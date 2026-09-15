@@ -1,40 +1,40 @@
 ---
 title: TiDB 3.1 Beta.1 Release Notes
-summary: TiDB 3.1 Beta.1 was released on January 10, 2020. The release includes changes to TiKV, such as renaming backup files and adding incremental backup features. Tools like BR have improved backup progress information and added features for partitioned tables. TiDB Ansible now automatically disables Transparent Huge Pages and adds Grafana monitoring for BR components. Overall, the release focuses on improving backup and restore processes, monitoring, and deployment optimization.
+summary: TiDB 3.1 Beta.1 发布日期为 2020 年 1 月 10 日。TiDB 版本为 3.1.0-beta.1，TiDB Ansible 版本也为 3.1.0-beta.1。TiKV 新增了备份功能和 SST 文件恢复修复。Tools 中 BR 组件修复了备份进度信息不准确的问题，并新增了自动调度 PD schedulers 功能。TiDB Ansible 新增了初始化阶段自动关闭操作系统 THP 的功能和 BR 组件的 Grafana 监控。
+aliases: ['/zh/tidb/dev/release-3.1.0-beta.1/','/zh/tidb/v3.1/release-3.1.0-beta.1','/docs-cn/dev/releases/release-3.1.0-beta.1/','/docs-cn/dev/releases/3.1.0-beta.1/','/zh/tidb/v5.4/release-3.1.0-beta.1','/zh/tidb/v6.1/release-3.1.0-beta.1','/zh/tidb/v6.5/release-3.1.0-beta.1','/zh/tidb/v7.1/release-3.1.0-beta.1','/zh/tidb/v7.5/release-3.1.0-beta.1','/zh/tidb/v8.1/release-3.1.0-beta.1']
 ---
 
 # TiDB 3.1 Beta.1 Release Notes
 
-Release date: January 10, 2020
+发版日期：2020 年 1 月 10 日
 
-TiDB version: 3.1.0-beta.1
+TiDB 版本：3.1.0-beta.1
 
-TiDB Ansible version: 3.1.0-beta.1
+TiDB Ansible 版本：3.1.0-beta.1
 
 ## TiKV
 
 + backup
-    - Change the name of the backup file from `start_key` to the hash value of `start_key` to reduce the file name's length for easy reading [#6198](https://github.com/tikv/tikv/pull/6198)
-    - Disable RocksDB's `force_consistency_checks` check to avoid false positives in the consistency check [#6249](https://github.com/tikv/tikv/pull/6249)
-    - Add the incremental backup feature [#6286](https://github.com/tikv/tikv/pull/6286)
-
+    - 备份文件的名称由 `start_key` 改为 `start_key` 的 hash 值，减少文件名的长度，方便阅读 [#6198](https://github.com/tikv/tikv/pull/6198)
+    - 关闭 RocksDB `force_consistency_checks` 检查功能，避免一致性检查误报的问题 [#6249](https://github.com/tikv/tikv/pull/6249)
+    - 新增增量备份功能 [#6286](https://github.com/tikv/tikv/pull/6286)
 + sst_importer
-    - Fix the issue that the SST file does not have MVCC properties during restoring [#6378](https://github.com/tikv/tikv/pull/6378)
-    - Add the monitoring items such as `tikv_import_download_duration`, `tikv_import_download_bytes`, `tikv_import_ingest_duration`, `tikv_import_ingest_bytes`, and `tikv_import_error_counter` to observe the overheads of downloading and ingesting SST files [#6404](https://github.com/tikv/tikv/pull/6404)
+    - 修复恢复后 SST 文件没有 MVCC Properties 的问题 [#6378](https://github.com/tikv/tikv/pull/6378)
+    - 新增 `tikv_import_download_duration`、`tikv_import_download_bytes`、`tikv_import_ingest_duration`、`tikv_import_ingest_bytes`、`tikv_import_error_counter` 等监控项，用于观察 Download SST 和 Ingest SST 的开销 [#6404](https://github.com/tikv/tikv/pull/6404)
 + raftstore
-    - Fix the issue of Follower Read that the follower reads stale data when the leader changes, thus breaking transaction isolation [#6343](https://github.com/tikv/tikv/pull/6343)
+    - 修复因 Follower Read 在 leader 变更时读到旧数据的问题，导致事务的隔离性被破坏的问题 [#6343](https://github.com/tikv/tikv/pull/6343)
 
 ## Tools
 
 + BR (Backup and Restore)
-    - Fix the inaccurate backup progress information [#127](https://github.com/pingcap/br/pull/127)
-    - Improve the performance of splitting Regions [#122](https://github.com/pingcap/br/pull/122)
-    - Add the backup and restore feature for partitioned tables [#137](https://github.com/pingcap/br/pull/137)
-    - Add the feature of automatically scheduling PD schedulers [#123](https://github.com/pingcap/br/pull/123)
-    - Fix the issue that data is overwritten after non `PKIsHandle` tables are restored [#139](https://github.com/pingcap/br/pull/139)
+    - 修复备份进度信息不准确的问题 [#127](https://github.com/pingcap/br/pull/127)
+    - 提升 split Region 的性能 [#122](https://github.com/pingcap/br/pull/122)
+    - 新增备份恢复分区表的功能 [#137](https://github.com/pingcap/br/pull/137)
+    - 新增自动调度 PD schedulers 功能 [#123](https://github.com/pingcap/br/pull/123)
+    - 修复非 PKIsHandle 表恢复后数据覆盖的问题 [#139](https://github.com/pingcap/br/pull/139)
 
 ## TiDB Ansible
 
-- Add the feature of automatically disabling Transparent Huge Pages (THP) in the operating system during the initialization phase [#1086](https://github.com/pingcap/tidb-ansible/pull/1086)
-- Add the Grafana monitoring for BR components [#1093](https://github.com/pingcap/tidb-ansible/pull/1093)
-- Optimize the deployment of TiDB Lightning by automatically creating related directories [#1104](https://github.com/pingcap/tidb-ansible/pull/1104)
+- 新增初始化阶段自动关闭操作系统 THP 的功能 [#1086](https://github.com/pingcap/tidb-ansible/pull/1086)
+- 新增 BR 组件的 Grafana 监控 [#1093](https://github.com/pingcap/tidb-ansible/pull/1093)
+- 优化 TiDB Lightning 部署，自动创建相关目录 [#1104](https://github.com/pingcap/tidb-ansible/pull/1104)

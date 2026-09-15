@@ -1,33 +1,33 @@
 ---
-title: Schedule Replicas by Topology Labels
-summary: Learn how to schedule replicas by topology labels.
+title: 通过拓扑 label 进行副本调度
+summary: TiDB v5.3.0 引入了通过拓扑 label 进行副本调度的功能。为了提升集群的高可用性和数据容灾能力，推荐让 TiKV 节点在物理层面上尽可能分散。通过设置 TiKV 和 TiFlash 的 labels，可以标识它们的地理位置。同时，需要配置 PD 的 location-labels 和 isolation-level 来使 PD 理解 TiKV 节点拓扑并加强拓扑隔离要求。PD 在副本调度时会保证同一份数据的不同副本尽可能分散，以提高集群容灾能力。
 ---
 
-# Schedule Replicas by Topology Labels
+# 通过拓扑 label 进行副本调度
 
-> **Note:**
+> **注意：**
 >
-> TiDB v5.3.0 introduces [Placement Rules in SQL](/placement-rules-in-sql.md). This offers a more convenient way to configure the placement of tables and partitions. Placement Rules in SQL might replace placement configuration with PD in future releases.
+> TiDB 在 v5.3.0 中引入了 [Placement Rules in SQL](/placement-rules-in-sql.md)。使用该功能，你可以更方便地配置表和分区的位置。在未来版本中，Placement Rules in SQL 可能取代通过 PD 配置放置规则的功能。
 
-To improve the high availability and disaster recovery capability of TiDB clusters, it is recommended that TiKV nodes are physically scattered as much as possible. For example, TiKV nodes can be distributed on different racks or even in different data centers. According to the topology information of TiKV, the PD scheduler automatically performs scheduling at the background to isolate each replica of a Region as much as possible, which maximizes the capability of disaster recovery.
+为了提升 TiDB 集群的高可用性和数据容灾能力，我们推荐让 TiKV 节点尽可能在物理层面上分散，例如让 TiKV 节点分布在不同的机架甚至不同的可用区。PD 调度器根据 TiKV 的拓扑信息，会自动在后台通过调度使得 Region 的各个副本尽可能隔离，从而使得数据容灾能力最大化。
 
-To make this mechanism effective, you need to properly configure TiKV and PD so that the topology information of the cluster, especially the TiKV location information, is reported to PD during deployment. Before you begin, see [Deploy TiDB Using TiUP](/production-deployment-using-tiup.md) first.
+要让这个机制生效，需要在部署时进行合理配置，把集群的拓扑信息（特别是 TiKV 的位置）上报给 PD。阅读本章前，请先确保阅读 [TiUP 部署方案](/production-deployment-using-tiup.md)。
 
-## Configure `labels` for TiKV, TiFlash, and TiDB
+## 配置 TiKV、TiFlash 和 TiDB 的 labels
 
-You can configure `labels` for TiKV, TiFlash, and TiDB based on the cluster topology.
+你可以根据集群拓扑配置 TiKV、TiFlash 和 TiDB 的 labels。
 
-### Configure a cluster using TiUP (recommended)
+### 使用 TiUP 进行配置（推荐）
 
-When using TiUP to deploy a cluster, you can configure the TiKV location in the [initialization configuration file](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file). TiUP will generate the corresponding configuration files for TiDB, TiKV, PD, and TiFlash during deployment.
+如果使用 TiUP 部署集群，可以在[初始化配置文件](/production-deployment-using-tiup.md#第-3-步初始化集群拓扑文件)中统一进行 location 相关配置。TiUP 会负责在部署时生成对应的 TiDB、TiKV、PD 和 TiFlash 配置文件。
 
-In the following example, a two-layer topology of `zone/host` is defined. The TiDB nodes, TiKV nodes, and TiFlash nodes of the cluster are distributed among three zones, z1, z2, and z3.
+下面的例子定义了 `zone` 和 `host` 两层拓扑结构。集群的 TiDB、TiKV 和 TiFlash 分布在三个 zone，z1、z2 和 z3。
 
-- In each zone, there are two hosts that have TiDB instances deployed, and each host has a separate TiDB instance deployed.
-- In each zone, there are two hosts that have TiKV instances deployed. In z1, each host has two TiKV instances deployed. In z2 and z3, each host has a separate TiKV instance deployed.
-- In each zone, there are two hosts that have TiFlash instances deployed, and each host has a separate TiFlash instance deployed.
+- 每个 zone 内有两台主机部署 TiDB 实例，TiDB 实例均为独占机器部署。
+- 每个 zone 内有两台主机部署 TiKV 实例，z1 每台主机同时部署两个 TiKV 实例，z2 和 z3 每台主机分别独立部署一个 TiKV 实例。
+- 每个 zone 内有两台主机部署 TiFlash 实例，TiFlash 实例均为独占机器部署。
 
-In the following example, `tidb-host-machine-n` represents the IP address of the `n`th TiDB node, `tikv-host-machine-n` represents the IP address of the `n`th TiKV node, and `tiflash-host-machine-n` represents the IP address of the `n`th TiFlash node.
+以下例子中 `tidb-host-machine-n` 代表第 n 个 TiDB 节点的 IP 地址，`tikv-host-machine-n` 代表第 n 个 TiKV 节点的 IP 地址，`tiflash-host-machine-n` 代表第 n 个 TiFlash 节点的 IP 地址。
 
 ```
 server_configs:
@@ -71,26 +71,26 @@ tikv_servers:
 # z1
   # machine-1 on z1
   - host: tikv-host-machine-1
-    port: 20160
+    port：20160
     config:
       server.labels:
         zone: z1
         host: tikv-host-machine-1
   - host: tikv-host-machine-1
-    port: 20161
+    port：20161
     config:
       server.labels:
         zone: z1
         host: tikv-host-machine-1
   # machine-2 on z1
   - host: tikv-host-machine-2
-    port: 20160
+    port：20160
     config:
       server.labels:
         zone: z1
         host: tikv-host-machine-2
   - host: tikv-host-machine-2
-    port: 20161
+    port：20161
     config:
       server.labels:
         zone: z1
@@ -154,38 +154,29 @@ tiflash_servers:
         host: tiflash-host-machine-6
 ```
 
-For details, see [Geo-distributed Deployment topology](/geo-distributed-deployment-topology.md).
+详情参阅 [TiUP 跨数据中心部署拓扑](/geo-distributed-deployment-topology.md)。
 
-> **Note:**
+> **注意：**
 >
-> If you have not configured `replication.location-labels` in the configuration file, when you deploy a cluster using this topology file, an error might occur. It is recommended that you confirm `replication.location-labels` is configured in the configuration file before deploying a cluster.
+> 如果你未在配置文件中配置 `replication.location-labels` 项，使用该拓扑配置文件部署集群时可能会报错。建议在部署集群前，确认 `replication.location-labels` 已配置。
 
-### Configure a cluster using command lines or configuration files
+### 使用命令行或配置文件进行配置
 
-#### Configure `labels` for TiKV and TiFlash
+#### 设置 TiKV 和 TiFlash 的 `labels`
 
-You can use the command-line flag or set the TiKV or TiFlash configuration file to bind some attributes in the form of key-value pairs. These attributes are called `labels`. After TiKV and TiFlash are started, they report their `labels` to PD so users can identify the location of TiKV and TiFlash nodes.
+TiKV 和 TiFlash 支持在命令行参数或者配置文件中以键值对的形式绑定一些属性，我们把这些属性叫做标签 (label)。TiKV 和 TiFlash 在启动后，会将自身的标签上报给 PD，因此可以使用标签来标识 TiKV 和 TiFlash 节点的地理位置。
 
-Assume that the topology has four layers: zone > data center (dc) > rack > host, and you can use these labels (zone, dc, rack, host) to set location of the TiKV and TiFlash. To set labels for TiKV and TiFlash, you can use one of the following methods:
+比如集群的拓扑结构分成四层：可用区 (zone) -> 数据中心 (dc) -> 机架 (rack) -> 主机 (host)，就可以使用这 4 个标签来设置 TiKV 和 TiFlash 的位置。
 
-+ Use the command-line flag to start a TiKV instance:
+使用命令行参数的方式启动一个 TiKV 实例：
 
-    ```shell
-    tikv-server --labels zone=<zone>,dc=<dc>,rack=<rack>,host=<host>
-    ```
 
-+ Configure in the TiKV configuration file:
+```
+tikv-server --labels zone=<zone>,dc=<dc>,rack=<rack>,host=<host>
+```
 
-    ```toml
-    [server]
-    [server.labels]
-    zone = "<zone>"
-    dc = "<dc>"
-    rack = "<rack>"
-    host = "<host>"
-    ```
+使用配置文件的方式：
 
-To set labels for TiFlash, you can use the `tiflash-learner.toml` file, which is the configuration file of tiflash-proxy:
 
 ```toml
 [server]
@@ -196,13 +187,26 @@ rack = "<rack>"
 host = "<host>"
 ```
 
-#### (Optional) Configure `labels` for TiDB
+TiFlash 支持通过 tiflash-learner.toml （tiflash-proxy 的配置文件）的方式设置 labels：
 
-When [Follower read](/follower-read.md) is enabled, if you want TiDB to prefer to read data from the same region, you need to configure `labels` for TiDB nodes.
-
-You can set `labels` for TiDB using the configuration file:
 
 ```toml
+[server]
+[server.labels]
+zone = "<zone>"
+dc = "<dc>"
+rack = "<rack>"
+host = "<host>"
+```
+
+#### 设置 TiDB 的 `labels`（可选）
+
+如果需要使用 [Follower Read](/follower-read.md) 的优先读同一区域副本的功能，需要为 TiDB 节点配置相关的 `labels`。
+
+TiDB 支持使用配置文件的方式设置 `labels`：
+
+
+```
 [labels]
 zone = "<zone>"
 dc = "<dc>"
@@ -210,26 +214,26 @@ rack = "<rack>"
 host = "<host>"
 ```
 
-> **Note:**
+> **注意：**
 >
-> Currently, TiDB depends on the `zone` label to match and select replicas that are in the same region. To use this feature, you need to include `zone` when [configuring `location-labels` for PD](#configure-location-labels-for-pd), and configure `zone` when configuring `labels` for TiDB, TiKV, and TiFlash. For more details, see [Configure `labels` for TiKV and TiFlash](#configure-labels-for-tikv-and-tiflash).
+> 目前，TiDB 依赖 `zone` 标签匹配选择同一区域的副本。如果需要使用此功能，需要在 PD [`location-labels` 配置](#设置-pd-的-isolation-level-配置)中包含 `zone`，并在 TiDB、TiKV 和 TiFlash 设置的 `labels` 中包含 `zone`。关于如何设置 TiKV 和 TiFlash 的 `labels`，可参考[设置 TiKV 和 TiFlash 的 `labels`](#设置-tikv-和-tiflash-的-labels)。
 
-## Configure `location-labels` for PD
+## 设置 PD 的 `location-labels` 配置
 
-According to the description above, the label can be any key-value pair used to describe TiKV attributes. But PD cannot identify the location-related labels and the layer relationship of these labels. Therefore, you need to make the following configuration for PD to understand the TiKV node topology.
+根据前面的描述，标签可以是用来描述 TiKV 属性的任意键值对，但 PD 无从得知哪些标签是用来标识地理位置的，而且也无从得知这些标签的层次关系。因此，PD 也需要一些配置来使得 PD 理解 TiKV 节点拓扑。
 
-Defined as an array of strings, `location-labels` is the configuration for PD. Each item of this configuration corresponds to the key of TiKV `labels`. Besides, the sequence of each key represents the layer relationship of different labels (the isolation levels decrease from left to right).
+PD 上的配置叫做 `location-labels`，是一个字符串数组。该配置的每一项与 TiKV `labels` 的 key 是对应的，而且其中每个 key 的顺序代表不同标签的级别关系（从左到右，隔离级别依次递减）。
 
-You can customize the value of `location-labels`, such as `zone`, `rack`, or `host`, because the configuration does not have default values. Also, this configuration has **no** restriction in the number of label levels (not mandatory for 3 levels) as long as they match with TiKV server labels.
+`location-labels` 没有默认值，你可以根据具体需求来设置该值，包括 `zone`、`rack`、`host` 等等。同时，`location-labels` 对标签级别的数量也**没有**限制（即不限定于 3 个），只要其级别与 TiKV 服务器的标签匹配，则可以配置成功。
 
-> **Note:**
+> **注意：**
 >
-> - To make configurations take effect, you must configure `location-labels` for PD and `labels` for TiKV at the same time. Otherwise, PD does not perform scheduling according to the topology.
-> - If you use Placement Rules in SQL, you only need to configure `labels` for TiKV. Currently, Placement Rules in SQL is incompatible with the `location-labels` configuration of PD and ignores this configuration. It is not recommended to use `location-labels` and Placement Rules in SQL at the same time; otherwise, unexpected results might occur.
+> - 必须同时配置 PD 的 `location-labels` 和 TiKV 的 `labels` 参数，否则 PD 不会根据拓扑结构进行调度。
+> - 如果你使用 Placement Rules in SQL，只需要配置 TiKV 的 `labels` 即可。Placement Rules in SQL 目前不兼容 PD `location-labels` 设置，会忽略该设置。不建议 `location-labels` 与 Placement Rules in SQL 混用，否则可能产生非预期的结果。
 
-To configure `location-labels`, choose one of the following methods according to your cluster situation:
+你可以根据集群状态来选择不同的配置方式：
 
-+ If the PD cluster is not initialized, configure `location-labels` in the PD configuration file:
+- 在集群初始化之前，可以通过 PD 的配置文件进行配置：
 
     
     ```toml
@@ -237,18 +241,16 @@ To configure `location-labels`, choose one of the following methods according to
     location-labels = ["zone", "rack", "host"]
     ```
 
-+ If the PD cluster is already initialized, use the pd-ctl tool to make online changes:
+- 如果需要在 PD 集群初始化完成后进行配置，则需要使用 pd-ctl 工具进行在线更改：
 
     
     ```bash
     pd-ctl config set location-labels zone,rack,host
     ```
 
-## Configure `isolation-level` for PD
+## 设置 PD 的 `isolation-level` 配置
 
-If `location-labels` has been configured, you can further enhance the topological isolation requirements on TiKV clusters by configuring `isolation-level` in the PD configuration file.
-
-Assume that you have made a three-layer cluster topology by configuring `location-labels` according to the instructions above: zone -> rack -> host, you can configure the `isolation-level` to `zone` as follows:
+在配置了 `location-labels` 的前提下，用户可以还通过 `isolation-level` 配置来进一步加强对 TiKV 集群的拓扑隔离要求。假设按照上面的说明通过 `location-labels` 将集群的拓扑结构分成三层：可用区 (zone) -> 机架 (rack) -> 主机 (host)，并对 `isolation-level` 作如下配置：
 
 
 ```toml
@@ -256,33 +258,33 @@ Assume that you have made a three-layer cluster topology by configuring `locatio
 isolation-level = "zone"
 ```
 
-If the PD cluster is already initialized, you need to use the pd-ctl tool to make online changes:
+当 PD 集群初始化完成后，需要使用 pd-ctl 工具进行在线更改：
 
 
 ```bash
 pd-ctl config set isolation-level zone
 ```
 
-The `location-level` configuration is an array of strings, which needs to correspond to a key of `location-labels`. This parameter limits the minimum and mandatory isolation level requirements on TiKV topology clusters.
+其中，`isolation-level` 配置是一个字符串，需要与 `location-labels` 的其中一个 key 对应。该参数限制 TiKV 拓扑集群的最小且强制隔离级别要求。
 
-> **Note:**
+> **注意：**
 >
-> `isolation-level` is empty by default, which means there is no mandatory restriction on the isolation level. To set it, you need to configure `location-labels` for PD and ensure that the value of `isolation-level` is one of `location-labels` names.
+> `isolation-level` 默认情况下为空，即不进行强制隔离级别限制，若要对其进行设置，必须先配置 PD 的 `location-labels` 参数，同时保证 `isolation-level` 的值一定为 `location-labels` 中的一个。
 
-## PD schedules based on topology label
+## 基于拓扑 label 的 PD 调度策略
 
-PD schedules replicas according to the label layer to make sure that different replicas of the same data are scattered as much as possible.
+PD 在副本调度时，会按照 label 层级，保证同一份数据的不同副本尽可能分散。
 
-Take the topology in the previous section as an example.
+下面以上一节的拓扑结构为例分析。
 
-Assume that the number of cluster replicas is 3 (`max-replicas=3`). Because there are 3 zones in total, PD ensures that the 3 replicas of each Region are respectively placed in z1, z2, and z3. In this way, the TiDB cluster is still available when one zone fails.
+假设集群副本数设置为 3 (`max-replicas=3`)，因为总共有 3 个 zone，PD 会保证每个 Region 的 3 个副本分别放置在 z1/z2/z3，这样当任何一个数据中心发生故障时，TiDB 集群依然是可用的。
 
-Then, assume that the number of cluster replicas is 5 (`max-replicas=5`). Because there are only 3 zones in total, PD cannot guarantee the isolation of each replica at the zone level. In this situation, the PD scheduler will ensure replica isolation at the host level. In other words, multiple replicas of a Region might be distributed in the same zone but not on the same host.
+假如集群副本数设置为 5 (`max-replicas=5`)，因为总共只有 3 个 zone，在这一层级 PD 无法保证各个副本的隔离，此时 PD 调度器会退而求其次，保证在 host 这一层的隔离。也就是说，会出现一个 Region 的多个副本分布在同一个 zone 的情况，但是不会出现多个副本分布在同一台主机。
 
-In the case of the 5-replica configuration, if z3 fails or is isolated as a whole, and cannot be recovered after a period of time (controlled by `max-store-down-time`), PD will make up the 5 replicas through scheduling. At this time, only 4 hosts are available. This means that host-level isolation cannot be guaranteed and that multiple replicas might be scheduled to the same host. But if the `isolation-level` value is set to `zone` instead of being left empty, this specifies the minimum physical isolation requirements for Region replicas. That is to say, PD will ensure that replicas of the same Region are scattered among different zones. PD will not perform corresponding scheduling even if following this isolation restriction does not meet the requirement of `max-replicas` for multiple replicas.
+在 5 副本配置的前提下，如果 z3 出现了整体故障或隔离，并且 z3 在一段时间后仍然不能恢复（由 `max-store-down-time` 控制），PD 会通过调度补齐 5 副本，此时可用的主机只有 4 个了，故而无法保证 host 级别的隔离，于是可能出现多个副本被调度到同一台主机的情况。
 
-If the `isolation-level` setting is set to `zone`, this specifies the minimum isolation requirement for Region replicas at the physical level. In this case, PD will always guarantee that replicas of the same Region are distributed across different zones. Even if following this isolation restriction would not meet the multi-replica requirements of `max-replicas`, PD will not schedule accordingly. Taking a TiKV cluster distributed across three data zones (z1, z2, and z3) as an example, if each Region requires three replicas, PD distributes the three replicas of the same Region to these three data zones respectively. If a power outage occurs in z1 and cannot be recovered after a period of time (30 minutes by default, controlled by [`max-store-down-time`](/pd-configuration-file.md#max-store-down-time)), PD determines that the Region replicas in z1 are no longer available. However, because `isolation-level` is set to `zone`, PD needs to strictly guarantee that different replicas of the same Region will not be scheduled to the same data zone. Because both z2 and z3 already have replicas, PD will not perform any scheduling under the minimum isolation level restriction of `isolation-level`, even if there are only two replicas at this moment.
+但假如 `isolation-level` 设置不为空，值为 `zone`，这样就规定了 Region 副本在物理层面上的最低隔离要求，也就是说 PD 一定会保证同一 Region 的副本分散于不同的 zone 之上。即便遵循此隔离限制会无法满足 `max-replicas` 的多副本要求，PD 也不会进行相应的调度。例如，当前存在 TiKV 集群的三个可用区 z1/z2/z3，在三副本的设置下，PD 会将同一 Region 的三个副本分别分散调度至这三个可用区。若此时 z1 整个可用区发生了停电事故并在一段时间后（由 [`max-store-down-time`](/pd-configuration-file.md#max-store-down-time) 控制，默认为 30 分钟）仍然不能恢复，PD 会认为 z1 上的 Region 副本不再可用。但由于 `isolation-level` 设置为了 `zone`，PD 需要严格保证不同的 Region 副本不会落到同一 zone 上。此时的 z2 和 z3 均已存在副本，则 PD 在 `isolation-level` 的最小强制隔离级别限制下便不会进行任何调度，即使此时仅存在两个副本。
 
-Similarly, when `isolation-level` is set to `rack`, the minimum isolation level applies to different racks in the same data center. With this configuration, the isolation at the zone layer is guaranteed first if possible. When the isolation at the zone level cannot be guaranteed, PD tries to avoid scheduling different replicas to the same rack in the same zone. The scheduling works similarly when `isolation-level` is set to `host` where PD first guarantees the isolation level of rack, and then the level of host.
+类似地，`isolation-level` 为 `rack` 时，最小隔离级别便为同一可用区的不同 rack。在此设置下，如果能在 zone 级别保证隔离，会首先保证 zone 级别的隔离。只有在 zone 级别隔离无法完成时，才会考虑避免出现在同一 zone 同一 rack 的调度，并以此类推。
 
-In summary, PD maximizes the disaster recovery of the cluster according to the current topology. Therefore, if you want to achieve a certain level of disaster recovery, deploy more machines on different sites according to the topology than the number of `max-replicas`. TiDB also provides mandatory configuration items such as `isolation-level` for you to more flexibly control the topological isolation level of data according to different scenarios.
+总的来说，PD 能够根据当前的拓扑结构使得集群容灾能力最大化。所以如果用户希望达到某个级别的容灾能力，就需要根据拓扑结构在对应级别提供多于副本数 (`max-replicas`) 的机器。同时 TiDB 也提供了诸如 `isolation-level` 这样的强制隔离级别设置，以便更灵活地根据场景来控制对数据的拓扑隔离级别。

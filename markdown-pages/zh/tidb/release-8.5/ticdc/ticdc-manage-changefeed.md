@@ -1,15 +1,15 @@
 ---
-title: Manage Changefeeds
-summary: Learn how to manage TiCDC changefeeds.
+title: 管理 Changefeed
+summary: 了解 Changefeed 相关的各种管理手段。
 ---
 
-# Manage Changefeeds
+# 管理 Changefeed
 
-This document describes how to create and manage TiCDC changefeeds by using the TiCDC command-line tool `cdc cli`. You can also manage changefeeds via the HTTP interface of TiCDC. For details, see [TiCDC OpenAPI](/ticdc/ticdc-open-api.md).
+本文介绍 Changefeed 相关的各种管理方法，其中大部分功能是通过 TiCDC 的命令行工具来完成的。如果你需要，也可以通过 TiCDC 暴露的 HTTP 接口实现类似功能，详细信息参考 [TiCDC OpenAPI](/ticdc/ticdc-open-api.md)。
 
-## Create a replication task
+## 创建同步任务
 
-Run the following command to create a replication task:
+使用以下命令来创建同步任务：
 
 ```shell
 cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://root:123456@127.0.0.1:3306/" --changefeed-id="simple-replication-task"
@@ -18,12 +18,12 @@ cdc cli changefeed create --server=http://10.0.10.25:8300 --sink-uri="mysql://ro
 ```shell
 Create changefeed successfully!
 ID: simple-replication-task
-Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-08-27T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"enable_old_value":true,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"8.5.8"}
+Info: {"upstream_id":7178706266519722477,"namespace":"default","id":"simple-replication-task","sink_uri":"mysql://root:xxxxx@127.0.0.1:4000/?time-zone=","create_time":"2026-08-27T15:05:46.679218+08:00","start_ts":438156275634929669,"engine":"unified","config":{"case_sensitive":false,"force_replicate":false,"ignore_ineligible_table":false,"check_gc_safe_point":true,"enable_sync_point":true,"bdr_mode":false,"sync_point_interval":30000000000,"sync_point_retention":3600000000000,"filter":{"rules":["test.*"],"event_filters":null},"mounter":{"worker_num":16},"sink":{"protocol":"","schema_registry":"","csv":{"delimiter":",","quote":"\"","null":"\\N","include_commit_ts":false},"column_selectors":null,"transaction_atomicity":"none","encoder_concurrency":16,"terminator":"\r\n","date_separator":"none","enable_partition_separator":false},"consistent":{"level":"none","max_log_size":64,"flush_interval":2000,"storage":""}},"state":"normal","creator_version":"v8.5.8"}
 ```
 
-## Query the replication task list
+## 查询同步任务列表
 
-Run the following command to query the replication task list:
+使用以下命令来查询同步任务列表：
 
 ```shell
 cdc cli changefeed list --server=http://10.0.10.25:8300
@@ -41,17 +41,18 @@ cdc cli changefeed list --server=http://10.0.10.25:8300
 }]
 ```
 
-- `checkpoint` indicates that TiCDC has already replicated data before this time point to the downstream.
-- `state` indicates the state of the replication task.
-    - `normal`: The replication task runs normally.
-    - `stopped`: The replication task is stopped (manually paused).
-    - `error`: The replication task is stopped (by an error).
-    - `removed`: The replication task is removed. Tasks of this state are displayed only when you have specified the `--all` option. To see these tasks when this option is not specified, run the `changefeed query` command.
-    - `finished`: The replication task is finished (data is replicated to the `target-ts`). Tasks of this state are displayed only when you have specified the `--all` option. To see these tasks when this option is not specified, run the `changefeed query` command.
+- `checkpoint` 即为 TiCDC 已经将该时间点前的数据同步到了下游。
+- `state` 为该同步任务的状态：
 
-## Query a specific replication task
+    - `normal`：正常同步
+    - `stopped`：停止同步（手动暂停）
+    - `error`：停止同步（出错）
+    - `removed`：已删除任务（只在指定 `--all` 选项时才会显示该状态的任务。未指定时，可通过 `query` 查询该状态的任务）
+    - `finished`：任务已经同步到指定 `target-ts`，处于已完成状态（只在指定 `--all` 选项时才会显示该状态的任务。未指定时，可通过 `query` 查询该状态的任务）。
 
-To query a specific replication task, run the `changefeed query` command. The query result includes the task information and the task state. You can specify the `--simple` or `-s` argument to simplify the query result that will only include the basic replication state and the checkpoint information. If you do not specify this argument, detailed task configuration, replication states, and replication table information are output.
+## 查询特定同步任务
+
+使用 `changefeed query` 命令可以查询特定同步任务（对应某个同步任务的信息和状态），指定 `--simple` 或 `-s` 参数会简化输出，提供最基本的同步状态和 checkpoint 信息。不指定该参数会输出详细的任务配置、同步状态和同步表信息。
 
 ```shell
 cdc cli changefeed query -s --server=http://10.0.10.25:8300 --changefeed-id=simple-replication-task
@@ -66,12 +67,12 @@ cdc cli changefeed query -s --server=http://10.0.10.25:8300 --changefeed-id=simp
 }
 ```
 
-In the preceding command and result:
+以上命令中：
 
-+ `state` is the replication state of the current changefeed. Each state must be consistent with the state in `changefeed list`.
-+ `tso` represents the largest transaction TSO in the current changefeed that has been successfully replicated to the downstream.
-+ `checkpoint` represents the corresponding time of the largest transaction TSO in the current changefeed that has been successfully replicated to the downstream.
-+ `error` records whether an error has occurred in the current changefeed.
+- `state` 代表当前 changefeed 的同步状态，各个状态必须和 `changefeed list` 中的状态相同。
+- `tso` 代表当前 changefeed 中已经成功写入下游的最大事务 TSO。
+- `checkpoint` 代表当前 changefeed 中已经成功写入下游的最大事务 TSO 对应的时间。
+- `error` 记录当前 changefeed 是否有错误发生。
 
 ```shell
 cdc cli changefeed query --server=http://10.0.10.25:8300 --changefeed-id=simple-replication-task
@@ -135,63 +136,62 @@ cdc cli changefeed query --server=http://10.0.10.25:8300 --changefeed-id=simple-
 }
 ```
 
-In the preceding command and result:
+以上命令中：
 
-- `info` is the replication configuration of the queried changefeed.
-- `status` is the replication state of the queried changefeed.
-    - `resolved-ts`: The largest transaction `TS` in the current changefeed. Note that this `TS` has been successfully sent from TiKV to TiCDC.
-    - `checkpoint-ts`: The largest transaction `TS` in the current `changefeed`. Note that this `TS` has been successfully written to the downstream.
-    - `admin-job-type`: The status of a changefeed:
-        - `0`: The state is normal.
-        - `1`: The task is paused. When the task is paused, all replicated `processor`s exit. The configuration and the replication status of the task are retained, so you can resume the task from `checkpoint-ts`.
-        - `2`: The task is resumed. The replication task resumes from `checkpoint-ts`.
-        - `3`: The task is removed. When the task is removed, all replicated `processor`s are ended, and the configuration information of the replication task is cleared up. Only the replication status is retained for later queries.
-- `task-status` indicates the state of each replication sub-task in the queried changefeed.
+- `info` 代表查询 changefeed 的同步配置。
+- `status` 代表查询 changefeed 的同步状态信息。
 
-## Pause a replication task
+    - `resolved-ts` 代表当前 changefeed 中已经成功从 TiKV 发送到 TiCDC 的最大事务 TS。
+    - `checkpoint-ts` 代表当前 changefeed 中已经成功写入下游的最大事务 TS。
+    - `admin-job-type` 代表一个 changefeed 的状态：
+        - `0`：状态正常。
+        - `1`：任务暂停，停止任务后所有同步 `processor` 会结束退出，同步任务的配置和同步状态都会保留，可以从 `checkpoint-ts` 恢复任务。
+        - `2`：任务恢复，同步任务从 `checkpoint-ts` 继续同步。
+        - `3`：任务已删除，接口请求后会结束所有同步 `processor`，并清理同步任务配置信息。同步状态保留，只提供查询，没有其他实际功能。
+- `task-status` 代表查询 changefeed 所分配的各个同步子任务的状态信息。
 
-Run the following command to pause a replication task:
+## 停止同步任务
+
+使用以下命令来停止同步任务：
 
 ```shell
 cdc cli changefeed pause --server=http://10.0.10.25:8300 --changefeed-id simple-replication-task
 ```
 
-In the preceding command:
+以上命令中：
 
-- `--changefeed-id=uuid` represents the ID of the changefeed that corresponds to the replication task you want to pause.
+- `--changefeed-id=uuid` 为需要操作的 `changefeed` ID。
 
-## Resume a replication task
+## 恢复同步任务
 
-Run the following command to resume a paused replication task:
+使用以下命令恢复同步任务：
 
 ```shell
 cdc cli changefeed resume --server=http://10.0.10.25:8300 --changefeed-id simple-replication-task
 ```
 
-- `--changefeed-id=uuid` represents the ID of the changefeed that corresponds to the replication task you want to resume.
-- `--overwrite-checkpoint-ts`: starting from v6.2.0, you can specify the starting TSO of resuming the replication task. TiCDC starts pulling data from the specified TSO. The argument accepts `now` or a specific TSO (such as 434873584621453313). The specified TSO must be in the range of (GC safe point, CurrentTSO]. If this argument is not specified, TiCDC replicates data from the current `checkpoint-ts` by default. You can use the `cdc cli changefeed list` command to check the current value of `checkpoint-ts`.
-- `--no-confirm`: when the replication is resumed, you do not need to confirm the related information. Defaults to `false`.
+- `--changefeed-id=uuid` 为需要操作的 `changefeed` ID。
+- `--overwrite-checkpoint-ts`：从 v6.2 开始支持指定 changefeed 恢复的起始 TSO。TiCDC 集群将从这个 TSO 开始拉取数据。该项支持 `now` 或一个具体的 TSO（如 434873584621453313），指定的 TSO 应在 (GC safe point, CurrentTSO] 范围内。如未指定该参数，默认从当前的 `checkpoint-ts` 同步数据。可以使用 `cdc cli changefeed list` 命令查看当前的 `checkpoint-ts` 的值。
+- `--no-confirm`：恢复同步任务时无需用户确认相关信息。默认为 false。
 
-> **Note:**
+> **注意：**
 >
-> - If the TSO specified in `--overwrite-checkpoint-ts` (`t2`) is larger than the current checkpoint TSO in the changefeed (`t1`), data between `t1` and `t2` will not be replicated to the downstream. This causes data loss. You can obtain `t1` by running `cdc cli changefeed query`.
-> - If the TSO specified in `--overwrite-checkpoint-ts` (`t2`) is smaller than the current checkpoint TSO in the changefeed (`t1`), TiCDC pulls data from an old time point (`t2`), which might cause data duplication (for example, if the downstream is MQ sink).
+> - 若 `--overwrite-checkpoint-ts` 指定的 TSO `t2` 大于 changefeed 的当前 checkpoint TSO `t1`（可通过 `cdc cli changefeed query` 命令获取），则会导致 `t1` 与 `t2` 之间的数据不会同步到下游，造成数据丢失。
+> - 若 `--overwrite-checkpoint-ts` 指定的 TSO `t2` 小于 changefeed 的当前 checkpoint TSO `t1`，则会导致 TiCDC 集群从一个旧的时间点 `t2` 重新拉取数据，可能会造成数据重复（例如 TiCDC 下游为 MQ sink）。
 
-## Remove a replication task
+## 删除同步任务
 
-Run the following command to remove a replication task:
+使用以下命令删除同步任务：
 
 ```shell
 cdc cli changefeed remove --server=http://10.0.10.25:8300 --changefeed-id simple-replication-task
 ```
 
-In the preceding command:
+- `--changefeed-id=uuid` 为需要操作的 `changefeed` ID。
 
-- `--changefeed-id=uuid` represents the ID of the changefeed that corresponds to the replication task you want to remove.
+## 更新同步任务配置
 
-## Update task configuration
-
-TiCDC supports modifying the configuration of the replication task (not dynamically). To modify the changefeed configuration, pause the task, modify the configuration, and then resume the task.
+TiCDC 支持非动态修改同步任务配置，修改 changefeed 配置需要按照 `暂停任务 -> 修改配置 -> 恢复任务` 的流程。
 
 ```shell
 cdc cli changefeed pause -c test-cf --server=http://10.0.10.25:8300
@@ -199,15 +199,15 @@ cdc cli changefeed update -c test-cf --server=http://10.0.10.25:8300 --sink-uri=
 cdc cli changefeed resume -c test-cf --server=http://10.0.10.25:8300
 ```
 
-Currently, you can modify the following configuration items:
+当前支持修改的配置包括：
 
-- `sink-uri` of the changefeed.
-- The changefeed configuration file and all configuration items in the file.
-- The `target-ts` of the changefeed.
+- changefeed 的 `sink-uri`
+- changefeed 配置文件及文件内所有配置
+- changefeed 的 `target-ts`
 
-## Manage processing units of replication sub-tasks (`processor`)
+## 管理同步子任务处理单元 (`processor`)
 
-- Query the `processor` list:
+- 查询 `processor` 列表：
 
     ```shell
     cdc cli processor list --server=http://10.0.10.25:8300
@@ -223,7 +223,7 @@ Currently, you can modify the following configuration items:
     ]
     ```
 
-- Query a specific changefeed which corresponds to the status of a specific replication task:
+- 查询特定 `processor`，对应于某个节点处理的同步子任务信息和状态：
 
     ```shell
     cdc cli processor query --server=http://10.0.10.25:8300 --changefeed-id=simple-replication-task --capture-id=b293999a-4168-4988-a4f4-35d9589b226b
@@ -233,7 +233,7 @@ Currently, you can modify the following configuration items:
     {
       "status": {
         "tables": {
-          "56": {    # 56 ID of the replication table, corresponding to tidb_table_id of a table in TiDB
+          "56": {    # 56 表示同步表 id，对应 TiDB 中表的 tidb_table_id
             "start-ts": 417474117955485702
           }
         },
@@ -248,50 +248,50 @@ Currently, you can modify the following configuration items:
     }
     ```
 
-    In the preceding command:
+以上命令中：
 
-    - `status.tables`: Each key number represents the ID of the replication table, corresponding to `tidb_table_id` of a table in TiDB.
-    - `resolved-ts`: The largest TSO among the sorted data in the current processor.
-    - `checkpoint-ts`: The largest TSO that has been successfully written to the downstream in the current processor.
+- `status.tables` 中每一个作为 key 的数字代表同步表的 id，对应 TiDB 中表的 tidb_table_id。
+- `resolved-ts` 代表当前 Processor 中已经排序数据的最大 TSO。
+- `checkpoint-ts` 代表当前 Processor 已经成功写入下游的事务的最大 TSO。
 
-## Replicate tables with the new framework for collations enabled
+## 同步启用了 TiDB 新的 Collation 框架的表
 
-Starting from v4.0.15, v5.0.4, v5.1.1 and v5.2.0, TiCDC supports tables that have enabled [new framework for collations](/character-set-and-collation.md#new-framework-for-collations).
+从 v4.0.15、v5.0.4、v5.1.1 和 v5.2.0 开始，TiCDC 支持同步启用了 TiDB [新的 Collation 框架](/character-set-and-collation.md#新框架下的排序规则支持)的表。
 
-## Replicate tables without a valid index
+## 同步没有有效索引的表
 
-Since v4.0.8, TiCDC supports replicating tables that have no valid index by modifying the task configuration. To enable this feature, configure in the changefeed configuration file as follows:
+从 v4.0.8 开始，TiCDC 支持通过修改任务配置来同步没有有效索引的表。若要开启该特性，需要在 `changefeed` 配置文件的根级别进行如下指定：
 
 ```toml
 force-replicate = true
 ```
 
-> **Warning:**
+> **警告：**
 >
-> When `force-replicate` is set to `true`, data consistency is not guaranteed. For tables without a valid index, operations such as `INSERT` and `REPLACE` are not reentrant, so there is a risk of data redundancy. TiCDC guarantees that data is distributed only at least once during the replication process. Therefore, enabling this feature to replicate tables without a valid index will definitely cause data redundancy. If you do not accept data redundancy, it is recommended to add an effective index, such as adding a primary key column with the `AUTO RANDOM` attribute.
+> 在开启 `force-replicate` 之后，不保证数据一致性。对于没有有效索引的表，`INSERT` 和 `REPLACE` 等操作不具备可重入性，因此会有数据冗余的风险。TiCDC 在同步过程中只保证数据至少分发一次，因此开启该特性同步没有有效索引的表，一定会导致数据冗余出现。如果不能接受数据冗余，建议增加有效索引，譬如增加具有 `AUTO RANDOM` 属性的主键列。
 
-## Unified Sorter
+## Unified Sorter 功能
 
-> **Note:**
+> **注意：**
 >
-> Starting from v6.0.0, TiCDC uses the DB Sorter engine by default, and no longer uses the Unified Sorter. It is recommended that you do not configure the `sort engine` item.
+> 从 v6.0.0 开始，TiCDC 内部默认使用 DB Sorter 引擎来对数据进行排序，不再使用 Unified Sorter。建议用户不再主动配置 Sorter 项。
 
-Unified sorter is the sorting engine in TiCDC. It can mitigate OOM problems caused by the following scenarios:
+Unified Sorter 是 TiCDC 中的排序引擎功能，用于缓解以下场景造成的内存溢出问题：
 
-+ The data replication task in TiCDC is paused for a long time, during which a large amount of incremental data is accumulated and needs to be replicated.
-+ The data replication task is started from an early timestamp so it becomes necessary to replicate a large amount of incremental data.
+- 如果 TiCDC 数据订阅任务的暂停中断时间长，其间积累了大量的增量更新数据需要同步。
+- 从较早的时间点启动数据订阅任务，业务写入量大，积累了大量的更新数据需要同步。
 
-For the changefeeds created using `cdc cli` after v4.0.13, Unified Sorter is enabled by default; for the changefeeds that have existed before v4.0.13, the previous configuration is used.
+对 v4.0.13 版本之后的 `cdc cli` 创建的 changefeed，默认开启 Unified Sorter。对 v4.0.13 版本前已经存在的 changefeed，则使用之前的配置。
 
-To check whether or not the Unified Sorter feature is enabled on a changefeed, you can run the following example command (assuming the IP address of the PD instance is `http://10.0.10.25:2379`):
+要确定一个 changefeed 上是否开启了 Unified Sorter 功能，可执行以下示例命令查看（假设 PD 实例的 IP 地址为 `http://10.0.10.25:2379`）：
 
 ```shell
-cdc cli --server="http://10.0.10.25:8300" changefeed query --changefeed-id=simple-replication-task | grep 'sort-engine'
+cdc cli --server="http://10.0.10.25:8300" changefeed query --changefeed-id=simple-replication-task | grep 'sort_engine'
 ```
 
-In the output of the above command, if the value of `sort-engine` is "unified", it means that Unified Sorter is enabled on the changefeed.
+以上命令的返回结果中，如果 `sort_engine` 的值为 "unified"，则说明 Unified Sorter 已在该 changefeed 上开启。
 
-> **Note:**
+> **注意：**
 >
-> + If your servers use mechanical hard drives or other storage devices that have high latency or limited bandwidth, the performance of Unified Sorter will be affected significantly.
-> + By default, Unified Sorter uses `data_dir` to store temporary files. It is recommended to ensure that the free disk space is greater than or equal to 500 GiB. For production environments, it is recommended to ensure that the free disk space on each node is greater than (the maximum `checkpoint-ts` delay allowed by the business) * (upstream write traffic at business peak hours). In addition, if you plan to replicate a large amount of historical data after `changefeed` is created, make sure that the free space on each node is greater than the amount of the replicated data.
+> - 如果服务器使用机械硬盘或其他有延迟或吞吐有瓶颈的存储设备，Unified Sorter 性能会受到较大影响。
+> - Unified Sorter 默认使用 `data_dir` 储存临时文件。建议保证硬盘的空闲容量大于等于 500 GiB。对于生产环境，建议保证每个节点上的磁盘可用空间大于（业务允许的最大）`checkpoint-ts` 延迟 * 业务高峰上游写入流量。此外，如果在 `changefeed` 创建后预期需要同步大量历史数据，请确保每个节点的空闲容量大于等于要追赶的同步数据。

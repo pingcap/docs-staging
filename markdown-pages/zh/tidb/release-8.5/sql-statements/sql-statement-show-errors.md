@@ -1,15 +1,15 @@
 ---
-title: SHOW ERRORS | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 SHOW ERRORS 的用法概述。
+title: SHOW ERRORS
+summary: TiDB 数据库中 SHOW ERRORS 的使用概况。
 ---
 
 # SHOW ERRORS
 
-该语句显示之前执行的语句中的错误。当语句成功执行后，错误缓冲区会被清空。在这种情况下，`SHOW ERRORS` 将返回一个空集。
+`SHOW ERRORS` 语句用于显示已执行语句中的错误。一旦先前的语句成功执行，就会清除错误缓冲区，这时 `SHOW ERRORS` 会返回一个空集。
 
-哪些语句会生成错误与警告的行为，受到当前 `sql_mode` 设置的高度影响。
+当前的 `sql_mode` 很大程度决定了哪些语句会产生错误与警告。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 ShowErrorsStmt ::=
@@ -22,12 +22,30 @@ ShowLikeOrWhere ::=
 
 ## 示例
 
+
 ```sql
-mysql> select invalid;
+select invalid;
+```
+
+```
 ERROR 1054 (42S22): Unknown column 'invalid' in 'field list'
-mysql> create invalid;
+```
+
+
+```sql
+create invalid;
+```
+
+```
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 1 column 14 near "invalid"
-mysql> SHOW ERRORS;
+```
+
+
+```sql
+SHOW ERRORS;
+```
+
+```
 +-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Level | Code | Message                                                                                                                                                   |
 +-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -35,25 +53,44 @@ mysql> SHOW ERRORS;
 | Error | 1064 | You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 1 column 14 near "invalid"  |
 +-------+------+-----------------------------------------------------------------------------------------------------------------------------------------------------------+
 2 rows in set (0.00 sec)
+```
 
-mysql> CREATE invalid2;
+
+```sql
+CREATE invalid2;
+```
+
+```
 ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your TiDB version for the right syntax to use line 1 column 15 near "invalid2"
-mysql> SELECT 1;
+```
+
+
+```sql
+SELECT 1;
+```
+
+```
 +------+
 | 1    |
 +------+
 |    1 |
 +------+
 1 row in set (0.00 sec)
+```
 
-mysql> SHOW ERRORS;
+
+```sql
+SHOW ERRORS;
+```
+
+```
 Empty set (0.00 sec)
 ```
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW ERRORS` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`SHOW ERRORS` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 另请参见
+## 另请参阅
 
 * [SHOW WARNINGS](/sql-statements/sql-statement-show-warnings.md)

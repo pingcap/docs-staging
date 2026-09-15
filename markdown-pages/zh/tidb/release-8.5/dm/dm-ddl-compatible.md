@@ -1,19 +1,19 @@
 ---
-title: Special Handling of DM DDLs
-summary: Learn how DM parses and handles DDL statements according to the statement types.
+title: Data Migration DDL 特殊处理说明
+summary: 数据迁移中，根据不同的 DDL 语句和场景，采用不同处理方式。DM 不支持的 DDL 语句会直接跳过。部分 DDL 语句在同步到下游前会进行改写。在合库合表迁移任务中，DDL 同步行为存在变更。Online DDL 特性也会对 DDL 事件进行特殊处理。
 ---
 
-# Special Handling of DM DDLs
+# Data Migration DDL 特殊处理说明
 
-When TiDB Data Migration (DM) migrates data, it parses the DDL statements and handles them according to the statement type and the current migration stage.
+DM 同步过程中，根据 DDL 语句以及所处场景的不同，将采用不同的处理方式。
 
-## Skip DDL statements
+## 忽略的 DDL 语句
 
-The following statements are not supported by DM, so DM skips them directly after parsing.
+以下语句 DM 并未支持，因此解析之后直接跳过。
 
 <table>
     <tr>
-        <th>Description</th>
+        <th>描述</th>
         <th>SQL</th>
     </tr>
     <tr>
@@ -122,11 +122,11 @@ The following statements are not supported by DM, so DM skips them directly afte
     </tr>
 </table>
 
-## Rewrite DDL statements
+## 改写的 DDL 语句
 
-The following statements are rewritten before being replicated to the downstream.
+以下语句在同步到下游前会进行改写。
 
-|Original statement|Rewritten statement|
+|原始语句|实际执行语句|
 |-|-|
 |`^CREATE DATABASE...`|`^CREATE DATABASE...IF NOT EXISTS`|
 |`^CREATE TABLE...`|`^CREATE TABLE..IF NOT EXISTS`|
@@ -134,10 +134,10 @@ The following statements are rewritten before being replicated to the downstream
 |`^DROP TABLE...`|`^DROP TABLE...IF EXISTS`|
 |`^DROP INDEX...`|`^DROP INDEX...IF EXISTS`|
 
-## Shard merge migration tasks
+## 合库合表迁移任务
 
-When DM merges and migrates tables in pessimistic or optimistic mode, the behavior of DDL replication is different from that in other scenarios. For details, refer to [Pessimistic Mode](/dm/feature-shard-merge-pessimistic.md) and [Optimistic Mode](/dm/feature-shard-merge-optimistic.md).
+当使用悲观协调模式和乐观协调模式进行分库分表合并迁移时，DDL 同步的行为存在变更，具体请参考[悲观模式](/dm/feature-shard-merge-pessimistic.md)和[乐观模式](/dm/feature-shard-merge-optimistic.md)。
 
 ## Online DDL
 
-The Online DDL feature also handles DDL events in a special way. For details, refer to [Migrate from Databases that Use GH-ost/PT-osc](/dm/feature-online-ddl.md).
+Online DDL 特性也会对 DDL 事件进行特殊处理，详情可参考[迁移使用 gh-ost/pt-osc 的源数据库](/dm/feature-online-ddl.md)。

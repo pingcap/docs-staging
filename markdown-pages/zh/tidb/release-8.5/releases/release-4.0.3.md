@@ -1,174 +1,175 @@
 ---
 title: TiDB 4.0.3 Release Notes
-summary: TiDB 4.0.3 was released on July 24, 2020. New features include TiDB Dashboard improvements, TiFlash file encryption, and support for various tools. Improvements were made to TiDB, TiKV, PD, and TiDB Dashboard. Bug fixes were also implemented for TiDB, TiKV, PD, TiDB Dashboard, TiFlash, TiCDC, Backup & Restore, Dumpling, TiDB Lightning, and TiDB Binlog.
+summary: TiDB 4.0.3 发布了新版本，包括 TiDB Dashboard、TiFlash、Tools 和改进提升等多个方面的更新和修复。新增功能包括 TiDB Dashboard 显示详细信息、TiFlash 支持文件加密、Tools 支持多种算法压缩备份文件等。改进提升方面包括增加全局变量控制日志记录、加速执行速度、默认打开执行信息收集等。此外，还修复了多个 Bug，包括 gRPC transportReader 异常、数据不完整、无法正确设置 safepoint 等问题。
+aliases: ['/zh/tidb/dev/release-4.0.3/','/zh/tidb/v4.0/release-4.0.3','/docs-cn/dev/releases/release-4.0.3/','/zh/tidb/v5.4/release-4.0.3','/zh/tidb/v6.1/release-4.0.3','/zh/tidb/v6.5/release-4.0.3','/zh/tidb/v7.1/release-4.0.3','/zh/tidb/v7.5/release-4.0.3','/zh/tidb/v8.1/release-4.0.3']
 ---
 
 # TiDB 4.0.3 Release Notes
 
-Release date: July 24, 2020
+发版日期：2020 年 7 月 24 日
 
-TiDB version: 4.0.3
+TiDB 版本：4.0.3
 
-## New Features
+## 新功能
 
 + TiDB Dashboard
 
-    - Display detailed TiDB Dashboard version information [#679](https://github.com/pingcap-incubator/tidb-dashboard/pull/679)
-    - Show browser compatibility notice for unsupported browsers or outdated browsers [#654](https://github.com/pingcap-incubator/tidb-dashboard/pull/654)
-    - Support searching in the **SQL Statements** page [#658](https://github.com/pingcap-incubator/tidb-dashboard/pull/658)
+    - 显示详细的 TiDB Dashboard 版本信息 [#679](https://github.com/pingcap-incubator/tidb-dashboard/pull/679)
+    - 显示不受支持的浏览器或过时的浏览器的兼容性通知 [#654](https://github.com/pingcap-incubator/tidb-dashboard/pull/654)
+    - 支持在 **SQL 语句**分析页面搜索 [#658](https://github.com/pingcap-incubator/tidb-dashboard/pull/658)
 
 + TiFlash
 
-    - Implement file encryption in TiFlash proxy
+    - TiFlash proxy 支持文件加密功能
 
 + Tools
 
     + Backup & Restore (BR)
 
-        - Support compressing backup files using zstd, lz4 or snappy [#404](https://github.com/pingcap/br/pull/404)
+        - 支持使用 zstd、lz4、snappy 算法压缩备份文件 [#404](https://github.com/pingcap/br/pull/404)
 
     + TiCDC
 
-        - Support configuring `kafka-client-id` in MQ sink-uri [#706](https://github.com/pingcap/tiflow/pull/706)
-        - Support updating `changefeed` configuration offline [#699](https://github.com/pingcap/tiflow/pull/699)
-        - Support setting customized `changefeed` name [#727](https://github.com/pingcap/tiflow/pull/727)
-        - Support TLS and MySQL SSL connection [#347](https://github.com/pingcap/tiflow/pull/347)
-        - Support outputting changes in the Avro format [#753](https://github.com/pingcap/tiflow/pull/753)
-        - Support the Apache Pulsar sink [#751](https://github.com/pingcap/tiflow/pull/751)
+        - 支持 sink-uri 中配置 Kafka 客户端的 ID [#706](https://github.com/pingcap/tiflow/pull/706)
+        - 支持离线更新同步任务的配置 [#699](https://github.com/pingcap/tiflow/pull/699)
+        - 支持自定义同步任务的 ID [#727](https://github.com/pingcap/tiflow/pull/727)
+        - 支持使用 SSL 加密链接向 MySQL 输出数据 [#347](https://github.com/pingcap/tiflow/pull/347)
+        - 支持输出 Avro 格式的变更数据 [#753](https://github.com/pingcap/tiflow/pull/753)
+        - 支持向 Apache Pulsar 输出变更数据 [#751](https://github.com/pingcap/tiflow/pull/751)
 
     + Dumpling
 
-        - Support the specialized CSV separator and delimiter [#116](https://github.com/pingcap/dumpling/pull/116)
-        - Support specifying the format of the output file name [#122](https://github.com/pingcap/dumpling/pull/122)
+        - 支持自定义 CSV 文件的分隔符和换行符 [#116](https://github.com/pingcap/dumpling/pull/116)
+        - 支持自定义输出文件名格式 [#122](https://github.com/pingcap/dumpling/pull/122)
 
-## Improvements
+## 改进提升
 
 + TiDB
 
-    - Add the `tidb_log_desensitization` global variable to control whether to do desensitization when logging SQL queries [#18581](https://github.com/pingcap/tidb/pull/18581)
-    - Enable `tidb_allow_batch_cop` by default [#18552](https://github.com/pingcap/tidb/pull/18552)
-    - Speed up canceling a query [#18505](https://github.com/pingcap/tidb/pull/18505)
-    - Add a header for the `tidb_decode_plan` result [#18501](https://github.com/pingcap/tidb/pull/18501)
-    - Make the configuration checker compatible with earlier versions of the configuration file [#18046](https://github.com/pingcap/tidb/pull/18046)
-    - Enable collecting the execution information by default [#18518](https://github.com/pingcap/tidb/pull/18518)
-    - Add the `tiflash_tables` and `tiflash_segments` system tables [#18536](https://github.com/pingcap/tidb/pull/18536)
-    - Move `AUTO RANDOM` out of experimental features and announce its general availability. The improvements and compatibility changes are as follows:
-        - Deprecate `experimental.allow-auto-random` in the configuration file. No matter how this item is configured, you can always define the `AUTO RANDOM` feature on columns. [#18613](https://github.com/pingcap/tidb/pull/18613) [#18623](https://github.com/pingcap/tidb/pull/18623)
-        - Add the `tidb_allow_auto_random_explicit_insert` session variable to control the explicit writes on `AUTO RANDOM` columns. The default value is `false`. This is to avoid the unexpected `AUTO_RANDOM_BASE` update caused by explicit writes on columns. [#18508](https://github.com/pingcap/tidb/pull/18508)
-        - Allow defining `AUTO_RANDOM` only on `BIGINT` and `UNSIGNED BIGINT` columns and restrict the maximum number of shard bits to `15`, which avoids the allocatable space being consumed too quickly [#18538](https://github.com/pingcap/tidb/pull/18538)
-        - Do not trigger the `AUTO_RANDOM_BASE` update when defining the `AUTO_RANDOM` attribute on the `BIGINT` column and inserting the negative value into the primary key [#17987](https://github.com/pingcap/tidb/pull/17987)
-        - Use the highest bit of an integer for ID allocation when defining the `AUTO_RANDOM` attribute on `UNSIGNED BIGINT` columns, which gets more allocable space [#18404](https://github.com/pingcap/tidb/pull/18404)
-        - Support updating the `AUTO_RANDOM` attribute in the result of `SHOW CREATE TABLE` [#18316](https://github.com/pingcap/tidb/pull/18316)
+    - 增加全局变量 `tidb_log_desensitization` 来控制在日志中记录 SQL 时是否脱敏 [#18581](https://github.com/pingcap/tidb/pull/18581)
+    - 默认打开 `tidb_allow_batch_cop` [#18552](https://github.com/pingcap/tidb/pull/18552)
+    - 加速 `kill tidb sesesion_id` 的执行速度 [#18505](https://github.com/pingcap/tidb/pull/18505)
+    - 函数 `tidb_decode_plan` 的结果增加表头输出 [#18501](https://github.com/pingcap/tidb/pull/18501)
+    - 配置检查器可以兼容旧版本的配置文件 [#18046](https://github.com/pingcap/tidb/pull/18046)
+    - 默认打开执行信息的收集 [#18518](https://github.com/pingcap/tidb/pull/18518)
+    - 增加系统表 `tiflash_tables` 和 `tiflash_segments` [#18536](https://github.com/pingcap/tidb/pull/18536)
+    - `AUTO RANDOM` 被移出实验特性并正式 GA，有如下的改进和兼容性修改：
+        - 在配置文件中，将 `experimental.allow-auto-random` 废弃，该无论该选项如何配置，都可以在列上定义 `AUTO_RANDOM` 属性 [#18613](https://github.com/pingcap/tidb/pull/18613) [#18623](https://github.com/pingcap/tidb/pull/18623)
+        - 为避免显式写入 `AUTO_RANDOM` 列造成非预期的 `AUTO_RANDOM_BASE` 的更新，新增 session 变量 `tidb_allow_auto_random_explicit_insert` 用于控制 `AUTO_RANDOM` 列的显式写入，该变量默认值为 `false` [#18508](https://github.com/pingcap/tidb/pull/18508)
+        - 为避免分配空间被快速消耗，`AUTO_RANDOM` 列现在仅允许在 `BIGINT` 和 `UNSIGNED BIGINT` 列上定义，并将最大的 Shard Bit 数量限制为 `15` [#18538](https://github.com/pingcap/tidb/pull/18538)
+        - 当在 `BIGINT` 列上定义 `AUTO_RANDOM` 属性，并显示插入负值的整型主键时，将不会再触发 `AUTO_RANDOM_BASE` 的更新 [#17987](https://github.com/pingcap/tidb/pull/17987)
+        - 当在 `UNSIGNED BIGINT` 列上定义 `AUTO_RANDOM` 属性，分配 ID 时将利用整数的最高位以获得更大的分配空间 [#18404](https://github.com/pingcap/tidb/pull/18404)
+        - 在 `SHOW CREATE TABLE` 的结果中支持 `AUTO_RANDOM_BASE` 属性的更新 [#18316](https://github.com/pingcap/tidb/pull/18316)
 
 + TiKV
 
-    - Introduce the new `backup.num-threads` configuration to control the size of the backup thread pool [#8199](https://github.com/tikv/tikv/pull/8199)
-    - Do not send store heartbeats when receiving snapshots [#8136](https://github.com/tikv/tikv/pull/8136)
-    - Support dynamically changing the shared block cache's capacity [#8232](https://github.com/tikv/tikv/pull/8232)
+    - 添加了新的配置项 `backup.num-threads` 用语控制 backup 线程池的大小 [#8199](https://github.com/tikv/tikv/pull/8199)
+    - 收取 snapshot 时不再发送 store heartbeat [#8136](https://github.com/tikv/tikv/pull/8136)
+    - 支持动态调整 `shared block cache` 的大小 [#8232](https://github.com/tikv/tikv/pull/8232)
 
 + PD
 
-    - Support the JSON formatted log [#2565](https://github.com/pingcap/pd/pull/2565)
+    - 支持 JSON 格式日志 [#2565](https://github.com/pingcap/pd/pull/2565)
 
 + TiDB Dashboard
 
-    - Improve the Key Visualizer bucket merge for cold logical ranges [#674](https://github.com/pingcap-incubator/tidb-dashboard/pull/674)
-    - Rename the configuration item of `disable-telemetry` to `enable-telemetry` for consistency [#684](https://github.com/pingcap-incubator/tidb-dashboard/pull/684)
-    - Show the progress bar when switching pages [#661](https://github.com/pingcap-incubator/tidb-dashboard/pull/661)
-    - Ensure that the slow log search now follows the same behavior as log search when there are space separators [#682](https://github.com/pingcap-incubator/tidb-dashboard/pull/682)
+    - 优化 key Visualizer 中冷表的 bucket 合并 [#674](https://github.com/pingcap-incubator/tidb-dashboard/pull/674)
+    - 重命名配置项 `disable-telemetry` 以使遥测更一致 [#684](https://github.com/pingcap-incubator/tidb-dashboard/pull/684)
+    - 切换页面时显示进度条 [#661](https://github.com/pingcap-incubator/tidb-dashboard/pull/661)
+    - 保证慢日志查询和日志查询行为的一致性，即使在空格存在的情况 [#682](https://github.com/pingcap-incubator/tidb-dashboard/pull/682)
 
 + TiFlash
 
-    - Change the unit of the **DDL Jobs** panel in Grafana to `operations per minute`
-    - Add a new dashboard in Grafana to show more metrics about **TiFlash-Proxy**
-    - Reduce IOPS in TiFlash proxy
+    - 将 Grafana **DDL Jobs** 面板中的单位修改为 `operations per minute`
+    - 在 Grafana 中新增关于 **TiFlash-Proxy** 的详细监控指标面板
+    - 降低 TiFlash Proxy 的 IOPS
 
 + Tools
 
     + TiCDC
 
-        - Replace table ID with table name in metrics [#695](https://github.com/pingcap/tiflow/pull/695)
+        - 将监控指标总的表 ID 替换为表名 [#695](https://github.com/pingcap/tiflow/pull/695)
 
     + Backup & Restore (BR)
 
-        - Support outputting JSON logs [#336](https://github.com/pingcap/br/issues/336)
-        - Support enabling pprof during runtime [#372](https://github.com/pingcap/br/pull/372)
-        - Speed up DDL executions by sending DDL concurrently during restore [#377](https://github.com/pingcap/br/pull/377)
+        - 支持输出 JSON 格式的日志 [#336](https://github.com/pingcap/br/issues/336)
+        - 支持在运行 BR 期间动态开启 pprof [#372](https://github.com/pingcap/br/pull/372)
+        - 加速恢复时 DDL 的执行速度 [#377](https://github.com/pingcap/br/pull/377)
 
     + TiDB Lightning
 
-        - Deprecate `black-white-list` with a newer and easier-to-understand filter format [#332](https://github.com/pingcap/tidb-lightning/pull/332)
+        - 使用一种更加简单易懂的表过滤机制替换原先的黑白名单机制 [#332](https://github.com/pingcap/tidb-lightning/pull/332)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Return an error instead of an empty set for `IndexHashJoin` when an error occurs during execution [#18586](https://github.com/pingcap/tidb/pull/18586)
-    - Fix the recurring panic when gRPC transportReader is broken [#18562](https://github.com/pingcap/tidb/pull/18562)
-    - Fix the issue that Green GC does not scan locks on offline stores which might cause data incompleteness [#18550](https://github.com/pingcap/tidb/pull/18550)
-    - Forbid processing a non-read-only statement using TiFlash engine [#18534](https://github.com/pingcap/tidb/pull/18534)
-    - Return the actual error message when a query connection panics [#18500](https://github.com/pingcap/tidb/pull/18500)
-    - Fix the issue that the `ADMIN REPAIR TABLE` execution fails to reload the table metadata on the TiDB node [#18323](https://github.com/pingcap/tidb/pull/18323)
-    - Fix the data inconsistency issue occurred because the lock of a written and deleted primary key in one transaction is resolved by another transaction [#18291](https://github.com/pingcap/tidb/pull/18291)
-    - Make spilling disk work well [#18288](https://github.com/pingcap/tidb/pull/18288)
-    - Fix the error reported when the `REPLACE INTO` statement works on the table that contains generated columns [#17907](https://github.com/pingcap/tidb/pull/17907)
-    - Return the OOM error when the `IndexHashJoin` and `IndexMergeJoin` workers panic [#18527](https://github.com/pingcap/tidb/pull/18527)
-    - Fix the bug that the execution of `Index Join` might return wrong results in special cases when the index used by `Index Join` contains the integer primary key [#18565](https://github.com/pingcap/tidb/pull/18565)
-    - Fix the issue that when the new collation is enabled on the cluster, the data updated on columns with the new collation in a transaction cannot be read through the unique index [#18703](https://github.com/pingcap/tidb/pull/18703)
+    - 当 `IndexHashJoin` 遇到执行中发生非内存相关的错误时，返回错误而不是空结果集 [#18586](https://github.com/pingcap/tidb/pull/18586)
+    - 修复 gRPC transportReader 导致的反复异常 [#18562](https://github.com/pingcap/tidb/pull/18562)
+    - 修复因为 Green GC 不会扫描已下线 store 上的锁而可能导致数据不完整的问题 [#18550](https://github.com/pingcap/tidb/pull/18550)
+    - 非只读语句不会使用 TiFlash 引擎 [#18534](https://github.com/pingcap/tidb/pull/18534)
+    - 当查询连接异常时返回真实的错误信息 [#18500](https://github.com/pingcap/tidb/pull/18500)
+    - 修复非 repair mode 的 TiDB 节点不会重新读取修复的表元信息的错误 [#18323](https://github.com/pingcap/tidb/pull/18323)
+    - 修复当锁住的 primary key 在当前事务被插入/删除时可能造成的结果不一致问题 [#18291](https://github.com/pingcap/tidb/pull/18291)
+    - 修复数据落盘为正确生效导致的内存溢出 [#18288](https://github.com/pingcap/tidb/pull/18288)
+    - 修复 `REPLACE INTO` 语句作用在包含生成列的表时会错误报错的问题 [#17907](https://github.com/pingcap/tidb/pull/17907)
+    - 当 `IndexHashJoin` 及 `IndexMergeJoin` 执行异常时抛出 `Out Of Memory Quota!` 错误 [#18527](https://github.com/pingcap/tidb/pull/18527)
+    - 修复当 `Index Join` 使用的索引包含整型主键时，特殊情况下执行结果可能出错的问题 [#18565](https://github.com/pingcap/tidb/pull/18565)
+    - 修复当开启 new collation 时，若在事务内的更新涉及了 new collation 列，并在该事务内通过唯一索引读取更新数据时，被更新的数据无法被读取到的问题 [#18703](https://github.com/pingcap/tidb/pull/18703)
 
 + TiKV
 
-    - Fix the issue that reads might get stale data during merging [#8113](https://github.com/tikv/tikv/pull/8113)
-    - Fix the issue that collation does not work on the `min`/`max` function when aggregation is pushed down to TiKV [#8108](https://github.com/tikv/tikv/pull/8108)
+    - 修复 merge 期间可能读到过期数据的问题 [#8113](https://github.com/tikv/tikv/pull/8113)
+    - 修复聚合函数 `min`/`max` 下推到 TiKV 时，collation 不能正确工作的问题 [#8108](https://github.com/tikv/tikv/pull/8108)
 
 + PD
 
-    - Fix the issue that creating TSO stream might be blocked for a while if the server crashes [#2648](https://github.com/pingcap/pd/pull/2648)
-    - Fix the issue that `getSchedulers` might cause a data race [#2638](https://github.com/pingcap/pd/pull/2638)
-    - Fix the issue that deleting the scheduler might cause deadlocks [#2637](https://github.com/pingcap/pd/pull/2637)
-    - Fix the bug that placement rules are not considered when `balance-leader-scheduler` is enabled [#2636](https://github.com/pingcap/pd/pull/2636)
-    - Fix the issue that sometimes service `safepoint` cannot be set properly, which might make BR and dumpling fail [#2635](https://github.com/pingcap/pd/pull/2635)
-    - Fix the issue that the target store in `hot region scheduler` is incorrectly selected [#2627](https://github.com/pingcap/pd/pull/2627)
-    - Fix the issue that the TSO request might take too long when PD leader is switched [#2622](https://github.com/pingcap/pd/pull/2622)
-    - Fix the issue of stale scheduler after leader change [#2608](https://github.com/pingcap/pd/pull/2608)
-    - Fix the issue that sometimes replicas of a Region cannot be adjusted to the best location when placement rules are enabled [#2605](https://github.com/pingcap/pd/pull/2605)
-    - Fix the issue that the deployment path of the store is not updated according to the change of deployment directory [#2600](https://github.com/pingcap/pd/pull/2600)
-    - Prevent `store limit` from changing to zero [#2588](https://github.com/pingcap/pd/pull/2588)
+    - 修复如果服务器崩溃，创建 TSO 流可能会被阻塞一段时间的问题 [#2648](https://github.com/pingcap/pd/pull/2648)
+    - 修复 `getSchedulers` 可能导致数据争用的问题 [#2638](https://github.com/pingcap/pd/pull/2638)
+    - 修复删除 `scheduler` 时导致死锁的问题 [#2637](https://github.com/pingcap/pd/pull/2637)
+    - 修复 `balance-leader-scheduler` 没有考虑 placement rule 的问题 [#2636](https://github.com/pingcap/pd/pull/2636)
+    - 修复有时无法正确设置 `safepoint` 的问题，这可能会使 BR 和 Dumpling 失败 [#2635](https://github.com/pingcap/pd/pull/2635)
+    - 修复 `hot region scheduler` 中目标 store 选择错误的问题 [#2627](https://github.com/pingcap/pd/pull/2627)
+    - 修复 PD Leader 切换时 TSO 请求可能花费太长时间的问题 [#2622](https://github.com/pingcap/pd/pull/2622)
+    - 修复 PD Leader 切换后过期 `scheduler` 的问题 [#2608](https://github.com/pingcap/pd/pull/2608)
+    - 修复了启用 placement rule 时，有时 Region 的副本可能无法调整到最佳位置的问题 [#2605](https://github.com/pingcap/pd/pull/2605)
+    - 修复了存储的部署路径不会随着部署目录移动而更新的问题 [#2600](https://github.com/pingcap/pd/pull/2600)
+    - 修复了 `store limit` 可能为零的问题 [#2588](https://github.com/pingcap/pd/pull/2588)
 
 + TiDB Dashboard
 
-    - Fix the TiDB connection error when TiDB is scaled out [#689](https://github.com/pingcap-incubator/tidb-dashboard/pull/689)
-    - Fix the issue that TiFlash instances are not displayed in the log searching page [#680](https://github.com/pingcap-incubator/tidb-dashboard/pull/680)
-    - Fix the issue of metric selection reset after refreshing the overview page [#663](https://github.com/pingcap-incubator/tidb-dashboard/pull/663)
-    - Fix a connection issue in some TLS scenarios [#660](https://github.com/pingcap-incubator/tidb-dashboard/pull/660)
-    - Fix the issue that the language dropdown box is not displayed correctly in some cases [#677](https://github.com/pingcap-incubator/tidb-dashboard/pull/677)
+    - 修复 TiDB 扩容时的 TiDB 连接错误 [#689](https://github.com/pingcap-incubator/tidb-dashboard/pull/689)
+    - 修复 TiFlash 实例未显示在日志搜索页面的问题 [#680](https://github.com/pingcap-incubator/tidb-dashboard/pull/680)
+    - 修复概况页面刷新之后 metrics 会重置的问题 [#663](https://github.com/pingcap-incubator/tidb-dashboard/pull/663)
+    - 修复某些 TLS 方案中的连接问题 [#660](https://github.com/pingcap-incubator/tidb-dashboard/pull/660)
+    - 修复在某些情况下无法正确显示语言的下拉列表 [#677](https://github.com/pingcap-incubator/tidb-dashboard/pull/677)
 
 + TiFlash
 
-    - Fix the issue that TiFlash crashes after renaming the primary key column
-    - Fix the issue that concurrent `Learner Read` and `Remove Region` might cause deadlocks
+    - 修复更改主键列名后 TiFlash 崩溃的问题
+    - 修复 Learner Read 与 Remove Region 并发时可能的死锁问题
 
 + Tools
 
     + TiCDC
 
-        - Fix the issue that TiCDC leaks memory in some cases [#704](https://github.com/pingcap/tiflow/pull/704)
-        - Fix the issue that unquoted table name causes the SQL syntax error [#676](https://github.com/pingcap/tiflow/pull/676)
-        - Fix the issue that the processor does not fully exit after `p.stop` is called [#693](https://github.com/pingcap/tiflow/pull/693)
+        - 解决了某些场景下可能发生的 OOM 问题 [#704](https://github.com/pingcap/tiflow/pull/704)
+        - 解决了某些特殊表名可能导致 SQL 语法出错的问题 [#676](https://github.com/pingcap/tiflow/pull/676)
+        - 解决了同步任务处理单元无法正常退出的问题 [#693](https://github.com/pingcap/tiflow/pull/693)
 
     + Backup & Restore (BR)
 
-        - Fix the issue that the backup time might be negative [#405](https://github.com/pingcap/br/pull/405)
+        - 解决了备份汇总报告中时间为负数的问题 [#405](https://github.com/pingcap/br/pull/405)
 
     + Dumpling
 
-        - Fix the issue that Dumpling omits the `NULL` value when `--r` is specified [#119](https://github.com/pingcap/dumpling/pull/119)
-        - Fix the bug that flushing tables might not work for tables to dump [#117](https://github.com/pingcap/dumpling/pull/117)
+        - 解决了 `NULL` 值在有 `--r` 参数时被忽略的问题 [#119](https://github.com/pingcap/dumpling/pull/119)
+        - 解决了导出数据时 flush table 没有正常工作的问题 [#117](https://github.com/pingcap/dumpling/pull/117)
 
     + TiDB Lightning
 
-        - Fix the issue that `--log-file` does not take effect [#345](https://github.com/pingcap/tidb-lightning/pull/345)
+        - 解决了 `--log-file` 参数不生效的问题 [#345](https://github.com/pingcap/tidb-lightning/pull/345)
 
     + TiDB Binlog
 
-        - Fix the issue that when TiDB Binlog replicates data to the downstream with TLS enabled, Drainer cannot be started which occurs because TLS is not enabled on the database driver used to update the checkpoint [#988](https://github.com/pingcap/tidb-binlog/pull/988)
+        - 修复开启 TLS 写下游时用来保存 checkpoint 的 DB 没有开启 TLS 导致 Drainer 无法启动的问题 [#988](https://github.com/pingcap/tidb-binlog/pull/988)

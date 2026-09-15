@@ -1,82 +1,82 @@
 ---
-title: TiDB Dashboard Resource Manager Page
-summary: TiDB Dashboard Resource Manager Page helps cluster administrators implement resource isolation by creating resource groups and setting quotas. It provides methods to estimate cluster capacity and monitor resource consumption. Access the page through TiDB Dashboard or a browser. The page includes sections for configuration, capacity estimation, and metrics. Capacity estimation methods include hardware deployment and actual workload. Monitoring metrics include total RU consumed, RU consumed by resource groups, TiDB CPU quota and usage, TiKV CPU quota and usage, and TiKV IO MBps.
+title: TiDB Dashboard 资源管控页面
+summary: 介绍如何使用 TiDB Dashboard 的资源管控页面查看资源管控相关信息，以便预估集群容量，更好地进行资源配置。
 ---
 
-# TiDB Dashboard Resource Manager Page
+# TiDB Dashboard 资源管控页面
 
-To implement resource isolation using the [Resource Control](/tidb-resource-control-ru-groups.md) feature, cluster administrators can create resource groups and set quotas for each group. Before resource planning, you need to know the overall capacity of the cluster. This document helps you view the information about resource control, so you can estimate the cluster capacity before resource planning and allocate resources more effectively.
+为使用[资源管控 (Resource Control)](/tidb-resource-control-ru-groups.md) 特性实现资源隔离，集群管理员可以定义资源组 (Resource Group)，通过资源组限定配额。在进行资源规划之前，你需要了解集群的整体容量。该页面可以帮助你查看资源管控相关信息，以便预估集群容量，更好地进行资源配置。
 
-## Access the page
+## 访问方式
 
-You can use one of the following two methods to access the Resource Manager page:
+可以通过以下两种方法访问资源管控页面：
 
-* After logging in to TiDB Dashboard, click **Resource Manager** in the left navigation menu.
+* 登录 TiDB Dashboard 后，在左侧导航栏中点击**资源管控** (Resource Manager)。
 
-* Visit <http://127.0.0.1:2379/dashboard/#/resource_manager> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
+* 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/resource_manager>（将 `127.0.0.1:2379` 替换为你的实际 PD 地址和端口）。
 
-## Resource Manager page
+## 资源管控详情
 
-The following figure shows the Resource Manager details page:
+资源管控详情页面如下图所示：
 
-![TiDB Dashboard: Resource Manager](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-info.png)
+![TiDB Dashboard: Resource Manager](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-resource-manager-info.png)
 
-The Resource Manager page contains the following three sections:
+资源管控详情页包含以下三个部分：
 
-- Configuration: This section displays the data obtained from the `RESOURCE_GROUPS` table of TiDB. It contains the information about all resource groups. For more information, see [`RESOURCE_GROUPS`](/information-schema/information-schema-resource-groups.md).
+- 配置 (Configuration)：数据来自于 TiDB 的 `RESOURCE_GROUPS` 表中所有资源组的信息。参见 [`RESOURCE_GROUPS`](/information-schema/information-schema-resource-groups.md) 文档。
 
-- Estimate Capacity: Before resource planning, you need to know the overall capacity of the cluster. You can use one of the following methods:
+- 容量估算 (Estimate Capacity)：在进行资源规划之前，你需要了解集群的整体容量。目前提供两种估算方式：
 
-    - [Estimate capacity based on actual workload](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)
-    - [Estimate capacity based on hardware deployment](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-hardware-deployment)
+    - [基于硬件部署估算容量](/sql-statements/sql-statement-calibrate-resource.md#基于硬件部署估算容量)
+    - [根据实际负载估算容量](/sql-statements/sql-statement-calibrate-resource.md#根据实际负载估算容量)
 
-- Metrics: By observing the metrics on the panels, you can understand the current overall resource consumption status of the cluster.
+- 监控指标 (Metrics)：通过观察面板上的指标，可以了解当前集群整体的资源消耗状态。
 
-## Estimate Capacity
+## 容量估算
 
-Before resource planning, you need to know the overall capacity of the cluster. TiDB provides two methods to estimate the capacity of [Request Unit (RU)](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru#what-is-request-unit-ru) in the current cluster:
+在进行资源规划之前，你需要了解集群的整体容量。目前提供两种估算方式预估当前集群的 [Request Unit (RU)](/tidb-resource-control-ru-groups.md#什么是-request-unit-ru#什么是-request-unit-ru) 的容量：
 
-- [Estimate capacity based on hardware deployment](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-hardware-deployment)
+- [基于硬件部署估算容量](/sql-statements/sql-statement-calibrate-resource.md#基于硬件部署估算容量) (Calibrate by Hardware)
     
-    TiDB accepts the following workload types:
+    目前提供了以下负载类型供选择：
     
-    - `tpcc`: applies to workloads with heavy data write. It is estimated based on a workload model similar to `TPC-C`.
-    - `oltp_write_only`: applies to workloads with heavy data write. It is estimated based on a workload model similar to `sysbench oltp_write_only`.
-    - `oltp_read_write`: applies to workloads with even data read and write. It is estimated based on a workload model similar to `sysbench oltp_read_write`.
-    - `oltp_read_only`: applies to workloads with heavy data read. It is estimated based on a workload model similar to `sysbench oltp_read_only`.
+    - `tpcc`：数据写入较重的负载，根据类似 `TPC-C` 的负载模型预测。
+    - `oltp_write_only`：数据写入较重的负载，根据类似 `sysbench oltp_write_only` 的负载模型预测。
+    - `oltp_read_write`：数据读写平衡的负载，根据类似 `sysbench oltp_read_write` 的负载模型预测。
+    - `oltp_read_only`：数据读取较重的负载，根据类似 `sysbench oltp_read_only` 的负载模型预测。
 
-  ![Calibrate by Hardware](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-calibrate-by-hardware.png)
+  ![基于硬件部署估算容量](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-resource-manager-calibrate-by-hardware.png)
 
-    The **Total RU of user resource groups** represents the total amount of RU for all user resource groups, excluding the `default` resource group. If this value is more than the estimated capacity, the system triggers an alert. By default, the system allocates unlimited usage to the predefined `default` resource group. When all users belong to the `default` resource group, resources are allocated in the same way as when resource control is disabled.
+    用户资源分组总请求单元 (Total RU of user resource groups) 表示当前除 `default` 用户外的 RU 总量。当该数值大于容量估算值时，系统会发出提醒。系统预定义的 `default` 资源组默认拥有无限用量。当所有用户都属于 `default` 资源组时，资源分配方式与关闭资源管控时相同。
 
-- [Estimate capacity based on actual workload](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload)
+- [根据实际负载估算容量](/sql-statements/sql-statement-calibrate-resource.md#根据实际负载估算容量) (Calibrate by Workload)
 
-    ![Calibrate by Workload](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-resource-manager-calibrate-by-workload.png)
+    ![根据实际负载估算容量](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-resource-manager-calibrate-by-workload.png)
 
-    You can select a time range for estimation within the range of 10 minutes to 24 hours. The time zone used is the same as that of the front-end user.
+    可以选择 10 分钟至 24 小时的时间范围进行预估。时区与前端用户所处时区相同。
 
-    - When the time window range does not fall between 10 minutes and 24 hours, the following error is displayed `ERROR 1105 (HY000): the duration of calibration is too short, which could lead to inaccurate output. Please make the duration between 10m0s and 24h0m0s`.
+    - 如果时间窗口范围不满足 10 分钟至 24 小时的条件，会报错 `Error 1105 (HY000): the duration of calibration is too short, which could lead to inaccurate output. Please make the duration between 10m0s and 24h0m0s`。
 
-    - The monitoring metrics for the [capacity estimation based on the actual workload](/sql-statements/sql-statement-calibrate-resource.md#estimate-capacity-based-on-actual-workload) feature include `tikv_cpu_quota`, `tidb_server_maxprocs`, `resource_manager_resource_unit`, and `process_cpu_usage`. If the CPU quota monitoring data is empty, there will be an error with the corresponding monitoring metric name, for example, `Error 1105 (HY000): There is no CPU quota metrics, metrics 'tikv_cpu_quota' is empty`.
+    - [根据实际负载估算容量](/sql-statements/sql-statement-calibrate-resource.md#根据实际负载估算容量)功能的监控指标包括 `tikv_cpu_quota`、`tidb_server_maxprocs`、`resource_manager_resource_unit`、`process_cpu_usage`。如果 CPU quota 监控数据为空，会有对应监控项名称的报错，如 `Error 1105 (HY000): There is no CPU quota metrics, metrics 'tikv_cpu_quota' is empty`。
+  
+    - 如果时间窗口范围内的负载过低或者 `resource_manager_resource_unit` 及 `process_cpu_usage` 监控数据缺失，会报错 `Error 1105 (HY000): The workload in selected time window is too low, with which TiDB is unable to reach a capacity estimation; please select another time window with higher workload, or calibrate resource by hardware instead`。此外，由于 TiKV 未在 macOS 上监控 CPU 使用率，所以不支持根据实际负载估算容量功能，也会报告此错误。
 
-    - If the workload in the time window is too low, or the `resource_manager_resource_unit` and `process_cpu_usage` monitoring data is missing, an error will be reported `Error 1105 (HY000): The workload in selected time window is too low, with which TiDB is unable to reach a capacity estimation; please select another time window with higher workload, or calibrate resource by hardware instead`. In addition, because TiKV does not monitor CPU utilization on macOS, it does not support capacity estimation based on the actual workload, and will also report this error.
+  可以通过[监控指标](#监控指标)中的 **CPU Usage** 选择合适的时间范围。
 
-  You can select an appropriate time range using **CPU Usage** in the [Metrics](#metrics) section.
-
-> **Note:**
+> **注意：**
 >
-> To use the capacity estimation feature, the current login user must have the `SUPER` or `RESOURCE_GROUP_ADMIN` privilege and the `SELECT` privilege for some system tables. Before using this feature, ensure the current user has these privileges. Otherwise, some features might not work properly. For more information, see [`CALIBRATE RESOURCE`](/sql-statements/sql-statement-calibrate-resource.md#privileges).
+> 要使用容量估算功能，当前登录用户需要拥有 `SUPER` 或 `RESOURCE_GROUP_ADMIN` 权限，并拥有部分系统表的访问权限。在使用此功能前，请确保当前用户已拥有这些权限，否则部分功能可能无法正常使用。详情请参考[容量预估的权限要求](/sql-statements/sql-statement-calibrate-resource.md#权限)。
 
-## Metrics
+## 监控指标
 
-By observing the metrics on the panels, you can understand the current overall resource consumption status of the cluster. The monitoring metrics and their meanings are as follows:
+通过观察面板上的指标，可以了解当前集群整体的资源消耗状态。监控指标及其含义如下：
 
-- Total RU Consumed: The total consumption of Request Units counted in real time.
-- RU Consumed by Resource Groups: The number of Request Units consumed by resource groups in real time.
+- Total RU Consumed：实时统计的 Request Unit 总消耗量
+- RU Consumed by Resource Groups：以资源组为单位进行实时统计的 Request Unit 消耗数量
 - TiDB
-    - CPU Quota: The maximum CPU usage of TiDB.
-    - CPU Usage: The total CPU usage of all TiDB instances.
+    - CPU Quota：TiDB 最大 CPU 占用率
+    - CPU Usage：所有 TiDB 实例 CPU 占用率
 - TiKV
-    - CPU Quota: The maximum CPU usage of TiKV.
-    - CPU Usage: The total CPU usage of all TiKV instances.
-    - IO MBps: The total I/O throughput of all TiKV instances.
+    - CPU Quota：TiKV 最大 CPU 占用率
+    - CPU Usage：所有 TiKV 实例 CPU 占用率
+    - IO MBps：所有 TiKV 实例的 I/O 吞吐量

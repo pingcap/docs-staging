@@ -1,256 +1,246 @@
 ---
-title: Performance Analysis and Tuning
-summary: Learn how to optimize database system based on database time and how to utilize the TiDB Performance Overview dashboard for performance analysis and tuning.
+title: TiDB 性能分析和优化方法
+summary: 本文介绍了基于数据库时间的系统优化方法，以及如何利用 TiDB Performance Overview 面板进行性能分析和优化。
 ---
 
-# Performance Analysis and Tuning
+# TiDB 性能分析和优化
 
-This document describes a tuning approach by database time, and illustrates how to use the TiDB [Performance Overview dashboard](/grafana-performance-overview-dashboard.md) for performance analysis and tuning.
+本文介绍了基于数据库时间的系统优化方法，以及如何利用 TiDB [Performance Overview 面板](/grafana-performance-overview-dashboard.md)进行性能分析和优化。
 
-With the methods described in this document, you can analyze user response time and database time from a global and top-down perspective, to confirm whether the bottleneck in user response time is caused by database issues. If the bottleneck is in the database, you can use the database time overview and SQL latency breakdowns to identify the bottleneck and tune performance.
+通过本文中介绍的方法，你可以从全局、自顶向下的角度分析用户响应时间和数据库时间，确认用户响应时间的瓶颈是否在数据库中。如果瓶颈在数据库中，你可以通过数据库时间概览和 SQL 延迟的分解，定位数据库内部的瓶颈点，并进行针对性的优化。
 
-## Performance tuning based on database time
+## 基于数据库时间的性能优化方法
 
-TiDB is constantly measuring and collecting SQL processing paths and database time. Therefore, it is easy to identify database performance bottlenecks in TiDB. Based on database time metrics, you can achieve the following two goals even without data on user response time:
+TiDB 对 SQL 的处理路径和数据库时间进行了完善的测量和记录，方便定位数据库的性能瓶颈。即使在用户响应时间的性能数据缺失的情况下，基于 TiDB 数据库时间的相关性能指标，你也可以达到以下两个性能分析目标：
 
-- Determine whether the bottleneck is in TiDB by comparing the average SQL processing latency with the idle time of a TiDB connection in a transaction.
-- If the bottleneck is in TiDB, further identify the exact module in the distributed system based on database time overview, color-based performance data, key metrics, resource utilization, and top-down latency breakdowns.
+1. 通过对比 SQL 处理平均延迟和事务中 TiDB 连接的空闲时间，确定整个系统的瓶颈是否在 TiDB 中。
+2. 如果瓶颈在 TiDB 内部，根据数据库时间概览、颜色优化法、关键指标和资源利用率、自上而下的延迟分解，定位到性能瓶颈具体在整个分布式系统的哪个模块。
 
-### Is TiDB the bottleneck?
+### 确定整个系统的瓶颈是否在 TiDB 中
 
-- If the average idle time of TiDB connections in transactions is higher than the average SQL processing latency, the database is not to blame for the transaction latency of applications. The database time takes only a small part of the user response time, indicating that the bottleneck is outside the database.
+- 如果事务中 TiDB 连接的平均空闲时间比 SQL 平均处理延迟高，说明应用的事务处理中，主要的延迟不在数据库中，数据库时间占用户响应时间比例小，可以确认瓶颈不在数据库中。
 
-    In this case, check the external components of the database. For example, determine whether there are sufficient hardware resources in the application server, and whether the network latency from the application to the database is excessively high.
+    在这种情况下，需要关注数据库外部的组件，比如应用服务器硬件资源是否存在瓶颈，应用到数据库的网络延迟是否过高等。
 
-- If the average SQL processing latency is higher than the average idle time of TiDB connections in transactions, the bottleneck in transactions is in TiDB, and the database time takes a large percentage of the user response time.
+- 如果 SQL 平均处理延迟比事务中 TiDB 连接的平均空闲时间高，说明事务中主要的瓶颈在 TiDB 内部，数据库时间占用户响应时间比例大。
 
-### If the bottleneck is in TiDB, how to identify it?
+### 如果瓶颈在 TiDB 内部，如何定位
 
-The following figure shows a typical SQL process. You can see that most SQL processing paths are covered in TiDB performance metrics. The database time is broken down into different dimensions, which are colored accordingly. You can quickly understand the workload characteristics and catch the bottlenecks inside the database if any.
+一个典型的 SQL 的处理流程如下所示，TiDB 的性能指标覆盖了绝大部分的处理路径，对数据库时间进行不同维度的分解和上色，用户可以快速的了解负载特性和数据库内部的瓶颈。
 
-![database time decomposition chart](https://docs-download.pingcap.com/media/images/docs/performance/dashboard-diagnostics-time-relation.png)
+![数据库时间分解图](https://docs-download.pingcap.com/media/images/docs-cn/performance/dashboard-diagnostics-time-relation.png)
 
-Database time is the sum of all SQL processing time. A breakdown of the database time into the following three dimensions helps you quickly identify bottlenecks in TiDB:
+数据库时间是所有 SQL 处理时间的总和。通过以下三个维度对数据库时间进行分解，可以帮助你快速定位 TiDB 内部瓶颈：
 
-- By SQL processing type: Determine which type of SQL statements consumes the most database time. The formula is:
+- 按 SQL 处理类型分解，判断哪种类型的 SQL 语句消耗数据库时间最多。对应的分解公式为：
 
     `DB Time = Select Time + Insert Time + Update Time + Delete Time + Commit Time + ...`
 
-- By the 4 steps of SQL processing (get_token/parse/compile/execute): Determine which step consumes the most time. The formula is:
+- 按 SQL 处理的 4 个步骤（即 get_token/parse/compile/execute）分解，判断哪个步骤消耗的时间最多。对应的分解公式为：
 
     `DB Time = Get Token Time + Parse Time + Compile Time + Execute Time`
 
-- By executor time, TSO wait time, KV request time, and execution retry time: Determine which execution step constitutes the bottleneck. The formula is:
+- 对于 execute 耗时，按照 TiDB 执行器本身的时间、TSO 等待时间、KV 请求时间和重试的执行时间，判断执行阶段的瓶颈。对应的分解公式为：
 
     `Execute Time ~= TiDB Executor Time + KV Request Time + PD TSO Wait Time + Retried execution time`
 
-## Performance analysis and tuning using the Performance Overview dashboard
+## 利用 Performance Overview 面板进行性能分析和优化
 
-This section describes how to perform performance analysis and tuning based on database time using the Performance Overview dashboard in Grafana.
+本章介绍如何利用 Grafana 中的 Performance Overview 面板进行基于数据库时间的性能分析和优化。
 
-The Performance Overview dashboard orchestrates the metrics of TiDB, PD, and TiKV, and presents each of them in the following sections:
+Performance Overview 面板按总分结构对 TiDB、TiKV、PD 的性能指标进行编排组织，包括以下三个部分：
 
-- Database time and SQL execution time overview: Color-coded SQL types, database time by SQL execution phase, and database time of different requests help you quickly identify database workload characteristics and performance bottlenecks.
-- Key metrics and resource utilization: Contains database QPS, connection information, request command types between the applications and the database, database internal TSO and KV request OPS, and TiDB/TiKV resource usage.
-- Top-down latency breakdown: Contains a comparison of query latency and connection idle time, breakdown of query latency, latency of TSO requests and KV requests in SQL execution, and breakdown of TiKV internal write latency.
+- 数据库时间和 SQL 执行时间概览：通过颜色标记不同 SQL 类型，SQL 不同执行阶段、不同请求的数据库时间，帮助你快速识别数据库负载特征和性能瓶颈。
+- 关键指标和资源利用率：包含数据库 QPS、应用和数据库的连接信息和请求命令类型、数据库内部 TSO 和 KV 请求 OPS、TiDB 和 TiKV 的资源使用概况。
+- 自上而下的延迟分解：包括 Query 延迟和连接空闲时间对比、Query 延迟分解、execute 阶段 TSO 请求和 KV 请求的延迟、TiKV 内部写延迟的分解等。
 
-### Database time and SQL execution time overview
+### 数据库时间和 SQL 执行时间概览
 
-The database time metric is the sum of the latency that TiDB processes SQL per second, which is also the total time that TiDB concurrently processes application SQL requests per second (equal to the number of active connections).
+Database Time 指标为 TiDB 每秒处理 SQL 的延迟总和，即 TiDB 集群每秒并发处理应用 SQL 请求的总时间(等于活跃连接数)。
 
-The Performance Overview dashboard provides the following three stacked area graphs. They help you understand database workload profile and quickly identify the bottleneck causes in terms of statements, sql phase, and TiKV or PD request type during SQL execution.
+Performance Overview 面板提供了以下三个面积堆叠图，帮助你了解数据库负载的类型，快速定位数据库时间的瓶颈主要是处理什么语句，集中在哪个执行阶段，SQL 执行阶段主要等待 TiKV 或者 PD 哪种请求类型。
 
 - Database Time By SQL Type
 - Database Time By SQL Phase
 - SQL Execute Time Overview
 
-#### Tune by color
+#### 颜色优化法
 
-The diagrams of database time breakdown and execution time overview present both expected and unexpected time consumption intuitively. Therefore, you can quickly identify performance bottleneck and learn the workload profile. Green and blue areas stand for normal time consumption and requests. If non-green or non-blue areas occupy a significant proportion in these two diagrams, the database time distribution is inappropriate.
+通过观察数据库时间分解图和执行时间概览图，你可以直观地区分正常或者异常的时间消耗，快速定位集群的异常瓶颈点，高效了解集群的负载特征。对于正常的时间消耗和请求类型，图中显示颜色为绿色系或蓝色系。如果非绿色或蓝色系的颜色在这两张图中占据了明显的比例，意味着数据库时间的分布不合理。
 
-- Database Time By SQL Type:
+- Database Time By SQL Type：蓝色标识代表 Select 语句，绿色标识代表 Update、Insert、Commit 等 DML 语句。红色标识代表 General 类型，包含 StmtPrepare、StmtReset、StmtFetch、StmtClose 等命令。
+- Database Time By SQL Phase：execute 执行阶段为绿色，其他三个阶段偏红色系，如果非绿色的颜色占比明显，意味着在执行阶段之外数据库消耗了过多时间，需要进一步分析根源。一个常见的场景是因为无法使用执行计划缓存，导致 compile 阶段的橙色占比明显。
+- SQL Execute Time Overview：绿色系标识代表常规的写 KV 请求（例如 Prewrite 和 Commit），蓝色系标识代表常规的读 KV 请求（例如 Cop 和 Get），紫色系标识代表 TiFlash MPP 请求，其他色系标识需要注意的问题。例如，悲观锁加锁请求为红色，TSO 等待为深褐色。如果非蓝色系或者非绿色系占比明显，意味着执行阶段存在异常的瓶颈。例如，当发生严重锁冲突时，红色的悲观锁时间会占比明显；当负载中 TSO 等待的消耗时间过长时，深褐色会占比明显。
 
-    - Blue: `Select` statement
-    - Green: `Update`, `Insert`, `Commit` and other DML statements
-    - Red: General SQL types, including `StmtPrepare`, `StmtReset`, `StmtFetch`, and `StmtClose`
+**示例 1：TPC-C 负载**
 
-- Database Time By SQL Phase: The SQL execution phase is in green and other phases are in red on general. If non-green areas are large, it means much database time is consumed in other phases than the execution phase and further cause analysis is required. A common scenario is that the compile phase shown in orange takes a large area due to unavailability of prepared plan cache.
-- SQL Execute Time Overview: Green metrics stand for common KV write requests (such as `Prewrite` and `Commit`), blue metrics stand for common KV read requests (such as Cop and Get), purple metrics stand for TiFlash MPP requests, and metrics in other colors stand for unexpected situations which you need to pay attention. For example, pessimistic lock KV requests are marked red and TSO waiting is marked dark brown. If non-blue or non-green areas are large, it means there is bottleneck during SQL execution. For example:
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_db_time.png)
 
-    - If serious lock conflicts occur, the red area will take a large proportion.
-    - If excessive time is consumed in waiting TSO, the dark brown area will take a large proportion.
+- Database Time by SQL Type：主要消耗时间的语句为 commit、update、select 和 insert 语句。
+- Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
+- SQL Execute Time Overview：执行阶段主要消耗时间的 KV 请求为绿色的 Prewrite 和 Commit。
 
-**Example 1: TPC-C workload**
-
-![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_db_time.png)
-
-- Database Time by SQL Type: Most time-consuming statements are `commit`, `update`, `select`, and `insert` statements.
-- Database Time by SQL Phase: The most time-consuming phase is SQL execution in green.
-- SQL Execute Time Overview: The most time-consuming KV requests in SQL execution are `Prewrite` and `Commit` in green.
-
-    > **Note:**
-    >
-    > It is normal that the total KV request time is greater than the execute time. Because the TiDB executor may send KV requests to multiple TiKVs concurrently, causing the total KV request wait time to be greater than the execute time. In the preceding TPC-C workload, TiDB sends `Prewrite` and `Commit` requests concurrently to multiple TiKVs when a transaction is committed. Therefore, the total time for `Prewrite`, `Commit`, and `PessimisticLock` requests in this example is obviously longer than the execute time.
-    >
-    > - The `execute` time may also be significantly greater than the total time of the KV request plus the `tso_wait` time. This means that the SQL execution time is spent mostly inside the TiDB executor. Here are two common examples:
-    >
-        > - Example 1: After TiDB executor reads a large amount of data from TiKV, it needs to do complex join and aggregation inside TiDB, which consumes a lot of time.
-        > - Example 2: The application experiences serious write statement lock conflicts. Frequent lock retries result in long `Retried execution time`.
-
-**Example 2: OLTP read-heavy workload**
-
-![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_normal_db_time.png)
-
-- Database Time by SQL Type: Major time-consuming statements are `SELECT`, `COMMIT`, `UPDATE`, and `INSERT`, among which `SELECT` consumes most database time.
-- Database Time by SQL Phase: Most time is consumed in the `execute` phase in green.
-- SQL Execute Time Overview: In SQL execution phase, `pd tso_wait` in dark brown, `KV Get` in blue, and `Prewrite` and `Commit` in green are time-consuming.
-
-**Example 3: Read-only OLTP workload**
-
-![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_long_compile_db_time.png)
-
-- Database Time by SQL Type: Mainly are `SELECT` statements.
-- Database Time by SQL Phase: Major time-consuming phases are `compile` in orange and `execute` in green. Latency in the `compile` phase is the highest, indicating that TiDB is taking too long to generate execution plans and the root cause needs to be further determined based on the subsequent performance data.
-- SQL Execute Time Overview: The KV BatchGet requests in blue consume the most time during SQL execution.
-
-> **Note:**
+> **注意：**
 >
-> In example 3, `SELECT` statements need to read thousands of rows concurrently from multiple TiKVs. Therefore, the total time of the `BatchGet` request is much longer than the execution time.
-
-**Example 4: Lock contention workload**
-
-![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/oltp_lock_contention_db_time.png)
-
-- Database Time by SQL Type: Mainly are `UPDATE` statements.
-- Database Time by SQL Phase: Most time is consumed in the execute phase in green.
-- SQL Execute Time Overview: The KV request PessimisticLock shown in red consumes the most time during SQL execution, and the execution time is obviously longer than the total time of KV requests. This is caused by serious lock conflicts in write statements and frequent lock retries prolong `Retried execution time`. Currently, TiDB does not measure `Retried execution time`.
-
-**Example 5: HTAP CH-Benchmark workload**
-
-![HTAP](https://docs-download.pingcap.com/media/images/docs/performance/htap_tiflash_mpp.png)
-
-- Database Time by SQL Type: Mainly are `SELECT` statements.
-- Database Time by SQL Phase: Most time is consumed in the execute phase in green.
-- SQL Execute Time Overview: The `tiflash_mpp` requests shown in purple consume the most time during SQL execution, followed by the KV requests, including the `Cop` requests in blue, and the `Prewrite` and `Commit` requests in green.
-
-### TiDB key metrics and cluster resource utilization
-
-#### Query Per Second, Command Per Second, and Prepared-Plan-Cache
-
-By checking the following three panels in Performance Overview, you can learn the application workload type, how the application interacts with TiDB, and whether the application fully utilizes TiDB [prepared plan cache](/sql-prepared-plan-cache.md).
-
-- QPS: Short for Query Per Second. It shows the count of SQL statements executed by the application.
-- CPS By Type: Short for Command Per Second. Command indicates MySQL protocol-specific commands. A query statement can be sent to TiDB either by a query command or a prepared statement.
-- Queries Using Plan Cache OPS: `avg-hit` is the number of queries using the execution plan cache per second in a TiDB cluster, and `avg-miss` is the number of queries not using the execution plan cache per second in a TiDB cluster.
-
-    `avg-hit + avg-miss` is equal to `StmtExecute`, which is the number of all queries executed per second. When prepared plan cache is enabled in TiDB, the following three scenarios will occur:
-
-    - No prepared plan cache is hit: `avg-hit` (the number of hits per second) is 0, and `avg-miss` is equal to the number of `StmtExecute` commands per second. The possible reasons include:
-        - The application is using the query interface.
-        - The cached plans are cleaned up because the application calls the `StmtClose` command after each `StmtExecute` execution.
-        - All statements executed by `StmtExecute` do not meet the [cache conditions](/sql-prepared-plan-cache.md) so the execution plan cache cannot be hit.
-    - All prepared plan cache is hit: `avg-hit` (the number of hits per second) is equal to the number of `StmtExecute` commands per second, and `avg-miss` (the number without hits per second) is 0.
-    - Some prepared plan cache is hit: `avg-hit` (the number of hits per second) is fewer than the number of `StmtExecute` commands per second. Prepared plan cache has known limitations. For example, it does not support subqueries, so SQL statements with subqueries cannot use prepared plan cache.
-
-**Example 1: TPC-C workload**
-
-The TPC-C workload are mainly `UPDATE`, `SELECT`, and `INSERT` statements. The total QPS is equal to the number of `StmtExecute` commands per second and the latter is almost equal to `avg-hit` on the Queries Using Plan Cache OPS panel. Ideally, the client caches the object of the prepared statement. In this way, the cached statement is called directly when a SQL statement is executed. All SQL executions hit the prepared plan cache, and there is no need to recompile to generate execution plans.
-
-![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_qps.png)
-
-**Example 2: Prepared plan cache unavailable for query commands in read-only OLTP workload**
-
-In this workload, `Commit QPS` = `Rollback QPS` = `Select QPS`. The application has enabled auto-commit concurrency, and rollback is performed every time a connection is fetched from the connection pool. As a result, these three statements are executed the same number of times.
-
-![OLTP-Query](https://docs-download.pingcap.com/media/images/docs/performance/oltp_long_compile_qps.png)
-
-- The red bold line in the QPS panel stands for failed queries, and the Y-axis on the right shows the number of failed queries. A value other than 0 means the presence of failed queries.
-- The total QPS is equal to the number of queries in the CPS By Type panel, the query command has been used by the application.
-- The Queries Using Plan Cache OPS panel has no data, because prepared plan cache is unavailable for query command. This means that TiDB needs to parse and generate an execution plan for every query execution. As a result, the compile time is longer with increasing CPU consumption by TiDB.
-
-**Example 3: Prepared plan cache unavailable with prepared statement enabled for OLTP workload**
-
-`StmtPrepare` times = `StmtExecute` times = `StmtClose` times ~= `StmtFetch` times. The application uses the prepare > execute > fetch > close loop. To prevent prepared statement object leak, many application frameworks call `close` after the `execute` phase. This creates two problems.
-
-- A SQL execution requires four commands and four network round trips.
-- Queries Using Plan Cache OPS is 0, indicating zero hit of prepared plan cache. The `StmtClose` command clears cached execution plans by default and the next `StmtPrepare` command needs to generate the execution plan again.
-
-> **Note:**
+> - KV 请求的总时间大于 execute time 为正常现象，因为 TiDB 执行器可能并发向多个 TiKV 发送 KV 请求，导致总的 KV 请求等待时间大于 execute time。TPC-C 负载中，事务提交时，TiDB 会向多个 TiKV 并行发送 Prewrite 和 Commit 请求，所以这个例子中 Prewrite、Commit 和 PessimisticsLock 请求的总时间明显大于 execute time。
 >
-> Starting from TiDB v6.0.0, you can prevent the `StmtClose` command from clearing cached execution plans via the global variable (`set global tidb_ignore_prepared_cache_close_stmt=on;`). In this way, subsequent executions can hit the prepared plan cache.
+> - execute time 也可能明显大于 KV 请求的总时间加上 tso_wait 的时间，这意味着 SQL 执行阶段主要时间花在 TiDB 执行器内部。两种常见的例子：
+>
+>     - 例 1：TiDB 执行器从 TiKV 读取大量数据之后，需要在 TiDB 内部进行复杂的关联和聚合，消耗大量时间。
+>     - 例 2：应用的写语句锁冲突严重，频繁锁重试导致 `Retried execution time` 过长。
 
-![OLTP-Prepared](https://docs-download.pingcap.com/media/images/docs/performance/oltp_prepared_statement_no_plan_cache.png)
+**示例 2：OLTP 读密集负载**
 
-**Example 4: Prepared statements have a resource leak**
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_normal_db_time.png)
 
-The number of `StmtPrepare` commands per second is much greater than that of `StmtClose` per second, which indicates that the application has an object leak for prepared statements.
+- Database Time by SQL Type：主要消耗时间的语句为 select、commit、update 和 insert 语句。其中，select 占据绝大部分的数据库时间。
+- Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
+- SQL Execute Time Overview：执行阶段主要消耗时间为深褐色的 pd tso_wait、蓝色的 KV Get 和绿色的 Prewrite 和 Commit。
 
-![OLTP-Query](https://docs-download.pingcap.com/media/images/docs/performance/prepared_statement_leaking.png)
+**示例 3：只读 OLTP 负载**
 
-- In the QPS panel, the red bold line indicates the number of failed queries, and the Y axis on the right indicates the coordinate value of the number. In this example, the number of failed queries per second is 74.6.
-- In the CPS By Type panel, the number of `StmtPrepare` commands per second is much greater than that of `StmtClose` per second, which indicates that an object leak occurs in the application for prepared statements.
-- In the Queries Using Plan Cache OPS panel, `avg-miss` is almost equal to `StmtExecute` in the CPS By Type panel, which indicates that almost all SQL executions miss the execution plan cache.
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_long_compile_db_time.png)
 
-#### KV/TSO Request OPS and KV Request Time By Source
+- Database Time by SQL Type：几乎所有语句为 select。
+- Database Time by SQL Phase：主要消耗时间的阶段为橙色的 compile 和绿色的 execute 阶段。compile 阶段延迟最高，代表着 TiDB 生成执行计划的过程耗时过长，需要根据后续的性能数据进一步确定根源。
+- SQL Execute Time Overview：执行阶段主要消耗时间的 KV 请求为蓝色 BatchGet。
 
-- In the KV/TSO Request OPS panel, you can view the statistics of KV and TSO requests per second. Among the statistics, `kv request total` represents the sum of all requests from TiDB to TiKV. By observing the types of requests from TiDB to PD and TiKV, you can get an idea of the workload profile within the cluster.
-- In the KV Request Time By Source panel, you can view the time ratio of each KV request type and all request sources.
-    - kv request total time: The total time of processing KV and TiFlash requests per second.
-    - Each KV request and the corresponding request source form a stacked bar chart, in which `external` identifies normal business requests and `internal` identifies internal activity requests (such as DDL and auto analyze requests).
+> **注意：**
+>
+> 示例 3 select 语句需要从多个 TiKV 并行读取几千行数据，BatchGet 请求的总时间远大于执行时间。
 
-**Example 1: Busy workload**
+**示例 4： 锁争用负载**
 
-![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_source_sql.png)
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_lock_contention_db_time.png)
 
-In this TPC-C workload:
+- Database Time by SQL Type：主要为 Update 语句。
+- Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
+- SQL Execute Time Overview：执行阶段主要消耗时间的 KV 请求为红色的悲观锁 PessimisticLock，execute time 明显大于 KV 请求的总时间，这是因为应用的写语句锁冲突严重，频繁锁重试导致 `Retried execution time` 过长。目前 `Retried execution time` 消耗的时间，TiDB 尚未进行测量。
 
-- The total number of KV requests per second is 79,700. The top request types are `Prewrite`, `Commit`, `PessimisticLock`, and `BatchGet` in order of number of requests.
-- Most of the KV processing time is spent on `Commit-external_Commit` and `Prewrite-external_Commit`, which indicates that the most time-consuming KV requests are `Commit` and `Prewrite` from external commit statements.
+**示例 5： HTAP CH-Benchmark 负载**
 
-**Example 2: Analyze workload**
+![HTAP](https://docs-download.pingcap.com/media/images/docs-cn/performance/htap_tiflash_mpp.png)
 
-![OLTP](https://docs-download.pingcap.com/media/images/docs/performance/internal_stats.png)
+- Database Time by SQL Type：主要为 Select 语句。
+- Database Time by SQL Phase：主要消耗时间的阶段为绿色的 execute 阶段。
+- SQL Execute Time Overview：执行阶段主要消耗时间为紫色的 `tiflash_mpp` 请求，其次是 KV 请求，包括蓝色的  `Cop`，以及绿色的 `Prewrite` 和 `Commit`。
 
-In this workload, only `ANALYZE` statements are running in the cluster:
+### TiDB 关键指标和集群资源利用率
 
-- The total number of KV requests per second is 35.5 and the number of Cop requests per second is 9.3.
-- Most of the KV processing time is spent on `Cop-internal_stats`, which indicates that the most time-consuming KV request is `Cop` from internal `ANALYZE` operations.
+#### Query Per Second、Command Per Second 和 Prepared-Plan-Cache
 
-#### CPU and memory usage
+通过观察 Performance Overview 里的以下三个面板，可以了解应用的负载类型，与 TiDB 的交互方式，以及是否能有效地利用 TiDB 的[执行计划缓存](/sql-prepared-plan-cache.md)。
 
-In the CPU/Memory panels of TiDB, TiKV, and PD, you can monitor their respective logical CPU usage and memory consumption, such as average CPU, maximum CPU, delta CPU (maximum CPU usage minus minimum CPU usage), CPU quota, and maximum memory usage. Based on these metrics, you can determine the overall resource usage of TiDB, TiKV, and PD.
+- QPS：表示 Query Per Second，包含应用的 SQL 语句类型执行次数分布。
+- CPS By Type：CPS 表示 Command Per Second，Command 代表 MySQL 协议的命令类型。同样一个查询语句可以通过 query 或者 prepared statement 的命令类型发送到 TiDB。
+- Queries Using Plan Cache OPS：TiDB 集群每秒执行计划缓存的命中次数（即 `avg-hit`） 和未命中次数（即 `avg-miss`）。
 
-- Based on the `delta` value, you can determine if CPU usage in TiDB or TiKV is unbalanced. For TiDB, a high `delta` usually means unbalanced application connections among the TiDB instances; For TiKV, a high `delta` usually means there are read/write hot spots in the cluster.
-- With an overview of TiDB, TiKV, and PD resource usage, you can quickly determine if there are resource bottlenecks in your cluster and whether TiKV, TiDB, or PD needs scale-out or scale-up.
+    StmtExecute 每秒执行次数等于 `avg-hit + avg-miss`。执行计划缓存只支持 prepared statement 命令。当 TiDB 开启执行计划缓存时，存在三种使用情况：
 
-**Example 1: High TiKV resource usage**
+    - 完全无法命中执行计划缓存：每秒命中次数 `avg-hit` 为 0，`avg-miss` 等于 StmtExecute 命令每秒执行次数。可能的原因包括：
+        - 应用使用了 query 命令。
+        - 每次 StmtExecute 执行之后，应用调用了 StmtClose 命令，导致缓存的执行计划被清理。
+        - StmtExecute 执行的所有语句都不符合[缓存的条件](/sql-prepared-plan-cache.md)，导致无法命中执行计划缓存。
+    - 完全命中执行计划缓存：每秒命中次数 `avg-hit` 等于 StmtExecute 命令每秒执行次数，每秒未命中次数 `avg-miss` 等于 0。
+    - 部分命中执行计划缓存：每秒命中次数 `avg-hit` 小于 StmtExecute 命令每秒执行次数。执行计划缓存目前存在一些限制，比如不支持子查询，该类型的 SQL 执行计划无法被缓存。
 
-In the following TPC-C workload, each TiDB and TiKV is configured with 16 CPUs. PD is configured with 4 CPUs.
+**示例 1：TPC-C 负载**
 
-![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_cpu_memory.png)
+TPC-C 负载类型主要以 Update、Select 和 Insert 语句为主。总的 QPS 等于每秒 StmtExecute 的次数，并且 StmtExecute 每秒的数据基本等于 Queries Using Plan Cache OPS 面板的 `avg-hits`。这是 OLTP 负载理想的情况，客户端执行使用 prepared statement，并且在客户端缓存了 prepared statement 对象，执行每条 SQL 语句时直接调用 statement 执行。执行时都命中执行计划缓存，不需要重新 compile 生成执行计划。
 
-- The average, maximum, and delta CPU usage of TiDB are 761%, 934%, and 322%, respectively. The maximum memory usage is 6.86 GiB.
-- The average, maximum, and delta CPU usage of TiKV are 1343%, 1505%, and 283%, respectively. The maximum memory usage is 27.1 GiB.
-- The maximum CPU usage of PD is 59.1%. The maximum memory usage is 221 MiB.
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_qps.png)
 
-Obviously, TiKV consumes more CPU, which is expected because TPC-C is a write-heavy scenario. To improve performance, it is recommended to scale out TiKV.
+**示例 2：只读 OLTP 负载，使用 query 命令无法使用执行计划缓存**
 
-#### Data traffic
+这个负载中，Commit QPS = Rollback QPS = Select QPS。应用开启了 auto-commit 并发，每次从连接池获取连接都会执行 rollback，因此这三种语句的执行次数是相同的。
 
-The read and write traffic panels offer insights into traffic patterns within your TiDB cluster, allowing you to monitor data flow from clients to the database and between internal components comprehensively.
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_long_compile_qps.png)
 
-- Read traffic
+- QPS 面板中出现的红色加粗线为 Failed Query，坐标的值为右边的 Y 轴。非 0 代表此负载中存在错误语句。
+- 总的 QPS 等于 CPS By Type 面板中的 Query，说明应用中使用了 query 命令。
+- Queries Using Plan Cache OPS 面板没有数据，因为不使用 prepared statement 接口，无法使用 TiDB 的执行计划缓存，意味着应用的每一条 query，TiDB 都需要重新解析，重新生成执行计划。通常会导致 compile 时间变长以及 TiDB CPU 消耗的增加。
 
-    - `TiDB -> Client`: the outbound traffic statistics from TiDB to the client
-    - `Rocksdb -> TiKV`: the data flow that TiKV retrieves from RocksDB during read operations within the storage layer
+**示例 3：OLTP 负载，使用 prepared statement 接口无法使用执行计划缓存**
 
-- Write traffic
+StmtPrepare 次数 = StmtExecute 次数 = StmtClose 次数 ~= StmtFetch 次数，应用使用了 prepare > execute > fetch > close 的 loop，很多框架都会在 execute 之后调用 close，确保资源不会泄露。这会带来两个问题：
 
-    - `Client -> TiDB`: the inbound traffic statistics from the client to TiDB
-    - `TiDB -> TiKV: general`: the rate at which foreground transactions are written from TiDB to TiKV
-    - `TiDB -> TiKV: internal`: the rate at which internal transactions are written from TiDB to TiKV
-    - `TiKV -> Rocksdb`: the flow of write operations from TiKV to RocksDB
-    - `RocksDB Compaction`: the total read and write I/O flow generated by RocksDB compaction operations. If `RocksDB Compaction` is significantly higher than `TiKV -> Rocksdb`, and your average row size is larger than 512 bytes, you can enable Titan to reduce the compaction I/O flow as follows, with min-blob-size set to `"512B"` or `"1KB"` and blob-file-compression set to `"zstd"`.
+- 执行每条 SQL 语句需要 4 个命令，以及 4 次网络往返。
+- Queries Using Plan Cache OPS 为 0，无法命中执行计划缓存。StmtClose 命令默认会清理缓存的执行计划，导致下一次 StmtPrepare 命令需要重新生成执行计划。
+
+> **注意：**
+>
+> 从 TiDB v6.0.0 起，你可以通过全局变量 (`set global tidb_ignore_prepared_cache_close_stmt=on;`) 控制 StmtClose 命令不清理已被缓存的执行计划，使得下一次的 SQL 的执行不需要重新生成执行计划。
+
+![OLTP-Prepared](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_prepared_statement_no_plan_cache.png)
+
+**示例 4：Prepared Statement 存在资源泄漏**
+
+StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 prepared statement 对象泄漏。
+
+![OLTP-Query](https://docs-download.pingcap.com/media/images/docs-cn/performance/prepared_statement_leaking.png)
+
+- QPS 面板中出现的红色加粗线为 Failed Query，坐标的值为右边的 Y 轴。每秒错误语句为 74.6 条。
+- CPS By Type 面板中的 StmtPrepare 每秒执行次数远大于 StmtClose，说明应用程序存在 prepared statement 对象泄漏。
+- Queries Using Plan Cache OPS 面板中的 `avg-miss` 几乎等于 CPS By Type 面板中的 StmtExecute，说明几乎所有的 SQL 执行都未命中执行计划缓存。
+
+#### KV/TSO Request OPS 和 KV Request Time By Source
+
+- 在 KV/TSO Request OPS 面板中，你可以查看 KV 和 TSO 每秒请求的数据统计。其中，`kv request total` 代表 TiDB 到 TiKV 所有请求的总和。通过观察 TiDB 到 PD 和 TiKV 的请求类型，可以了解集群内部的负载特征。
+- 在 KV Request Time By Source 面板中，你可以查看每种 KV 请求和请求来源的时间占比。
+    - kv request total time 是每秒总的 KV 和 TiFlash 请求处理时间
+    - 每种 KV 请求和请求来源组成柱状堆叠图，`external` 标识正常业务的请求，`internal` 标识内部活动的请求（比如 DDL、auto analyze 等请求）。
+
+**示例 1：繁忙的负载**
+
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_source_sql.png)
+
+在此 TPC-C 负载中：
+
+- 每秒总的 KV 请求的数量为 79.7 K。按请求数量排序，最高的请求类型为 `Prewrite`、`Commit`、`PessimisticsLock` 和 `BatchGet` 等。
+- KV 处理时间来源主要为 `Commit-external_Commit`、`Prewrite-external_Commit`，说明消耗时间最高的 KV 请求为 `Commit` 和 `Prewrite`，并且来源于外部的 Commit 语句。
+
+**示例 2：Analyze 负载**
+
+![OLTP](https://docs-download.pingcap.com/media/images/docs-cn/performance/internal_stats.png)
+
+集群中只有 analyze 语句运行：
+
+- 每秒总的 KV 请求数据是 35.5，Cop 请求次数是每秒 9.3。
+- KV 处理时间主要来源为 `Cop-internal_stats`，说明 Cop 请求来源于内部的 analyze 操作。
+
+#### CPU 和内存使用情况
+
+在 TiDB、TiKV 和 PD 的 CPU/Memory 面板中，你可以监控它们各自的逻辑 CPU 使用率和内存消耗情况，例如平均 CPU 利用率、最大 CPU 利用率、CPU 利用率差值（最大 CPU 使用率减去最小 CPU 使用率）、CPU Quota（可以使用的 CPU 核数）以及最大内存使用率。基于这些指标，你可以确定 TiDB、TiKV 和 PD 的整体资源使用情况。
+
+- 根据 `delta` 值，你可以判断 TiDB 或 TiKV 的 CPU 使用是否存在不均衡的情况。对于 TiDB，较高的 `delta` 值通常意味着应用程序的连接在 TiDB 实例之间分布不均衡；对于 TiKV，较高的 `delta` 值通常意味着集群中存在读写热点。
+- 通过 TiDB、TiKV 和 PD 的资源使用概览，你可以快速判断集群是否存在资源瓶颈，以及是否需要对 TiKV、TiDB 或 PD 进行扩容或者硬件配置升级。
+
+**示例 1：TiKV 资源使用率高**
+
+在以下 TPC-C 负载中，每个 TiDB 和 TiKV 配置了 16 核 CPU，PD 配置了 4 核 CPU。
+
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_cpu_memory.png)
+
+- TiDB 的平均、最大和 delta CPU 使用率分别为 761%、934% 和 322%。最大内存使用率为 6.86 GiB。
+- TiKV 的平均、最大和 delta CPU 使用率分别为 1343%、1505% 和 283%。最大内存使用率为 27.1 GiB。
+- PD 的最大 CPU 使用率为 59.1%。最大内存使用率为 221 MiB。
+
+显然，TiKV 消耗了更多的 CPU，在 TPC-C 这样的写密集场景中，这是符合预期的。建议通过扩容 TiKV 来提升性能。
+
+#### 数据流量
+
+Read traffic 和 Write traffic 面板可以帮助你深入分析 TiDB 集群内部的流量模式，全面监控从客户端到数据库以及内部组件之间的数据流情况。
+
+- Read traffic （读流量）
+    - `TiDB -> Client`：从 TiDB 到客户端的出站流量统计
+    - `Rocksdb -> TiKV`：TiKV 在存储层读操作期间从 RocksDB 读取的数据流量
+
+- Write traffic （写流量）
+    - `Client -> TiDB`：从客户端到 TiDB 的入站流量统计
+    - `TiDB -> TiKV: general`：前台事务从 TiDB 写入到 TiKV 的速率
+    - `TiDB -> TiKV: internal`：内部事务从 TiDB 写入到 TiKV 的速率
+    - `TiKV -> Rocksdb`：从 TiKV 到 RocksDB 的写操作流量
+    - `RocksDB Compaction`：RocksDB compaction 操作产生的总读写 I/O 流量。如果 `RocksDB Compaction` 明显高于 `TiKV -> Rocksdb`，且你的平均行大小高于 512 字节，则可以进行以下配置以减少 compaction I/O 流量：启用 Titan，将 `min-blob-size` 设置为 `"512B"` 或 `"1KB"`，将 `blob-file-compression` 设置为 `"zstd"`。
 
         ```toml
         [rocksdb.titan]
@@ -260,293 +250,295 @@ The read and write traffic panels offer insights into traffic patterns within yo
         blob-file-compression = "zstd"
         ```
 
-**Example 1: Read and write traffic in the TPC-C workload**
+**示例 1：TPC-C 负载中的读写流量**
 
-The following is an example of read and write traffic in the TPC-C workload.
+以下是 TPC-C 负载中读写流量的示例。
 
-- Read traffic
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_read_write_traffic.png)
 
-    - `TiDB -> Client`: 14.2 MB/s
-    - `Rocksdb -> TiKV`: 469 MB/s. Note that both read operations (`SELECT` statements) and write operations (`INSERT`, `UPDATE`, and `DELETE` statements) require reading data from RocksDB into TiKV before committing a transaction.
+- 读流量
+    - `TiDB -> Client`：14.2 MB/s
+    - `Rocksdb -> TiKV`：469 MB/s。注意，在提交事务之前，读操作（`SELECT` 语句）和写操作（`INSERT`、`UPDATE` 和 `DELETE` 语句）都需要从 RocksDB 读取数据到 TiKV。
 
-- Write traffic
+- 写流量
+    - `Client -> TiDB`：5.05 MB/s
+    - `TiDB -> TiKV: general`：13.1 MB/s
+    - `TiDB -> TiKV: internal`：5.07 KB/s
+    - `TiKV -> Rocksdb`：109 MB/s
+    - `RocksDB Compaction`：567 MB/s
 
-    - `Client -> TiDB`: 5.05 MB/s
-    - `TiDB -> TiKV: general`: 13.1 MB/s
-    - `TiDB -> TiKV`: internal: 5.07 KB/s
-    - `TiKV -> Rocksdb`: 109 MB/s
-    - `RocksDB Compaction`: 567 MB/s
+![TPC-C](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_read_write_traffic.png)
 
-![TPC-C](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_read_write_traffic.png)
+**示例 2：启用 Titan 前后的写流量**
 
-**Example 2: Write traffic before and after Titan is enabled**
+以下示例展示了启用 Titan 前后的性能变化。对于 6 KiB 数据量的插入负载，Titan 显著降低了写流量和 compaction I/O，提高了 TiKV 的整体性能和资源利用率。
 
- The following example shows the performance changes before and after Titan is enabled. For an insert workload with 6 KB records, Titan significantly reduces write traffic and compaction I/O, enhancing overall performance and resource utilization of TiKV.
+- 启用 Titan 前的写流量
 
-- Write traffic before Titan is enabled
+    - `Client -> TiDB`：510 MB/s
+    - `TiDB -> TiKV: general`：187 MB/s
+    - `TiDB -> TiKV: internal`：3.2 KB/s
+    - `TiKV -> Rocksdb`：753 MB/s
+    - `RocksDB Compaction`：10.6 GB/s
 
-    - `Client -> TiDB`: 510 MB/s
-    - `TiDB -> TiKV: general`: 187 MB/s
-    - `TiDB -> TiKV: internal`: 3.2 KB/s
-    - `TiKV -> Rocksdb`: 753 MB/s
-    - `RocksDB Compaction`: 10.6 GB/s
+    ![Titan 禁用](https://docs-download.pingcap.com/media/images/docs-cn/performance/titan_disable.png)
 
-    ![Titan Disable](https://docs-download.pingcap.com/media/images/docs/performance/titan_disable.png)
+- 启用 Titan 后的写流量
 
-- Write traffic after Titan is enabled
+    - `Client -> TiDB`：586 MB/s
+    - `TiDB -> TiKV: general`：295 MB/s
+    - `TiDB -> TiKV: internal`：3.66 KB/s
+    - `TiKV -> Rocksdb`：1.21 GB/s
+    - `RocksDB Compaction`：4.68 MB/s
 
-    - `Client -> TiDB`: 586 MB/s
-    - `TiDB -> TiKV: general`: 295 MB/s
-    - `TiDB -> TiKV: internal`: 3.66 KB/s
-    - `TiKV -> Rocksdb`: 1.21 GB/s
-    - `RocksDB Compaction`: 4.68 MB/s
+    ![Titan 启用](https://docs-download.pingcap.com/media/images/docs-cn/performance/titan_enable.png)
 
-    ![Titan Enable](https://docs-download.pingcap.com/media/images/docs/performance/titan_enable.png)
+### Query 延迟分解和关键的延迟指标
 
-### Query latency breakdown and key latency metrics
+延迟面板通常包含平均值和 99 分位数，平均值用来定位总体的瓶颈，99 分位数用来判断是否存在延迟严重抖动的情况。判断性能抖动范围时，可能还需要需要借助 999 分位数。
 
-The latency panel provides average values and 99th percentile. The average values help identify the overall bottleneck, while the 99th or 999th percentile or 999th helps determine whether there is a significant latency jitter.
+#### Duration、Connection Idle Duration 和 Connection Count
 
-#### Duration, Connection Idle Duration, and Connection Count
+Duration 面板包含了所有语句的 99 延迟和每种 SQL 类型的平均延迟。Connection Idle Duration 面板包含连接空闲的平均和 99 延迟，连接空闲时包含两种状态：
 
-The Duration panel contains the average and P99 latency of all statements, and the average latency of each SQL type. The Connection Idle Duration panel contains the average and the P99 connection idle duration. Connection idle duration includes the following two states:
+- in-txn：代表事务中连接的空闲时间，即当连接处于事务中时，处理完上一条 SQL 之后，收到下一条 SQL 语句的间隔时间。
+- not-in-txn：当连接没有处于事务中，处理完上一条 SQL 之后，收到下一条 SQL 语句的间隔时间。
 
-- in-txn: The interval between processing the previous SQL and receiving the next SQL statement when the connection is within a transaction.
-- not-in-txn: The interval between processing the previous SQL and receiving the next SQL statement when the connection is not within a transaction.
+应用进行数据库事务时，通常使用同一个数据库连接。对比 query 的平均延迟和 connection idle duration 的延迟，可以判断整个系统性能瓶颈或者用户响应时间的抖动是否是由 TiDB 导致的。
 
-An applications perform transactions with the same database connection. By comparing the average query latency with the connection idle duration, you can determine if TiDB is the bottleneck for overall system, or if user response time jitter is caused by TiDB.
+- 如果应用负载不是只读的，包含事务，对比 query 平均延迟和 `avg-in-txn` 可以判断应用处理事务时，主要的时间是花在数据库内部还是在数据库外面，借此定位用户响应时间的瓶颈。
+- 如果是只读负载，不存在 `avg-in-txn` 指标，可以对比 query 平均延迟和 `avg-not-in-txn` 指标。
 
-- If the application workload is not read-only and contains transactions, by comparing the average query latency with `avg-in-txn`, you can determine the proportion in processing transactions inside and outside the database, and identify the bottleneck in user response time.
-- If the application workload is read-only or autocommit mode is on, you can compare the average query latency with `avg-not-in-txn`.
+现实的客户负载中，瓶颈在数据库外面的情况并不少见，例如：
 
-In real customer scenarios, it is not rare that the bottleneck is outside the database, for example:
+- 客户端服务器配置过低，CPU 资源不够。
+- 使用 HAProxy 作为 TiDB 集群代理，但是 HAProxy CPU 资源不够。
+- 使用 HAProxy 作为 TiDB 集群代理，但是高负载下 HAProxy 服务器的网络带宽被打满。
+- 应用服务器到数据库延迟过高，比如公有云环境应用和 TiDB 集群不在同一个地区，比如数据库的 DNS 均衡器和 TiDB 集群不在同一个地区。
+- 客户端程序存在瓶颈，无法充分利用服务器的多 CPU 核或者多 Numa 资源，比如应用只使用一个 JVM 向 TiDB 建立上千个 JDBC 连接。
 
-- The client server configuration is too low and the CPU resources are exhausted.
-- HAProxy is used as a TiDB cluster proxy, and the HAProxy CPU resource is exhausted.
-- HAProxy is used as a TiDB cluster proxy, and the network bandwidth of the HAProxy server is used up under high workload.
-- The network latency from the application server to the database is high. For example, the network latency is high because in public-cloud deployments the applications and the TiDB cluster are not in the same region, or the dns workload balancer and the TiDB cluster are not in the same region.
-- The bottleneck is in client applications. The application server's CPU cores and Numa resources cannot be fully utilized. For example, only one JVM is used to establish thousands of JDBC connections to TiDB.
+在 Connection Count （连接信息）面板中，你可以查看总的连接数和每个 TiDB 节点的连接数，并由此判断连接总数是否正常，各 TiDB 节点的连接数是否不均衡。`active connections` 记录着活跃连接数，等于每秒的数据库时间，右侧 Y 轴为 `disconnection/s`，代表集群每秒断开连接的数量，用来判断应用是否使用了短连接。
 
-In the Connection Count panel, you can check the total number of connections and also the number of connections on each TiDB node, which helps you determine whether the total number of connections is normal and whether the number of connections on each TiDB node is unbalanced. `active connections` indicates the number of active connections, which is equal to the database time per second. The Y axis on the right (`disconnection/s`) indicates the number of disconnections per second in a cluster, which can be used to determine whether the application uses short connections.
+**示例 1：disconnection/s 过高**
 
-**Example 1: The number of disconnection/s is too high**
+![high disconnection/s](https://docs-download.pingcap.com/media/images/docs-cn/performance/high_disconnections.png)
 
-![high disconnection/s](https://docs-download.pingcap.com/media/images/docs/performance/high_disconnections.png)
+在此负载中：
 
-In this workload:
+- 所有 SQL 语句的平均延迟 10.8 ms，P99 延迟 84.1 ms。
+- 事务中连接空闲时间 `avg-in-txn` 为 9.4 ms。
+- 集群总的连接数为 3.7K，每个 TiDB 节点的连接数为 1.8 K。平均活跃连接数为 40.3，大部分连接处于空闲状态。`disconnection/s` 平均为 55.8，说明应用在频繁的新建和断开连接。短连接的行为会对 TiDB 的资源和响应时间造成一定的影响。
 
-- The average latency and P99 latency of all SQL statements are 10.8 ms and 84.1 ms, respectively.
-- The average connection idle time in transactions `avg-in-txn` is 9.4 ms.
-- The total number of connections to the cluster is 3,700, and the number of connections to each TiDB node is 1,800. The average number of active connections is 40.3, which indicates that most of the connections are idle. The average number of `disconnection/s` is 55.8, which indicates that the application is connecting and disconnecting frequently. The behavior of short connections will have a certain impact on TiDB resources and response time.
+**示例 2：用户响应时间的瓶颈在 TiDB 中**
 
-**Example 2: TiDB is the bottleneck of user response time**
+![TiDB is the Bottleneck](https://docs-download.pingcap.com/media/images/docs-cn/performance/tpcc_duration_idle.png)
 
-![TiDB is the Bottleneck](https://docs-download.pingcap.com/media/images/docs/performance/tpcc_duration_idle.png)
+在此 TPC-C 负载中：
 
-In this TPC-C workload:
+- 所有 SQL 语句的平均延迟 477 us，99 延迟 3.13 ms。平均 commit 语句 2.02 ms，平均 insert 语句 609 us，平均查询语句 468 us。
+- 事务中连接空闲时间 `avg-in-txn` 171 us。
 
-- The average latency and P99 latency of all SQL statements are 477 us and 3.13 ms, respectively. The average latencies of the commit statement, insert statement, and query statement are 2.02 ms, 609 us, and 468 us, respectively.
-- The average connection idle time in transactions `avg-in-txn` is 171 us.
+由此可以判断，平均的 query 延迟明显大于 `avg-in-txn`，说明事务处理中，主要的瓶颈在数据库内部。
 
-The average query latency is significantly greater than `avg-in-txn`, which means the main bottleneck in transactions is inside the database.
+**示例 3：用户响应时间的瓶颈不在 TiDB 中**
 
-**Example 3: TiDB is not the bottleneck of user response time**
+![TiDB is not the Bottleneck](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_query_long_idle.png)
 
-![TiDB is not Bottleneck](https://docs-download.pingcap.com/media/images/docs/performance/cloud_query_long_idle.png)
+在此负载中，平均 query 延迟为 1.69 ms，事务中连接空闲时间 `avg-in-txn` 为 18 ms。说明事务中，TiDB 平均花了 1.69 ms 处理完一个 SQL 语句之后，需要等待 18 ms 才能收到下一条语句。
 
-In this workload, the average query latency is 1.69 ms and `avg-in-txn` is 18 ms, indicating that TiDB spends 1.69 ms on average to process a SQL statement in transactions, and then needs to wait for 18 ms to receive the next statement.
+由此可以判断，用户响应时间的瓶颈不在 TiDB 中。这个例子是在一个公有云环境下，因为应用和数据库不在同一个地区，应用和数据库之间的网络延迟高导致了超高的连接空闲时间。
 
-The average query latency is significantly lower than `avg-in-txn`. The bottleneck of user response time is not in TiDB. This example is in a public cloud environment, where high network latency between the application and the database results in extremely high connection idle time, because the application and the database are not in the same region.
+#### Parse、Compile 和 Execute Duration
 
-#### Parse, Compile, and Execute Duration
+在 TiDB 中，从输入查询文本到返回结果的[典型处理流程](/sql-optimization-concepts.md)。
 
-In TiDB, there is a [typical processing flow](/sql-optimization-concepts.md) from sending query statements to returning results.
+SQL 在 TiDB 内部的处理分为四个阶段，get token、parse、compile 和 execute：
 
-SQL processing in TiDB consists of four phases, `get token`, `parse`, `compile`, and `execute`.
+- get token 阶段：通常只有几微秒的时间，可以忽略。除非 TiDB 单个实例的连接数达到的 [token-limit](/tidb-configuration-file.md) 的限制，创建连接的时候被限流。
+- parse 阶段：query 语句解析为抽象语法树 abstract syntax tree (AST)。
+- compile 阶段：根据 parse 阶段输出的 AST 和统计信息，编译出执行计划。整个过程主要步骤为逻辑优化与物理优化，前者通过一些规则对查询计划进行优化，例如基于关系代数的列裁剪等，后者通过统计信息和基于成本的优化器，对执行计划的成本进行估算，并选择整体成本最小的物理执行计划。
+- execute 阶段：时间消耗视情况，先等待全局唯一的时间戳 TSO，之后执行器根据执行计划中算子涉及的 Key 范围，构建出 TiKV 的 API 请求，分发到 TiKV。execute 时间包含 TSO 等待时间、KV 请求的时间和 TiDB 执行器本身处理数据的时间。
 
-- `get token`: Usually only a few microseconds and can be ignored. The token is limited only when the number of connections to a single TiDB instance reaches the [token-limit](/tidb-configuration-file.md) limit.
-- `parse`: The query statements are parsed into abstract syntax tree (AST).
-- `compile`: Execution plans are compiled based on the AST from the `parse` phase and statistics. The `compile` phase contains logical optimization and physical optimization. Logical optimization optimizes query plans by rules, such as column pruning based on relational algebra. Physical optimization estimates the cost of the execution plans by statistics by a cost-based optimizer and selects a physical execution plan with the lowest cost.
-- `execute`: The time consumption to execute a SQL statement. TiDB first waits for the globally unique timestamp TSO. Then the executor constructs the TiKV API request based on the Key range of the operator in the execution plan and distributes it to TiKV. `execute` time includes the TSO wait time, the KV request time, and the time spent by TiDB executor in processing data.
-
-If an application uses the `query` or `StmtExecute` MySQL command interface only, you can use the following formula to identify the bottleneck in average latency.
+如果应用统一使用 query 或者 StmtExecute MySQL 命令接口，可以使用以下公式来定位平均延迟的瓶颈。
 
 ```
 avg Query Duration = avg Get Token + avg Parse Duration + avg Compile Duration + avg Execute Duration
 ```
 
-Usually, the `execute` phase accounts for the most of the `query` latency. However, the `parse` and `compile` phases can also take a large part in the following cases:
+通常 execute 阶段会占 query 延迟的主要部分，在以下情况下，parse 和 compile 阶段也会占比明显。
 
-- Long latency in the `parse` phase: For example, when the `query` statement is long, much CPU will be consumed to parse the SQL text.
-- Long latency in the `compile` phase: If the prepared plan cache is not hit, TiDB needs to compile an execution plan for every SQL execution. The latency in the `compile` phase can be several or tens of milliseconds or even higher. If prepared plan cache is not hit, logical and physical optimization are done in the `compile` phase, which consumes a lot of CPU and memory, makes Go Runtime (TiDB is written in [`Go`](https://go.dev/)) under pressure, and affects the performance of other TiDB components. Prepared plan cache is important for efficient processing of OLTP workload in TiDB.
+- parse 阶段延迟占比明显：比如 query 语句很长，文本解析消耗大量的 CPU。
+- compile 阶段延迟占比明显：如果应用没有使用执行计划缓存，每个语句都需要生成执行计划。compile 阶段的延迟可能达到几毫秒或者几十毫秒。如果无法命中执行计划缓存，compile 阶段需要进行逻辑优化和物理优化，这将消耗大量的 CPU 和内存，并给 Go Runtime 带来压力（因为 TiDB 是 [`Go`](https://go.dev/) 编写的），进一步影响 TiDB 其他组件的性能。这说明，OLTP 负载在 TiDB 中是否能高效运行，执行计划缓存扮演了重要的角色。
 
-**Example 1: Database bottleneck in the `compile` phase**
+**示例 1：数据库瓶颈在 compile 阶段**
 
-![Compile](https://docs-download.pingcap.com/media/images/docs/performance/long_compile.png)
+![Compile](https://docs-download.pingcap.com/media/images/docs-cn/performance/long_compile.png)
 
-In the preceding figure, the average time of the `parse`, `compile`, and `execute` phases are 17.1 us, 729 us, and 681 us, respectively. The `compile` latency is high because the application uses the `query` command interface and cannot use prepared plan cache.
+此图中 parse、compile 和 execute 阶段的平均时间分别为 17.1 us、729 us 和 681 us。因为应用使用 query 命令接口，无法使用执行计划缓存，所以 compile 阶段延迟高。
 
-**Example 2: Database bottleneck in the `execute` phase**
+**示例 2：数据库瓶颈在 execute 阶段**
 
-![Execute](https://docs-download.pingcap.com/media/images/docs/performance/long_execute.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs-cn/performance/long_execute.png)
 
-In this TPC-C workload, the average time of `parse`, `compile` and `execute` phases are 7.39 us, 38.1 us, and 12.8 ms, respectively. The `execute` phase is the bottleneck of the `query` latency.
+在此 TPC-C 负载中，parse、compile 和 execute 阶段的平均时间分别为 7.39us、38.1us 和 12.8ms。query 延迟的瓶颈在于 execute 阶段。
 
-#### KV and TSO Request Duration
+#### KV 和 TSO Request Duration
 
-TiDB interacts with PD and TiKV in the `execute` phase. As shown in the following figure, when processing SQL request, TiDB requests TSOs before entering the `parse` and `compile` phases. The PD Client does not block the caller, but returns a `TSFuture` and asynchronously sends and receives the TSO requests in the background. Once the PD client finishes handling the TSO requests, it returns `TSFuture`. The holder of the `TSFuture` needs to call the Wait method to get the final TSOs. After TiDB finishes the `parse` and `compile` phases, it enters the `execute` phase, where two situations might occur:
+在 execute 阶段，TiDB 会跟 PD 和 TiKV 进行交互。如下图所示，当 TiDB 处理 SQL 语句请求时，在进行 parse 和 compile 之前，如果需要获取 TSO，会先请求生成 TSO。PD Client 不会阻塞调用者，而是直接返回一个 `TSFuture`，并在后台异步处理 TSO 请求的收发，一旦完成立即返回给 TSFuture，TSFuture 的持有者则需要调用 Wait 方法来获得最终的 TSO 结果。当 TiDB 完成 parse 和 compile 之后，进入 execute 阶段，此时存在两个情况：
 
-- If the TSO request has completed, the Wait method immediately returns an available TSO or an error
-- If the TSO request has not yet completed, the Wait method is blocked until a TSO is available or an error appears (the gRPC request has been sent but no result is returned, and the network latency is high)
+- 如果 TSO 请求已经完成，Wait 方法会立刻返回一个可用的 TSO 或 error
+- 如果 TSO 请求还未完成，Wait 方法会 block 住等待一个可用的 TSO 或 error（说明 gRPC 请求已发送但尚未收到返回结果，网络延迟较高）
 
-The TSO wait time is recorded as `TSO WAIT` and the network time of the TSO request is recorded as `TSO RPC`. After the TSO wait is complete, TiDB executor usually sends read or write requests to TiKV.
+TSO 等待的时间记录为 TSO WAIT，TSO 请求的网络时间记录为 TSO RPC。TiDB TSO 等待完成之后，执行过程中通常需要和 TiKV 进行读写交互：
 
-- Common KV read requests: `Get`, `BatchGet`, and `Cop`
-- Common KV write requests: `PessimisticLock`, `Prewrite` and `Commit` for two-phase commits
+- 读的 KV 请求常见类型：Get、BatchGet 和 Cop
+- 写的 KV 请求常见类型：PessimisticLock，二阶段提交的 Prewrite 和 Commit
 
-![Execute](https://docs-download.pingcap.com/media/images/docs/performance/execute_phase.png)
+![Execute](https://docs-download.pingcap.com/media/images/docs-cn/performance/execute_phase.png)
 
-The indicators in this section correspond to the following three panels.
+这一部分的指标对应以下三个面板：
 
-- Avg TiDB KV Request Duration: The average latency of KV requests measured by TiDB
-- Avg TiKV GRPC Duration: The average latency in processing gPRC messages in TiKV
-- PD TSO Wait/RPC Duration: TiDB executor TSO wait time and network latency for TSO requests (RPC)
+- Avg TiDB KV Request Duration：TiDB 测量的 KV 请求的平均延迟
+- Avg TiKV GRPC Duration：TiKV 内部 GRPC 消息处理的平均延迟
+- PD TSO Wait/RPC Duration：TiDB 执行器等待 TSO 延迟 (wait) 和 TSO 请求的网络延迟(rpc)。
 
-The relationship between `Avg TiDB KV Request Duration` and `Avg TiKV GRPC Duration` is as follows:
-
-```
-Avg TiDB KV Request Duration = Avg TiKV GRPC Duration + Network latency between TiDB and TiKV + TiKV gRPC processing time + TiDB gRPC processing time and scheduling latency
-```
-
-The difference between `Avg TiDB KV Request Duration` and `Avg TiKV GRPC Duration` is closely related to the network traffic, network latency, and resource usage by TiDB and TiKV.
-
-- In the same data center: The difference is generally less than 2 ms.
-- In different availability zones in the same region: The difference is generally less than 5 ms.
-
-**Example 1: Low workload of clusters deployed on the same data center**
-
-![Same Data Center](https://docs-download.pingcap.com/media/images/docs/performance/oltp_kv_tso.png)
-
-In this workload, the average `Prewrite` latency on TiDB is 925 us, and the average `kv_prewrite` processing latency inside TiKV is 720 us. The difference is about 200 us, which is normal in the same data center. The average TSO wait latency is 206 us, and the RPC time is 144 us.
-
-**Example 2: Normal workload on public cloud clusters**
-
-![Cloud Env ](https://docs-download.pingcap.com/media/images/docs/performance/cloud_kv_tso.png)
-
-In this example, TiDB clusters are deployed in different data centers in the same region. The average `commit` latency on TiDB is 12.7 ms, and the average `kv_commit` processing latency inside TiKV is 10.2 ms, a difference of about 2.5 ms. The average TSO wait latency is 3.12 ms, and the RPC time is 693 us.
-
-**Example 3: Resource overloaded on public cloud clusters**
-
-![Cloud Env, TiDB Overloaded](https://docs-download.pingcap.com/media/images/docs/performance/cloud_kv_tso_overloaded.png)
-
-In this example, the TiDB clusters are deployed in different data centers in the same region, and TiDB network and CPU resources are severely overloaded. The average `BatchGet` latency on TiDB is 38.6 ms, and the average `kv_batch_get` processing latency inside TiKV is 6.15 ms. The difference is more than 32 ms, which is much higher than the normal value. The average TSO wait latency is 9.45 ms and the RPC time is 14.3 ms.
-
-#### Storage Async Write Duration, Store Duration, and Apply Duration
-
-TiKV processes a write request in the following procedure:
-
-- `scheduler worker` processes the write request, performs a transaction consistency check, and converts the write request into a key-value pair to be sent to the `raftstore` module.
-- The TiKV consensus module `raftstore` applies the Raft consensus algorithm to make the storage layer (composed of multiple TiKVs) fault-tolerant.
-
-    Raftstore consists of a `Store` thread and an `Apply` thread:
-
-    - The `Store` thread processes Raft messages and new `proposals`. When a new `proposals` is received, the `Store` thread of the leader node writes to the local Raft DB and copies the message to multiple follower nodes. When this `proposals` is successfully persisted in most instances, the `proposals` is successfully committed.
-    - The `Apply` thread writes the committed `proposals` to the KV DB. When the data is successfully written to the KV DB, the `Apply` thread notifies externally that the write request has completed.
-
-![TiKV Write](https://docs-download.pingcap.com/media/images/docs/performance/store_apply.png)
-
-The `Storage Async Write Duration` metric records the latency after a write request enters raftstore. The data is collected on a basis of per request.
-
-The `Storage Async Write Duration` metric contains two parts, `Store Duration` and `Apply Duration`. You can use the following formula to determine whether the bottleneck for write requests is in the `Store` or `Apply` step.
+其中，Avg TiDB KV Request Duration 和 Avg TiKV GRPC Duration 的关系如下
 
 ```
-avg Storage Async Write Duration = avg Store Duration + avg Apply Duration
+Avg TiDB KV Request Duration = Avg TiKV GRPC Duration + TiDB 与 TiKV 之间的网络延迟 + TiKV GRPC 处理时间 + TiDB GRPC 处理时间和调度延迟。
 ```
 
-> **Note:**
+Avg TiDB KV Request Duration 和 Avg TiKV GRPC Duration 的差值跟网络流量和延迟，TiDB 和 TiKV 的资源使用情况密切相关。
+
+- 同一个机房内，Avg TiDB KV Request Duration 和 Avg TiKV GRPC Duration 的差值通常应该小于 2 毫秒。
+- 同一地区的不同可用区，Avg TiDB KV Request Duration 和 Avg TiKV GRPC Duration 的差值通常应该小于 5 毫秒。
+
+**示例 1：同机器低负载的集群**
+
+![Same Data Center](https://docs-download.pingcap.com/media/images/docs-cn/performance/oltp_kv_tso.png)
+
+在此负载中，TiDB 侧平均 Prewrite 请求延迟为 925 us，TiKV 内部 kv_prewrite 平均处理延迟为 720 us，相差 200 us 左右，是同机房内正常的延迟。TSO wait 平均延迟 206 us，rpc 时间为 144 us。
+
+**示例 2：公有云集群，负载正常**
+
+![Cloud Env ](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_kv_tso.png)
+
+在此示例中，TiDB 集群部署在同一个地区的不同机房。TiDB 侧平均 Commit 请求延迟为 12.7 ms，TiKV 内部 kv_commit 平均处理延迟为 10.2 ms，相差 2.5 ms 左右。TSO wait 平均延迟为 3.12 ms，rpc 时间为 693 us。
+
+**示例 3：公有云集群，资源严重过载**
+
+![Cloud Env, TiDB Overloaded](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_kv_tso_overloaded.png)
+
+在此示例中，TiDB 集群部署在同一个地区的不同机房，TiDB 网络和 CPU 资源严重过载。TiDB 侧平均 BatchGet 请求延迟为 38.6 ms，TiKV 内部 kv_batch_get 平均处理延迟为 6.15 ms，相差超过 32 ms，远高于正常值。TSO wait 平均延迟为 9.45 ms，rpc 时间为 14.3 ms。
+
+#### Storage Async Write Duration、Store Duration 和 Apply Duration
+
+TiKV 对于写请求的处理流程如下：
+
+- `scheduler worker` 会先处理写请求，进行事务一致性检查，并把写请求转化成键值对，发送到 `raftstore` 模块。
+- `raftstore` 为 TiKV 的共识模块，使用 Raft 共识算法，使多个 TiKV 组成的存储层可以容错。
+
+    Raftstore 分为 Store 线程和 Apply 线程：
+
+    - Store 线程负责处理 Raft 消息和新的 `proposals`。当收到新的 `proposals` 时，leader 节点的 store 线程会写入本地 Raft DB，并将消息复制到多个 follower 节点。当这个 `proposals` 在多数实例持久化成功之后，`proposals` 成功被提交。
+    - Apply 线程负责将提交的数据写入到 KV DB 中。当写操作的数据被成功地写入 KV 数据库中时，Apply 线程会通知外层请求写请求已经完成。
+
+![TiKV Write](https://docs-download.pingcap.com/media/images/docs-cn/performance/store_apply.png)
+
+Storage Async Write Duration 指标记录写请求进入 raftstore 之后的延迟，采集的粒度具体到每个请求的级别。
+
+Storage Async Write Duration 分为 Store Duration 和 Apply Duration。你可以通过以下公式定位写请求的瓶颈主要是在 Store 还是 Apply 步骤。
+
+```
+avg Storage Async Write Duration  = avg Store Duration + avg Apply Duration
+```
+
+> **注意：**
 >
-> `Store Duration` and `Apply Duration` are supported since v5.3.0.
+> Store Duration 和 Apply Duration 从 v5.3.0 版本开始支持。
 
-**Example 1: Comparison of the same OLTP workload in v5.3.0 and v5.4.0**
+**示例 1：同一个 OLTP 负载在 v5.3.0 和 v5.4.0 版本的对比**
 
-According to the preceding formula, the QPS of a write-heavy OLTP workload in v5.4.0 is 14% higher than that in v5.3.0:
+应用以上公式：v5.4.0 版本中，一个写密集的 OLTP 负载 QPS 比 v5.3.0 提升了 14%。
 
-- v5.3.0: 24.4 ms ~= 17.7 ms + 6.59 ms
-- v5.4.0: 21.4 ms ~= 14.0 ms + 7.33 ms
+- v5.3.0：24.4 ms ~= 17.7 ms + 6.59 ms
+- v5.4.0：21.4 ms ~= 14.0 ms + 7.33 ms
 
-In v5.4.0, the gPRC module has been optimized to accelerate Raft log replication, which reduces `Store Duration` compared with v5.3.0.
+因为 v5.4.0 版本中，TiKV 对 gRPC 模块进行了优化，优化了 Raft 日志复制速度，相比 v5.3.0 降低了 Store Duration。
 
-v5.3.0:
+v5.3.0：
 
-![v5.3.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.3.0_store_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.3.0_store_apply.png)
 
-v5.4.0:
+v5.4.0：
 
-![v5.4.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.4.0_store_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.4.0_store_apply.png)
 
-**Example 2: Store Duration is a bottleneck**
+**示例 2：Store Duration 瓶颈明显**
 
-Apply the preceding formula: 10.1 ms ~= 9.81 ms + 0.304 ms. The result indicates that the latency bottleneck for write requests is in `Store Duration`.
+应用以上公式：10.1 ms ~= 9.81 ms + 0.304 ms，说明写请求的延迟瓶颈在 Store Duration。
 
-![Store](https://docs-download.pingcap.com/media/images/docs/performance/cloud_store_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_store_apply.png)
 
-#### Commit Log Duration, Append Log Duration, and Apply Log Duration
+#### Commit Log Duration、Append Log Duration 和 Apply Log Duration
 
-`Commit Log Duration`, `Append Log Duration`, and `Apply Log Duration` are latency metrics for key operations within raftstore. These latencies are captured at the batch operation level, with each operation combining multiple write requests. Therefore, the latencies do not directly correspond to the `Store Duration` and `Apply Duration` mentioned above.
+Commit Log Duration、Append Log Duration 和 Apply Log Duration 这三个延迟是 raftstore 内部关键操作的延迟记录。这些记录采集的粒度是 batch 操作级别的，每个操作会把多个写请求合并在一起，因此不能直接对应上文的 Store Duration 和 Apply Duration。
 
-- `Commit Log Duration` and `Append Log Duration` record time of operations performed in the `Store` thread. `Commit Log Duration` includes the time of copying Raft logs to other TiKV nodes (to ensure raft-log persistence). `Commit Log Duration` usually contains two `Append Log Duration` operations, one for the leader and the other for the follower. `Commit Log Duration` is usually significantly higher than `Append Log Duration`, because the former includes the time of copying Raft logs to other TiKV nodes through network.
-- `Apply Log Duration` records the latency of `apply` Raft logs by the `Apply` thread.
+- Commit Log Duration 和 Append Log Duration 均为 store 线程的操作。Commit Log Duration 包含复制 Raft 日志到其他 TiKV 节点，保证 raft-log 的持久化。一般包含两次 Append Log Duration，一次 leader，一次 follower 的。Commit Log Duration 延迟通常会明显高于 Append Log Duration，因为包含了通过网络复制 Raft 日志到其他 TiKV 的时间。
+- Apply Log Duration 记录了 apply 线程 apply Raft 日志的延迟。
 
-Common scenarios where `Commit Log Duration` is long:
+Commit Log Duration 慢的常见场景：
 
-- There is a bottleneck in TiKV CPU resources and the scheduling latency is high
-- `raftstore.store-pool-size` is either excessively small or large (an excessively large value might also cause performance degradation)
-- The I/O latency is high, resulting in high `Append Log Duration` latency
-- The network latency between TiKV nodes is high
-- The number of the gRPC threads are too small, CPU usage is uneven among the GRPC threads.
+- TiKV CPU 资源存在瓶颈，调度延迟高
+- `raftstore.store-pool-size` 设置过小或者过大（过大也可能导致性能下降）
+- IO 延迟高，导致 Append Log Duration 延迟高
+- TiKV 之间的网络延迟比较高
+- TiKV 的 gRPC 线程数设置过小或者多个 gRPC CPU 资源使用不均衡
 
-Common scenarios where `Apply Log Duration` is long:
+Apply Log Duration 慢的常见场景：
 
-- There is a bottleneck in TiKV CPU resources and the scheduling latency is high
-- `raftstore.apply-pool-size` is either excessively small or large (an excessively large value might also cause performance degradation)
-- The I/O latency is high
+- TiKV CPU 资源存在瓶颈，调度延迟高
+- `raftstore.apply-pool-size` 设置过小或者过大（过大也可能导致性能下降）
+- IO 延迟比较高
 
-**Example 1: Comparison of the same OLTP workload in v5.3.0 and v5.4.0**
+**示例 1：同一个 OLTP 负载在 v5.3.0 和 v5.4.0 版本的对比**
 
-The QPS of a write-heavy OLTP workload in v5.4.0 is improved by 14% compared with that in v5.3.0. The following table compares the three key latencies.
+v5.4.0 版本，一个写密集的 OLTP 负载 QPS 比 v5.3.0 提升了 14%。对比这三个关键延迟：
 
-| Avg Duration | v5.3.0 (ms) | v5.4.0 (ms) |
+| Avg Duration   | v5.3.0(ms)   |    v5.4.0(ms)  |
 |:----------|:----------|:----------|
-| Append Log Duration | 0.27 | 0.303|
-| Commit Log Duration | 13 | 8.68 |
-| Apply Log Duration | 0.457|0.514 |
+| Append Log Duration  | 0.27 | 0.303|
+| Commit Log Duration  | 13   | 8.68 |
+| Apply Log Duration   | 0.457|0.514  |
 
-In v5.4.0, the gPRC module has been optimized to accelerate Raft log replication, which reduces `Commit Log Duration` and `Store Duration` compared with v5.3.0.
+因为 v5.4.0 版本中，TiKV 对 gRPC 模块进行了优化，优化了 Raft 日志复制速度，相比 v5.3.0 降低了 Commit Log Duration 和 Store Duration。
 
-v5.3.0:
+v5.3.0：
 
-![v5.3.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.3.0_commit_append_apply.png)
+![v5.3.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.3.0_commit_append_apply.png)
 
-v5.4.0:
+v5.4.0：
 
-![v5.4.0](https://docs-download.pingcap.com/media/images/docs/performance/v5.4.0_commit_append_apply.png)
+![v5.4.0](https://docs-download.pingcap.com/media/images/docs-cn/performance/v5.4.0_commit_append_apply.png)
 
-**Example 2: Commit Log Duration is a bottleneck**
+**示例 2：Commit Log Duration 瓶颈明显的例子**
 
-![Store](https://docs-download.pingcap.com/media/images/docs/performance/cloud_append_commit_apply.png)
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/cloud_append_commit_apply.png)
 
-- Average `Append Log Duration` = 4.38 ms
-- Average `Commit Log Duration` = 7.92 ms
-- Average `Apply Log Duration` = 172 us
+- 平均 Append Log Duration = 4.38 ms
+- 平均 Commit Log Duration = 7.92 ms
+- 平均 Apply Log Duration = 172 us
 
-For the `Store` thread, `Commit Log Duration` is obviously higher than `Apply Log Duration`. Meanwhile, `Append Log Duration` is significantly higher than `Apply Log Duration`, indicating that the `Store` thread might suffer from bottlenecks in both CPU and I/O. Possible ways to reduce `Commit Log Duration` and `Append Log Duration` are as follows:
+Store 线程的 Commit Log Duration 明显比 Apply Log Duration 高，并且 Append Log Duration 比 Apply Log Duration 明显的高，说明 Store 线程在 CPU 和 IO 都可能都存在瓶颈。可能降低 Commit Log Duration 和 Append Log Duration 的方式如下：
 
-- If TiKV CPU resources are sufficient, consider adding `Store` threads by increasing the value of `raftstore.store-pool-size`.
-- If TiDB is v5.4.0 or later, consider enabling [`Raft Engine`](/tikv-configuration-file.md#raft-engine) by setting `raft-engine.enable: true`. Raft Engine has a light execution path. This helps reduce I/O writes and long-tail latency of writes in some scenarios.
-- If TiKV CPU resources are sufficient and TiDB is v5.3.0 or later, consider enabling [`StoreWriter`](/tune-tikv-thread-performance.md#performance-tuning-for-tikv-thread-pools) by setting `raftstore.store-io-pool-size: 1`.
+- 如果 TiKV CPU 资源充足，考虑增加 Store 线程，即 `raftstore.store-pool-size`。
+- 如果 TiDB 为 v5.4.0 及之后的版本，考虑启用 [`Raft Engine`](/tikv-configuration-file.md#raft-engine)，Raft Engine 具有更轻量的执行路径，在一些场景下显著减少 IO 写入量和写入请求的长尾延迟，启用方式为设置 `raft-engine.enable: true`。
+- 如果 TiKV CPU 资源充足，且 TiDB 为 v5.3.0 及之后的版本，考虑启用 [`StoreWriter`](/tune-tikv-thread-performance.md#tikv-线程池调优)。启用方式：`raftstore.store-io-pool-size: 1`。
 
-## If my TiDB version is earlier than v6.1.0, what should I do to use the Performance Overview dashboard?
+## 低于 v6.1.0 的 TiDB 版本如何使用 Performance overview 面板
 
-Starting from v6.1.0, Grafana has a built-in Performance Overview dashboard by default. This dashboard is compatible with TiDB v4.x and v5.x versions. If your TiDB is earlier than v6.1.0, you need to manually import [`performance_overview.json`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/metrics/grafana/performance_overview.json), as shown in the following figure:
+从 v6.1.0 起，TiDB Grafana 组件默认内置了 Performance Overview 面板。Performance overview 面板兼容 TiDB v4.x 和 v5.x 版本。如果你的 TiDB 版本低于 v6.1.0，需要手动导入 [`performance_overview.json`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/metrics/grafana/performance_overview.json)。
 
-![Store](https://docs-download.pingcap.com/media/images/docs/performance/import_dashboard.png)
+导入方法如图所示：
+
+![Store](https://docs-download.pingcap.com/media/images/docs-cn/performance/import_dashboard.png)

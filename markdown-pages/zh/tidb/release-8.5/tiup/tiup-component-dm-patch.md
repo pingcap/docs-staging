@@ -1,137 +1,137 @@
 ---
-title: Apply Hotfix to DM Clusters Online
-summary: Learn how to apply hotfix patches to DM clusters.
+title: 在线应用 Hotfix 到 DM 集群
+summary: 了解如何应用 hotfix 补丁包到 DM 集群。
 ---
 
-# Apply Hotfix to DM Clusters Online
+# 在线应用 Hotfix 到 DM 集群
 
-If you need to dynamically replace the binaries of a service while the cluster is running (that is, to keep the cluster available during the replacement), you can use the `tiup dm patch` command. The command does the following:
+在集群运行过程中，如果需要动态替换某个服务的二进制文件（即替换过程中保持集群可用），那么可以使用 `tiup dm patch` 命令，它会完成以下几件事情：
 
-- Uploads the binary package for replacement to the target machine.
-- Takes the related nodes offline using the API.
-- Stops the target service.
-- Unpacks the binary package and replaces the service.
-- Starts the target service.
+- 将用于替换的二进制包上传到目标机器
+- 通过 API 下线节点
+- 停止目标服务
+- 解压二进制包，替换服务
+- 启动目标服务
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm patch <cluster-name> <package-path> [flags]
 ```
 
-- `<cluster-name>`: The name of the cluster to be operated
-- `<package-path>`: The path to the binary package used for replacement
+- `<cluster-name>` 代表要操作的集群名。
+- `<package-path>` 为用于替换的二进制包。
 
-### Preparation
+### 准备条件
 
-You need to pack the binary package required for this command in advance according to the following steps:
+执行 `tiup dm patch` 命令前，需要进行以下操作准备用于替换的二进制包：
 
-- Determine the name `${component}` of the component to be replaced (dm-master, dm-worker ...), the `${version}` of the component (v2.0.0, v2.0.1 ...), and the operating system `${os}` and platform `${arch}` on which the component runs.
-- Download the current component package using the command `wget https://tiup-mirrors.pingcap.com/${component}-${version}-${os}-${arch}.tar.gz -O /tmp/${component}-${version}-${os}-${arch}.tar.gz`.
-- Run `mkdir -p /tmp/package && cd /tmp/package` to create a temporary directory to pack files.
-- Run `tar xf /tmp/${component}-${version}-${os}-${arch}.tar.gz` to unpack the original binary package.
-- Run `find .` to view the file structure in the temporary package directory.
-- Copy the binary files or configuration files to the corresponding locations in the temporary directory.
-- Run `tar czf /tmp/${component}-hotfix-${os}-${arch}.tar.gz *` to pack the files in the temporary directory.
-- Finally, you can use `/tmp/${component}-hotfix-${os}-${arch}.tar.gz` as the value of `<package-path>` in the `tiup dm patch` command.
+- 确定当前要替换的组件名称 `${component}` (dm-master，dm-worker 等) 以及其版本 `${version}` (v2.0.0，v2.0.1 等)，以及其运行的平台 `${os}` (linux) 和 `${arch}` (amd64, arm64)
+- 下载当前的组件包：`wget https://tiup-mirrors.pingcap.com/${component}-${version}-${os}-${arch}.tar.gz -O /tmp/${component}-${version}-${os}-${arch}.tar.gz`
+- 建立临时打包目录：`mkdir -p /tmp/package && cd /tmp/package`
+- 解压原来的二进制包：`tar xf /tmp/${component}-${version}-${os}-${arch}.tar.gz`
+- 查看临时打包目录中的文件结构：`find .`
+- 将要替换的二进制文件或配置文件复制到临时目录的对应位置
+- 重新打包 `tar czf /tmp/${component}-hotfix-${os}-${arch}.tar.gz *`
 
-## Options
+完成以上操作后，`/tmp/${component}-hotfix-${os}-${arch}.tar.gz` 就可以作为 `<package-path>` 用于 patch 命令中。
+
+## 选项
 
 ### --overwrite
 
-- After you patch a certain component (such as dm-worker), when the tiup-dm scales out the component, tiup-dm uses the original component version by default. To use the version that you patch when the cluster scales out in the future, you need to specify the option `--overwrite` in the command.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 对某个组件（比如 TiDB，TiKV）进行 patch 之后，该集群扩容该组件时，tiup-dm 默认会用原来的版本。如果希望后续扩容的时候也使用 patch 之后的版本的话，就需要指定 `--overwrite` 选项。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-### -N, --node
+### -N, --node（strings，默认为 []，未选中任何节点）
 
-- Specifies the nodes to be replaced. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the cluster status table returned by the `[tiup dm display](/tiup/tiup-component-dm-display.md)` command.
-- Data type: `STRING`
-- If this option is not specified, TiUP selects all nodes to replace by default.
+指定要替换的节点，该选项的值为以逗号分割的节点 ID 列表，节点 ID 为[集群状态](/tiup/tiup-component-dm-display.md)表格的第一列。
 
-> **Note:**
+> **注意：**
 >
-> If the option `-R, --role` is specified at the same time, TiUP then replaces service nodes that match both the requirements of `-N, --node` and `-R, --role`.
+> 若同时指定了 `-R, --role`，那么将替换它们的交集中的服务。
 
-### -R, --role
+### -R, --role（strings，默认为 []，未选中任何角色）
 
-- Specifies the roles to be replaced. The value of this option is a comma-separated list of the roles of the nodes. You can get the roles of the nodes from the second column of the cluster status table returned by the `[tiup dm display](/tiup/tiup-component-dm-display.md)` command.
-- Data type: `STRING`
-- If this option is not specified, TiUP selects all roles to replace by default.
+指定要替换的角色，该选项的值为以逗号分割的节点角色列表，角色为[集群状态](/tiup/tiup-component-dm-display.md)表格的第二列。
 
-> **Note:**
+> **注意：**
 >
-> If the option `-N, --node` is specified at the same time, TiUP then replaces service nodes that match both the requirements of `-N, --node` and `-R, --role`.
+> 若同时指定了 `-N, --node`，那么将替换它们的交集中的服务。
 
 ### --offline
 
-- Declares that the current cluster is offline. When this option is specified, TiUP DM only replaces the binary files of the cluster components in place without restarting the service.
+声明当前集群处于离线状态。指定该选项时，TiUP DM 仅原地替换集群组件的二进制文件，不重启服务。
 
 ### -h, --help
 
-- Prints help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Example
+## 在线应用 Hotfix 示例
 
-The following example shows how to apply `v5.3.0-hotfix` to the `v5.3.0` cluster deployed using TiUP. The operations might vary if you deploy the cluster using other methods.
+以下将在使用 TiUP 部署的 DM 环境中演示如何应用 `v5.3.0-hotfix` 到 `v5.3.0`集群，其他部署方式可能需要调整部分操作。
 
-> **Note:**
+> **注意：**
 >
-> Hotfix is used only for emergency fixes. Its daily maintenance is complicated. It is recommended that you upgrade the DM cluster to an official version as soon as it is released.
+> Hotfix 仅用于紧急修复，其日常维护较为复杂，建议在正式版本发布后及时升级。
 
-### Preparations
+### 准备工作
 
-Before applying a hotfix, prepare the hotfix package `dm-linux-amd64.tar.gz` and confirm the current DM software version:
+在开始应用 Hotfix 之前，请准备好 Hotfix 补丁包 `dm-linux-amd64.tar.gz`，并确认当前环境 DM 软件版本：
 
 ```shell
 /home/tidb/dm/deploy/dm-master-8261/bin/dm-master/dm-master -V
 ```
 
-Output:
+输出示例：
 
 ```
 Release Version: v5.3.0
-
 Git Commit Hash: 20626babf21fc381d4364646c40dd84598533d66
 Git Branch: heads/refs/tags/v5.3.0
 UTC Build Time: 2021-11-29 08:29:49
 Go Version: go version go1.16.4 linux/amd64
 ```
 
-### Prepare the patch package and apply it to the DM cluster
+### 制作 Patch 补丁包并应用到 DM 集群
 
-1. Prepare the DM software package that matches the current version:
+1. 准备当前环境版本的 DM 软件包：
 
+    
     ```shell
     mkdir -p /tmp/package
     tar -zxvf /root/.tiup/storage/dm/packages/dm-master-v5.3.0-linux-amd64.tar.gz -C /tmp/package/
     tar -zxvf /root/.tiup/storage/dm/packages/dm-worker-v5.3.0-linux-amd64.tar.gz -C /tmp/package/
     ```
 
-2. Replace the binary file with the hotfix package:
+2. 替换新的二进制文件：
 
+    
     ```shell
-    # Decompress the hotfix package and use it to replace the binary file.
+    # 解压 Hotfix 压缩包并替换
     cd /root; tar -zxvf dm-linux-amd64.tar.gz
     cp /root/dm-linux-amd64/bin/dm-master /tmp/package/dm-master/dm-master
     cp /root/dm-linux-amd64/bin/dm-worker /tmp/package/dm-worker/dm-worker
-    # Re-package the modified files.
-    # Note that the packaging method might be different for other deployment methods.
+
+    # 重新打包
+    # 注意，其他部署方式可能有所不同
     cd /tmp/package/ && tar -czvf dm-master-hotfix-linux-amd64.tar.gz dm-master/
     cd /tmp/package/ && tar -czvf dm-worker-hotfix-linux-amd64.tar.gz dm-worker/
     ```
 
-3. Apply the hotfix:
+3. 应用补丁。
 
-    Query the cluster status. The following uses the cluster named `dm-test` as an example:
+    查询当前集群状态，以名称为 `dm-test` 的集群为例：
 
+    
     ```shell
     tiup dm display dm-test
     ```
 
-    Output:
+    输出示例：
 
     ```
     Cluster type:       dm
@@ -149,24 +149,27 @@ Go Version: go version go1.16.4 linux/amd64
     Total nodes: 5
     ```
 
-    Apply the hotfix to the specified node or specified role. If both `-R` and `-N` are specified, the intersection will be taken.
+    将补丁应用到指定节点或指定角色，若同时使用 `-R` 和 `-N`，将会取其交集。
 
+    
     ```
-    # Apply hotfix to a specified node.
+    # 为指定节点应用补丁
     tiup dm patch dm-test dm-master-hotfix-linux-amd64.tar.gz -N 172.16.100.21:8261
     tiup dm patch dm-test dm-worker-hotfix-linux-amd64.tar.gz -N 172.16.100.21:8262
-    # Apply hotfix to a specified role.
+
+    # 为指定角色应用补丁
     tiup dm patch dm-test dm-master-hotfix-linux-amd64.tar.gz -R dm-master
     tiup dm patch dm-test dm-worker-hotfix-linux-amd64.tar.gz -R dm-worker
     ```
 
-4. Query the hotfix application result:
+4. 查看补丁应用结果：
 
+    
     ```shell
     /home/tidb/dm/deploy/dm-master-8261/bin/dm-master/dm-master -V
     ```
 
-    Output:
+    输出示例：
 
     ```
     Release Version: v5.3.0-20211230
@@ -176,13 +179,14 @@ Go Version: go version go1.16.4 linux/amd64
     Go Version: go version go1.16.4 linux/amd64
     ```
 
-    The cluster information changes accordingly:
+    集群信息也会有所变化：
 
+    
     ```shell
     tiup dm display dm-test
     ```
 
-    Output:
+    输出示例：
 
     ```
     Starting component `dm`: /root/.tiup/components/dm/v1.8.1/tiup-dm display dm-test
@@ -201,4 +205,4 @@ Go Version: go version go1.16.4 linux/amd64
     Total nodes: 5
     ```
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

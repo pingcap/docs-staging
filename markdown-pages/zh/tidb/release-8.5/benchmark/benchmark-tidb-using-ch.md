@@ -1,51 +1,52 @@
 ---
-title: How to Run CH-benCHmark Test on TiDB
-summary: Learn how to run CH-benCHmark test on TiDB.
+title: 如何对 TiDB 进行 CH-benCHmark 测试
+summary: 本文介绍如何对 TiDB 进行 CH-benCHmark 测试。
 ---
 
-# How to Run CH-benCHmark Test on TiDB
+# 如何对 TiDB 进行 CH-benCHmark 测试
 
-This document describes how to test TiDB using CH-benCHmark.
+本文介绍如何对 TiDB 进行 CH-benCHmark 测试。
 
-CH-benCHmark is a mixed workload containing both [TPC-C](http://www.tpc.org/tpcc/) and [TPC-H](http://www.tpc.org/tpch/) tests. It is the most common workload to test HTAP systems. For more information, see [The mixed workload CH-benCHmark](https://dl.acm.org/doi/10.1145/1988842.1988850).
+CH-benCHmark 是包含 [TPC-C](http://www.tpc.org/tpcc/) 和 [TPC-H](http://www.tpc.org/tpch/) 的混合负载，也是用于测试 HTAP 系统的最常见负载。更多信息，请参考 [The mixed workload CH-benCHmark](https://dl.acm.org/doi/10.1145/1988842.1988850)。
 
-Before running the CH-benCHmark test, you need to deploy [TiFlash](/tiflash/tiflash-overview.md) first, which is a TiDB's HTAP component. After you deploy TiFlash and [create TiFlash replicas](#create-tiflash-replicas), TiKV will replicate the latest data of TPC-C online transactions to TiFlash in real time, and the TiDB optimizer will automatically push down OLAP queries from TPC-H workload to the MPP engine of TiFlash for efficient execution.
+在进行 CH-benCHmark 测试前，你需要先部署 TiDB 的 HTAP 组件 [TiFlash](/tiflash/tiflash-overview.md)。部署 TiFlash 并[创建 TiFlash 副本](#创建-tiflash-副本)后，对于 TPC-C 联机交易数据，系统将实时同步最新的数据到 TiFlash 组件；TiDB 优化器会自动将 TPC-H 负载的 OLAP 查询下推到 TiFlash MPP 引擎进行高效执行。
 
-The CH-benCHmark test in this document is implemented based on [go-tpc](https://github.com/pingcap/go-tpc). You can download the test program using the following [TiUP](/tiup/tiup-overview.md) command:
+本文使用 [go-tpc](https://github.com/pingcap/go-tpc) 作为 CH 测试实现，可以通过 [TiUP](/tiup/tiup-overview.md) 命令下载测试程序：
 
 
 ```shell
 tiup install bench
 ```
 
-For detailed usage of the TiUP Bench component, see [TiUP Bench](/tiup/tiup-bench.md).
+关于 TiUP Bench 组件的详细用法可参考 [TiUP Bench](/tiup/tiup-bench.md)。
 
-## Load data
+## 导入数据
 
-### Load TPC-C data
+### 导入 TPC-C 数据
 
-**Loading data is usually the most time-consuming and problematic stage of the entire TPC-C test.**
+**导入数据通常是整个 TPC-C 测试中最耗时、也是最容易出问题的阶段。**
 
-Taking 1000 warehouses as an example, you can execute the following TiUP command in shell for data load and test. Note that you need to replace `172.16.5.140` and `4000` in this document with your TiDB host and port values.
+本文以 1000 WAREHOUSE 为例，在 shell 中运行以下 TiUP 命令进行数据导入和测试。注意你需要将本文中的 `172.16.5.140` 和 `4000` 替换为你实际的 TiDB host 和 port 值。
+
 
 ```shell
 tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 prepare -T 32
 ```
 
-Depending on different machine configurations, this loading process might take a few hours. If the cluster size is small, you can use a smaller warehouse value for the test.
+基于不同的机器配置，数据导入过程可能会持续几个小时。如果是小型集群，可以使用较小的 WAREHOUSE 值进行测试。
 
-After the data is loaded, you can execute the `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check` command to validate the data correctness.
+数据导入完成后，可以通过命令 `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check` 验证数据正确性。
 
-### Load additional tables and views required for TPC-H
+### 导入 TPC-H 所需额外的表和视图
 
-Run the following TiUP command in the shell:
+在 shell 中运行 TiUP 命令：
 
 
 ```shell
 tiup bench ch -H 172.16.5.140 -P 4000 -D tpcc prepare
 ```
 
-The following is the log output:
+日志输出如下：
 
 ```
 creating nation
@@ -60,29 +61,29 @@ generate suppliers table done
 creating view revenue1
 ```
 
-## Create TiFlash replicas
+## 创建 TiFlash 副本
 
-After TiFlash is deployed, TiFlash does not automatically replicate TiKV data. You need to execute the following SQL statement to create TiFlash replicas for the `tpcc` database. Once the specified TiFlash replicas are created, TiKV automatically replicates the latest data to TiFlash in real-time. In the following example, two TiFlash nodes are deployed in the cluster and the replica number is set to 2.
+部署 TiFlash 后，TiFlash 并不会自动同步 TiKV 数据，你需要执行以下 SQL 语句创建整库的 TiFlash 副本。创建 TiFlash 副本后，系统自动实时同步最新数据到 TiFlash 组件。例如，当集群中部署了两个 TiFlash 节点时，如果将 replica 设置为 2，执行以下 SQL 语句将创建两个 TiFlash 副本。
 
 ```
-ALTER DATABASE tpcc SET tiflash replica 2;
+ALTER DATABASE tpcc SET TIFLASH REPLICA 2;
 ```
 
-To check whether the replication of all tables in the `tpcc` database is complete, execute the following statement, in which the `WHERE` clause is used to specify the databases and tables to be checked. If you want to check the replication status of all databases, remove the `WHERE` clause from the statement.
+可通过如下 SQL 语句确认所有表（通过 WHERE 语句可以指定需要确认的表，去掉 WHERE 语句则查看所有表）的 TiFlash 副本的状态是否完成同步：
 
 
 ```sql
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = 'tpcc';
 ```
 
-In the result of the above statement:
+查询结果中：
 
-- `AVAILABLE` indicates whether the TiFlash replica of a specific table is available or not. `1` means available and `0` means unavailable. Once a replica becomes available, this status does not change anymore.
-- `PROGRESS` means the progress of the replication. The value is between `0` and `1`. `1` means that the replication is complete for the TiFlash replica.
+* `AVAILABLE` 字段表示该表的 TiFlash 副本是否可用。1 代表可用，0 代表不可用。副本状态变为可用之后就不再改变。
+* `PROGRESS` 字段代表同步进度，进度值在 0 到 1 之间，1 代表 TiFlash 副本已经完成同步。
 
-## Collect statistics
+## 搜集统计信息
 
-To ensure that the TiDB optimizer can generate the optimal execution plan, execute the following SQL statements to collect statistics in advance. **Be sure to set [`tidb_analyze_column_options`](/system-variables.md#tidb_analyze_column_options-new-in-v830) to `ALL`, otherwise collecting statistics can result in a significant drop in query performance.**
+为了确保优化器能生成最优的执行计划，请执行以下 SQL 语句提前搜集统计信息。**务必确保将 [`tidb_analyze_column_options`](/system-variables.md#tidb_analyze_column_options-从-v830-版本开始引入) 系统变量的值设置为 `ALL`，否则统计信息收集可能会导致查询性能显著下降。**
 
 ```
 set global tidb_analyze_column_options='ALL';
@@ -100,16 +101,16 @@ analyze table region;
 analyze table supplier;
 ```
 
-## Run the test
+## 运行测试
 
-Taking 50 TP concurrency and 1 AP concurrency as an example, execute the following command to run the test:
+以 50 TP 并发，1 AP 并发为例，运行以下测试命令：
 
 
 ```shell
 tiup bench ch --host 172.16.5.140 -P4000 --warehouses 1000 run -D tpcc -T 50 -t 1 --time 1h
 ```
 
-During the test, test results are continuously printed on the console. For example:
+命令运行过程中，控制台上会持续打印测试结果。例如：
 
 ```text
 [Current] NEW_ORDER - Takes(s): 10.0, Count: 13524, TPM: 81162.0, Sum(ms): 998317.6, Avg(ms): 73.9, 50th(ms): 71.3, 90th(ms): 100.7, 95th(ms): 113.2, 99th(ms): 159.4, 99.9th(ms): 209.7, Max(ms): 243.3
@@ -127,7 +128,7 @@ During the test, test results are continuously printed on the console. For examp
 ...
 ```
 
-After the test is finished, the test summary results are printed. For example:
+命令运行结束后，控制台会打印测试统计结果。例如：
 
 ```text
 Finished: 50 OLTP workers, 1 OLAP workers
@@ -163,4 +164,4 @@ tpmC: 93826.9, efficiency: 729.6%
 [Summary] Q7     - Count: 11, Sum(ms): 158928.2, Avg(ms): 14446.3
 ```
 
-After the test is finished, you can execute the `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check` command to validate the data correctness.
+测试完成之后，也可以运行 `tiup bench tpcc -H 172.16.5.140 -P 4000 -D tpcc --warehouses 1000 check` 验证数据正确性。

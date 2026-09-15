@@ -1,52 +1,53 @@
 ---
-title: Migrate Data Using Data Migration
-summary: Use the Data Migration tool to migrate the full data and the incremental data.
+title: 使用 DM 迁移数据
+summary: 本文介绍如何使用 DM 工具迁移数据。首先部署 DM 集群，然后检查集群信息和创建数据源。配置任务后，启动任务并查询任务状态。最后，停止任务并监控任务与查看日志。
 ---
 
-# Migrate Data Using Data Migration
+# 使用 DM 迁移数据
 
-This guide shows how to migrate data using the Data Migration (DM) tool.
+本文介绍如何使用 DM 工具迁移数据。
 
-## Step 1: Deploy the DM cluster
+## 第 1 步：部署 DM 集群
 
-It is recommended to [deploy the DM cluster using TiUP](/dm/deploy-a-dm-cluster-using-tiup.md). You can also [deploy the DM cluster using binary](/dm/deploy-a-dm-cluster-using-binary.md) for trial or test.
+推荐[使用 TiUP 部署 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)；也可以[使用 binary 部署 DM 集群](/dm/deploy-a-dm-cluster-using-binary.md)用于体验或测试。
 
-> **Note:**
+> **注意：**
 >
-> - For database passwords in all the DM configuration files, it is recommended to use the passwords encrypted by `dmctl`. If a database password is empty, it is unnecessary to encrypt it. See [Encrypt the database password using dmctl](/dm/dm-manage-source.md#encrypt-the-database-password).
-> - The user of the upstream and downstream databases must have the corresponding read and write privileges.
+> - 在 DM 所有的配置文件中，对于数据库密码推荐使用 dmctl 加密后的密文。如果数据库密码为空，则不需要加密。关于如何使用 dmctl 加密明文密码，参考[使用 dmctl 加密数据库密码](/dm/dm-manage-source.md#加密数据库密码)。
+> - 上下游数据库用户必须拥有相应的读写权限。
 
-## Step 2: Check the cluster information
+## 第 2 步：检查集群信息
 
-After the DM cluster is deployed using TiUP, the configuration information is like what is listed below.
+使用 TiUP 部署 DM 集群后，相关配置信息如下：
 
-- The configuration information of related components in the DM cluster:
+- DM 集群相关组件配置信息
 
-    | Component | Host | Port |
-    |------| ---- | ---- |
+    | 组件 | 主机 | 端口 |
+    |:------|:---- |:---- |
     | dm_worker1 | 172.16.10.72 | 8262 |
     | dm_worker2 | 172.16.10.73 | 8262 |
     | dm_master | 172.16.10.71 | 8261 |
 
-- The information of upstream and downstream database instances:
+- 上下游数据库实例相关信息
 
-    | Database instance | Host | Port | Username | Encrypted password |
-    | -------- | --- | --- | --- | --- |
-    | Upstream MySQL-1 | 172.16.10.81 | 3306 | root | VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU= |
-    | Upstream MySQL-2 | 172.16.10.82 | 3306 | root | VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU= |
-    | Downstream TiDB | 172.16.10.83 | 4000 | root | |
+    | 数据库实例 | 主机 | 端口 | 用户名 | 加密密码 |
+    |:-------- |:--- | :--- | :--- | :--- |
+    | 上游 MySQL-1 | 172.16.10.81 | 3306 | root | VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU= |
+    | 上游 MySQL-2 | 172.16.10.82 | 3306 | root | VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU= |
+    | 下游 TiDB | 172.16.10.83 | 4000 | root | |
 
-The list of privileges needed on the MySQL host can be found in the [precheck](/dm/dm-precheck.md) documentation.
+上游 MySQL 数据库实例用户所需权限参见[上游 MySQL 实例配置前置检查](/dm/dm-precheck.md)介绍。
 
-## Step 3: Create data source
+## 第 3 步：创建数据源
 
-1. Write MySQL-1 related information to `conf/source1.yaml`:
+1. 将 MySQL-1 的相关信息写入到 `conf/source1.yaml` 中：
 
     ```yaml
     # MySQL1 Configuration.
 
     source-id: "mysql-replica-01"
-    # This indicates that whether DM-worker uses Global Transaction Identifier (GTID) to pull binlog. Before you use this configuration item, make sure that the GTID mode is enabled in the upstream MySQL.
+
+    # DM-worker 是否使用全局事务标识符 (GTID) 拉取 binlog。使用前提是在上游 MySQL 已开启 GTID 模式。
     enable-gtid: false
 
     from:
@@ -56,86 +57,80 @@ The list of privileges needed on the MySQL host can be found in the [precheck](/
       port: 3306
     ```
 
-2. Execute the following command in the terminal, and use `tiup dmctl` to load the MySQL-1 data source configuration to the DM cluster:
+2. 在终端中执行下面的命令，使用 `tiup dmctl` 将 MySQL-1 的数据源配置加载到 DM 集群中：
 
     
     ```bash
     tiup dmctl --master-addr 172.16.10.71:8261 operate-source create conf/source1.yaml
     ```
 
-3. For MySQL-2, modify the relevant information in the configuration file and execute the same `dmctl` command.
+3. 对于 MySQL-2，修改配置文件中的相关信息，并执行相同的 dmctl 命令。
 
-## Step 4: Configure the data migration task
+## 第 4 步：配置任务
 
-The following example assumes that you need to migrate all the `test_table` table data in the `test_db` database of both the upstream MySQL-1 and MySQL-2 instances, to the downstream `test_table` table in the `test_db` database of TiDB, in the full data plus incremental data mode.
+假设需要将 MySQL-1 和 MySQL-2 实例的 `test_db` 库的 `test_table` 表以**全量+增量**的模式迁移到下游 TiDB 的 `test_db` 库的 `test_table` 表。
 
-Edit the `task.yaml` task configuration file as below:
+编辑任务配置文件 `task.yaml`：
 
 ```yaml
-# The task name. You need to use a different name for each of the multiple tasks that
-# run simultaneously.
+# 任务名，多个同时运行的任务不能重名。
 name: "test"
-# The full data plus incremental data (all) migration mode.
+# 全量+增量 (all) 迁移模式。
 task-mode: "all"
-# The downstream TiDB configuration information.
+# 下游 TiDB 配置信息。
 target-database:
   host: "172.16.10.83"
   port: 4000
   user: "root"
   password: ""
 
-# Configuration of all the upstream MySQL instances required by the current data migration task.
+# 当前数据迁移任务需要的全部上游 MySQL 实例配置。
 mysql-instances:
 -
-  # The ID of upstream instances or the migration group. You can refer to the configuration of `source_id` in the "inventory.ini" file or in the "dm-master.toml" file.
+  # 上游实例或者复制组 ID，参考 `inventory.ini` 的 `source_id` 或者 `dm-master.toml` 的 `source-id 配置`。
   source-id: "mysql-replica-01"
-  # The configuration item name of the block and allow lists of the name of the
-  # database/table to be migrated, used to quote the global block and allow
-  # lists configuration that is set in the global block-allow-list below.
-  block-allow-list: "global"  # Use black-white-list if the DM version is earlier than or equal to v2.0.0-beta.2.
-  # The configuration item name of the dump processing unit, used to quote the global configuration of the dump unit.
+  # 需要迁移的库名或表名的黑白名单的配置项名称，用于引用全局的黑白名单配置，全局配置见下面的 `block-allow-list` 的配置。
+  block-allow-list: "global"          # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
+  # dump 处理单元的配置项名称，用于引用全局的 dump 处理单元配置。
   mydumper-config-name: "global"
 
 -
   source-id: "mysql-replica-02"
-  block-allow-list: "global"  # Use black-white-list if the DM version is earlier than or equal to v2.0.0-beta.2.
+  block-allow-list: "global"          # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
   mydumper-config-name: "global"
 
-# The global configuration of block and allow lists. Each instance can quote it by the
-# configuration item name.
-block-allow-list:                     # Use black-white-list if the DM version is earlier than or equal to v2.0.0-beta.2.
+# 黑白名单全局配置，各实例通过配置项名引用。
+block-allow-list:                     # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
   global:
-    do-tables:                        # The allow list of upstream tables to be migrated.
-    - db-name: "test_db"              # The database name of the table to be migrated.
-      tbl-name: "test_table"          # The name of the table to be migrated.
+    do-tables:                        # 需要迁移的上游表的白名单。
+    - db-name: "test_db"              # 需要迁移的表的库名。
+      tbl-name: "test_table"          # 需要迁移的表的名称。
 
-# The global configuration of the dump unit. Each instance can quote it by the configuration item name.
+# dump 处理单元全局配置，各实例通过配置项名引用。
 mydumpers:
   global:
     extra-args: ""
 ```
 
-## Step 5: Start the data migration task
+## 第 5 步：启动任务
 
-To detect possible errors of data migration configuration in advance, DM provides the precheck feature:
+为了提前发现数据迁移任务的一些配置错误，DM 中增加了[前置检查](/dm/dm-precheck.md)功能：
 
-- DM automatically checks the corresponding privileges and configuration while starting the data migration task.
-- You can also use the `check-task` command to manually precheck whether the upstream MySQL instance configuration satisfies the DM requirements.
+- 启动数据迁移任务时，DM 自动检查相应的权限和配置。
+- 也可使用 `check-task` 命令手动前置检查上游的 MySQL 实例配置是否符合 DM 的配置要求。
 
-For details about the precheck feature, see [Precheck the upstream MySQL instance configuration](/dm/dm-precheck.md).
-
-> **Note:**
+> **注意：**
 >
-> Before starting the data migration task for the first time, you should have got the upstream configured. Otherwise, an error is reported while you start the task.
+> 第一次启动数据迁移任务时，必须确保上游数据库已配置。否则，启动任务时会报错。
 
-Run the `tiup dmctl` command to start the data migration tasks. `task.yaml` is the configuration file that is edited above.
+使用 `tiup dmctl` 执行以下命令启动数据迁移任务。其中，`task.yaml` 是之前编辑的配置文件。
 
 
 ```bash
 tiup dmctl --master-addr 172.16.10.71:8261 start-task ./task.yaml
 ```
 
-- If the above command returns the following result, it indicates the task is successfully started.
+- 如果执行该命令后返回的结果如下，则表明任务已成功启动。
 
     ```json
     {
@@ -156,32 +151,39 @@ tiup dmctl --master-addr 172.16.10.71:8261 start-task ./task.yaml
     }
     ```
 
-- If you fail to start the data migration task, modify the configuration according to the returned prompt and then run the `start-task task.yaml` command to restart the task.
+- 如果任务启动失败，可根据返回结果的提示进行配置变更后执行 `start-task task.yaml` 命令重新启动任务。
 
-## Step 6: Check the data migration task
+## 第 6 步：查询任务
 
-If you need to check the task state or whether a certain data migration task is running in the DM cluster, run the following command in `tiup dmctl`:
+如需了解 DM 集群中是否存在正在运行的迁移任务及任务状态等信息，可使用 `tiup dmctl` 执行以下命令进行查询：
 
 
 ```bash
 tiup dmctl --master-addr 172.16.10.71:8261 query-status
 ```
 
-## Step 7: Stop the data migration task
+## 第 7 步：停止任务
 
-If you do not need to migrate data any more, run the following command in `tiup dmctl` to stop the task:
+如果不再需要进行数据迁移，可以使用 `tiup dmctl` 执行以下命令停止迁移任务：
+
 
 ```bash
 tiup dmctl --master-addr 172.16.10.71:8261 stop-task test
 ```
 
-`test` is the task name that you set in the `name` configuration item of the `task.yaml` configuration file.
+其中的 `test` 是 `task.yaml` 配置文件中 `name` 配置项设置的任务名。
 
-## Step 8: Monitor the task and check logs
+## 第 8 步：监控任务与查看日志
 
-Assuming that Prometheus, Alertmanager, and Grafana are successfully deployed along with the DM cluster deployment using TiUP, and the Grafana address is `172.16.10.71`. To view the alert information related to DM, you can open <http://172.16.10.71:9093> in a browser and enter into Alertmanager; to check monitoring metrics, go to <http://172.16.10.71:3000>, and choose the DM dashboard.
+如果使用 TiUP 部署 DM 集群时，正确部署了 Prometheus、Alertmanager 与 Grafana，且其地址均为 `172.16.10.71`。可在浏览器中打开 <http://172.16.10.71:9093> 进入 Alertmanager 查看 DM 告警信息；可在浏览器中打开 <http://172.16.10.71:3000> 进入 Grafana，选择 DM 的 dashboard 查看 DM 相关监控项。
 
-While the DM cluster is running, DM-master, DM-worker, and dmctl output the monitoring metrics information through logs. The log directory of each component is as follows:
+DM 在运行过程中，DM-worker、DM-master 及 dmctl 都会通过日志输出相关信息。各组件的日志目录如下：
 
-- DM-master log directory: It is specified by the `--log-file` DM-master process parameter. If DM is deployed using TiUP, the log directory is `{log_dir}` in the DM-master node.
-- DM-worker log directory: It is specified by the `--log-file` DM-worker process parameter. If DM is deployed using TiUP, the log directory is `{log_dir}` in the DM-worker node.
+- DM-master 日志目录：通过 DM-master 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录位于 `{log_dir}`。
+- DM-worker 日志目录：通过 DM-worker 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录位于 `{log_dir}`。
+
+## 相关资源
+
+<RelatedResources>
+  <ResourceCard title="管理 TiDB 实验 10: 使用 TiDB Data Migration 进行数据迁移" type="lab" link="https://labs.pingcap.com/labs/dba_303_lab_ff9" imgSrc="https://lab-static.pingcap.com/quick-demo/dba_303_ch11_en.png" duration="60 分钟" />
+</RelatedResources>

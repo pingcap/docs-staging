@@ -1,46 +1,44 @@
 ---
-title: TiDB Tools Use Cases
-summary: Learn the common use cases of TiDB tools and how to choose the tools.
+title: TiDB 工具的使用场景
+summary: 本文档介绍 TiDB 工具的常见使用场景与工具选择。
 ---
 
-# TiDB Tools Use Cases
+# TiDB 工具的使用场景
 
-This document introduces the common use cases of TiDB tools and how to choose the right tool for your scenario.
+本文档从数据迁移工具的使用场景出发，介绍部分常见场景下的迁移工具的选择。
 
-## Deploy and operate TiDB on physical or virtual machines
+## 在物理机或虚拟机上部署运维 TiDB
 
-If you need to deploy and operate TiDB on physical or virtual machines, you can install [TiUP](/tiup/tiup-overview.md), and then use TiUP to manage TiDB components such as TiDB, PD, and TiKV.
+当需要在物理机或虚拟机上部署运维 TiDB 时，你可以先安装 [TiUP](/tiup/tiup-overview.md)，再通过 TiUP 管理 TiDB 的众多组件，如 TiDB、PD、TiKV 等。
 
-## Deploy and operate TiDB on Kubernetes
+## 在 Kubernetes 上部署运维 TiDB
 
-If you need to deploy and operate TiDB on Kubernetes, you can deploy a Kubernetes cluster, and then deploy [TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable). After that, you can use TiDB Operator to deploy and operate a TiDB cluster.
+当需要在 Kubernetes 上部署运维 TiDB 时，你可以先创建 Kubernetes 集群，部署[TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable)，然后使用 TiDB Operator 部署运维 TiDB 集群。
 
-## Import data from CSV to TiDB
+## 从 CSV 导入数据到 TiDB
 
-If you need to import the compatible CSV files exported by other tools to TiDB, use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md).
+当需要将其他工具导出的格式兼容的 CSV files 导入到 TiDB 时，可使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)。
 
-## Import full data from MySQL/Aurora
+## 从 MySQL/Aurora 导入全量数据
 
-If you need to import full data from MySQL/Aurora, use [Dumpling](/dumpling-overview.md) first to export data as SQL dump files, and then use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import data into the TiDB cluster.
+当需要从 MySQL/Aurora 导入全量数据时，可先使用 [Dumpling](/dumpling-overview.md) 将数据导出为 SQL dump files，然后再使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 将数据导入到 TiDB 集群。
 
-## Migrate data from MySQL/Aurora
+## 从 MySQL/Aurora 迁移数据
 
-If you need to migrate both full data and incremental data from MySQL/Aurora, use [TiDB Data Migration](/dm/dm-overview.md) (DM) to perform the [Migrate Data from Amazon Aurora to TiDB](/migrate-aurora-to-tidb.md).
+当既需要从 MySQL/Aurora 导入全量数据，又需要迁移增量数据时，可使用 [TiDB Data Migration (DM)](/dm/dm-overview.md) 完成[从 Amazon Aurora 迁移数据到 TiDB](/migrate-aurora-to-tidb.md)。
 
-If the full data volume is large (at the TB level), you can first use [Dumpling](/dumpling-overview.md) and [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to perform the full data migration, and then use DM to perform the incremental data migration.
+如果全量数据量较大（TB 级别），则可先使用 [Dumpling](/dumpling-overview.md) 与 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 完成全量数据的迁移，再使用 DM 完成增量数据的迁移。
 
-## Back up and restore TiDB cluster
+## TiDB 集群备份与恢复
 
-If you need to back up a TiDB cluster or restore backed up data to the cluster, use [BR](/br/backup-and-restore-overview.md) (Backup & Restore).
+当需要对 TiDB 集群进行备份或在之后对 TiDB 集群进行恢复时，可使用 [BR](/br/backup-and-restore-overview.md)。
 
-In addition, BR can also be used to perform [incremental backup](/br/br-incremental-guide.md#back-up-incremental-data) and [incremental restore](/br/br-incremental-guide.md#restore-incremental-data) of TiDB cluster data.
+## 迁出数据到 TiDB
 
-## Migrate data to TiDB
+当需要将 TiDB 集群的数据迁出到其他 TiDB 集群时，可使用 [Dumpling](/dumpling-overview.md) 从 TiDB 将全量数据导出为 SQL dump files，然后再使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 将数据导入到 TiDB。
 
-If you need to migrate data from a TiDB cluster to another TiDB cluster, use [Dumpling](/dumpling-overview.md) to export full data from TiDB as SQL dump files, and then use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import data to another TiDB cluster.
+如果还需要执行增量数据的迁移，则可使用 [TiCDC](/ticdc/ticdc-overview.md)。
 
-If you also need to migrate incremental data, you can use [TiCDC](/ticdc/ticdc-overview.md).
+## TiDB 增量数据订阅
 
-## TiDB incremental data subscription
-
-If you need to subscribe to TiDB's incremental changes, you can use [TiCDC](/ticdc/ticdc-overview.md).
+当需要订阅 TiDB 增量数据的变更时，可使用 [TiCDC](/ticdc/ticdc-overview.md)。

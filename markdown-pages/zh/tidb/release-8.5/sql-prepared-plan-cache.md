@@ -1,83 +1,87 @@
 ---
-title: SQL Prepared Execution Plan Cache
-summary: 了解 TiDB 中的 SQL Prepared 执行计划缓存。
+title: Prepare 语句执行计划缓存
+summary: Prepare 语句执行计划缓存功能默认打开，可通过变量启用或关闭。缓存功能仅针对 Prepare/Execute 请求，对普通查询无效。缓存功能会有一定内存开销，可通过监控查看内存使用情况。可手动清空计划缓存，但不支持一次性清空整个集群的计划缓存。忽略 COM_STMT_CLOSE 指令和 DEALLOCATE PREPARE 语句，可解决计划被立即清理的问题。监控 Queries Using Plan Cache OPS 和 Plan Cache Miss OPS，以确保 SQL 执行计划缓存正常工作。Prepared Statement Count 图表显示非零值，表示应用使用了预处理语句。
 ---
 
-# SQL Prepared 执行计划缓存
+# Prepare 语句执行计划缓存
 
-TiDB 支持对 `Prepare` 和 `Execute` 查询的执行计划进行缓存。这包括两种形式的预处理语句：
+TiDB 支持对 `Prepare`/`Execute` 请求的执行计划缓存。其中包括以下两种形式的预处理语句：
 
-- 使用 `COM_STMT_PREPARE` 和 `COM_STMT_EXECUTE` 协议特性。
-- 使用 SQL 语句 `PREPARE` 和 `EXECUTE`。
+- 使用 `COM_STMT_PREPARE` 和 `COM_STMT_EXECUTE` 的协议功能；
+- 执行 `Prepare`/`Execute` SQL 语句查询；
 
-TiDB 优化器对这两类查询的处理方式相同：在准备阶段，参数化的查询会被解析成 AST（抽象语法树）并缓存；在后续执行时，执行计划会根据存储的 AST 和具体参数值生成。
+TiDB 优化器对这两类查询的处理是一样的：`Prepare` 时将参数化的 SQL 查询解析成 AST（抽象语法树），每次 `Execute` 时根据保存的 AST 和具体的参数值生成执行计划。
 
-当启用执行计划缓存时，在第一次执行时，每个 `Prepare` 语句会检查当前查询是否可以使用执行计划缓存，如果可以，则将生成的执行计划放入由 LRU（最近最少使用）链表实现的缓存中。在随后的 `Execute` 查询中，会从缓存中获取执行计划并进行可用性检查。如果检查成功，则跳过生成执行计划的步骤；否则，重新生成执行计划并保存到缓存中。
+当开启执行计划缓存后，每条 `Prepare` 语句的第一次 `Execute` 会检查当前查询是否可以使用执行计划缓存，如果可以则将生成的执行计划放进一个由 LRU 链表构成的缓存中；在后续的 `Execute` 中，会先从缓存中获取执行计划，并检查是否可用，如果获取和检查成功则跳过生成执行计划这一步，否则重新生成执行计划并放入缓存中。
 
-TiDB 还支持对某些非 `PREPARE` 语句的执行计划缓存，类似于 `Prepare`/`Execute` 语句。更多详情请参考 [Non-prepared plan cache](/sql-non-prepared-plan-cache.md)。
+对于某些非 `PREPARE` 语句，TiDB 可以像 `Prepare`/`Execute` 语句一样支持执行计划缓存，详情请参考[非 Prepare 语句执行计划缓存](/sql-non-prepared-plan-cache.md)。
 
-在当前版本的 TiDB 中，如果一个 `Prepare` 语句满足以下任意条件，则该查询或计划不会被缓存：
+在当前版本中，当 `Prepare` 语句符合以下条件任何一条，查询或者计划不会被缓存：
 
-- 查询包含 `SELECT`、`UPDATE`、`INSERT`、`DELETE`、`Union`、`Intersect` 和 `Except` 以外的 SQL 语句。
-- 查询访问临时表，或包含生成列的表，或使用静态模式（即 [`tidb_partition_prune_mode`](/system-variables.md#tidb_partition_prune_mode-new-in-v51) 设置为 `static`）访问分区表。
-- 查询包含非相关子查询，例如 `SELECT * FROM t1 WHERE t1.a > (SELECT 1 FROM t2 WHERE t2.b < 1)`。
-- 查询包含在执行计划中带有 `PhysicalApply` 操作符的相关子查询，例如 `SELECT * FROM t1 WHERE t1.a > (SELECT a FROM t2 WHERE t1.b > t2.b)`。
-- 查询包含 `ignore_plan_cache` 或 `set_var` 提示，例如 `SELECT /*+ ignore_plan_cache() */ * FROM t` 或 `SELECT /*+ set_var(max_execution_time=1) */ * FROM t`。
-- 查询包含除 `?` 以外的变量（包括系统变量或用户定义变量），例如 `select * from t where a>? and b>@x`。
-- 查询包含无法缓存的函数：`database()`、`current_user`、`current_role`、`user`、`connection_id`、`last_insert_id`、`row_count`、`version` 和 `like`。
-- 查询使用变量作为 `LIMIT` 参数（如 `LIMIT ?` 和 `LIMIT 10, ?`），且变量值大于 10000。
-- 查询在 `Order By` 后包含 `?`，如 `Order By ?`。此类查询根据 `?` 指定的列排序。如果针对不同列的查询使用相同的执行计划，结果会出错。因此，这类查询不缓存。但如果是常见的查询，例如 `Order By a+?`，则会缓存。
-- 查询在 `Group By` 后包含 `?`，如 `Group By?`。此类查询根据 `?` 指定的列分组。如果针对不同列的查询使用相同的执行计划，结果会出错。因此，这类查询不缓存。但如果是常见的查询，例如 `Group By a+?`，则会缓存。
-- 查询在定义 `Window Frame` 窗口函数时包含 `?`，如 `(partition by year order by sale rows ? preceding)`。如果 `?` 出现在窗口函数的其他位置，查询也会被缓存。
-- 查询包含用于比较 `int` 和 `string` 的参数，例如 `c_int >= ?` 或 `c_int in (?, ?)`，其中 `?` 表示字符串类型，如 `set @x='123'`。为了确保查询结果与 MySQL 兼容，参数需要在每次查询中调整，因此此类查询不缓存。
-- 计划尝试访问 `TiFlash`。
-- 在大多数情况下，包含 `TableDual` 的计划不会被缓存，除非当前的 `Prepare` 语句没有参数。
-- 查询访问 TiDB 系统视图，如 `information_schema.columns`。不建议使用 `Prepare` 和 `Execute` 语句访问系统视图。
+- `SELECT`、`UPDATE`、`INSERT`、`DELETE`、`Union`、`Intersect`、`Except` 以外的 SQL 语句；
+- 访问临时表、包含生成列的表的查询，或使用静态模式（即 [`tidb_partition_prune_mode`](/system-variables.md#tidb_partition_prune_mode-从-v51-版本开始引入) 设置为 `static`）访问分区表的查询；
+- 查询中包含非关联子查询，例如 `SELECT * FROM t1 WHERE t1.a > (SELECT 1 FROM t2 WHERE t2.b < 1)`；
+- 执行计划中带有 `PhysicalApply` 算子的关联子查询，例如 `SELECT * FROM t1 WHERE t1.a > (SELECT a FROM t2 WHERE t1.b > t2.b)`；
+- 包含 `ignore_plan_cache` 或 `set_var` 这两个 Hint 的查询，例如 `SELECT /*+ ignore_plan_cache() */ * FROM t` 或 `SELECT /*+ set_var(max_execution_time=1) */ * FROM t`；
+- 包含除 `?` 外其他变量（即系统变量或用户自定义变量）的查询，例如 `select * from t where a>? and b>@x`；
+- 查询包含无法被缓存函数。目前不能被缓存的函数有：`database()`、`current_user`、`current_role`、`user`、`connection_id`、`last_insert_id`、`row_count`、`version`、`like`；
+- `LIMIT` 后面带有变量（例如 `LIMIT ?` 或 `LIMIT 10, ?`）且变量值大于 10000 的执行计划不缓存；
+- `?` 直接在 `Order By` 后的查询，如 `Order By ?`，此时 `?` 表示根据 `Order By` 后第几列排序，排序列不同的查询使用同一个计划可能导致错误结果，故不缓存；如果是普通表达式，如 `Order By a+?` 则会缓存；
+- `?` 紧跟在 `Group by` 后的查询，如 `Group By ?`，此时 `?` 表示根据 `Group By` 后第几列聚合，聚合列不同的查询使用同一个计划可能导致错误结果，故不缓存；如果是普通表达式，如 `Group By a+?` 则会缓存；
+- `?` 出现在窗口函数 `Window Frame` 定义中的查询，如 `(partition by year order by sale rows ? preceding)`；如果 `?` 出现在窗口函数的其他位置，则会缓存；
+- 用参数进行 `int` 和 `string` 比较的查询，如 `c_int >= ?` 或者 `c_int in (?, ?)`等，其中 `?` 为字符串类型，如 `set @x='123'`；此时为了保证结果和 MySQL 兼容性，需要每次对参数进行调整，故不会缓存；
+- 会访问 `TiFlash` 的计划不会被缓存；
+- 大部分情况下计划中含有 `TableDual` 的计划将将不会被缓存，除非当前执行的 `Prepare` 语句不含参数，则对应的 `TableDual` 计划可以被缓存。
+- 访问 TiDB 系统视图的查询，如 `information_schema.columns`。不建议使用 `Prepare`/`Execute` 语句访问系统视图。
 
-TiDB 对查询中的 `?` 数量有限制。如果查询中包含超过 65535 个 `?`，会报错 `Prepared statement contains too many placeholders`。
+TiDB 对 `?` 的个数有限制，如果超过了 65535 个，则会报错 `Prepared statement contains too many placeholders`。
 
-LRU 链表设计为会话级缓存，因为 `Prepare`/`Execute` 不能跨会话执行。链表的每个元素是一个键值对，值为执行计划，键由以下部分组成：
+LRU 链表是设计成 session 级别的缓存，因为 `Prepare`/`Execute` 不能跨 session 执行。LRU 链表的每个元素是一个 key-value 对，value 是执行计划，key 由如下几部分组成：
 
-- 执行 `Execute` 时所在的数据库名
-- `Prepare` 语句的标识符，即 `PREPARE` 关键字后的名称
-- 当前的 schema 版本，每次成功执行 DDL 语句后更新
-- 执行 `Execute` 时的 SQL 模式
-- 当前时区，即 `time_zone` 系统变量的值
-- `sql_select_limit` 系统变量的值
+- 执行 `Execute` 时所在数据库的名字；
+- `Prepare` 语句的标识符，即紧跟在 `PREPARE` 关键字后的名字；
+- 当前的 schema 版本，每条执行成功的 DDL 语句会修改 schema 版本；
+- 执行 `Execute` 时的 SQL Mode；
+- 当前设置的时区，即系统变量 `time_zone` 的值；
+- 系统变量 `sql_select_limit` 的值；
 
-任何上述信息的变化（例如切换数据库、重命名 `Prepare` 语句、执行 DDL 语句或修改 SQL 模式/`time_zone` 的值），或 LRU 缓存的淘汰机制，都会导致执行时的执行计划缓存未命中。
+key 中任何一项变动（如切换数据库、重命名 `Prepare` 语句、执行 DDL、修改 SQL Mode/`time_zone` 的值）、或 LRU 淘汰机制触发都会导致 `Execute` 时无法命中执行计划缓存。
 
-从缓存中获取执行计划后，TiDB 会首先检查执行计划是否仍然有效。如果当前 `Execute` 语句在显式事务中执行，且引用的表在事务预排序语句中被修改，且缓存的执行计划不包含 `UnionScan` 操作符，则不能执行。
+成功从缓存中获取到执行计划后，TiDB 会先检查执行计划是否依然合法，如果当前 `Execute` 在显式事务里执行，并且引用的表在事务前序语句中被修改，而缓存的执行计划对该表访问不包含 `UnionScan` 算子，则它不能被执行。
 
-验证通过后，会根据当前参数值调整执行计划的扫描范围，然后用以执行数据查询。
+在通过合法性检测后，会根据当前最新参数值，对执行计划的扫描范围做相应调整，再用它执行获取数据。
 
-关于执行计划缓存和查询性能，有几点值得注意：
+关于执行计划缓存和查询性能有几点值得注意：
 
-- 无论执行计划是否被缓存，都受 SQL 绑定的影响。对于未缓存的执行计划（第一次 `Execute`），会受到现有 SQL 绑定的影响；对于已缓存的执行计划，如果创建了新的 SQL 绑定，这些计划会变得无效。
-- 缓存的计划不受统计信息变化、优化规则变化和表达式的阻塞推送影响。
-- 考虑到 `Execute` 的参数不同，执行计划缓存禁止某些与特定参数值密切相关的激进查询优化方法，以确保适应性。这可能导致某些参数值下的查询计划不是最优的。例如，查询的过滤条件为 `where a > ? And a < ?`，第一次 `Execute` 时参数分别为 `2` 和 `1`，考虑到下一次执行时参数可能为 `1` 和 `2`，优化器不会生成针对当前参数值的最优 `TableDual` 执行计划；
-- 如果不考虑缓存失效和淘汰，执行计划缓存会对各种参数值应用，理论上也会导致某些值的执行计划不是最优的。例如，过滤条件为 `where a < ?`，第一次执行时参数为 `1`，优化器会生成最优的 `IndexScan` 执行计划并缓存。在后续执行中，如果值变为 `10000`，可能 `TableScan` 计划更优。但由于使用了执行计划缓存，之前生成的 `IndexScan` 被用来执行。因此，执行计划缓存更适合查询简单（编译比例高）且执行计划相对固定的应用场景。
+- 不管计划是否已经被缓存，都会受到 SQL Binding 的影响。对于没有被缓存的计划，即在第一次执行 `Execute` 时，会受到已有 SQL Binding 的影响；而对于已经缓存的计划，如果有新的 SQL Binding 被创建产生，则原有已经被缓存的计划会失效。
+- 已经被缓存的计划不会受到统计信息更新、优化规则和表达式下推黑名单更新的影响，仍然会使用已经保存在缓存中的计划。
+- 重启 TiDB 实例时（如不停机滚动升级 TiDB 集群），`Prepare` 信息会丢失，此时执行 `execute stmt ...` 可能会遇到 `Prepared Statement not found` 的错误，此时需要再执行一次 `prepare stmt ...`。
+- 考虑到不同 `Execute` 的参数会不同，执行计划缓存为了保证适配性会禁止一些和具体参数值密切相关的激进查询优化手段，导致对特定的一些参数值，查询计划可能不是最优。比如查询的过滤条件为 `where a > ? and a < ?`，第一次 `Execute` 时参数分别为 2 和 1，考虑到这两个参数下次执行时可能会是 1 和 2，优化器不会生成对当前参数最优的 `TableDual` 执行计划。
+- 如果不考虑缓存失效和淘汰，一份执行计划缓存会对应各种不同的参数取值，理论上也会导致某些取值下执行计划非最优。比如查询过滤条件为 `where a < ?`，假如第一次执行 `Execute` 时用的参数值为 1，此时优化器生成最优的 `IndexScan` 执行计划放入缓存，在后续执行 `Execute` 时参数变为 10000，此时 `TableScan` 可能才是更优执行计划，但由于执行计划缓存，执行时还是会使用先前生成的 `IndexScan`。因此执行计划缓存更适用于查询较为简单（查询编译耗时占比较高）且执行计划较为固定的业务场景。
 
-从 v6.1.0 版本开始，执行计划缓存默认开启。你可以通过系统变量 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610) 控制预处理计划缓存。
+自 v6.1.0 起，执行计划缓存功能默认打开，可以通过变量 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-从-v610-版本开始引入) 启用或关闭这项功能。
 
-> **Note:**
+> **注意：**
 >
-> [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610) 系统变量只控制 `Prepare`/`Execute` 查询的执行计划缓存，不影响普通查询。普通查询的执行计划缓存请参考 [SQL Non-Prepared Execution Plan Cache](/sql-non-prepared-plan-cache.md)。
+> 系统变量 [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-从-v610-版本开始引入) 控制的执行计划缓存仅针对 `Prepare`/`Execute` 请求，对普通查询无效。普通查询的执行计划缓存参见[非 Prepare 语句执行计划缓存](/sql-non-prepared-plan-cache.md)。
 
-启用执行计划缓存功能后，你可以使用会话级系统变量 [`last_plan_from_cache`](/system-variables.md#last_plan_from_cache-new-in-v40) 查看上一次 `Execute` 是否使用了缓存的执行计划，例如：
+在开启了执行计划缓存功能后，可以通过 SESSION 级别的系统变量 [`last_plan_from_cache`](/system-variables.md#last_plan_from_cache-从-v40-版本开始引入) 查看上一条 `Execute` 语句是否使用了缓存的执行计划，例如：
 
 
 ```sql
 MySQL [test]> create table t(a int);
 Query OK, 0 rows affected (0.00 sec)
+
 MySQL [test]> prepare stmt from 'select * from t where a = ?';
 Query OK, 0 rows affected (0.00 sec)
+
 MySQL [test]> set @a = 1;
 Query OK, 0 rows affected (0.00 sec)
 
--- 第一次执行会生成执行计划并保存到缓存中。
+-- 第一次 execute 生成执行计划放入缓存
 MySQL [test]> execute stmt using @a;
 Empty set (0.00 sec)
+
 MySQL [test]> select @@last_plan_from_cache;
 +------------------------+
 | @@last_plan_from_cache |
@@ -86,9 +90,10 @@ MySQL [test]> select @@last_plan_from_cache;
 +------------------------+
 1 row in set (0.00 sec)
 
--- 第二次执行命中缓存。
+-- 第二次 execute 命中缓存
 MySQL [test]> execute stmt using @a;
 Empty set (0.00 sec)
+
 MySQL [test]> select @@last_plan_from_cache;
 +------------------------+
 | @@last_plan_from_cache |
@@ -98,16 +103,19 @@ MySQL [test]> select @@last_plan_from_cache;
 1 row in set (0.00 sec)
 ```
 
-如果你发现某组 `Prepare`/`Execute` 由于执行计划缓存导致行为异常，可以使用 `ignore_plan_cache()` SQL 提示跳过当前语句的执行计划缓存。以下为示例：
+如果发现某一组 `Prepare`/`Execute` 由于执行计划缓存导致了非预期行为，可以通过 SQL Hint `ignore_plan_cache()` 让该组语句不使用缓存。还是用上述的 `stmt` 为例：
 
 
 ```sql
 MySQL [test]> prepare stmt from 'select /*+ ignore_plan_cache() */ * from t where a = ?';
 Query OK, 0 rows affected (0.00 sec)
+
 MySQL [test]> set @a = 1;
 Query OK, 0 rows affected (0.00 sec)
+
 MySQL [test]> execute stmt using @a;
 Empty set (0.00 sec)
+
 MySQL [test]> select @@last_plan_from_cache;
 +------------------------+
 | @@last_plan_from_cache |
@@ -115,8 +123,10 @@ MySQL [test]> select @@last_plan_from_cache;
 | 0                      |
 +------------------------+
 1 row in set (0.00 sec)
+
 MySQL [test]> execute stmt using @a;
 Empty set (0.00 sec)
+
 MySQL [test]> select @@last_plan_from_cache;
 +------------------------+
 | @@last_plan_from_cache |
@@ -126,19 +136,17 @@ MySQL [test]> select @@last_plan_from_cache;
 1 row in set (0.00 sec)
 ```
 
-## 预处理计划缓存的诊断
+## 诊断 Prepared Plan Cache
 
-### 使用 `SHOW WARNINGS` 进行诊断
+### 通过 `SHOW WARNINGS` 诊断 
 
-某些查询或计划无法缓存。你可以使用 `SHOW WARNINGS` 语句检查查询或计划是否被缓存。如果未缓存，可以在结果中查看失败原因。例如：
+对于无法进行缓存的查询或计划，可通过 `SHOW WARNINGS` 语句查看查询或计划是否被缓存。如果未被缓存，则可在结果中查看无法被缓存的原因。示例如下：
 
 ```sql
-mysql> PREPARE st FROM 'SELECT * FROM t WHERE a > (SELECT MAX(a) FROM t)';  -- 查询包含子查询，无法缓存。
-
+mysql> PREPARE st FROM 'SELECT * FROM t WHERE a > (SELECT MAX(a) FROM t)';  -- 该查询包含子查询，因此无法被缓存
 Query OK, 0 rows affected, 1 warning (0.01 sec)
 
-mysql> SHOW WARNINGS;  -- 检查查询计划无法缓存的原因。
-
+mysql> SHOW WARNINGS;  -- 查看查询计划无法被缓存的原因
 +---------+------+-----------------------------------------------+
 | Level   | Code | Message                                       |
 +---------+------+-----------------------------------------------+
@@ -146,20 +154,16 @@ mysql> SHOW WARNINGS;  -- 检查查询计划无法缓存的原因。
 +---------+------+-----------------------------------------------+
 1 row in set (0.00 sec)
 
-mysql> prepare st from 'select * from t where a<?';
-
+mysql> PREPARE st FROM 'SELECT * FROM t WHERE a<?';
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> set @a='1';
-
+mysql> SET @a='1';
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> execute st using @a;  -- 优化将非 INT 类型转换为 INT 类型，参数变化可能导致执行计划变化，因此不缓存。
-
+mysql> EXECUTE st USING @a;  -- 该优化中进行了非 INT 类型到 INT 类型的转换，产生的执行计划可能随着参数变化而存在风险，因此 TiDB 不缓存该计划
 Empty set, 1 warning (0.01 sec)
 
 mysql> SHOW WARNINGS;
-
 +---------+------+----------------------------------------------+
 | Level   | Code | Message                                      |
 +---------+------+----------------------------------------------+
@@ -168,14 +172,13 @@ mysql> SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-### 使用 `Statements Summary` 进行诊断
+### 通过 `Statements Summary` 诊断
 
-`Statements Summary` 表中包含两个字段，`plan_cache_unqualified` 和 `plan_cache_unqualified_last_reason`，分别表示对应查询无法使用计划缓存的次数和原因。你可以利用这两个字段进行诊断：
+在 `Statements Summary` 表中包含有 `plan_cache_unqualified` 和 `plan_cache_unqualified_last_reason` 两个字段，分别表示对应查询无法使用 Plan Cache 的次数和原因，可以通过这两个字段来进行诊断：
 
 ```sql
-mysql> SELECT digest_text, plan_cache_unqualified, plan_cache_unqualified_last_reason FROM information_schema.statements_summary WHERE plan_cache_unqualified > 0 ORDER BY plan_cache_unqualified DESC
+mysql> SELECT digest_text, plan_cache_unqualified,  plan_cache_unqualified_last_reason FROM information_schema.statements_summary WHERE plan_cache_unqualified > 0 ORDER BY plan_cache_unqualified DESC
 LIMIT 10;
-
 +---------------------------------+------------------------+----------------------------------------+
 | digest_text                     | plan_cache_unqualified | plan_cache_unqualified_last_reason     |
 +---------------------------------+------------------------+----------------------------------------+
@@ -187,65 +190,40 @@ LIMIT 10;
 10 row in set (0.01 sec)
 ```
 
-## 内存管理：预处理计划缓存
+## Prepared Plan Cache 的内存管理
 
-<CustomContent platform="tidb">
+使用 Prepared Plan Cache 会有一定的内存开销，可以通过 Grafana 中的 [`Plan Cache Memory Usage` 监控](/grafana-tidb-dashboard.md)查看每台 TiDB 实例上所有 `SESSION` 所缓存的计划占用的总内存。
 
-使用预处理计划缓存会带来内存开销。你可以在 Grafana 的 [**Plan Cache Memory Usage**](/grafana-tidb-dashboard.md) 监控面板中查看所有会话在每个 TiDB 实例中缓存的执行计划总内存消耗。
-
-> **Note:**
+> **注意：**
 >
-> 由于 Golang 的内存回收机制和一些未统计的内存结构，Grafana 中显示的内存并不等于实际堆内存使用。经过测试，Grafana 显示的内存与实际堆内存的偏差约为 ±20%。
+> 考虑到 Golang 的内存回收机制以及部分未统计的内存结构，Grafana 中显示的内存与实际的堆内存使用量并不相等。经过实验验证存在约 ±20% 的误差。
 
-你可以在 Grafana 中使用 [**Plan Cache Plan Num**](/grafana-tidb-dashboard.md) 面板查看每个 TiDB 实例中缓存的执行计划总数。
+对于每台 TiDB 实例上所缓存的执行计划总数量，可以通过 Grafana 中的 [`Plan Cache Plan Num` 监控](/grafana-tidb-dashboard.md)查看。
 
-以下为 Grafana 中 **Plan Cache Memory Usage** 和 **Plan Cache Plan Num** 面板的示例：
+Grafana 中 `Plan Cache Memory Usage` 和 `Plan Cache Plan Num` 监控如下图所示：
 
-![grafana_panels](https://docs-download.pingcap.com/media/images/docs/planCache-memoryUsage-planNum-panels.png)
+![grafana_panels](https://docs-download.pingcap.com/media/images/docs-cn/planCache-memoryUsage-planNum-panels.png)
 
-从 v7.1.0 版本开始，你可以通过配置系统变量 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710) 来控制每个会话中最大缓存计划数。不同环境建议值如下，可根据监控面板调整：
+从 v7.1.0 开始，你可以通过变量 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-从-v710-版本开始引入) 来设置每个 `SESSION` 最多缓存的计划数量。针对不同的环境，推荐的设置如下，你可以结合监控进行调整：
 
+- TiDB Server 实例内存阈值 <= 64 GiB 时，`tidb_session_plan_cache_size = 50`
+- TiDB Server 实例内存阈值 > 64 GiB 时，`tidb_session_plan_cache_size = 100`
 
-</CustomContent>
+从 v7.1.0 开始，你可以通过变量 [`tidb_plan_cache_max_plan_size`](/system-variables.md#tidb_plan_cache_max_plan_size-从-v710-版本开始引入) 来设置可以缓存的计划的最大大小，默认为 2 MB。超过该值的执行计划将不会被缓存到 Plan Cache 中。
 
-<CustomContent platform="tidb-cloud">
+当 TiDB Server 的内存余量小于一定阈值时，会触发 Plan Cache 的内存保护机制，此时会对一些缓存的计划进行逐出。
 
-使用预处理计划缓存会带来一些内存开销。在内部测试中，每个缓存计划平均消耗 100 KiB 内存。由于计划缓存目前处于 `SESSION` 级别，总内存消耗大约为 `会话数 * 每个会话的平均缓存计划数 * 100 KiB`。
+目前该阈值由变量 `tidb_prepared_plan_cache_memory_guard_ratio` 控制，默认为 0.1，即 10%，也就是当剩余内存不足 10%（使用内存超过 90%）时，会触发此机制。
 
-例如，当前 TiDB 实例有 50 个会话并发，每个会话大约有 100 个缓存计划，总内存消耗大约为 `50 * 100 * 100 KiB` = `512 MB`。
+由于内存限制，Plan Cache 可能出现 Cache Miss 的情况，可以通过 Grafana 中的 [`Plan Cache Miss OPS` 监控](/grafana-tidb-dashboard.md)查看。
 
-你可以通过配置系统变量 [`tidb_session_plan_cache_size`](/system-variables.md#tidb_session_plan_cache_size-new-in-v710) 来控制每个会话中最大缓存计划数。不同环境建议值如下：
+## 手动清空计划缓存
 
-</CustomContent>
+通过执行 `ADMIN FLUSH [SESSION | INSTANCE] PLAN_CACHE` 语句，你可以手动清空计划缓存。
 
-- 当 TiDB 服务器实例的内存阈值 <= 64 GiB 时，设置 `tidb_session_plan_cache_size` 为 `50`。
-- 当 TiDB 服务器实例的内存阈值 > 64 GiB 时，设置 `tidb_session_plan_cache_size` 为 `100`。
+该语句中的作用域 `[SESSION | INSTANCE]` 用于指定需要清空的缓存级别，可以为 `SESSION` 或 `INSTANCE`。如果不指定作用域，该语句默认清空 `SESSION` 级别的缓存。
 
-从 v7.1.0 版本开始，你可以通过配置系统变量 [`tidb_plan_cache_max_plan_size`](/system-variables.md#tidb_plan_cache_max_plan_size-new-in-v710) 来控制可缓存计划的最大大小。默认值为 2 MB。如果计划大小超过此值，则不会缓存。
-
-当 TiDB 服务器的未使用内存低于某个阈值时，会触发计划缓存的内存保护机制，从而驱逐部分缓存计划。
-
-你可以通过配置系统变量 `tidb_prepared_plan_cache_memory_guard_ratio` 来控制阈值。默认值为 0.1，意味着当 TiDB 服务器的未用内存少于总内存的 10%（即使用了 90% 内存）时，触发内存保护机制。
-
-<CustomContent platform="tidb">
-
-由于内存限制，计划缓存可能会有未命中的情况。你可以在 Grafana 的 [`Plan Cache Miss OPS`](/grafana-tidb-dashboard.md) 指标中查看状态。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-由于内存限制，计划缓存可能会有未命中的情况。
-
-</CustomContent>
-
-## 清除执行计划缓存
-
-你可以通过执行 `ADMIN FLUSH [SESSION | INSTANCE] PLAN_CACHE` 语句清除执行计划缓存。
-
-在此语句中，`[SESSION | INSTANCE]` 指定是清除当前会话还是整个 TiDB 实例的计划缓存。如果未指定范围，默认作用于 `SESSION` 缓存。
-
-以下为清除 `SESSION` 执行计划缓存的示例：
+下面是一个清空计划缓存的例子：
 
 
 ```sql
@@ -261,7 +239,7 @@ Empty set (0.00 sec)
 MySQL [test]> execute stmt;
 Empty set (0.00 sec)
 
-MySQL [test]> select @@last_plan_from_cache; -- 选择缓存的计划
+MySQL [test]> select @@last_plan_from_cache; -- 选择计划缓存
 +------------------------+
 | @@last_plan_from_cache |
 +------------------------+
@@ -269,13 +247,13 @@ MySQL [test]> select @@last_plan_from_cache; -- 选择缓存的计划
 +------------------------+
 1 row in set (0.00 sec)
 
-MySQL [test]> admin flush session plan_cache; -- 清除当前会话的缓存计划
+MySQL [test]> admin flush session plan_cache; -- 清空当前 session 的计划缓存
 Query OK, 0 rows affected (0.00 sec)
 
 MySQL [test]> execute stmt;
 Empty set (0.00 sec)
 
-MySQL [test]> select @@last_plan_from_cache; -- 缓存的计划已被清除，无法再次选择
+MySQL [test]> select @@last_plan_from_cache; -- 由于缓存被清空，此时无法再次选中
 +------------------------+
 | @@last_plan_from_cache |
 +------------------------+
@@ -284,7 +262,7 @@ MySQL [test]> select @@last_plan_from_cache; -- 缓存的计划已被清除，�
 1 row in set (0.00 sec)
 ```
 
-目前，TiDB 不支持清除 `GLOBAL` 执行计划缓存。这意味着你不能清除整个 TiDB 集群的缓存计划。如果尝试清除 `GLOBAL` 执行计划缓存，会报错：
+TiDB 暂不支持清空 `GLOBAL` 级别的计划缓存，即不支持一次性清空整个集群的计划缓存，使用时会报错：
 
 
 ```sql
@@ -292,56 +270,56 @@ MySQL [test]> admin flush global plan_cache;
 ERROR 1105 (HY000): Do not support the 'admin flush global scope.'
 ```
 
-## 忽略 `COM_STMT_CLOSE` 命令和 `DEALLOCATE PREPARE` 语句
+## 忽略 `COM_STMT_CLOSE` 指令和 `DEALLOCATE PREPARE` 语句
 
-为了减少 SQL 语句的语法解析成本，建议你只运行一次 `prepare stmt`，然后多次运行 `execute stmt`，最后再运行 `deallocate prepare`：
+为了减少每次执行 SQL 语句的语法分析，Prepared Statement 推荐的使用方式是，prepare 一次，然后 execute 多次，最后 deallocate prepare。例如：
 
 
 ```sql
-MySQL [test]> prepare stmt from '...'; -- 只准备一次
-MySQL [test]> execute stmt using ...;  -- 只执行一次
+MySQL [test]> prepare stmt from '...'; -- prepare 一次
+MySQL [test]> execute stmt using ...;  -- execute 一次
 MySQL [test]> ...
-MySQL [test]> execute stmt using ...;  -- 多次执行
-MySQL [test]> deallocate prepare stmt; -- 释放预处理语句
+MySQL [test]> execute stmt using ...;  -- execute 多次
+MySQL [test]> deallocate prepare stmt; -- 使用完成后释放
 ```
 
-在实际操作中，你可能习惯在每次运行 `execute stmt` 后都执行 `deallocate prepare`，如下所示：
+如果你习惯于在每次 execute 后都立即执行 deallocate prepare，如：
 
 
 ```sql
-MySQL [test]> prepare stmt from '...'; -- 只准备一次
+MySQL [test]> prepare stmt from '...'; -- 第一次 prepare
 MySQL [test]> execute stmt using ...;
-MySQL [test]> deallocate prepare stmt; -- 执行后释放
-MySQL [test]> prepare stmt from '...'; -- 预处理两次
+MySQL [test]> deallocate prepare stmt; -- 一次使用后立即释放
+MySQL [test]> prepare stmt from '...'; -- 第二次 prepare
 MySQL [test]> execute stmt using ...;
-MySQL [test]> deallocate prepare stmt; -- 释放预处理语句
+MySQL [test]> deallocate prepare stmt; -- 再次释放
 ```
 
-在这种做法中，第一次执行获得的执行计划不能被第二次执行所复用。
+这样的使用方式会让第一次执行得到的计划被立即清理，不能在第二次被复用。
 
-为解决此问题，你可以将系统变量 [`tidb_ignore_prepared_cache_close_stmt`](/system-variables.md#tidb_ignore_prepared_cache_close_stmt-new-in-v600) 设置为 `ON`，让 TiDB 忽略关闭 `prepare stmt` 的命令：
+为了兼容这样的使用方式，从 v6.0 起，TiDB 支持 [`tidb_ignore_prepared_cache_close_stmt`](/system-variables.md#tidb_ignore_prepared_cache_close_stmt-从-v600-版本开始引入) 变量。打开该变量后，TiDB 会忽略关闭 Prepare Statement 的信号，解决上述问题，如：
 
 
 ```sql
-mysql> set @@tidb_ignore_prepared_cache_close_stmt=1;  -- 开启变量
+mysql> set @@tidb_ignore_prepared_cache_close_stmt=1;  -- 打开开关
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> prepare stmt from 'select * from t'; -- 只准备一次
+mysql> prepare stmt from 'select * from t'; -- 第一次 prepare
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> execute stmt;                        -- 只执行一次
+mysql> execute stmt;                        -- 第一次 execute
 Empty set (0.00 sec)
 
-mysql> deallocate prepare stmt;             -- 第一次执行后释放
+mysql> deallocate prepare stmt;             -- 第一次 execute 后立即释放
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> prepare stmt from 'select * from t'; -- 预处理两次
+mysql> prepare stmt from 'select * from t'; -- 第二次 prepare
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> execute stmt;                        -- 预处理两次
+mysql> execute stmt;                        -- 第二次 execute
 Empty set (0.00 sec)
 
-mysql> select @@last_plan_from_cache;       -- 复用上次的计划
+mysql> select @@last_plan_from_cache;       -- 因为开关打开，第二次依旧能复用上一次的计划
 +------------------------+
 | @@last_plan_from_cache |
 +------------------------+
@@ -352,16 +330,6 @@ mysql> select @@last_plan_from_cache;       -- 复用上次的计划
 
 ### 监控
 
-<CustomContent platform="tidb">
+在 [Grafana 面板](/grafana-tidb-dashboard.md)的 TiDB 页面，**Executor** 部分包含“Queries Using Plan Cache OPS”和“Plan Cache Miss OPS”两个图表，用以检查 TiDB 和应用是否正确配置，以便 SQL 执行计划缓存能正常工作。TiDB 页面的 **Server** 部分还提供了“Prepared Statement Count”图表，如果应用使用了预处理语句，这个图表会显示非零值。通过数值变化，可以判断 SQL 执行计划缓存是否正常工作。
 
-在 [TiDB 页面中的 Grafana 仪表盘](/grafana-tidb-dashboard.md) 的 **Executor** 部分，有 “Queries Using Plan Cache OPS” 和 “Plan Cache Miss OPS” 图表。这些图表可以用来检查 TiDB 和应用是否正确配置，以确保 SQL 计划缓存正常工作。同一页面的 **Server** 部分提供了 “Prepared Statement Count” 图表。如果应用使用了预处理语句，该图表会显示非零值，这是 SQL 计划缓存正常工作的前提。
-
-![`sql_plan_cache`](https://docs-download.pingcap.com/media/images/docs/performance/sql_plan_cache.png)
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [**Monitoring**](/tidb-cloud/built-in-monitoring.md) 页面中，可以查看 `Queries Using Plan Cache OPS` 指标，以获取所有 TiDB 实例中每秒使用或未命中计划缓存的查询数。
-
-</CustomContent>
+![`sql_plan_cache`](https://docs-download.pingcap.com/media/images/docs-cn/performance/sql_plan_cache.png)

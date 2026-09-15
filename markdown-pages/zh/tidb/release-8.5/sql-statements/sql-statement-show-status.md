@@ -1,23 +1,21 @@
 ---
-title: SHOW [GLOBAL|SESSION] STATUS | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中使用 SHOW [GLOBAL|SESSION] STATUS 的概述。
+title: SHOW [GLOBAL|SESSION] STATUS
+summary: TiDB 数据库中 SHOW [GLOBAL|SESSION] STATUS 的使用概况。
 ---
 
 # SHOW [GLOBAL|SESSION] STATUS
 
-此语句是为了与 MySQL 兼容而包含的。TiDB 使用 Prometheus 和 Grafana 进行集中式指标收集，而不是大部分指标使用 `SHOW STATUS`。
+`SHOW [GLOBAL|SESSION] STATUS` 语句用于提供 MySQL 兼容性。对于大部分监控指标，TiDB 使用 Prometheus 和 Grafana 来集中收集，而不是使用 `SHOW STATUS`。
 
-变量的完整描述可以在这里找到： [status variables](/status-variables.md)
+该语句输出中各变量的详细介绍，请参考[服务器状态变量](/status-variables.md)。
 
-## 概述
+## 语法图
 
 ```ebnf+diagram
 ShowStatusStmt ::=
     'SHOW' Scope? 'STATUS' ShowLikeOrWhere?
-
 Scope ::=
     ( 'GLOBAL' | 'SESSION' )
-
 ShowLikeOrWhere ::=
     "LIKE" SimpleExpr
 |   "WHERE" Expression
@@ -26,7 +24,10 @@ ShowLikeOrWhere ::=
 ## 示例
 
 ```sql
-mysql> SHOW SESSION STATUS;
+SHOW SESSION STATUS;
+```
+
+```
 +-------------------------------+--------------------------------------+
 | Variable_name                 | Value                                |
 +-------------------------------+--------------------------------------+
@@ -45,8 +46,13 @@ mysql> SHOW SESSION STATUS;
 | server_id                     | 61160e73-ab80-40ff-8f33-27d55d475fd1 |
 +-------------------------------+--------------------------------------+
 13 rows in set (0.00 sec)
+```
 
-mysql> SHOW GLOBAL STATUS;
+```sql
+SHOW GLOBAL STATUS;
+```
+
+```
 +-----------------------+--------------------------------------+
 | Variable_name         | Value                                |
 +-----------------------+--------------------------------------+
@@ -65,9 +71,9 @@ mysql> SHOW GLOBAL STATUS;
 
 ## MySQL 兼容性
 
-* 此语句与 MySQL 兼容。
+`SHOW [GLOBAL|SESSION] STATUS` 语句与 MySQL 兼容。
 
-## 相关链接
+## 另请参阅
 
 * [FLUSH STATUS](/sql-statements/sql-statement-flush-status.md)
-* [Server Status Variables](/status-variables.md)
+* [服务器状态变量](/status-variables.md)

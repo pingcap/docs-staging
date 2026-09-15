@@ -1,608 +1,568 @@
 ---
-title: Key Monitoring Metrics of TiKV
-summary: Learn some key metrics displayed on the Grafana TiKV dashboard.
+title: TiKV 监控指标详解
+summary: TiKV 监控指标详解：TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Grafana)，监控架构详见 TiDB 监控框架概述。Grafana Dashboard 分为 PD、TiDB、TiKV、Node_exporter、Overview、Performance_overview 等。对于日常运维，通过观察 TiKV-Details 面板上的指标，可以了解 TiKV 当前的状态。根据性能地图，可以检查集群的状态是否符合预期。TiKV-Details 默认的监控信息包括 Cluster、Errors、Server、gRPC、Thread CPU、PD、Raft IO、Raft process、Raft message、Raft propose、Raft admin、Local reader、Unified Read Pool、Storage、Flow Control、Scheduler 等。
 ---
 
-# Key Monitoring Metrics of TiKV
+# TiKV 监控指标详解
 
-If you use TiUP to deploy the TiDB cluster, the monitoring system (Prometheus/Grafana) is deployed at the same time. For more information, see [Overview of the Monitoring Framework](/tidb-monitoring-framework.md).
+使用 TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Grafana)，监控架构参见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
 
-The Grafana dashboard is divided into a series of sub dashboards which include Overview, PD, TiDB, TiKV, Node\_exporter, and Performance\_overview. A lot of metrics are there to help you diagnose.
+目前 Grafana Dashboard 整体分为 PD、TiDB、TiKV、Node\_exporter、Overview、Performance\_overview 等。
 
-## TiKV-Details dashboard
+## TiKV-Details 面板
 
-You can get an overview of the component TiKV status from the **TiKV-Details** dashboard, where the key metrics are displayed. According to the [Performance Map](https://asktug.com/_/tidb-performance-map/#/), you can check whether the status of the cluster is as expected.
+对于日常运维，通过观察 **TiKV-Details** 面板上的指标，可以了解 TiKV 当前的状态。
 
-This section provides a detailed description of these key metrics on the **TiKV-Details** dashboard.
+以下为 **TiKV-Details** 默认的监控信息：
 
 ### Cluster
 
-- Store size: The storage size per TiKV instance
-- Available size: The available capacity per TiKV instance
-- Capacity size: The capacity size per TiKV instance
-- CPU: The CPU utilization per TiKV instance
-- Memory: The memory usage per TiKV instance
-- IO utilization: The I/O utilization per TiKV instance
-- MBps: The total bytes of read and write in each TiKV instance
-- QPS: The QPS per command in each TiKV instance
-- Errps: The rate of gRPC message failures
-- leader: The number of leaders per TiKV instance
-- Region: The number of Regions per TiKV instance
-- Uptime: The runtime of TiKV since last restart
+- Store size：每个 TiKV 实例的使用的存储空间的大小
+- Available size：每个 TiKV 实例的可用的存储空间的大小
+- Capacity size：每个 TiKV 实例的存储容量的大小
+- CPU：每个 TiKV 实例 CPU 的使用率
+- Memory：每个 TiKV 实例内存的使用情况
+- IO utilization：每个 TiKV 实例 IO 的使用率
+- MBps：每个 TiKV 实例写入和读取的数据量大小
+- QPS：每个 TiKV 实例上各种命令的 QPS
+- Errps：每个 TiKV 实例上 gRPC 消息失败的速率
+- leader：每个 TiKV 实例 leader 的个数
+- Region：每个 TiKV 实例 Region 的个数
+- Uptime：自上次重启以来 TiKV 正常运行的时间
 
-![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-cluster.png)
+![TiKV Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-cluster.png)
 
 ### Errors
 
-- Critical error: The number of critical errors
-- Server is busy: Indicates occurrences of events that make the TiKV instance unavailable temporarily, such as Write Stall, and Channel Full. It should be `0` in normal case.
-- Server report failures: The number of error messages reported by server. It should be `0` in normal case.
-- Raftstore error: The number of Raftstore errors per type on each TiKV instance
-- Scheduler error: The number of scheduler errors per type on each TiKV instance
-- Coprocessor error: The number of coprocessor errors per type on each TiKV instance
-- gRPC message error: The number of gRPC message errors per type on each TiKV instance
-- Leader drop: The count of dropped leaders per TiKV instance
-- Leader missing: The count of missing leaders per TiKV instance
-- Log Replication Reject: The number of logappend messages rejected due to insufficient memory on each TiKV instance
+- Critical error：严重错误的数量
+- Server is busy：各种会导致 TiKV 实例暂时不可用的事件个数，如 write stall，channel full 等，正常情况下应当为 0
+- Server report failures：server 报错的消息个数，正常情况下应当为 0
+- Raftstore error：每个 TiKV 实例上 raftstore 发生错误的个数
+- Scheduler error：每个 TiKV 实例上 scheduler 发生错误的个数
+- Coprocessor error：每个 TiKV 实例上 coprocessor 发生错误的个数
+- gRPC message error：每个 TiKV 实例上 gRPC 消息发生错误的个数
+- Leader drop：每个 TiKV 实例上 drop leader 的个数
+- Leader missing：每个 TiKV 实例上 missing leader 的个数
+- Log Replication Rejected：每个 TiKV 实例上由于内存不足而拒绝 logappend 消息的个数
 
-![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-errors-v610.png)
+![TiKV Dashboard - Errors metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-errors-v610.png)
 
 ### Server
 
-- CF size: The size of each column family
-- Store size: The storage size per TiKV instance
-- Channel full: The number of Channel Full errors per TiKV instance. It should be `0` in normal case.
-- Active written leaders: The number of leaders being written on each TiKV instance
-- Approximate Region size: The approximate Region size
-- Approximate Region size Histogram: The histogram of each approximate Region size
-- Region average written keys: The average number of written keys to Regions per TiKV instance
-- Region average written bytes: The average written bytes to Regions per TiKV instance
+- CF size：每个列族的大小
+- Store size：每个 TiKV 实例的使用的存储空间的大小
+- Channel full：每个 TiKV 实例上 channel full 错误的数量，正常情况下应当为 0
+- Active written leaders：各个 TiKV 实例中正在被写入的 Leader 的数量
+- Approximate Region size：每个 Region 近似的大小
+- Approximate Region size Histogram：每个 Region 近似大小的直方图
+- Region average written keys：每个 TiKV 实例上所有 Region 的平均 key 写入个数
+- Region average written bytes：每个 TiKV 实例上所有 Region 的平均写入大小
 
-![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-server.png)
+![TiKV Dashboard - Server metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-server.png)
 
 ### gRPC
 
-- gRPC message count: The rate of gRPC messages per type
-- gRPC message failed: The rate of failed gRPC messages
-- 99% gRPC message duration: The gRPC message duration per message type (P99)
-- Average gRPC message duration: The average execution time of gRPC messages
-- gRPC batch size: The batch size of gRPC messages between TiDB and TiKV
-- Raft message batch size: The batch size of Raft messages between TiKV instances
-- gRPC request sources QPS: The QPS of gRPC request sources
-- gRPC request sources duration: The execution time of gRPC request sources
-- gRPC resource group QPS: The QPS of gRPC request sources by resource groups
+- gRPC message count：每种 gRPC 请求的速度
+- gRPC message failed：失败的 gRPC 请求的速度
+- 99% gRPC message duration：99% gRPC 请求的执行时间小于该值
+- Average gRPC message duration：gRPC 请求平均的执行时间
+- gRPC batch size：TiDB 与 TiKV 之间 grpc 请求的 batch 大小
+- raft message batch size：TiKV 与 TiKV 之间 raft 消息的 batch 大小
+- gRPC request sources QPS：不同 gRPC 请求来源的速度
+- gRPC request sources duration：不同 gRPC 请求来源的执行总时间
+- gRPC resource group QPS：不同 resource group 的 gRPC 请求速度
 
 ### Thread CPU
 
-- Raft store CPU: The CPU utilization of the `raftstore` thread. The CPU utilization should be less than 80% * `raftstore.store-pool-size` in normal case.
-- Async apply CPU: The CPU utilization of the `async apply` thread. The CPU utilization should be less than 90% * `raftstore.apply-pool-size` in normal cases.
-- Store writer CPU: The CPU utilization of the async IO thread. The CPU utilization should be less than 90% * `raftstore.store-io-pool-size` in normal cases.
-- gRPC poll CPU: The CPU utilization of the `gRPC` thread. The CPU utilization should be less than 80% * `server.grpc-concurrency` in normal cases.
-- Scheduler worker CPU: The CPU utilization of the `scheduler worker` thread. The CPU utilization should be less than 90% * `storage.scheduler-worker-pool-size` in normal cases.
-- Storage ReadPool CPU: The CPU utilization of the `storage read pool` thread
-- Unified read pool CPU: The CPU utilization of the `unified read pool` thread
-- RocksDB CPU: The CPU utilization of the RocksDB thread
-- Coprocessor CPU: The CPU utilization of the `coprocessor` thread
-- GC worker CPU: The CPU utilization of the `GC worker` thread
-- BackGround worker CPU: The CPU utilization of the `background worker` thread
-- Import CPU: The CPU utilization of the `import` thread
-- Backup Worker CPU: The CPU utilization of the `backup` thread
-- CDC Worker CPU: The CPU utilization of the `CDC worker` thread
-- CDC endpoint CPU: The CPU utilization of the `CDC endpoint` thread
-- Raftlog fetch worker CPU: The CPU utilization of the async raft log fetcher worker
-- TSO Worker CPU: The CPU utilization of the `TSO worker` thread
+- Raft store CPU：raftstore 线程的 CPU 使用率，通常应低于 80% * `raftstore.store-pool-size`
+- Async apply CPU：async apply 线程的 CPU 使用率，通常应低于 90% * `raftstore.apply-pool-size`
+- Store writer CPU：async io 线程的 CPU 使用率，通常应低于 90% * `raftstore.store-io-pool-size`
+- gRPC poll CPU：gRPC 线程的 CPU 使用率，通常应低于 80% * `server.grpc-concurrency`
+- Scheduler worker CPU：scheduler worker 线程的 CPU 使用率，通常应低于 90% * `storage.scheduler-worker-pool-size`
+- Storage ReadPool CPU：storage read pool 线程的 CPU 使用率
+- Unified read pool CPU：unified read pool 线程的 CPU 使用率
+- RocksDB CPU：RocksDB 线程的 CPU 使用率
+- Coprocessor CPU：coprocessor 线程的 CPU 使用率
+- GC worker CPU：GC worker 线程的 CPU 使用率
+- BackGround worker CPU：background worker 线程的 CPU 使用率
+- Import CPU：Import 线程的 CPU 使用率
+- Backup Worker CPU：Backup 线程的 CPU 使用率
+- CDC Worker CPU：CDC Worker 线程的 CPU 使用率
+- CDC endpoint CPU：CDC endpoint 的 CPU 使用率
+- Raftlog fetch worker CPU：Async raft log fetcher worker 的 CPU 使用率
+- TSO Worker CPU：TSO Worker 线程的 CPU 使用率
 
 ### PD
 
-- PD requests: The rate at which TiKV sends to PD
-- PD request duration (average): The average duration of processing requests that TiKV sends to PD
-- PD heartbeats: The rate at which heartbeat messages are sent from TiKV to PD
-- PD validate peers: The rate at which messages are sent from TiKV to PD to validate TiKV peers
+- PD requests：TiKV 发送给 PD 的请求速度
+- PD request duration (average)：TiKV 发送给 PD 的请求处理的平均时间
+- PD heartbeats：发送给 PD 的心跳的速度
+- PD validate peers：TiKV 发送给 PD 用于验证 TiKV 的 peer 有效的消息的速度
 
 ### Raft IO
 
-- Apply log duration: The time consumed for Raft to apply logs
-- Apply log duration per server: The time consumed for Raft to apply logs per TiKV instance
-- Append log duration: The time consumed for Raft to append logs
-- Append log duration per server: The time consumed for Raft to append logs per TiKV instance
-- Commit log duration: The time consumed by Raft to commit logs
-- Commit log duration per server: The time consumed by Raft to commit logs per TiKV instance
+- Apply log duration：Raft apply 日志所花费的时间
+- Apply log duration per server：每个 TiKV 实例上 Raft apply 日志所花费的时间
+- Append log duration：Raft append 日志所花费的时间
+- Append log duration per server：每个 TiKV 实例上 Raft append 日志所花费的时间
+- Commit log duration：Raft commit 日志所花费的时间
+- Commit log duration per server：每个 TiKV 实例上 Raft commit 日志所花费的时间
 
-![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raftio.png)
+![TiKV Dashboard - Raft IO metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raftio.png)
 
 ### Raft process
 
-- Ready handled: The number of handled ready operations per type per second
-    - count: The number of handled ready operations per second
-    - has_ready_region: The number of Regions that have ready per second
-    - pending_region: The operations per second of the Regions being checked for whether it has ready. This metric is deprecated since v3.0.0
-    - message: The number of messages that the ready operations per second contain
-    - append: The number of Raft log entries that the ready operations per second contain
-    - commit: The number of committed Raft log entries that the ready operations per second contain
-    - snapshot: The number of snapshots that the ready operations per second contains
-- 0.99 Duration of Raft store events: The time consumed by Raftstore events (P99)
-- Process ready duration: The time consumed for processes to be ready in Raft
-- Process ready duration per server: The time consumed for peer processes to be ready in Raft per TiKV instance. It should be less than 2 seconds (P99.99).
-- Max Duration of Raft store events: The time consumed by the slowest Raftstore event.
-- Replica read lock checking duration: The time consumed for checking locks when processing Replica Read.
-- Peer msg length distribution: The number of messages processed by each Region in each TiKV instance at a time. The more messages, the busier the peer is.
+- Ready handled：Raft 中不同 ready 类型的 ops
+    - count：批量处理 ready 的 ops
+    - has_ready_region：获得 ready 的 Region 的 ops
+    - pending_region：被检查是否获得 ready 的 Region 的 ops，v3.0.0 后废弃
+    - message：ready 内待发送 message 的 ops
+    - append：ready 内 Raft log entry 的 ops
+    - commit：ready 内 committed Raft log entry 的 ops
+    - snapshot：携带 snapshot 的 ready 的 ops
+- Max Duration of Raft store events：raftstore 处理事件最慢一次所花费的时间
+- Replica read lock checking duration：处理 Replica Read 时检查 lock 所花费的时间
+- Peer msg length distribution：每个 TiKV 中每个 region 一次性处理 Peer 消息的个数，消息越多说明 peer 越繁忙。
 
-![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-process.png)
+![TiKV Dashboard - Raft process metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-process.png)
 
 ### Raft message
 
-- Sent messages per server: The number of Raft messages sent by each TiKV instance per second
-- Flush messages per server: The number of Raft messages flushed by the Raft client in each TiKV instance per second
-- Receive messages per server: The number of Raft messages received by each TiKV instance per second
-- Messages: The number of Raft messages sent per type per second
-- Vote: The number of Vote messages sent in Raft per second
-- Raft dropped messages: The number of dropped Raft messages per type per second
+- Sent messages per server：每个 TiKV 实例发送 Raft 消息的 ops
+- Flush messages per server：每个 TiKV 实例中 raft client 往外 flush Raft 消息的 ops
+- Receive messages per server：每个 TiKV 实例接受 Raft 消息的 ops
+- Messages：发送不同类型的 Raft 消息的 ops
+- Vote：Raft 投票消息发送的 ops
+- Raft dropped messages：每秒钟丢弃不同类型的 Raft 消息的个数
 
-![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-message.png)
+![TiKV Dashboard - Raft message metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-message.png)
 
 ### Raft propose
 
-- Raft apply proposals per ready: The histogram of the number of proposals that each ready operation contains in a batch while applying proposal.
-- Raft read/write proposals: The number of proposals per type per second
-- Raft read proposals per server: The number of read proposals made by each TiKV instance per second
-- Raft write proposals per server: The number of write proposals made by each TiKV instance per second
-- Propose wait duration: The histogram of waiting time of each proposal
-- Propose wait duration per server: The histogram of waiting time of each proposal per TiKV instance
-- Apply wait duration: The histogram of apply time of each proposal
-- Apply wait duration per server: The histogram of apply time of each proposal per TiKV instance
-- Raft log speed: The average rate at which peers propose logs
+- Raft apply proposals per ready：在一个 batch 内，apply proposal 时每个 ready 中包含 proposal 的个数的直方图
+- Raft read/write proposals：不同类型的 proposal 的 ops
+- Raft read proposals per server：每个 TiKV 实例发起读 proposal 的 ops
+- Raft write proposals per server：每个 TiKV 实例发起写 proposal 的 ops
+- Propose wait duration：proposal 的等待时间的直方图
+- Propose wait duration per server：每个 TiKV 实例上每个 proposal 的等待时间的直方图
+- Apply wait duration：apply 的等待时间的直方图
+- Apply wait duration per server：每个 TiKV 实例上每个 apply 的等待时间的直方图
+- Raft log speed：peer propose 日志的平均速度
 
-![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-propose.png)
+![TiKV Dashboard - Raft propose metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-propose.png)
 
 ### Raft admin
 
-- Admin proposals: The number of admin proposals per second
-- Admin apply: The number of processed apply commands per second
-- Check split: The number of Raftstore split check commands per second
-- 99.99% Check split duration: The time consumed when running split check commands (P99.99)
+- Admin proposals：admin proposal 的 ops
+- Admin apply：apply 命令的 ops
+- Check split：split check 命令的 ops
+- 99.99% Check split duration：99.99% 的情况下，split check 所需花费的时间
 
-![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-raft-admin.png)
+![TiKV Dashboard - Raft admin metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-raft-admin.png)
 
 ### Local reader
 
-- Local reader requests: The number of total requests and the number of rejections from the local read thread
+- Local reader requests：所有请求的总数以及 local read 线程拒绝的请求数量
 
-![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-local-reader.png)
+![TiKV Dashboard - Local reader metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-local-reader.png)
 
 ### Unified Read Pool
 
-- Time used by level: The time consumed for each level in the unified read pool. Level 0 means small queries.
-- Level 0 chance: The proportion of level 0 tasks in unified read pool
-- Running tasks: The number of tasks running concurrently in the unified read pool
+- Time used by level：在 unified read pool 中每个级别使用的时间，级别 0 指小查询
+- Level 0 chance：在 unified read pool 中调度的 level 0 任务的比例
+- Running tasks：在 unified read pool 中并发运行的任务数量
 
 ### Storage
 
-- Storage command total: The number of received command by type per second
-- Storage async request error: The number of engine asynchronous request errors per second
-- Storage async snapshot duration: The time consumed by processing asynchronous snapshot requests. It should be less than `1s` in `.99`.
-- Storage async write duration: The time consumed by processing asynchronous write requests. It should be less than `1s` in `.99`.
+- Storage command total：收到不同命令的 ops
+- Storage async request error：异步请求出错的 ops
+- Storage async snapshot duration：异步处理 snapshot 所花费的时间，99% 的情况下，应该小于 1s
+- Storage async write duration：异步写所花费的时间，99% 的情况下，应该小于 1s
 
-![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-storage.png)
+![TiKV Dashboard - Storage metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-storage.png)
 
 ### Flow Control
 
-- Scheduler flow: The scheduler traffic on each TiKV instance in real time.
-- Scheduler discard ratio: The rejection ratio of scheduler requests on each TiKV instance. If this ratio is greater than 0, it indicates that flow control exists. When `Compaction pending bytes` exceeds its threshold, TiKV will linearly increase the `Scheduler discard ratio` based on the exceeded portion. The client will retry the rejected requests automatically.
-- Throttle duration: The blocked duration for the execution of the scheduler requests when flow control is triggered due to too many L0 files. If this metric has values, it indicates that flow control exists.
-- Scheduler throttled CF: The CF that triggers RocksDB throttling when the flow control threshold is reached.
-- Flow controller actions: The actions that trigger RocksDB throttling when the flow control threshold is reached.
-- Flush/L0 flow: The traffic of flush and L0 compaction for different CFs of RocksDB on each TiKV instance.
-- Flow control factors: The factors related to triggering RocksDB throttling.
-- Compaction pending bytes: The size of the RocksDB data awaiting compaction in real time on each TiKV instance.
-- Txn command throttled duration: The blocked duration for commands related to transactions due to throttling. Under normal circumstances, this metric is 0.
-- Non-txn command throttled duration: The blocked duration for other commands due to throttling. Under normal circumstances, this metric is 0.
+- Scheduler flow：每个 TiKV 实例的 scheduler 的实时流量
+- Scheduler discard ratio：每个 TiKV 实例的 scheduler 的请求拒绝比率。如果该比例大于 0，则表明存在流控。当 Compaction pending bytes 超过阈值时，TiKV 会根据超过阈值部分的值，按比例线性增加 Scheduler discard ratio。被拒绝的请求将自动由客户端重试
+- Throttle duration：L0 文件过多并触发流控后，scheduler 执行请求的阻塞时间。如果存在统计数据，则表明存在流控
+- Scheduler throttled CF：由于达到流控阈值，触发 RocksDB 限流的 CF
+- Flow controller actions：由于达到流控阈值，触发 RocksDB 限流的原因
+- Flush/L0 flow：每个 TiKV 实例上 RocksDB 的不同 CF 的 Flush 流量和 L0 compaction 的流量
+- Flow control factors：触发 RocksDB 限流相关的因素
+- Compaction pending bytes：每个 TiKV 实例上 RocksDB 实时等待 compaction 的数据的大小
+- Txn command throttled duration：由于限流，与事务相关的命令的阻塞时间。正常情况下，该指标为 0
+- Non-txn command throttled duration：由于限流，非事务相关的命令的阻塞时间。正常情况下，该指标为 0
 
-![TiKV Dashboard - Flow Control metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-flow-control.png)
+![TiKV Dashboard - Flow Control metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-flow-control.png)
 
 ### Scheduler
 
-- Scheduler stage total: The number of commands at each stage per second. There should not be a lot of errors in a short time.
-- Scheduler writing bytes: The total written bytes by commands processed on each TiKV instance
-- Scheduler priority commands: The count of different priority commands per second
-- Scheduler pending commands: The count of pending commands per TiKV instance per second
+- Scheduler stage total：每种命令不同阶段的 ops，正常情况下，不会在短时间内出现大量的错误
+- Scheduler writing bytes：每个 TiKV 实例正在处理的命令的写入字节数量
+- Scheduler priority commands：不同优先级命令的 ops
+- Scheduler pending commands：每个 TiKV 实例上 pending 命令的 ops
 
-![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler.png)
+![TiKV Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-scheduler.png)
 
 ### Scheduler - commit
 
-- Scheduler stage total: The number of commands at each stage per second when executing the commit command. There should not be a lot of errors in a short time.
-- Scheduler command duration: The time consumed when executing the commit command. It should be less than `1s`.
-- Scheduler latch wait duration: The waiting time caused by latch when executing the commit command. It should be less than `1s`.
-- Scheduler keys read: The count of keys read by a commit command
-- Scheduler keys written: The count of keys written by a commit command
-- Scheduler scan details: The keys scan details of each CF when executing the commit command.
-- Scheduler scan details [lock]: The keys scan details of lock CF when executing the commit command
-- Scheduler scan details [write]: The keys scan details of write CF when executing the commit command
-- Scheduler scan details [default]: The keys scan details of default CF when executing the commit command
+- Scheduler stage total：commit 中每个命令所处不同阶段的 ops，正常情况下，不会在短时间内出现大量的错误
+- Scheduler command duration：执行 commit 命令所需花费的时间，正常情况下，应该小于 1s
+- Scheduler latch wait duration：由于 latch wait 造成的时间开销，正常情况下，应该小于 1s
+- Scheduler keys read：commit 命令读取 key 的个数
+- Scheduler keys written：commit 命令写入 key 的个数
+- Scheduler scan details：执行 commit 命令时，扫描每个 CF 中 key 的详细情况
+- Scheduler scan details [lock]：执行 commit 命令时，扫描每个 lock CF 中 key 的详细情况
+- Scheduler scan details [write]：执行 commit 命令时，扫描每个 write CF 中 key 的详细情况
+- Scheduler scan details [default]：执行 commit 命令时，扫描每个 default CF 中 key 的详细情况
 
-![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs/tikv-dashboard-scheduler-commit.png)
+![TiKV Dashboard - Scheduler commit metrics](https://docs-download.pingcap.com/media/images/docs-cn/tikv-dashboard-scheduler-commit.png)
 
 ### Scheduler - pessimistic_rollback
 
-- Scheduler stage total: The number of commands at each stage per second when executing the `pessimistic_rollback` command. There should not be a lot of errors in a short time.
-- Scheduler command duration: The time consumed when executing the `pessimistic_rollback` command. It should be less than `1s`.
-- Scheduler latch wait duration: The waiting time caused by latch when executing the `pessimistic_rollback` command. It should be less than `1s`.
-- Scheduler keys read: The count of keys read by a `pessimistic_rollback` command
-- Scheduler keys written: The count of keys written by a `pessimistic_rollback` command
-- Scheduler scan details: The keys scan details of each CF when executing the `pessimistic_rollback` command.
-- Scheduler scan details [lock]: The keys scan details of lock CF when executing the `pessimistic_rollback` command
-- Scheduler scan details [write]: The keys scan details of write CF when executing the `pessimistic_rollback` command
-- Scheduler scan details [default]: The keys scan details of default CF when executing the `pessimistic_rollback` command
+- Scheduler stage total：pessimistic_rollback 中每个命令所处不同阶段的 ops，正常情况下，不会在短时间内出现大量的错误
+- Scheduler command duration：执行 pessimistic_rollback 命令所需花费的时间，正常情况下，应该小于 1s
+- Scheduler latch wait duration：由于 latch wait 造成的时间开销，正常情况下，应该小于 1s
+- Scheduler keys read：pessimistic_rollback 命令读取 key 的个数
+- Scheduler keys written：pessimistic_rollback 命令写入 key 的个数
+- Scheduler scan details：执行 pessimistic_rollback 命令时，扫描每个 CF 中 key 的详细情况
+- Scheduler scan details [lock]：执行 pessimistic_rollback 命令时，扫描每个 lock CF 中 key 的详细情况
+- Scheduler scan details [write]：执行 pessimistic_rollback 命令时，扫描每个 write CF 中 key 的详细情况
+- Scheduler scan details [default]：执行 pessimistic_rollback 命令时，扫描每个 default CF 中 key 的详细情况
 
 ### Scheduler - prewrite
 
-- Scheduler stage total: The number of commands at each stage per second when executing the prewrite command. There should not be a lot of errors in a short time.
-- Scheduler command duration: The time consumed when executing the prewrite command. It should be less than `1s`.
-- Scheduler latch wait duration: The waiting time caused by latch when executing the prewrite command. It should be less than `1s`.
-- Scheduler keys read: The count of keys read by a prewrite command
-- Scheduler keys written: The count of keys written by a prewrite command
-- Scheduler scan details: The keys scan details of each CF when executing the prewrite command.
-- Scheduler scan details [lock]: The keys scan details of lock CF when executing the prewrite command
-- Scheduler scan details [write]: The keys scan details of write CF when executing the prewrite command
-- Scheduler scan details [default]: The keys scan details of default CF when executing the prewrite command
+- Scheduler stage total：prewrite 中每个命令所处不同阶段的 ops，正常情况下，不会在短时间内出现大量的错误
+- Scheduler command duration：执行 prewrite 命令所需花费的时间，正常情况下，应该小于 1s
+- Scheduler latch wait duration：由于 latch wait 造成的时间开销，正常情况下，应该小于 1s
+- Scheduler keys read：prewrite 命令读取 key 的个数
+- Scheduler keys written：prewrite 命令写入 key 的个数
+- Scheduler scan details：执行 prewrite 命令时，扫描每个 CF 中 key 的详细情况
+- Scheduler scan details [lock]：执行 prewrite 命令时，扫描每个 lock CF 中 key 的详细情况
+- Scheduler scan details [write]：执行 prewrite 命令时，扫描每个 write CF 中 key 的详细情况
+- Scheduler scan details [default]：执行 prewrite 命令时，扫描每个 default CF 中 key 的详细情况
 
 ### Scheduler - rollback
 
-- Scheduler stage total: The number of commands at each stage per second when executing the rollback command. There should not be a lot of errors in a short time.
-- Scheduler command duration: The time consumed when executing the rollback command. It should be less than `1s`.
-- Scheduler latch wait duration: The waiting time caused by latch when executing the rollback command. It should be less than `1s`.
-- Scheduler keys read: The count of keys read by a rollback command
-- Scheduler keys written: The count of keys written by a rollback command
-- Scheduler scan details: The keys scan details of each CF when executing the rollback command.
-- Scheduler scan details [lock]: The keys scan details of lock CF when executing the rollback command
-- Scheduler scan details [write]: The keys scan details of write CF when executing the rollback command
-- Scheduler scan details [default]: The keys scan details of default CF when executing the rollback command
+- Scheduler stage total：rollback 中每个命令所处不同阶段的 ops，正常情况下，不会在短时间内出现大量的错误
+- Scheduler command duration：执行 rollback 命令所需花费的时间，正常情况下，应该小于 1s
+- Scheduler latch wait duration：由于 latch wait 造成的时间开销，正常情况下，应该小于 1s
+- Scheduler keys read：rollback 命令读取 key 的个数
+- Scheduler keys written：rollback 命令写入 key 的个数
+- Scheduler scan details：执行 rollback 命令时，扫描每个 CF 中 key 的详细情况
+- Scheduler scan details [lock]：执行 rollback 命令时，扫描每个 lock CF 中 key 的详细情况
+- Scheduler scan details [write]：执行 rollback 命令时，扫描每个 write CF 中 key 的详细情况
+- Scheduler scan details [default]：执行 rollback 命令时，扫描每个 default CF 中 key 的详细情况
 
 ### GC
 
-- GC tasks: The count of GC tasks processed by gc_worker
-- GC tasks Duration: The time consumed when executing GC tasks
-- TiDB GC seconds: The GC duration
-- TiDB GC worker actions: The count of TiDB GC worker actions
-- ResolveLocks Progress: The progress of the first phase of GC (Resolve Locks)
-- TiKV Auto GC Progress: The progress of the second phase of GC
-- GC speed: The number of keys deleted by GC per second
-- TiKV Auto GC SafePoint: The value of TiKV GC safe point. The safe point is the current GC timestamp
-- GC lifetime: The lifetime of TiDB GC
-- GC interval: The interval of TiDB GC
-- GC in Compaction Filter: The count of filtered versions in the compaction filter of write CF.
+- GC tasks：由 gc_worker 处理的 GC 任务的个数
+- GC tasks Duration：执行 GC 任务时所花费的时间
+- TiDB GC seconds：TiDB 执行 GC 花费的时间
+- TiDB GC worker actions：TiDB GC worker 的不同 action 的个数
+- TiKV AutoGC Working：Auto GC 管理器的工作状态
+- ResolveLocks Progress：GC 第一阶段 (ResolveLocks) 的进度
+- TiKV Auto GC Progress：GC 第二阶段的进度
+- GC speed：GC 每秒删除的 key 的数量
+- TiKV Auto GC SafePoint：TiKV GC 的 safe point 的数值，safe point 为当前 GC 的时间戳
+- GC lifetime：TiDB 设置的 GC lifetime
+- GC interval：TiDB 设置的 GC 间隔
+- GC in Compaction Filter：write CF 的 Compaction Filter 中已过滤版本的数量
 
 ### Snapshot
 
-- Rate snapshot message: The rate at which Raft snapshot messages are sent
-- 99% Handle snapshot duration: The time consumed to handle snapshots (P99)
-- Snapshot state count: The number of snapshots per state
-- 99.99% Snapshot size: The snapshot size (P99.99)
-- 99.99% Snapshot KV count: The number of KV within a snapshot (P99.99)
+- Rate snapshot message：发送 Raft snapshot 消息的速率
+- 99% Handle snapshot duration：99% 的情况下，处理 snapshot 所需花费的时间
+- Snapshot state count：不同状态的 snapshot 的个数
+- 99.99% Snapshot size：99.99% 的 snapshot 的大小
+- 99.99% Snapshot KV count：99.99% 的 snapshot 包含的 key 的个数
 
 ### Task
 
-- Worker handled tasks: The number of tasks handled by worker per second
-- Worker pending tasks: Current number of pending and running tasks of worker per second. It should be less than `1000` in normal case.
-- FuturePool handled tasks: The number of tasks handled by future pool per second
-- FuturePool pending tasks: Current number of pending and running tasks of future pool per second
+- Worker handled tasks：worker 每秒钟处理的任务的数量
+- Worker pending tasks：当前 worker 中，每秒钟 pending 和 running 的任务的数量，正常情况下，应该小于 1000
+- FuturePool handled tasks：future pool 每秒钟处理的任务的数量
+- FuturePool pending tasks：当前 future pool 中，每秒钟 pending 和 running 的任务的数量
 
 ### Coprocessor Overview
 
-- Request duration: The total duration from the time of receiving the coprocessor request to the time of finishing processing the request
-- Total Requests: The number of requests by type per second
-- Handle duration: The histogram of time spent actually processing coprocessor requests per minute
-- Total Request Errors: The number of request errors of Coprocessor per second. There should not be a lot of errors in a short time.
-- Total KV Cursor Operations: The total number of the KV cursor operations by type per second, such as `select`, `index`, `analyze_table`, `analyze_index`, `checksum_table`, and `checksum_index`.
-- KV Cursor Operations: The histogram of KV cursor operations by type per second
-- Total RocksDB Perf Statistics: The statistics of RocksDB performance
-- Total Response Size: The total size of coprocessor response
+- Request duration：从收到 coprocessor 请求到处理结束所消耗的总时间
+- Total Requests：每种类型的总请求的 ops
+- Handle duration：每分钟实际处理 coprocessor 请求所消耗的时间的直方图
+- Total Request Errors：Coprocessor 每秒请求错误的数量，正常情况下，短时间内不应该有大量的错误
+- Total KV Cursor Operations：各种类型的 KV cursor 操作的总数量的 ops，例如 select、index、analyze_table、analyze_index、checksum_table、checksum_index 等
+- KV Cursor Operations：每秒各种类型的 KV cursor 操作的数量，以直方图形式显示
+- Total RocksDB Perf Statistics：RocksDB 性能统计数据
+- Total Response Size：coprocessor 回应的数据大小
 
 ### Coprocessor Detail
 
-- Handle duration: The histogram of time spent actually processing coprocessor requests per minute
-- 95% Handle duration by store: The time consumed to handle coprocessor requests per TiKV instance per second (P95)
-- Wait duration: The time consumed when coprocessor requests are waiting to be handled. It should be less than `10s` (P99.99).
-- 95% Wait duration by store: The time consumed when coprocessor requests are waiting to be handled per TiKV instance per second (P95)
-- Total DAG Requests: The total number of DAG requests per second
-- Total DAG Executors: The total number of DAG executors per second
-- Total Ops Details (Table Scan): The number of RocksDB internal operations per second when executing select scan in coprocessor
-- Total Ops Details (Index Scan): The number of RocksDB internal operations per second when executing index scan in coprocessor
-- Total Ops Details by CF (Table Scan): The number of RocksDB internal operations for each CF per second when executing select scan in coprocessor
-- Total Ops Details by CF (Index Scan): The number of RocksDB internal operations for each CF per second when executing index scan in coprocessor
+- Handle duration：每秒钟实际处理 coprocessor 请求所消耗的时间的直方图
+- 95% Handle duration by store：每秒钟中 95% 的情况下，每个 TiKV 实例处理 coprocessor 请求所花费的时间
+- Wait duration：coprocessor 每秒钟内请求的等待时间，99.99% 的情况下，应该小于 10s
+- 95% Wait duration by store：每秒钟 95% 的情况下，每个 TiKV 实例上 coprocessor 请求的等待时间
+- Total DAG Requests：DAG 请求的总数量的 ops
+- Total DAG Executors：DAG executor 的总数量的 ops
+- Total Ops Details (Table Scan)：coprocessor 中请求为 select 的 scan 过程中每秒钟各种事件发生的次数
+- Total Ops Details (Index Scan)：coprocessor 中请求为 index 的 scan 过程中每秒钟各种事件发生的次数
+- Total Ops Details by CF (Table Scan)：coprocessor 中对于每个 CF 请求为 select 的 scan 过程中每秒钟各种事件发生的次数
+- Total Ops Details by CF (Index Scan)：coprocessor 中对于每个 CF 请求为 index 的 scan 过程中每秒钟各种事件发生的次数
 
 ### Threads
 
-- Threads state: The state of TiKV threads
-- Threads IO: The I/O traffic of each TiKV thread
-- Thread Voluntary Context Switches: The number of TiKV threads voluntary context switches
-- Thread Nonvoluntary Context Switches: The number of TiKV threads nonvoluntary context switches
+- Threads state：TiKV 线程的状态
+- Threads IO：TiKV 各个线程的 I/O 流量
+- Thread Voluntary Context Switches：TiKV 线程自主切换的次数
+- Thread Nonvoluntary Context Switches：TiKV 线程被动切换的次数
 
 ### RocksDB - kv/raft
 
-- Get operations: The count of get operations per second
-- Get duration: The time consumed when executing get operations
-- Seek operations: The count of seek operations per second
-- Seek duration: The time consumed when executing seek operations
-- Write operations: The count of write operations per second
-- Write duration: The time consumed when executing write operations
-- WAL sync operations: The count of WAL sync operations per second
-- Write WAL duration: The time consumed for writing WAL
-- WAL sync duration: The time consumed when executing WAL sync operations
-- Compaction operations: The count of compaction and flush operations per second
-- Compaction duration: The time consumed when executing the compaction and flush operations
-- SST read duration: The time consumed when reading SST files
-- Write stall duration: Write stall duration. It should be `0` in normal case.
-- Memtable size: The memtable size of each column family
-- Memtable hit: The hit rate of memtable
-- Block cache size: The block cache size. Broken down by column family if shared block cache is disabled.
-- Block cache hit: The hit rate of block cache
-- Block cache flow: The flow rate of block cache operations per type
-- Block cache operations: The count of block cache operations per type
-- Keys flow: The flow rate of operations on keys per type
-- Total keys: The count of keys in each column family
-- Read flow: The flow rate of read operations per type
-- Bytes / Read: The bytes per read operation
-- Write flow: The flow rate of write operations per type
-- Bytes / Write: The bytes per write operation
-- Compaction flow: The flow rate of compaction operations per type
-- Compaction pending bytes: The pending bytes to be compacted
-- Compaction Job Size(files): The number of SST files involved in a single compaction job
-- Read amplification: The read amplification per TiKV instance
-- Compression ratio: The compression ratio of each level
-- Number of snapshots: The number of snapshots per TiKV instance
-- Oldest snapshots duration: The time that the oldest unreleased snapshot survivals
-- Number files at each level: The number of SST files for different column families in each level
-- Ingest SST duration seconds: The time consumed to ingest SST files
-- Stall conditions changed of each CF: Stall conditions changed of each column family
+- Get operations：get 操作的 ops
+- Get duration：get 操作的耗时
+- Seek operations：seek 操作的 ops
+- Seek duration：seek 操作的耗时
+- Write operations：write 操作的 ops
+- Write duration：write 操作的耗时
+- WAL sync operations：sync WAL 操作的 ops
+- Write WAL duration：write 操作中写 WAL 的耗时
+- WAL sync duration：sync WAL 操作的耗时
+- Compaction operations：compaction 和 flush 操作的 ops
+- Compaction duration：compaction 和 flush 操作的耗时
+- SST read duration：读取 SST 所需的时间
+- Write stall duration：由于 write stall 造成的时间开销，正常情况下应为 0
+- Memtable size：每个 CF 的 memtable 的大小
+- Memtable hit：memtable 的命中率
+- Block cache size：block cache 的大小。如果将 `shared block cache` 禁用，即为每个 CF 的 block cache 的大小
+- Block cache hit：block cache 的命中率
+- Block cache flow：不同 block cache 操作的流量
+- Block cache operations 不同 block cache 操作的个数
+- Keys flow：不同操作造成的 key 的流量
+- Total keys：每个 CF 中 key 的个数
+- Read flow：不同读操作的流量
+- Bytes/Read：每次读的大小
+- Write flow：不同写操作的流量
+- Bytes/Write：每次写的大小
+- Compaction flow：compaction 相关的流量
+- Compaction pending bytes：等待 compaction 的大小
+- Compaction Job Size(files)：单个 compaction 任务涉及的 SST 文件数量
+- Read amplification：每个 TiKV 实例的读放大
+- Compression ratio：每一层的压缩比
+- Number of snapshots：每个 TiKV 的 snapshot 的数量
+- Oldest snapshots duration：最旧的 snapshot 保留的时间
+- Number files at each level：每一层的文件个数
+- Ingest SST duration seconds：ingest SST 所花费的时间
+- Stall conditions changed of each CF：每个 CF stall 的原因
 
 ### Raft Engine
 
 - Operations
-    - write: the number of write operations by Raft Engine per second
-    - read_entry: the number of raft log read operations by Raft Engine per second
-    - read_message: the number of raft metadata read operations by Raft Engine per second
-- Write duration: the duration of write operations by Raft Engine. This duration is close to the sum of the latency of disk IOs involved in writing these data.
+    - write：Raft Engine 每秒写操作的次数
+    - read_entry：Raft Engine 每秒读 raft 日志的次数
+    - read_message：Raft Engine 每秒读 raft 元数据的次数
+- Write duration：Raft Engine 写操作的耗时，该耗时基本接近写入这些数据所包含的磁盘 IO 的 latency 之和
 - Flow
-    - write: the write traffic of Raft Engine
-    - rewrite append: the traffic of rewriting append logs
-    - rewrite rewrite: the traffic of rewriting rewrite logs
+    - write：Raft Engine 写流量
+    - rewrite append：重写 append 日志的流量
+    - rewrite rewrite：重写 rewrite 日志的流量
 - Write Duration Breakdown (99%)
-    - wal: the latency of writing Raft Engine WAL
-    - wait: the waiting time before writing
-    - apply: the time consumed for applying data to memory
-- Bytes/Written: the bytes written by Raft Engine every time
-- WAL Duration Breakdown (P99%): the time consumed for each stage of writing Raft Engine WAL
+    - wal：写 Raft Engine WAL 的延迟
+    - wait：写入前等待时间
+    - apply：apply 到内存的时间
+- Bytes/Written 每次写入对应的 bytes
+- WAL Duration Breakdown (P99%)：写 WAL 内部各个阶段所花的时间
 - File Count
-    - append: the number of files used for appending data by Raft Engine
-    - rewrite: the number of files used for rewriting data by Raft Engine (rewrite is similar to RocksDB compaction)
+    - append：Raft Engine 用于 append 数据的文件个数
+    - rewrite：Raft Engine 用于 rewrite 的文件个数（rewrite 类似于 RocksDB 的 compaction）
 - Entry Count
-    - rewrite: the number of entries rewritten by Raft Engine
-    - append: the number of entries appended by Raft Engine
+    - rewrite：Raft Engine 中已经 rewrite 的记录条数
+    - append：Raft Engine 中已经 append 的记录条数
 
 ### Titan - All
 
-- Blob file count: The number of Titan blob files
-- Blob file size: The total size of Titan blob file
-- Live blob size: The total size of valid blob record
-- Blob cache hit: The hit rate of Titan block cache
-- Iter touched blob file count: The number of blob file involved in a single iterator
-- Blob file discardable ratio distribution: The ratio distribution of blob record failure of blob files
-- Blob key size: The size of Titan blob keys
-- Blob value size: The size of Titan blob values
-- Blob get operations: The count of get operations in Titan blob
-- Blob get duration: The time consumed when executing get operations in Titan blob
-- Blob iter operations: The time consumed when executing iter operations in Titan blob
-- Blob seek duration: The time consumed when executing seek operations in Titan blob
-- Blob next duration: The time consumed when executing next operations in Titan blob
-- Blob prev duration: The time consumed when executing prev operations in Titan blob
-- Blob keys flow: The flow rate of operations on Titan blob keys
-- Blob bytes flow: The flow rate of bytes on Titan blob keys
-- Blob file read duration: The time consumed when reading Titan blob file
-- Blob file write duration: The time consumed when writing Titan blob file
-- Blob file sync operations: The count of blob file sync operations
-- Blob file sync duration: The time consumed when synchronizing blob file
-- Blob GC action: The count of Titan GC actions
-- Blob GC duration: The Titan GC duration
-- Blob GC keys flow: The flow rate of keys read and written by Titan GC
-- Blob GC bytes flow: The flow rate of bytes read and written by Titan GC
-- Blob GC input file size: The size of Titan GC input file
-- Blob GC output file size: The size of Titan GC output file
-- Blob GC file count: The count of blob files involved in Titan GC
+- Blob file count：Titan blob 文件的数量
+- Blob file size：Titan blob 文件总大小
+- Live blob size：有效 blob record 的总大小
+- Blob cache hit：Titan 的 blob cache 命中率
+- Iter touched blob file count：单个 Iterator 所涉及到 blob 文件的数量
+- Blob file discardable ratio distribution：blob 文件的失效 blob record 比例的分布情况
+- Blob key size：Titan 中 blob key 的大小
+- Blob value size：Titan 中 blob value 的大小
+- Blob get operations：blob 的 get 操作的数量
+- Blob get duration：blob 的 get 操作的耗时
+- Blob iter operations：blob 的 iter 操作的耗时
+- Blob seek duration：blob 的 seek 操作的耗时
+- Blob next duration：blob 的 next 操作的耗时
+- Blob prev duration：blob 的 prev 操作的耗时
+- Blob keys flow：Titan blob 读写的 key 数量
+- Blob bytes flow：Titan blob 读写的 bytes 数量
+- Blob file read duration：blob 文件的读取耗时
+- Blob file write duration：blob 文件的写入耗时
+- Blob file sync operations：blob 文件 sync 次数
+- Blob file sync duration：blob 文件 sync 耗时
+- Blob GC action：Titan GC 细分动作的次数
+- Blob GC duration：Titan GC 的耗时
+- Blob GC keys flow：Titan GC 读写的 key 数量
+- Blob GC bytes flow：Titan GC 读写的 bytes 数量
+- Blob GC input file size：Titan GC 输入文件的大小
+- Blob GC output file size：Titan GC 输出文件的大小
+- Blob GC file count：Titan GC 涉及的 blob 文件数量
 
 ### In Memory Engine
 
-The following metrics are related to [TiKV MVCC In-Memory Engine](/tikv-in-memory-engine.md) (IME).
+以下为 [TiKV MVCC 内存引擎](/tikv-in-memory-engine.md) (In-Memory Engine, IME) 的监控指标。
 
-- Ops: The number of operations per second for column families
-- Read MBps: The total bytes of read traffic in RocksDB and the in-memory engine
-- Coprocessor Handle duration: The time consumed for handling coprocessor requests
-- Region Cache Hit: The number of times data is successfully retrieved from the Region cache
-- Region Cache Hit Rate: The hit rate of Region cache
-- Region Cache Miss Reason: The reasons why data is not retrieved from the Region cache
-- Memory Usage: The memory usage of the in-memory engine
-- Region Count: The count of different types of Regions
-- GC Filter: The information about the filtering process during garbage collection (GC)
-- Region GC Duration: The time consumed for Region GC
-- Region Load Duration: The time consumed for loading Regions
-- Region Load Count: The number of Regions loaded per second
-- Region Eviction Duration: The time consumed for evicting Regions
-- Region Eviction Count: The number of Regions evicted per second
-- Write duration: The time consumed for write operations in the Region cache engine
-- 99% In-memory engine write duration per server: The 99th percentile of write duration per TiKV server for the in-memory engine
-- Prepare for write duration: The time consumed for preparing write operations in the in-memory engine
-- 99% In-memory engine prepare for write duration per server: The 99th percentile of time consumed for preparing write operations per TiKV server in the in-memory engine
-- Iterator operations: The number of different types of iterator operations
-- Seek duration: The time consumed for seek operations
-- Oldest Auto GC SafePoint: The oldest automatic GC safepoint for Regions cached in the in-memory engine
-- Newest Auto GC SafePoint: The newest automatic GC safepoint for Regions cached in the in-memory engine
-- Auto GC SafePoint Gap: The time gap between the newest automatic GC safepoint and the oldest automatic GC safepoint for Regions cached in the in-memory engine
-- Auto GC SafePoint Gap With TiKV: The gap between the TiKV automatic GC safepoint and the oldest automatic GC safepoint for Regions cached in the in-memory engine
+- Ops：每秒列族操作次数
+- Read MBps：RocksDB 和内存引擎的总体读流量（字节）
+- Coprocessor Handle duration：处理 coprocessor 请求的耗时
+- Region Cache Hit：从 Region 缓存中成功读取数据的次数
+- Region Cache Hit Rate：Region 缓存的命中率
+- Region Cache Miss Reason：从 Region 缓存中读取数据失败的原因
+- Memory Usage：内存引擎的内存使用情况
+- Region Count：不同类型的 Region 的数量
+- GC Filter：垃圾回收 (GC) 过程中过滤相关的信息
+- Region GC Duration：Region 垃圾回收的耗时
+- Region Load Duration：加载 Region 的耗时
+- Region Load Count：每秒加载的 Region 的数量
+- Region Eviction Duration：驱逐 Region 的耗时
+- Region Eviction Count：每秒驱逐的 Region 的数量
+- Write duration：写操作的耗时
+- 99% In-memory engine write duration per server：内存引擎每秒写操作的 99% 耗时
+- Prepare for write duration：准备写操作的耗时
+- 99% In-memory engine prepare for write duration per server：内存引擎每秒准备写操作的 99% 耗时
+- Iterator operations：不同类型的 iterator 操作的数量
+- Seek duration：seek 操作的耗时
+- Oldest Auto GC SafePoint：内存引擎缓存的 Region 中，最早的自动 GC safepoint
+- Newest Auto GC SafePoint：内存引擎缓存的 Region 中，最新的自动 GC safepoint
+- Auto GC SafePoint Gap：内存引擎缓存的 Region 中，最新的自动 GC safepoint 和最早的自动 GC safepoint 之间的时间差
+- Auto GC SafePoint Gap With TiKV：TiKV 的自动 GC safepoint 和内存引擎缓存的 Region 中最早的自动 GC safepoint 之间的时间差
 
 ### Pessimistic Locking
 
-- Lock Manager Thread CPU: The CPU utilization of the lock manager thread
-- Lock Manager Handled tasks: The number of tasks handled by lock manager
-- Waiter lifetime duration: The waiting time of the transaction for the lock to be released
-- Wait table: The status information of wait table, including the number of locks and the number of transactions waiting for the lock
-- Deadlock detect duration: The time consumed for detecting deadlock
-- Detect error: The number of errors encountered when detecting deadlock, including the number of deadlocks
-- Deadlock detector leader: The information of the node where the deadlock detector leader is located
-- Total pessimistic locks memory size: The memory size occupied by the in-memory pessimistic locks
-- In-memory pessimistic locking result: The result of only saving pessimistic locks to memory. `full` means the number of times that the pessimistic lock is not saved to memory because the memory limit is exceeded.
+- Lock Manager Thread CPU：lock manager 的线程 CPU 使用率
+- Lock Manager Handled tasks：lock manager 处理的任务数量
+- Waiter lifetime duration：事务等待锁释放的时间
+- Wait table：wait table 的状态信息，包括锁的数量和等锁事务的数量
+- Deadlock detect duration：处理死锁检测请求的耗时
+- Detect error：死锁检测遇到的错误数量，包含死锁的数量
+- Deadlock detector leader：死锁检测器 leader 所在节点的信息
+- Total pessimistic locks memory size：内存悲观锁占用内存的总大小
+- In-memory pessimistic locking result：将悲观锁仅保存到内存的结果，其中 full 表示因为超过内存限制而无法将悲观锁保存至内存的次数
 
 ### Resolved-TS
 
-- Resolved-TS worker CPU: The CPU utilization of the resolved-ts worker threads
-- Advance-TS worker CPU: The CPU utilization of the advance-ts worker threads
-- Scan lock worker CPU: The CPU utilization of the scan lock worker threads
-- Max gap of resolved-ts: The maximum time difference between the resolved-ts of all active Regions in this TiKV and the current time
-- Max gap of safe-ts: The maximum time difference between the safe-ts of all active Regions in this TiKV and the current time
-- Min Resolved TS Region: The ID of the Region whose resolved-ts is the minimal
-- Min Safe TS Region: The ID of the Region whose safe-ts is the minimal
-- Check Leader Duration: The distribution of time spent on processing leader requests. The duration is from sending requests to receiving responses in leader
-- Max gap of resolved-ts in Region leaders: The maximum time difference between the resolved-ts of all active Regions in this TiKV and the current time, only for Region leaders
-- Min Leader Resolved TS Region: The ID of the Region whose resolved-ts is the minimal, only for Region leaders
-- Lock heap size: The size of the heap that tracks locks in the resolved-ts module
+- Resolved-TS worker CPU：resolved-ts worker 线程的 CPU 使用率
+- Advance-TS worker CPU：advance-ts worker 线程的 CPU 使用率
+- Scan lock worker CPU：scan lock worker 线程的 CPU 使用率
+- Max gap of resolved-ts：在当前 TiKV 中，所有活跃 Region 的 resolved-ts 与当前时间的最大差值
+- Max gap of safe-ts：在当前 TiKV 中，所有活跃 Region 的 safe-ts 与当前时间的最大差值
+- Min Resolved TS Region：resolved-ts 最小的 Region 的 ID
+- Min Safe TS Region：safe-ts 最小的 Region 的 ID
+- Check Leader Duration：处理 leader 请求所花费的时间的直方图，从发送请求到接收到 leader 的响应
+- Max gap of resolved-ts in Region leaders：在当前 TiKV 中，所有活跃 Region 的 resolved-ts 与当前时间的最大差值，只包含 Region leader
+- Min Leader Resolved TS Region：resolved-ts 最小的 Region 的 ID，只包含 Region leader
+- Lock heap size：resolved-ts 模块中用于跟踪锁的堆的大小
 
 ### Memory
 
-- Allocator Stats: The statistics of the memory allocator
+- Allocator Stats：内存分配器的统计信息
 
 ### Backup
 
-- Backup CPU: The CPU utilization of the backup thread
-- Range Size: The histogram of backup range size
-- Backup Duration: The time consumed for backup
-- Backup Flow: The total bytes of backup
-- Disk Throughput: The disk throughput per instance
-- Backup Range Duration: The time consumed for backing up a range
-- Backup Errors: The number of errors encountered during a backup
+- Backup CPU：backup 的线程 CPU 使用率
+- Range Size：backup range 的大小直方图
+- Backup Duration：backup 的耗时
+- Backup Flow：backup 总的字节大小
+- Disk Throughput：实例磁盘的吞吐量
+- Backup Range Duration：backup range 的耗时
+- Backup Errors：backup 中发生的错误数量
 
 ### Encryption
 
-- Encryption data keys: The total number of encrypted data keys
-- Encrypted files: The number of encrypted files
-- Encryption initialized: Shows whether encryption is enabled. `1` means enabled.
-- Encryption meta files size: The size of the encryption meta file
-- Encrypt/decrypt data nanos: The histogram of duration on encrypting/decrypting data each time
-- Read/write encryption meta duration: The time consumed for reading/writing encryption meta files
+- Encryption data keys：正在使用的加密 data key 的总数量
+- Encrypted files：被加密的文件数量
+- Encryption initialized：显示加密是否被启用，`1` 代表已经启用
+- Encryption meta files size：加密相关的元数据文件的大小
+- Encrypt/decrypt data nanos：每次加密/解密数据的耗时的直方图
+- Read/write encryption meta duration：每秒钟读写加密文件所耗费的时间
 
 ### Log Backup
 
-- Handle Event Rate: The speed of handling write events
-- Initial Scan Generate Event Throughput: Incremental scanning speed when generating a new listener stream
-- Abnormal Checkpoint TS Lag: The lag of the current checkpoint TS to the present time for each task
-- Memory Of Events: An estimated amount of memory occupied by temporary data generated by incremental scanning
-- Observed Region Count: The number of Regions currently listened to
-- Errors: The number and type of retryable and non-fatal errors
-- Fatal Errors: The number and type of fatal errors. Usually, fatal errors cause the task to be paused.
-- Checkpoint TS of Tasks: Checkpoint TS for each task
-- Flush Duration: The heat map of how long it takes for moving cached data to external storage
-- Initial Scanning Duration: The heat map of how long it takes for incremental scanning when creating a new listening stream
-- Convert Raft Event Duration: The heat map of how long it takes to transform a Raft log entry into backup data after creating a listening stream
-- Command Batch Size: The batch size (within a single Raft group) of the listening Raft command
-- Save to Temp File Duration: The heat map of how long it takes to temporarily store a batch of backup data (spanning several tasks) into the temporary file area
-- Write to Temp File Duration: The heat map of how long it takes to temporarily store a batch of backup data (from a particular task) into the temporary file area
-- System Write Call Duration: The heat map of how long it takes to write a batch of backup data (from a Region) to a temporary file
-- Internal Message Type: The type of messages received by the actor responsible for the log backup within TiKV
-- Internal Message Handling Duration (P90|P99): The speed of consuming and processing each type of messages
-- Initial Scan RocksDB Throughput: The read traffic generated by RocksDB internal logging during incremental scanning
-- Initial Scan RocksDB Operation: The number of individual operations logged internally by RocksDB during incremental scanning
-- Initial Scanning Trigger Reason: The reason for triggering incremental scanning
-- Region Checkpoint Key Putting: The number of checkpoint operations logged to the PD
+- Handle Event Rate：处理写入事件的速度。
+- Initial Scan Generate Event Throughput：创建新的监听流时，增量扫描的速度。
+- Abnormal Checkpoint TS Lag：各个任务当前 Checkpoint TS 到现在时间的 Lag。
+- Memory Of Events：增量扫描产生的临时数据占用内存的估计值。
+- Observed Region Count：目前监听的 Region 数量。
+- Errors：可重试、非致命错误的数量及类型。
+- Fatal Errors：致命错误的数量及类型。通常致命错误会导致任务暂停。
+- Checkpoint TS of Tasks：各个任务的 Checkpoint TS。
+- Flush Duration：将缓存数据移动到外部存储的耗时的热力图。
+- Initial Scanning Duration：创建新的监听流时，增量扫描的耗时的热力图。
+- Convert Raft Event Duration：创建监听流后，转化 Raft 日志项为备份数据的耗时的热力图。
+- Command Batch Size：监听到的 Raft Command 的 Batch 大小（单个 Raft Group 内）。
+- Save to Temp File Duration：将一批备份数据（跨越数个 Task）暂存到临时文件区的耗时的热力图。
+- Write to Temp File Duration：将一批备份数据（来自某个 Task）暂存到临时文件区的耗时的热力图。
+- System Write Call Duration：将一批备份数据（来自某个 Region）写入到临时文件耗时的热力图。
+- Internal Message Type：TiKV 内部负责日志备份的 Actor 收到的消息的类型。
+- Internal Message Handling Duration (P90|P99)：消费、处理各个类型消息的速度。
+- Initial Scan RocksDB Throughput：增量扫描过程中，RocksDB 内部记录产生的读流量。
+- Initial Scan RocksDB Operation：增量扫描过程中，RocksDB 内部记录的各个操作的数量。
+- Initial Scanning Trigger Reason：触发增量扫描的原因。
+- Region Checkpoint Key Putting：向 PD 记录 Checkpoint 的操作的数量。
 
-> **Note:**
+> **注意：**
 >
-> The following monitoring metrics all use TiDB nodes as their data source, but they have some impact on the log backup process. Therefore, they are placed in the **TiKV Details** dashboard for ease of reference. TiKV actively pushes progress most of the time, but it is normal for some of the following monitoring metrics to occasionally not have sampled data.
+> 以下这些监控指标的数据源都是 TiDB 节点，但是对日志备份流程有一些影响。因此，为了方便查阅，将其放在了 **TiKV Details** 面板中。大部分时候 TiKV 会主动“推送”进度，但以下部分监控偶尔没有数据采样也属于正常现象。
 
-- Request Checkpoint Batch Size: The request batch size when the log backup coordinator requests checkpoint information for each TiKV
-- Tick Duration \[P99|P90\]: The time taken by the tick inside the coordinator
-- Region Checkpoint Failure Reason: The reason why a Region checkpoint cannot advance within the coordinator
-- Request Result: The record of the coordinator's success or failure in advancing the Region checkpoint
-- Get Region Operation Count: The number of times the coordinator requests Region information from the PD
-- Try Advance Trigger Time: The time taken for the coordinator to attempt to advance the checkpoint
+- Request Checkpoint Batch Size：日志备份协调器请求各个 TiKV 的 Checkpoint 信息时的请求攒批大小。
+- Tick Duration \[P99|P90\]：协调器内部 Tick 的耗时。
+- Region Checkpoint Failure Reason：协调器内部无法推进某个 Region Checkpoint 的原因。
+- Request Result：协调器推进 Region Checkpoint 的成功或失败的记录。
+- Get Region Operation Count：协调器向 PD 请求 Region 信息的次数。
+- Try Advance Trigger Time：协调器尝试推进 Checkpoint 的耗时。
 
-### Backup & Import
+### 面板常见参数的解释
 
-- Import CPU Utilization: The CPU utilization aggregated by SST importer.
-- Import Thread Count: The number of threads used by SST importer.
-- Import Errors: The number of errors encountered during SST import.
-- Import RPC Duration: The time spent on various RPC calls in SST importer.
-- Import RPC Ops: The total number of RPC calls in SST importer.
-- Import RPC Count: The number of RPC calls being processed by SST importer.
-- Import Write/Download RPC Duration: The RPC time for write or download operations in SST importer.
-- Import Wait Duration: The time spent waiting in queue for download task execution.
-- Import Read SST Duration: The time spent reading an SST file from external storage and downloading it to TiKV.
-- Import Rewrite SST Duration: The time spent rewriting the SST file based on rewrite rules.
-- Import Ingest RPC Duration: The time spent handling ingest RPC requests on TiKV.
-- Import Ingest SST Duration: The time spent ingesting the SST file into RocksDB.
-- Import Ingest SST Bytes: The number of bytes ingested.
-- Import Download SST Throughput: The SST download throughput in bytes per second.
-- cloud request: The number of requests to cloud providers.
+#### gRPC 消息类型
 
-### Point In Time Restore
+1. 使用事务型接口的命令：
 
-- CPU Usage: The CPU utilization by point-in-time recovery (PITR).
-- P99 RPC Duration: The 99th percentile of RPC request duration.
-- Import RPC Ops: The total number of RPC calls in SST importer.
-- Import RPC Count: The number of RPC calls being processed by SST importer.
-- Cache Events: The number of events in the file cache during SST import.
-- Overall RPC Duration: The time spent on RPC calls.
-- Read File into Memory Duration: The time spent downloading files from external storage and loading them into memory.
-- Queuing Time: The time spent waiting to be scheduled on a thread.
-- Apply Request Throughput: The rate of applying requests in bytes.
-- Downloaded File Size: The size of downloaded file in bytes.
-- Apply Batch Size: The number of bytes for applying to Raft store in one batch.
-- Blocked by Concurrency Time: The time spent waiting for execution due to concurrency constraints.
-- Apply Request Speed: The speed of applying request to Raft store.
-- Cached File in Memory: The files cached by the applying requests of SST importer.
-- Engine Requests Unfinished: The number of pending requests to Raft store.
-- Apply Time: The time spent writing data to Raft store.
-- Raft Store Memory Usage: The memory usage for Raft store.
+    - kv_get：事务型的 get 命令，获取指定 ts 能读到的最新版本数据
+    - kv_scan：扫描连续的一段数据
+    - kv_prewrite：2PC 的第一阶段，预写入事务要提交的数据
+    - kv_pessimistic_lock：对 key 加悲观锁，防止其他事务修改
+    - kv_pessimistic_rollback：删除 key 上的悲观锁
+    - kv_txn_heart_beat：更新悲观事务或大事务的 `lock_ttl` 以防止其被回滚
+    - kv_check_txn_status：检查事务的状态
+    - kv_commit：2PC 的第二阶段，提交 prewrite 阶段写入的数据
+    - kv_cleanup：回滚一个事务（此命令将会在 4.0 中废除）
+    - kv_batch_get：与 `kv_get` 类似，一次性获取批量 key 的 value
+    - kv_batch_rollback：批量回滚多个预写的事务
+    - kv_scan_lock：扫描所有版本号在 `max_version` 之前的锁，用于清理过期的事务
+    - kv_resolve_lock：根据事务状态，提交或回滚事务的锁
+    - kv_gc：触发垃圾回收
+    - kv_delete_range：从 TiKV 中删除连续的一段数据
 
-### Explanation of Common Parameters
+2. 非事务型的裸命令：
 
-#### gRPC Message Type
+    - raw_get：获取 key 所对应的 value
+    - raw_batch_get：获取一批 key 所对应的 value
+    - raw_scan：扫描一段连续的数据
+    - raw_batch_scan：扫描多段连续的数据
+    - raw_put：写入一个 key/value 对
+    - raw_batch_put：直接写入一批 key/value 对
+    - raw_delete：删除一个 key/value 对
+    - raw_batch_delete：删除一批 key/value 对
+    - raw_delete_range：删除连续的一段区间
 
-1. Transactional API:
+## TiKV-FastTune 面板
 
-    - kv_get: The command of getting the latest version of data specified by `ts`
-    - kv_scan: The command of scanning a range of data
-    - kv_prewrite: The command of prewriting the data to be committed at first phase of 2PC
-    - kv_pessimistic_lock: The command of adding a pessimistic lock to the key to prevent other transaction from modifying this key
-    - kv_pessimistic_rollback: The command of deleting the pessimistic lock on the key
-    - kv_txn_heart_beat: The command of updating `lock_ttl` for pessimistic transactions or large transactions to prevent them from rolling back
-    - kv_check_txn_status: The command of checking the status of the transaction
-    - kv_commit: The command of committing the data written by the prewrite command
-    - kv_cleanup: The command of rolling back a transaction, which is deprecated in v4.0
-    - kv_batch_get: The command of getting the value of batch key at once, similar to `kv_get`
-    - kv_batch_rollback: The command of batch rollback of multiple prewrite transactions
-    - kv_scan_lock: The command of scanning all locks with a version number before `max_version` to clean up expired transactions
-    - kv_resolve_lock: The command of committing or rollback the transaction lock, according to the transaction status.
-    - kv_gc: The command of GC
-    - kv_delete_range: The command of deleting a range of data from TiKV
+当 TiKV 出现 QPS 抖动、延迟抖动、延迟增加趋势等性能问题时，你可以查看 **TiKV-FastTune** 面板。**TiKV-FastTune** 包括多组子面板，可帮助你诊断性能问题，尤其适用于集群中写入负载较大的场景。
 
-2. Raw API:
+当出现写入相关的性能问题时，可以先在 Grafana 中查看 TiDB 相关的面板。如果问题出在存储端，打开 **TiKV-FastTune** 面板，浏览并检查上面的每个指标。
 
-    - raw_get: The command of getting the value of key
-    - raw_batch_get: The command of getting the value of batch keys
-    - raw_scan: The command of scanning a range of data
-    - raw_batch_scan: The command of scanning multiple consecutive data range
-    - raw_put: The command of writing a key/value pair
-    - raw_batch_put: The command of writing a batch of key/value pairs
-    - raw_delete: The command of deleting a key/value pair
-    - raw_batch_delete: The command of a batch of key/value pairs
-    - raw_delete_range: The command of deleting a range of data
+在 **TiKV-FastTune** 的面板中，指标标题描述了性能问题的可能成因。要验证成因是否正确，你需要检查具体的图表曲线。
 
-## TiKV-FastTune dashboard
+左边 Y 轴表示存储端的 write-RPC QPS，右边 Y 轴上的一组图是倒置绘制的。如果左边 Y 轴的曲线形状与右边的形状匹配，则指标标题描述的问题成因是正确的。
 
-If performance issues of TiKV occur, such as QPS jitter, latency jitter, and latency increasing trend, you can check the **TiKV-FastTune** dashboard. This dashboard contains a set of panels that help you with diagnostics, especially when the write workload in your cluster is medium or large.
-
-When write-related performance issues occur, you can first check the TiDB-related dashboards. If the issues are at the storage side, open the **TiKV-FastTune** page, browse and check every panel on it.
-
-In the **TiKV-FastTune** dashboard, you can see a title that suggests a possible cause of the performance issues. To check whether the suggested cause is true, check the graph on the page.
-
-The left-Y-axis of the graph represents the write-RPC QPS of the storage side, and a set of graphs on the right-Y-axis are drawn upside down. If the shape of the left graph matches that of the right graphs, the suggested cause is true.
-
-For detailed metrics and descriptions, see the dashboard [user manual](https://docs.google.com/presentation/d/1aeBF2VCKf7eo4-3TMyP7oPzFWIih6UBA53UI8YQASCQ/edit#slide=id.gab6b984c2a_1_352).
+有关该面板的具体监控项以及解释，参考 [TiKV-FastTune 用户手册（英文）](https://docs.google.com/presentation/d/1aeBF2VCKf7eo4-3TMyP7oPzFWIih6UBA53UI8YQASCQ/edit#slide=id.gab6b984c2a_1_352)。

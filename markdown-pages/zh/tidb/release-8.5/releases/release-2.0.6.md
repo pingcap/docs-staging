@@ -1,49 +1,50 @@
 ---
-title: TiDB 2.0.6 Release Notes
-summary: TiDB 2.0.6 was released on August 6, 2018, with improvements in system compatibility and stability. The release includes various improvements and bug fixes for TiDB and TiKV. Some notable improvements include reducing transaction conflicts, improving row count estimation accuracy, and adding a recover mechanism for panics during the execution of `ANALYZE TABLE`. Bug fixes address issues such as incompatible `DROP USER` statement behavior, OOM errors for `INSERT`/`LOAD DATA` statements, and incorrect results for prefix index and `DECIMAL` operations. TiKV also sees improvements in scheduler slots, rollback transaction records, and RocksDB log file management, along with a fix for a crash issue during data type conversion.
+title: TiDB 2.0.6 release notes
+summary: TiDB 2.0.6 版本在系统兼容性和稳定性方面有所改进。包括日志长度精简、记录 ADD INDEX 执行过程中的慢操作、减少更新统计信息操作中的事务冲突等。此外，修复了多个 bug，包括 DROP USER 语句和 MySQL 行为不兼容、tidb_batch_insert 打开后 INSERT/LOAD DATA 语句在某些场景下 OOM 的问题等。TiKV 方面扩大了默认 scheduler slots 值以减少假冲突现象，修复了字符串转 Decimal 时出现的 crash。
+aliases: ['/zh/tidb/dev/release-2.0.6/','/zh/tidb/v2.0/release-2.0.6','/docs-cn/dev/releases/release-2.0.6/','/docs-cn/dev/releases/206/','/zh/tidb/v5.4/release-2.0.6','/zh/tidb/v6.1/release-2.0.6','/zh/tidb/v6.5/release-2.0.6','/zh/tidb/v7.1/release-2.0.6','/zh/tidb/v7.5/release-2.0.6','/zh/tidb/v8.1/release-2.0.6']
 ---
 
 # TiDB 2.0.6 Release Notes
 
-On August 6, 2018, TiDB 2.0.6 is released. Compared with TiDB 2.0.5, this release has great improvement in system compatibility and stability.
+2018 年 8 月 6 日，TiDB 发布 2.0.6 版。该版本在 2.0.5 版的基础上，对系统兼容性、稳定性做出了改进。
 
 ## TiDB
 
 - Improvements
-    - Make "set system variable" log shorter to save disk space [#7031](https://github.com/pingcap/tidb/pull/7031)
-    - Record slow operations during the execution of `ADD INDEX` in the log, to make troubleshooting easier [#7083](https://github.com/pingcap/tidb/pull/7083)
-    - Reduce transaction conflicts when updating statistics [#7138](https://github.com/pingcap/tidb/pull/7138)
-    - Improve the accuracy of row count estimation when the values pending to be estimated exceeds the statistics range [#7185](https://github.com/pingcap/tidb/pull/7185)
-    - Choose the table with a smaller estimated row count as the outer table for `Index Join` to improve its execution efficiency [#7277](https://github.com/pingcap/tidb/pull/7277)
-    - Add the recover mechanism for panics occurred during the execution of `ANALYZE TABLE`, to avoid that the tidb-server is unavailable caused by abnormal behavior in the process of collecting statistics [#7228](https://github.com/pingcap/tidb/pull/7228)
-    - Return `NULL` and the corresponding warning when the results of `RPAD`/`LPAD` exceed the value of the `max_allowed_packet` system variable, compatible with MySQL [#7244](https://github.com/pingcap/tidb/pull/7244)
-    - Set the upper limit of placeholders count in the `PREPARE` statement to 65535, compatible with MySQL [#7250](https://github.com/pingcap/tidb/pull/7250)
+    - 精简 "set system variable" 日志的长度，减少日志文件体积 [#7031](https://github.com/pingcap/tidb/pull/7031)
+    - 在日志中记录 `ADD INDEX` 执行过程中的慢操作，便于定位问题 [#7083](https://github.com/pingcap/tidb/pull/7083)
+    - 减少更新统计信息操作中的事务冲突 [#7138](https://github.com/pingcap/tidb/pull/7138)
+    - 当待估算的值超过统计信息范围时，提高行数估计的准确度 [#7185](https://github.com/pingcap/tidb/pull/7185)
+    - 当使用 `Index Join` 时，选择行数估计较小的表作为驱动表，提高 `Index Join` 的执行效率 [#7227](https://github.com/pingcap/tidb/pull/7227)
+    - 为 `ANALYZE TABLE` 语句执行过程中发生的 panic 添加 recover 机制，避免收集统计信息过程中的异常行为导致 tidb-server 不可用 [#7228](https://github.com/pingcap/tidb/pull/7228)
+    - 当 `RPAD`/`LPAD` 的结果超过设置系统变量 `max_allowed_packet` 时，返回 `NULL` 和对应的 warning，兼容 MySQL [#7244](https://github.com/pingcap/tidb/pull/7244)
+    - 设置 `PREPARE` 语句中占位符数量上限为 65535，兼容 MySQL [#7250](https://github.com/pingcap/tidb/pull/7250)
 - Bug Fixes
-    - Fix the issue that the `DROP USER` statement is incompatible with MySQL behavior in some cases [#7014](https://github.com/pingcap/tidb/pull/7014)
-    - Fix the issue that statements like `INSERT`/`LOAD DATA` meet OOM after opening `tidb_batch_insert` [#7092](https://github.com/pingcap/tidb/pull/7092)
-    - Fix the issue that the statistics fail to automatically update when the data of a table keeps updating [#7093](https://github.com/pingcap/tidb/pull/7093)
-    - Fix the issue that the firewall breaks inactive gPRC connections [#7099](https://github.com/pingcap/tidb/pull/7099)
-    - Fix the issue that prefix index returns a wrong result in some scenarios [#7126](https://github.com/pingcap/tidb/pull/7126)
-    - Fix the panic issue caused by outdated statistics in some scenarios [#7155](https://github.com/pingcap/tidb/pull/7155)
-    - Fix the issue that one piece of index data is missed after the `ADD INDEX` operation in some scenarios [#7156](https://github.com/pingcap/tidb/pull/7156)
-    - Fix the wrong result issue when querying `NULL` values using the unique index in some scenarios [#7172](https://github.com/pingcap/tidb/pull/7172)
-    - Fix the messy code issue of the `DECIMAL` multiplication result in some scenarios [#7212](https://github.com/pingcap/tidb/pull/7212)
-    - Fix the wrong result issue of `DECIMAL` modulo operation in some scenarios [#7245](https://github.com/pingcap/tidb/pull/7245)
-    - Fix the issue that the `UPDATE`/`DELETE` statement in a transaction returns a wrong result under some special sequence of statements [#7219](https://github.com/pingcap/tidb/pull/7219)
-    - Fix the panic issue of the `UNION ALL`/`UPDATE` statement during the process of building the execution plan in some scenarios [#7225](https://github.com/pingcap/tidb/pull/7225)
-    - Fix the issue that the range of prefix index is calculated incorrectly in some scenarios [#7231](https://github.com/pingcap/tidb/pull/7231)
-    - Fix the issue that the `LOAD DATA` statement fails to write the binlog in some scenarios [#7242](https://github.com/pingcap/tidb/pull/7242)
-    - Fix the wrong result issue of `SHOW CREATE TABLE` during the execution process of `ADD INDEX` in some scenarios [#7243](https://github.com/pingcap/tidb/pull/7243)
-    - Fix the issue that panic occurs when `Index Join` does not initialize timestamps in some scenarios [#7246](https://github.com/pingcap/tidb/pull/7246)
-    - Fix the false alarm issue when `ADMIN CHECK TABLE` mistakenly uses the timezone in the session [#7258](https://github.com/pingcap/tidb/pull/7258)
-    - Fix the issue that `ADMIN CLEANUP INDEX` does not clean up the index in some scenarios [#7265](https://github.com/pingcap/tidb/pull/7265)
-    - Disable the Read Committed isolation level [#7282](https://github.com/pingcap/tidb/pull/7282)
+    - 修复某些情况下，`DROP USER` 语句和 MySQL 行为不兼容的问题 [#7014](https://github.com/pingcap/tidb/pull/7014)
+    - 修复当 `tidb_batch_insert` 打开后，`INSERT`/`LOAD DATA` 等语句在某些场景下 OOM 的问题 [#7092](https://github.com/pingcap/tidb/pull/7092)
+    - 修复某个表的数据持续更新时，其统计信息自动更新失效的问题 [#7093](https://github.com/pingcap/tidb/pull/7093)
+    - 修复防火墙断掉不活跃的 gRPC 连接的问题 [#7099](https://github.com/pingcap/tidb/pull/7099)
+    - 修复某些场景下使用前缀索引结果不正确的问题 [#7126](https://github.com/pingcap/tidb/pull/7126)
+    - 修复某些场景下统计信息过时导致 panic 的问题 [#7155](https://github.com/pingcap/tidb/pull/7155)
+    - 修复某些场景下 `ADD INDEX` 后索引数据少一条的问题 [#7156](https://github.com/pingcap/tidb/pull/7156)
+    - 修复某些场景下查询唯一索引上的 `NULL` 值结果不正确的问题 [#7172](https://github.com/pingcap/tidb/pull/7172)
+    - 修复某些场景下 `DECIMAL` 的乘法结果出现乱码的问题 [#7212](https://github.com/pingcap/tidb/pull/7212)
+    - 修复某些场景下 `DECIMAL` 的取模运算结果不正确的问题 [#7245](https://github.com/pingcap/tidb/pull/7245)
+    - 修复某些特殊语句序列下在事务中执行 `UPDATE`/`DELETE` 语句后结果不正确的问题 [#7219](https://github.com/pingcap/tidb/pull/7219)
+    - 修复某些场景下 `UNION ALL`/`UPDATE` 语句在构造执行计划过程中 panic 的问题 [#7225](https://github.com/pingcap/tidb/pull/7225)
+    - 修复某些场景下前缀索引的索引范围计算错误的问题 [#7231](https://github.com/pingcap/tidb/pull/7231)
+    - 修复某些场景下 `LOAD DATA` 语句不写 binlog 的问题 [#7242](https://github.com/pingcap/tidb/pull/7242)
+    - 修复某些场景下在 `ADD INDEX` 过程中 `SHOW CREATE TABLE` 结果不正确的问题 [#7243](https://github.com/pingcap/tidb/pull/7243)
+    - 修复某些场景下 `Index Join` 因为没有初始化事务时间戳而 panic 的问题 [#7246](https://github.com/pingcap/tidb/pull/7246)
+    - 修复 `ADMIN CHECK TABLE` 因为误用 session 中的时区而导致误报的问题 [#7258](https://github.com/pingcap/tidb/pull/7258)
+    - 修复 `ADMIN CLEANUP INDEX` 在某些场景下索引没有清除干净的问题 [#7265](https://github.com/pingcap/tidb/pull/7265)
+    - 禁用 Read Committed 事务隔离级别 [#7282](https://github.com/pingcap/tidb/pull/7282)
 
 ## TiKV
 
 - Improvements
-    - Enlarge scheduler's default slots to reduce false conflicts
-    - Reduce continuous records of rollback transactions, to improve the Read performance when conflicts are extremely severe
-    - Limit the size and number of RocksDB log files, to reduce unnecessary disk usage in long-running condition
+    - 扩大默认 scheduler slots 值以减少假冲突现象
+    - 减少回滚事务的连续标记以提升冲突极端严重下的读性能
+    - 限制 RocksDB log 文件的大小和个数以减少长时间运行下不必要的磁盘占用
 - Bug Fixes
-    - Fix the crash issue when converting the data type from string to decimal
+    - 修复字符串转 Decimal 时出现的 crash

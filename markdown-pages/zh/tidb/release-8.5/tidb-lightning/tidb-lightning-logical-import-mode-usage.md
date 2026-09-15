@@ -1,76 +1,74 @@
 ---
-title: Use Logical Import Mode
-summary: Learn how to use the logical import mode in TiDB Lightning.
+title: 使用逻辑导入模式
+summary: 了解在 TiDB Lightning 的逻辑导入模式下，如何编写数据导入任务的配置文件，如何进行性能调优等。
 ---
 
-# Use Logical Import Mode
+# 使用逻辑导入模式
 
-This document introduces how to use the [logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode.md) in TiDB Lightning, including writing the configuration file and tuning performance.
+本文档介绍如何编写[逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)的配置文件，如何进行性能调优等内容。
 
-## Configure and use the logical import mode
+## 配置及使用
 
-You can use the logical import mode via the following configuration file to import data:
+可以通过以下配置文件使用逻辑导入模式执行数据导入：
 
 ```toml
 [lightning]
-# log
+# 日志
 level = "info"
 file = "tidb-lightning.log"
 max-size = 128 # MB
 max-days = 28
 max-backups = 14
 
-# Checks the cluster minimum requirements before start.
+# 启动之前检查集群是否满足最低需求。
 check-requirements = true
 
 [mydumper]
-# The local data source directory or the URI of the external storage. For more information about the URI of the external storage, see https://docs.pingcap.com/tidb/v6.6/backup-and-restore-storages#uri-format.
+# 本地源数据目录或外部存储 URI。关于外部存储 URI 详情可参考 https://docs.pingcap.com/zh/tidb/stable/backup-and-restore-storages/#uri-格式。
 data-source-dir = "/data/my_database"
 
 [tikv-importer]
-# Import mode. "tidb" means using the logical import mode.
+# 导入模式配置，设为 tidb 即使用逻辑导入模式
 backend = "tidb"
 
 [tidb]
-# The information of the target cluster. The address of any tidb-server from the cluster.
+# 目标集群的信息。tidb-server 的地址，填一个即可。
 host = "172.16.31.1"
 port = 4000
 user = "root"
-# Configure the password to connect to TiDB. Either plaintext or Base64 encoded.
+# 设置连接 TiDB 的密码，可为明文或 Base64 编码。
 password = ""
-# tidb-lightning imports the TiDB library, and generates some logs.
-# Set the log level of the TiDB library.
+# tidb-lightning 引用了 TiDB 库，并生成产生一些日志。
+# 设置 TiDB 库的日志等级。
 log-level = "error"
 ```
 
-For the complete configuration file, refer to [TiDB Lightning Configuration](/tidb-lightning/tidb-lightning-configuration.md).
+TiDB Lightning 的完整配置文件可参考[完整配置及命令行参数](/tidb-lightning/tidb-lightning-configuration.md)。
 
-## Conflict detection
+## 冲突数据检测
 
-Conflicting data refers to two or more records with the same data in the PK or UK column. In the logical import mode, you can configure the strategy for handling conflicting data by setting the [`conflict.strategy`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) configuration item. Based on the strategy, TiDB Lightning imports data with different SQL statements.
+冲突数据是指两条或两条以上记录中存在主键或唯一键列数据重复。TiDB Lightning 的逻辑导入模式通过 [`conflict.strategy`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置) 配置冲突数据的处理行为，使用不同的 SQL 语句进行导入。
 
-| Strategy | Default behavior of conflicting data | The corresponding SQL statement |
-| :-- | :-- | :-- |
-| `"replace"` | Replacing existing data with new data. | `REPLACE INTO ...` |
-| `"ignore"` | Keeping existing data and ignoring new data. | If `conflict.threshold` is greater than 0, `INSERT INTO` is used; if `conflict.threshold` is `0`, `INSERT IGNORE INTO ...` is used |
-| `"error"` | Terminating the import when conflicting data is detected. | `INSERT INTO ...` |
-|  `""`  | Converted to `"error"`, which means terminating the import when conflicting data is detected.  |  None   |
+| 策略 | 冲突时默认行为                     | 对应 SQL 语句 |
+|:---|:----------------------------|:---|
+| `"replace"` | 新数据替代旧数据                    | `REPLACE INTO ...` |
+| `"ignore"` | 保留旧数据，忽略新数据                 | 如果 `conflict.threshold` 大于 `0`，则为 `INSERT INTO ...`；如果 `conflict.threshold` 为 `0`，则为 `INSERT IGNORE INTO ...` |
+| `"error"` | 遇到冲突数据时终止导入                        | `INSERT INTO ...` |
+| `""` | 会被转换为 `"error"`，遇到冲突数据时终止导入 | 无 |
 
-When the strategy is `"error"`, errors caused by conflicting data directly terminate the import task. When the strategy is `"replace"` or `"ignore"`, you can control the maximum tolerant conflicts by configuring [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task). The default value is `10000`, which means that 10000 errors are tolerant.
+配置为 `"error"` 时，由冲突数据引发的错误将直接导致导入任务终止。配置为 `"replace"` 或 `"ignore"` 时，可以通过进一步配置 [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置) 控制冲突数据的上限。默认值为 `10000`，意味着能容忍 10000 个错误。
 
-When the strategy is `"ignore"`, conflicting data is recorded in the downstream `conflict_records` table. For further details, see [Error report](/tidb-lightning/tidb-lightning-error-resolution.md#error-report). Before v8.1.0, you can limit the records by configuring [`conflict.max-record-rows`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task), and conflicting data that exceeds the limit is skipped and not recorded. Starting from v8.1.0, you need to configure [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-task) instead, because TiDB Lightning automatically assigns the value of `max-record-rows` with the value of `threshold`, regardless of the user input.
+配置为 `"ignore"` 时，冲突数据可以被记录到下游的 `conflict_records` 表中，详见[可容忍错误](/tidb-lightning/tidb-lightning-error-resolution.md)功能介绍。在 v8.1.0 之前的版本中，可以通过配置 [`conflict.max-record-rows`](/tidb-lightning/tidb-lightning-configuration.md#tidb-lightning-任务配置) 控制记录上限，超出上限的冲突数据会被跳过导入而不再记录。从 v8.1.0 版本开始，需要通过 [`conflict.threshold`](/tidb-lightning/tidb-lightning-configuration.md#threshold) 配置，因为 TiDB Lightning 会自动将 `max-record-rows` 的值设置为 `threshold` 的值，并忽略用户输入。
 
-## Performance tuning
+## 性能调优
 
-- In the logical import mode, the performance of TiDB Lightning largely depends on the write performance of the target TiDB cluster. If the cluster hits a performance bottleneck, refer to [Best Practices for High-Concurrency Writes](/best-practices/high-concurrency-best-practices.md).
+- TiDB Lightning 的逻辑导入模式性能很大程度上取决于目标 TiDB 集群的写入性能，当遇到性能瓶颈时可参考 TiDB 相关[性能优化文档](/best-practices/high-concurrency-best-practices.md)。
 
-- If the target TiDB cluster does not hit a write bottleneck, consider increasing the value of `region-concurrency` in TiDB Lightning configuration. The default value of `region-concurrency` is the number of CPU cores. The meaning of `region-concurrency` is different between the physical import mode and the logical import mode. In the logical import mode, `region-concurrency` is the write concurrency.
-
-    Example configuration:
+- 如果发现目标 TiDB 集群的的写入尚未达到瓶颈，可以考虑增加 Lightning 配置中 `region-concurrency` 的值。`region-concurrency` 默认值为 CPU 核数，其含义在物理导入模式和逻辑导入模式下有所不同，逻辑导入模式的 `region-concurrency` 表示写入并发数。配置示例：
 
     ```toml
     [lightning]
     region-concurrency = 32
     ```
 
-- Adjusting the `raftstore.apply-pool-size` and `raftstore.store-pool-size` configuration items in the target TiDB cluster might improve the import speed.
+- 调整目标 TiDB 集群的 [`raftstore.apply-pool-size`](/tikv-configuration-file.md#apply-pool-size) 和 [`raftstore.store-pool-size`](/tikv-configuration-file.md#store-pool-size) 参数也可能提升导入速度。

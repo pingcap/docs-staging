@@ -1,19 +1,19 @@
 ---
-title: DO | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 DO 的概述。
+title: DO | TiDB SQL Statement Reference
+summary: TiDB 数据库中 DO 的使用概况。
 ---
 
 # DO
 
-`DO` 执行表达式，但不会返回任何结果。在大多数情况下，`DO` 等同于不返回结果的 `SELECT expr, ...`。
+`DO` 语句用于执行表达式，但不返回任何结果。大部分情况下，`DO` 相当于不返回结果的 `SELECT expr, ...,`。
 
-> **Note:**
+> **注意：**
 >
-> `DO` 仅执行表达式。它不能在所有可以使用 `SELECT` 的场景中使用。例如，`DO id FROM t1` 是无效的，因为它引用了表。
+> `DO` 只能执行表达式，所以不是所有能够用 `SELECT` 的地方都能用 `DO` 替换。例如 `DO id FROM t1` 就是不是合法的 SQL 语句，因为它引用了一张表。
 
-在 MySQL 中，一个常见的用例是执行存储过程或触发器。由于 TiDB 不提供存储过程或触发器，此功能的使用有限。
+`DO` 在 MySQL 中的一个主要应用场景是存储过程或者触发器。因为 TiDB 当前不支持存储过程和触发器，所以 `DO` 的实际使用场景较少。
 
-## 语法简介
+## 语法图
 
 ```ebnf+diagram
 DoStmt   ::= 'DO' ExpressionList
@@ -29,10 +29,14 @@ Expression ::=
 
 ## 示例
 
-这个 SELECT 语句会暂停，但也会产生一个结果集。
+这条 `SELECT` 语句会暂停执行，但同时也会返回一个结果集。
+
 
 ```sql
-mysql> SELECT SLEEP(5);
+SELECT SLEEP(5);
+```
+
+```
 +----------+
 | SLEEP(5) |
 +----------+
@@ -41,20 +45,30 @@ mysql> SELECT SLEEP(5);
 1 row in set (5.00 sec)
 ```
 
-而 `DO`，则会暂停但不会产生结果集。
+如果使用 `DO` 的话，语句同样会暂停，但不会返回结果集。
+
 
 ```sql
-mysql> DO SLEEP(5);
-Query OK, 0 rows affected (5.00 sec)
+DO SLEEP(5);
+```
 
-mysql> DO SLEEP(1), SLEEP(1.5);
+```
+Query OK, 0 rows affected (5.00 sec)
+```
+
+
+```sql
+DO SLEEP(1), SLEEP(1.5);
+```
+
+```
 Query OK, 0 rows affected (2.50 sec)
 ```
 
 ## MySQL 兼容性
 
-TiDB 中的 `DO` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`DO` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [SELECT](/sql-statements/sql-statement-select.md)

@@ -1,214 +1,218 @@
 ---
-title: TiDB Monitoring Metrics
-summary: Learn some key metrics displayed on the Grafana TiDB dashboard.
+title: TiDB 监控指标
+summary: 了解 Grafana Dashboard 中展示的关键指标。
 ---
 
-# TiDB Monitoring Metrics
+# TiDB 重要监控指标详解
 
-If you use TiUP to deploy the TiDB cluster, the monitoring system (Prometheus & Grafana) is deployed at the same time. For the monitoring architecture, see [TiDB Monitoring Framework Overview](/tidb-monitoring-framework.md).
+使用 TiUP 部署 TiDB 集群时，你可以一键部署监控系统 (Prometheus & Grafana)，参考监控架构 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
 
-The Grafana dashboard is divided into a series of sub dashboards which include Overview, PD, TiDB, TiKV, Node\_exporter, Disk Performance, and Performance\_overview. The TiDB dashboard consists of the TiDB panel and the TiDB Summary panel. The differences between the two panels are different in the following aspects:
+目前 Grafana Dashboard 整体分为 PD、TiDB、TiKV、Node\_exporter、Overview、Performance\_overview 等。TiDB 分为 TiDB 和 TiDB Summary 面板，两个面板的区别如下：
 
-- TiDB panel: provides as comprehensive information as possible for troubleshooting cluster anomalies.
-- TiDB Summary Panel: extracts parts of the TiDB panel information with which users are most concerned, with some modifications. It provides data (such as QPS, TPS, response delay) that users care about in the daily database operations, which serves as the monitoring information to be displayed or reported.
+- TiDB 面板：提供尽可能全面的信息，供排查集群异常。
+- TiDB Summary 面板：将 TiDB 面板中用户最为关心的部分抽取出来，并做了些许修改。主要用于提供数据库日常运行中用户关心的数据，如 QPS、TPS、响应延迟等，以便作为外部展示、汇报用的监控信息。
 
-This document describes some key monitoring metrics displayed on the TiDB dashboard.
+以下为 **TiDB Dashboard** 关键监控指标的说明：
 
-## Key metrics description
-
-To understand the key metrics displayed on the TiDB dashboard, check the following sections:
+## 关键指标说明
 
 ### Query Summary
 
-- Duration: execution time
-    - The duration between the time that the client's network request is sent to TiDB and the time that the request is returned to the client after TiDB has executed it. In general, client requests are sent in the form of SQL statements, but can also include the execution time of commands such as `COM_PING`, `COM_SLEEP`, `COM_STMT_FETCH`, and `COM_SEND_LONG_DATA`
-    - Because TiDB supports Multi-Query, it supports sending multiple SQL statements at one time, such as `select 1; select 1; select 1;`. In this case, the total execution time of this query includes the execution time of all SQL statements
-- Command Per Second: the number of commands processed by TiDB per second, which is classified according to the success or failure of command execution results
-- QPS: the number of SQL statements executed per second on all TiDB instances, which is counted according to `SELECT`, `INSERT`, `UPDATE`, and other types of statements
-- CPS By Instance: the command statistics on each TiDB instance, which is classified according to the success or failure of command execution results
-- Failed Query OPM: the statistics of error types (such as syntax errors and primary key conflicts) according to the errors occurred when executing SQL statements per minute on each TiDB instance. It contains the module in which the error occurs and the error code
-- Slow query: the statistics of the processing time of slow queries (the time cost of the entire slow query, the time cost of Coprocessor, and the waiting time for Coprocessor scheduling). Slow queries are classified into internal and general SQL statements
-- Connection Idle Duration: the duration of idle connections
-- 999/99/95/80 Duration: the statistics of the execution time for different types of SQL statements (different percentiles)
+- Duration：执行时间
+    - 客户端网络请求发送到 TiDB，到 TiDB 执行结束后返回给客户端的时间。一般情况下，客户端请求都是以 SQL 语句的形式发送，但也可以包含 `COM_PING`、`COM_SLEEP`、`COM_STMT_FETCH`、`COM_SEND_LONG_DATA` 之类的命令执行时间。
+    - 由于 TiDB 支持 Multi-Query，因此，客户端可以一次性发送多条 SQL 语句，如 `select 1; select 1; select 1;`。此时的执行时间是所有 SQL 语句执行完之后的总时间。
+- Command Per Second：TiDB 按照执行结果成功或失败来统计每秒处理的命令数。
+- QPS：按 `SELECT`、`INSERT`、`UPDATE` 类型统计所有 TiDB 实例上每秒执行的 SQL 语句数量。
+- CPS By Instance：按照命令和执行结果成功或失败来统计每个 TiDB 实例上的命令。
+- Failed Query OPM：每个 TiDB 实例上，对每分钟执行 SQL 语句发生的错误按照错误类型进行统计（例如语法错误、主键冲突等）。包含了错误所属的模块和错误码。
+- Slow query：慢查询的处理时间（整个慢查询耗时、Coprocessor 耗时、Coprocessor 调度等待时间），慢查询分为 internal 和 general SQL 语句。
+- Connection Idle Duration：空闲连接的持续时间。
+- 999/99/95/80 Duration：不同类型的 SQL 语句执行耗时（不同百分位）。
 
 ### Query Detail
 
-- Duration 80/95/99/999 By Instance: the statistics of the execution time for SQL statements on each TiDB instance (different percentiles)
-- Failed Query OPM Detail: the statistics of error types (such as syntax errors and primary key conflicts) according to the errors occurred when executing SQL statements per minute on each TiDB instance
-- Internal SQL OPS: the internal SQL statements executed per second in the entire TiDB cluster. The internal SQL statements are internally executed and are generally triggered by user SQL statements or internally scheduled tasks.
+- Duration 80/95/99/999 By Instance：每个 TiDB 实例执行 SQL 语句的耗时（不同百分位）。
+- Failed Query OPM Detail：每个 TiDB 实例上，对每分钟执行 SQL 语句发生的错误按照错误类型进行统计（例如语法错误、主键冲突等）。
+- Internal SQL OPS：整个 TiDB 集群内部 SQL 语句执行的 QPS。内部 SQL 语句是指 TiDB 内部自动执行的 SQL 语句，一般由用户 SQL 语句来触发或者内部定时任务触发。
 
 ### Server
 
-- Uptime: the runtime of each TiDB instance
-- Memory Usage: the memory usage statistics of each TiDB instance, which is divided into the memory occupied by processes and the memory applied by Golang on the heap
-- CPU Usage: the statistics of CPU usage of each TiDB instance
-- Connection Count: the number of clients connected to each TiDB instance
-- Open FD Count: the statistics of opened file descriptors of each TiDB instance
-- Disconnection Count: the number of clients disconnected to each TiDB instance
-- Events OPM: the statistics of key events, such as "start", "close", "graceful-shutdown","kill", and "hang"
-- Goroutine Count: the number of Goroutines on each TiDB instance
-- Prepare Statement Count: the number of `Prepare` statements that are executed on each TiDB instance and the total count of them
-- Keep Alive OPM: the number of times that the metrics are refreshed every minute on each TiDB instance. It usually needs no attention.
-- Panic And Critical Error: the number of panics and critical errors occurred in TiDB
-- Time Jump Back OPS: the number of times that the operating system rewinds every second on each TiDB instance
-- Get Token Duration: the time cost of getting Token on each connection
-- Skip Binlog Count: the number of binlog write failures in TiDB; starting from v8.4.0, TiDB Binlog is removed, and this metric has no value
-- Client Data Traffic: data traffic statistics of TiDB and the client
+- Uptime：每个 TiDB 实例的运行时间。
+- Memory Usage：每个 TiDB 实例的内存使用，分为进程占用内存和 Golang 在堆上申请的内存。
+- CPU Usage：每个 TiDB 实例的 CPU 使用。
+- Connection Count：每个 TiDB 的连接数。
+- Open FD Count：每个 TiDB 实例的打开的文件描述符数量。
+- Disconnection Count：每个 TiDB 实例断开连接的数量。
+- Event OPM：每个 TiDB 实例关键事件，例如 start，close，graceful-shutdown，kill，hang 等。
+- Goroutine Count：每个 TiDB 实例的 Goroutine 数量。
+- Prepare Statement Count：每个 TiDB 实例现存的 `Prepare` 语句数以及总数。
+- Keep Alive OPM：每个 TiDB 实例每分钟刷新监控的次数，通常不需要关注。
+- Panic And Critical Error：TiDB 中出现的 Panic、Critical Error 数量。
+- Time Jump Back OPS：每个 TiDB 实例上每秒操作系统时间回跳的次数。
+- Get Token Duration：每个连接获取 Token 的耗时。
+- Skip Binlog Count：TiDB 写入 Binlog 失败的数量。从 v8.4.0 开始，TiDB Binlog 已移除，该指标不再有计数。
+- Client Data Traffic：TiDB 和客户端的数据流量。
 
 ### Transaction
 
-- Transaction OPS: the number of transactions executed per second
-- Duration: the execution duration of a transaction
-- Transaction Statement Num: the number of SQL statements in a transaction
-- Transaction Retry Num: the number of times that a transaction retries
-- Session Retry Error OPS: the number of errors encountered during the transaction retry per second. This metric includes two error types: retry failure and exceeding the maximum number of retries
-- Commit Token Wait Duration: the wait duration in the flow control queue during the transaction commit. If the wait duration is long, it means that the transaction to commit is too large and the flow is controlled. If the system still has resources available, you can speed up the commit process by increasing the system variable `tidb_committer_concurrency`.
-- KV Transaction OPS: the number of transactions executed per second within each TiDB instance
-    - A user transaction might trigger multiple transaction executions in TiDB, including reading internal metadata and atomic retries of the user transaction
-    - TiDB's internally scheduled tasks also operate on the database through transactions, which are also included in this panel
-- KV Transaction Duration: the time spent on executing transactions within each TiDB
-- Transaction Regions Num: the number of Regions operated in the transaction
-- Transaction Write KV Num Rate and Sum: the rate at which KVs are written and the sum of these written KVs in the transaction
-- Transaction Write KV Num: the number of KVs operated in the transaction
-- Statement Lock Keys: the number of locks for a single statement
-- Send HeartBeat Duration: the duration for the transaction to send heartbeats
-- Transaction Write Size Bytes Rate and sum: the rate at which bytes are written and the sum of these written bytes in the transaction
-- Transaction Write Size Bytes: the size of the data written in the transaction
-- Acquire Pessimistic Locks Duration: the time consumed by adding locks
-- TTL Lifetime Reach Counter: the number of transactions that reach the upper limit of TTL. The default value of the TTL upper limit is 1 hour. It means that 1 hour has passed since the first lock of a pessimistic transaction or the first prewrite of an optimistic transaction. The default value of the upper limit of TTL is 1 hour. The upper limit of TTL life can be changed by modifying `max-txn-TTL` in the TiDB configuration file
-- Load Safepoint OPS: the number of times that `Safepoint` is loaded. `Safepoint` is to ensure that the data before `Safepoint` is not read when the transaction reads data, thus ensuring data safety. The data before `Safepoint` might be cleaned up by the GC
-- Pessimistic Statement Retry OPS: the number of retry attempts for pessimistic statements. When the statement tries to add lock, it might encounter a write conflict. At this time, the statement will acquire a new snapshot and add lock again
-- Transaction Types Per Seconds: the number of transactions committed per second using the two-phase commit (2PC), async commit, and one-phase commit (1PC) mechanisms, including both success and failure transactions
+- Transaction OPS：每秒事务的执行数量
+- Duration：事务执行时间
+- Transaction Statement Num：事务中的 SQL 语句数量
+- Transaction Retry Num：事务重试次数
+- Session Retry Error OPS：事务重试时每秒遇到的错误数量，分为重试失败和超过最大重试次数两种类型
+- Commit Token Wait Duration：事务提交时的流控队列等待时间。当出现较长等待时，代表提交事务过大，正在限流。如果系统还有资源可以使用，可以通过增大系统变量 `tidb_committer_concurrency` 的值来加速提交
+- KV Transaction OPS：每个 TiDB 内部每秒执行的事务数量
+    - 一个用户的事务，在 TiDB 内部可能会触发多次事务执行，其中包含，内部元数据的读取，用户事务原子性地多次重试执行等
+    - TiDB 内部的定时任务也会通过事务来操作数据库，这部分也包含在这个面板里
+- KV Transaction Duration：每个 TiDB 内部执行事务的耗时
+- Transaction Regions Num：事务操作的 Region 数量
+- Transaction Write KV Num Rate and Sum：事务写入 KV 的速率总和
+- Transaction Write KV Num：事务操作的 KV 数量
+- Statement Lock Keys：单个语句的加锁个数
+- Send HeartBeat Duration：事务发送心跳的时间间隔
+- Transaction Write Size Bytes Rate and sum：事务写入字节数的速率总和
+- Transaction Write Size Bytes：事务写入的数据大小
+- Acquire Pessimistic Locks Duration：加锁所消耗的时间
+- TTL Lifetime Reach Counter：事务的 TTL 寿命上限。TTL 上限默认值 1 小时，它的含义是从悲观事务第一次加锁，或者乐观事务的第一个 prewrite 开始，超过了 1 小时。可以通过修改 TiDB 配置文件中 `max-txn-ttl` 来改变 TTL 寿命上限
+- Load Safepoint OPS：加载 Safepoint 的次数。Safepoint 作用是在事务读数据时，保证不读到 Safepoint 之前的数据，保证数据安全。因为，Safepoint 之前的数据有可能被 GC 清理掉
+- Pessimistic Statement Retry OPS：悲观语句重试次数。当语句尝试加锁时，可能遇到写入冲突，此时，语句会重新获取新的 snapshot 并再次加锁
+- Transaction Types Per Seconds：每秒采用两阶段提交 (2PC)、异步提交 （Async Commit) 和一阶段提交 (1PC) 机制的事务数量，提供成功和失败两种数量
 
 ### Executor
 
-- Parse Duration: the statistics of the parsing time of SQL statements
-- Compile Duration: the statistics of the time of compiling the parsed SQL AST to the execution plan
-- Execution Duration: the statistics of the execution time for SQL statements
-- Expensive Executor OPS: the statistics of the operators that consume many system resources per second, including `Merge Join`, `Hash Join`, `Index Look Up Join`, `Hash Agg`, `Stream Agg`, `Sort`, and `TopN`
-- Queries Using Plan Cache OPS: the statistics of queries using the Plan Cache per second
-- Plan Cache Miss OPS: the statistics of the number of times that the Plan Cache is missed per second
-- Plan Cache Memory Usage: the total memory consumed by the execution plan cached in each TiDB instance
-- Plan Cache Plan Num: the total number of execution plans cached in each TiDB instance
+- Parse Duration：SQL 语句解析耗时统计。
+- Compile Duration：将解析后的 SQL AST 编译成执行计划的耗时。
+- Execution Duration：执行 SQL 语句执行计划耗时。
+- Expensive Executor OPS：每秒消耗系统资源比较多的算子。包括 Merge Join、Hash Join、Index Look Up Join、Hash Agg、Stream Agg、Sort、TopN 等。
+- Queries Using Plan Cache OPS：每秒使用 Plan Cache 的查询数量。
+- Plan Cache Miss OPS：每秒出现 Plan Cache Miss 的数量。
+- Plan Cache Memory Usage：每个 TiDB 实例上所有 Plan Cache 缓存的执行计划占用的总内存。
+- Plan Cache Plan Num：每个 TiDB 实例上所有 Plan Cache 缓存的执行计划总数。
 
 ### Distsql
 
-- Distsql Duration: the processing time of Distsql statements
-- Distsql QPS: the statistics of Distsql statements
-- Distsql Partial QPS: the number of Partial results every second
-- Scan Keys Num: the number of keys that each query scans
-- Scan Keys Partial Num: the number of keys that each Partial result scans
-- Partial Num: the number of Partial results for each SQL statement
+- Distsql Duration：Distsql 处理的时长
+- Distsql QPS：每秒 Distsql 的数量
+- Distsql Partial QPS：每秒 Partial Results 的数量
+- Scan Keys Num：每个 Query 扫描的 Key 的数量
+- Scan Keys Partial Num：每一个 Partial Result 扫描的 Key 的数量
+- Partial Num：每个 SQL 语句 Partial Results 的数量
 
 ### KV Errors
 
-- KV Backoff Duration: the total duration that a KV retry request lasts. TiDB might encounter an error when sending a request to TiKV. TiDB has a retry mechanism for every request to TiKV. This `KV Backoff Duration` item records the total time of a request retry.
-- TiClient Region Error OPS: the number of Region related error messages returned by TiKV
-- KV Backoff OPS: the number of error messages returned by TiKV
-- Lock Resolve OPS: the number of TiDB operations to resolve locks. When TiDB's read or write request encounters a lock, it tries to resolve the lock
-- Other Errors OPS: the number of other types of errors, including clearing locks and updating `SafePoint`
+- KV Backoff Duration：KV 每个请求重试的总时间。TiDB 向 TiKV 的请求都有重试机制，这里统计的是向 TiKV 发送请求时遇到错误重试的总时间
+- TiClient Region Error OPS：TiKV 返回 Region 相关错误信息的数量
+- KV Backoff OPS：TiKV 返回错误信息的数量
+- Lock Resolve OPS：TiDB 清理锁操作的数量。当 TiDB 的读写请求遇到锁时，会尝试进行锁清理
+- Other Errors OPS：其他类型的错误数量，包括清锁和更新 SafePoint
 
 ### KV Request
 
-The following metrics relate to requests sent to TiKV. Retry requests are counted multiple times.
+下面的监控指标与发送给 TiKV 的请求相关。重试请求会被多次计数。
 
-- KV Request OPS: the execution times of a KV request, displayed according to TiKV
-- KV Request Duration 99 by store: the execution time of a KV request, displayed according to TiKV
-- KV Request Duration 99 by type: the execution time of a KV request, displayed according to the request type
+- KV Request OPS：KV Request 根据 TiKV 显示执行次数
+- KV Request Duration 99 by store：根据 TiKV 显示 KV Request 执行时间
+- KV Request Duration 99 by type：根据类型显示 KV Request 的执行时间
 - Stale Read Hit/Miss Ops
-    - **hit**: the number of requests per second that successfully execute a stale read
-    - **miss**: the number of requests per second that attempt a stale read but fail
-- Stale Read Req Ops:
-    - **cross-zone**: the number of requests per second that attempt a stale read in a remote zone
-    - **local**: the number of requests per second that attempt a stale read in the local zone
-- Stale Read Req Traffic:
-    - **cross-zone-in**: the incoming traffic of responses to requests that attempt a stale read in a remote zone
-    - **cross-zone-out**: the outgoing traffic of requests that attempt a stale read in a remote zone
-    - **local-in**: the incoming traffic of responses to requests that attempt a stale read in the local zone
-    - **local-out**: the outgoing traffic of requests that attempt a stale read in the local zone
+    - **hit**：每秒成功执行 Stale Read 的请求数量
+    - **miss**：每秒尝试执行 Stale Read 但失败的请求数量
+- Stale Read Req Ops
+    - **cross-zone**：每秒尝试在远程可用区执行 Stale Read 的请求数量
+    - **local**：每秒尝试在本地可用区执行 Stale Read 的请求数量
+- Stale Read Req Traffic
+    - **cross-zone-in**：尝试在远程可用区执行 Stale Read 的请求的响应的传入流量
+    - **cross-zone-out**：尝试在远程可用区执行 Stale Read 的请求的响应的传出流量
+    - **local-in**：尝试在本地可用区执行 Stale Read 的请求的响应的传入流量
+    - **local-out**：尝试在本地可用区执行 Stale Read 的请求的响应的传出流量
+- Read Req Traffic
+    - **leader-local**：Leader Read 在本地可用区处理读请求产生的流量
+    - **leader-cross-zone**：Leader Read 在远程可用区处理读请求产生的流量
+    - **follower-local**：Follower Read 在本地可用区处理读请求产生的流量
+    - **follower-cross-zone**：Follower Read 在远程可用区处理读请求产生的流量
 
 ### PD Client
 
-- PD Client CMD OPS: the statistics of commands executed by PD Client per second
-- PD Client CMD Duration: the time it takes for PD Client to execute commands
-- PD Client CMD Fail OPS: the statistics of failed commands executed by PD Client per second
-- PD TSO OPS: the number of gRPC requests per second that TiDB sends to PD (cmd) and the number of TSO requests (request); each gRPC request contains a batch of TSO requests
-- PD TSO Wait Duration: the time that TiDB waits for PD to return TSO
-- PD TSO RPC duration: the duration from the time that TiDB sends gRPC requests to PD to get TSO to the time that TiDB receives the gRPC response from PD
-- Async TSO Duration: the duration from the time that TiDB prepares to get TSO to the time that TiDB actually starts to wait for PD to return TSO
+- PD Client CMD OPS：PD Client 每秒执行命令的数量
+- PD Client CMD Duration：PD Client 执行命令耗时
+- PD Client CMD Fail OPS：PD Client 每秒执行命令失败的数量
+- PD TSO OPS：TiDB 每秒向 PD 发送获取 TSO 的 gRPC 请求的数量 (cmd) 和实际的 TSO 请求数量 (request)；每个 gRPC 请求包含一批 TSO 请求
+- PD TSO Wait Duration：TiDB 等待从 PD 返回 TSO 的时间
+- PD TSO RPC Duration：TiDB 从向 PD 发送获取 TSO 的 gRPC 请求到接收到 TSO gRPC 请求响应的耗时
+- Async TSO Duration：TiDB 从准备获取 TSO 到实际开始等待 TSO 返回的时间
 
 ### Schema Load
 
-- Load Schema Duration: the time it takes TiDB to obtain the schema from TiKV
-- Load Schema OPS: the statistics of the schemas that TiDB obtains from TiKV per second
-- Schema Lease Error OPM: the Schema Lease errors include two types: `change` and `outdate`. `change` means that the schema has changed, and `outdate` means that the schema cannot be updated, which is a more serious error and triggers an alert.
-- Load Privilege OPS: the statistics of the number of privilege information obtained by TiDB from TiKV per second
+- Load Schema Duration：TiDB 从 TiKV 获取 Schema 的时间
+- Load Schema OPS：TiDB 从 TiKV 每秒获取 Schema 的数量
+- Schema Lease Error OPM：Schema Lease 出错统计，包括 change 和 outdate 两种，change 代表 schema 发生了变化，outdate 代表无法更新 schema，属于较严重错误，出现 outdate 错误时会报警
+- Load Privilege OPS：TiDB 从 TiKV 每秒获取权限信息的数量
 
 ### DDL
 
-- DDL Duration 95: 95% quantile of DDL statement processing time
-- Batch Add Index Duration 100: statistics of the maximum time spent by each Batch on creating an index
-- DDL Waiting Jobs Count: the number of DDL tasks that are waiting
-- DDL META OPM: the number of times that a DDL obtains META every minute
-- DDL Worker Duration 99: 99% quantile of the execution time of each DDL worker
-- Deploy Syncer Duration: the time consumed by Schema Version Syncer initialization, restart, and clearing up operations
-- Owner Handle Syncer Duration: the time that it takes the DDL Owner to update, obtain, and check the Schema Version
-- Update Self Version Duration: the time consumed by updating the version information of Schema Version Syncer
-- DDL OPM: the number of DDL executions per second
-- DDL backfill progress in percentage: the progress of backfilling DDL tasks
+- DDL Duration 95：DDL 语句处理时间的 95% 分位
+- Batch Add Index Duration 100：创建索引时每个 Batch 所花费的最大时间
+- DDL Waiting Jobs Count：等待的 DDL 任务数量
+- DDL META OPM：DDL 每分钟获取 META 的次数
+- DDL Worker Duration 99：每个 DDL worker 执行时间的 99% 分位
+- Deploy Syncer Duration：Schema Version Syncer 初始化，重启，清空等操作耗时
+- Owner Handle Syncer Duration：DDL Owner 在执行更新，获取以及检查 Schema Version 的耗时
+- Update Self Version Duration：Schema Version Syncer 更新版本信息耗时
+- DDL OPM：DDL 语句的每秒执行次数
+- DDL backfill progress in percentage：backfill DDL 任务的进度展示
 
 ### Statistics
 
-- Auto Analyze Duration 95: the time consumed by automatic `ANALYZE`
-- Auto Analyze QPS: the statistics of automatic `ANALYZE`
-- Stats Inaccuracy Rate: the information of the statistics inaccuracy rate
-- Pseudo Estimation OPS: the number of the SQL statements optimized using pseudo statistics
-- Dump Feedback OPS: the number of stored statistical feedbacks
-- Store Query Feedback QPS: the number of operations per second to store the feedback information of the union query, which is performed in TiDB memory
-- Significant Feedback: the number of significant feedback pieces that update the statistics information
-- Update Stats OPS: the number of operations of updating statistics with feedback
+- Auto Analyze Duration 95：自动 ANALYZE 耗时
+- Auto Analyze QPS：自动 ANALYZE 数量
+- Stats Inaccuracy Rate：统计信息不准确度
+- Pseudo Estimation OPS：使用假的统计信息优化 SQL 的数量
+- Dump Feedback OPS：存储统计信息 Feedback 的数量
+- Store Query Feedback QPS：存储合并查询的 Feedback 信息的每秒操作数量，该操作在 TiDB 内存中进行
+- Significant Feedback：重要的 Feedback 更新统计信息的数量
+- Update Stats OPS：利用 Feedback 更新统计信息的数量
 
 ### Owner
 
-- New ETCD Session Duration 95: the time it takes to create a new etcd session. TiDB connects to etcd in PD through etcd client to save/read some metadata information. This records the time spent creating the session
-- Owner Watcher OPS: the number of Goroutine operations per second of DDL owner watch PD's etcd metadata
+- New ETCD Session Duration 95：创建一个新的 etcd 会话花费的时间。TiDB 通过 etcd client 连接 PD 中的 etcd 保存/读取部分元数据信息。这里记录了创建会话花费的时间
+- Owner Watcher OPS：DDL owner watch PD 的 etcd 的元数据的 goroutine 的每秒操作次数
 
 ### Meta
 
-- AutoID QPS: AutoID related statistics, including three operations (global ID allocation, a single table AutoID allocation, a single table AutoID Rebase)
-- AutoID Duration: the time consumed by AutoID related operations
-- Region Cache Error OPS: the number of errors encountered per second by the cached Region information in TiDB
-- Meta Operations Duration 99: the latency of Meta operations
+- AutoID QPS：AutoID 相关操作的数量统计，包括全局 ID 分配、单个 Table AutoID 分配、单个 Table AutoID Rebase 三种操作
+- AutoID Duration：AutoID 相关操作的耗时
+- Region Cache Error OPS：TiDB 缓存的 region 信息每秒遇到的错误次数
+- Meta Operations Duration 99：元数据操作延迟
 
 ### GC
 
-- Worker Action OPM: the number of GC related operations, including `run_job`, `resolve_lock`, and `delete_range`
-- Duration 99: the time consumed by GC related operations
-- Config: the configuration of GC data life time and GC running interval
-- GC Failure OPM: the number of failed GC related operations
-- Delete Range Failure OPM: the number of times the `Delete Range` has failed
-- Too Many Locks Error OPM: the number of the error that GC clears up too many locks
-- Action Result OPM: the number of results of GC-related operations
-- Delete Range Task Status: the task status of `Delete Range`, including completion and failure
-- Push Task Duration 95: the time spent pushing GC subtasks to GC workers
+- Worker Action OPM：GC 相关操作的数量，包括 run\_job，resolve\_lock，delete\_range 等操作
+- Duration 99：GC 相关操作的耗时
+- Config：GC 的数据保存时长 (life time) 和 GC 运行间隔 (run interval) 配置
+- GC Failure OPM：GC 相关操作失败的数量
+- Delete Range Failure OPM：Delete range 失败的次数
+- Too Many Locks Error OPM：GC 清锁过多错误的数量
+- Action Result OPM：GC 相关操作结果数量
+- Delete Range Task Status：Delete range 的任务状态，包含完成和失败状态
+- Push Task Duration 95：将 GC 子任务推送给 GC worker 的耗时
 
 ### Batch Client
 
-- Pending Request Count by TiKV: the number of Batch messages that are pending processing
-- Batch Client Unavailable Duration 95: the unavailable time of the Batch client
-- No Available Connection Counter: the number of times the Batch client cannot find an available link
+- Pending Request Count by TiKV：TiKV 批量消息处理的等待数量
+- Wait Duration 95: 批量消息处理的等待时间。
+- Batch Client Unavailable Duration 95：批处理客户端的不可用时长。
+- No Available Connection Counter：批处理客户端不可用的连接数。
 
 ### TTL
 
-- TiDB CPU Usage: the CPU usage of each TiDB instance.
-- TiKV IO MBps: the total bytes of I/O in each TiKV instance.
-- TiKV CPU: the CPU usage of each TiKV instance.
-- TTL QPS By Type: the QPS information of different types of statements generated by TTL jobs.
-- TTL Insert Rows Per Second: the number of rows inserted into TTL tables per second.
-- TTL Processed Rows Per Second: the number of expired rows processed by TTL jobs per second.
-- TTL Insert Rows Per Hour: the number of rows inserted into TTL tables for every hour.
-- TTL Delete Rows Per Hour: the number of expired rows deleted by TTL jobs for every hour.
-- TTL Scan/Delete Query Duration: the execution time of TTL scan/delete statements.
-- TTL Scan/Delete Worker Time By Phase: the time consumed by different phases of TTL internal worker threads.
-- TTL Job Count By Status: the number of TTL jobs currently being executed.
-- TTL Task Count By Status: the number of TTL tasks currently being executed.
+- TiDB CPU Usage: 每个 TiDB 实例的 CPU 使用。
+- TiKV IO MBps: 每个 TiKV 实例的 I/O 吞吐量。
+- TiKV CPU: 每个 TiKV 实例的 CPU 使用。
+- TTL QPS By Type：TTL 任务产生的不同类型语句的 QPS 信息。
+- TTL Insert Rows Per Second: 每秒钟向 TTL 表插入的数据行数。
+- TTL Processed Rows Per Second：TTL 任务每秒处理的过期数据的行数。
+- TTL Insert Rows Per Hour: 每小时总共向 TTL 表插入的行数。
+- TTL Delete Rows Per Hour: 每小时总共删除的过期行数。
+- TTL Scan/Delete Query Duration：TTL 的扫描/删除语句的执行时间。
+- TTL Scan/Delete Worker Time By Phase：TTL 内部工作线程的不同阶段所占用的时间。
+- TTL Job Count By Status：当前正在执行的 TTL 任务的数量。
+- TTL Task Count By Status：当前正在执行的 TTL 子任务的数量。

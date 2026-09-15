@@ -1,60 +1,39 @@
 ---
-title: 查询单个表的数据
-summary: 本文档介绍如何在数据库中查询单个表的数据。
+title: 单表查询
+summary: 介绍 TiDB 中的单表查询功能。
+aliases: ['/zh/tidb/dev/get-data-from-single-table','/zh/tidb/stable/dev-guide-get-data-from-single-table/','/zh/tidb/dev/dev-guide-get-data-from-single-table/','/zh/tidbcloud/dev-guide-get-data-from-single-table/']
 ---
 
 <!-- markdownlint-disable MD029 -->
 
-# 查询单个表的数据
+# 单表查询
 
-本文档介绍如何使用 SQL 以及各种编程语言从数据库中的单个表查询数据。
+在这个章节当中，将开始介绍如何使用 SQL 来对数据库中的数据进行查询。
 
-## 在开始之前
+## 开始之前
 
-以下内容以 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 应用为例，展示如何在 TiDB 中查询单个表的数据。
+下面将围绕 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 这个应用程序来对 TiDB 的数据查询部分展开介绍。
 
-在查询数据之前，请确保已完成以下步骤：
+在阅读本章节之前，你需要做以下准备工作：
 
-<CustomContent platform="tidb">
-
-1. 建立 TiDB 集群（建议使用 [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md) 或 [TiUP](/production-deployment-using-tiup.md)）。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-1. 使用 [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md) 建立 TiDB 集群。
-
-</CustomContent>
-
-2. [导入 Bookshop 应用的表结构和示例数据](/develop/dev-guide-bookshop-schema-design.md#import-table-structures-and-data)。
-
-<CustomContent platform="tidb">
-
+1. 构建 TiDB 集群（推荐使用 [TiDB Cloud](/develop/dev-guide-build-cluster-in-cloud.md) 或 [TiUP](/production-deployment-using-tiup.md)）。
+2. [导入 Bookshop 应用程序的表结构和示例数据](/develop/dev-guide-bookshop-schema-design.md#导入表结构和数据)。
 3. [连接到 TiDB](/develop/dev-guide-connect-to-tidb.md)。
 
-</CustomContent>
+## 简单的查询
 
-<CustomContent platform="tidb-cloud">
-
-3. [连接到 TiDB 集群](/tidb-cloud/connect-to-tidb-cluster.md)。
-
-</CustomContent>
-
-## 执行简单查询
-
-在 Bookshop 应用的数据库中，`authors` 表存储作者的基本信息。你可以使用 `SELECT ... FROM ...` 语句从数据库中查询数据。
+在 Bookshop 应用程序的数据库当中，`authors` 表存放了作家们的基础信息，可以通过 `SELECT ... FROM ...` 语句将数据从数据库当中调取出去。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-在 MySQL 客户端中执行以下 SQL 语句：
+在 MySQL Client 等客户端输入并执行如下 SQL 语句：
 
 ```sql
 SELECT id, name FROM authors;
 ```
 
-输出如下：
+输出结果如下：
 
 ```
 +------------+--------------------------+
@@ -78,12 +57,13 @@ SELECT id, name FROM authors;
 </div>
 <div label="Java" value="java">
 
-在 Java 中，为了存储作者的基本信息，你可以声明一个 `Author` 类。应根据数据库中的 [Data types](/data-type-overview.md) 和 [Value range](/data-type-numeric.md) 选择合适的 Java 数据类型。例如：
+在 Java 语言当中，可以通过声明一个 `Author` 类来定义如何存放作者的基础信息，根据数据的[类型](/data-type-overview.md)和[取值范围](/data-type-numeric.md)从 Java 语言当中选择合适的数据类型来存放对应的数据，例如：
 
-- 使用 `Int` 类型变量存储 `int` 类型数据。
-- 使用 `Long` 类型变量存储 `bigint` 类型数据。
-- 使用 `Short` 类型变量存储 `tinyint` 类型数据。
-- 使用 `String` 类型变量存储 `varchar` 类型数据。
+- 使用 `Int` 类型变量存放 `int` 类型的数据。
+- 使用 `Long` 类型变量存放 `bigint` 类型的数据。
+- 使用 `Short` 类型变量存放 `tinyint` 类型的数据。
+- 使用 `String` 类型变量存放 `varchar` 类型的数据。
+- ...
 
 ```java
 public class Author {
@@ -95,14 +75,14 @@ public class Author {
 
     public Author() {}
 
-     // 省略 getter 和 setter 方法。
+     // Skip the getters and setters.
 }
 ```
 
 ```java
 public class AuthorDAO {
 
-    // 省略实例变量的初始化。
+    // Omit initialization of instance variables.
 
     public List<Author> getAuthors() throws SQLException {
         List<Author> authors = new ArrayList<>();
@@ -122,34 +102,23 @@ public class AuthorDAO {
 }
 ```
 
-<CustomContent platform="tidb">
+在[使用 JDBC 连接到 TiDB](/develop/dev-guide-sample-application-java-jdbc.md)之后，你可以通过 `conn.createStatement()` 语句创建一个 `Statement` 实例对象。然后调用 `stmt.executeQuery("query_sql")` 方法向 TiDB 发起一个数据库查询请求。
 
-- 在 [使用 JDBC 驱动连接到 TiDB](/develop/dev-guide-connect-to-tidb.md#jdbc) 后，可以通过 `conn.createStatement()` 创建 `Statement` 对象。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-- 在 [使用 JDBC 驱动连接到 TiDB](/develop/dev-guide-choose-driver-or-orm.md#java-drivers) 后，可以通过 `conn.createStatement()` 创建 `Statement` 对象。
-
-</CustomContent>
-
-- 然后调用 `stmt.executeQuery("query_sql")` 来发起对 TiDB 的数据库查询请求。
-- 查询结果存储在 `ResultSet` 对象中。通过遍历 `ResultSet`，可以将返回的结果映射到 `Author` 对象中。
+数据库返回的查询结果将会存放到 `ResultSet` 当中，通过遍历 `ResultSet` 对象可以将返回结果映射到此前准备的 `Author` 类对象当中。
 
 </div>
 </SimpleTab>
 
-## 过滤查询结果
+## 对结果进行筛选
 
-你可以使用 `WHERE` 语句对查询结果进行过滤。
+查询得到的结果非常多，但是并不都是你想要的？可以通过 `WHERE` 语句对查询的结果进行过滤，从而找到想要查询的部分。
 
-例如，以下命令查询所有出生于 1998 年的作者：
+例如，想要查找众多作家当中找出在 1998 年出生的作家：
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
-在 `WHERE` 语句中添加过滤条件：
+在 SQL 中，可以使用 `WHERE` 子句添加筛选的条件：
 
 ```sql
 SELECT * FROM authors WHERE birth_year = 1998;
@@ -158,11 +127,11 @@ SELECT * FROM authors WHERE birth_year = 1998;
 </div>
 <div label="Java" value="java">
 
-在 Java 中，你可以用相同的 SQL 来处理带有动态参数的数据查询请求。
+对于 Java 程序而言，可以通过同一个 SQL 来处理带有动态参数的数据查询请求。
 
-这可以通过将参数拼接到 SQL 语句中实现，但这种方式存在潜在的 [SQL 注入](https://en.wikipedia.org/wiki/SQL_injection) 风险，影响应用的安全性。
+将参数拼接到 SQL 语句当中也许是一种方法，但是这可能不是一个好的主意，因为这会给应用程序带来潜在的 [SQL 注入](https://zh.wikipedia.org/wiki/SQL%E6%B3%A8%E5%85%A5)风险。
 
-为避免此类风险，应使用 [Prepared statement](/develop/dev-guide-prepared-statement.md) 代替普通的 Statement。
+在处理这类查询时，应该使用 [PreparedStatement](/develop/dev-guide-prepared-statement.md) 来替代普通的 Statement。
 
 ```java
 public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
@@ -187,11 +156,11 @@ public List<Author> getAuthorsByBirthYear(Short birthYear) throws SQLException {
 </div>
 </SimpleTab>
 
-## 排序查询结果
+## 对结果进行排序
 
-你可以使用 `ORDER BY` 语句对查询结果进行排序。
+使用 `ORDER BY` 语句可以让查询结果按照期望的方式进行排序。
 
-例如，以下 SQL 语句根据 `birth_year` 列以降序（`DESC`）排序，获取最年轻的作者列表：
+例如，可以通过下面的 SQL 语句对 `authors` 表的数据按照 `birth_year` 列进行降序 (`DESC`) 排序，从而得到最年轻的作家列表。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -252,9 +221,9 @@ public List<Author> getAuthorsSortByBirthYear() throws SQLException {
 300000 rows in set (0.23 sec)
 ```
 
-## 限制查询结果的数量
+## 限制查询结果数量
 
-你可以使用 `LIMIT` 语句限制查询结果的数量。
+如果希望 TiDB 只返回部分结果，可以使用 `LIMIT` 语句限制查询结果返回的记录数。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
@@ -317,19 +286,19 @@ public List<Author> getAuthorsWithLimit(Integer limit) throws SQLException {
 10 rows in set (0.11 sec)
 ```
 
-使用 `LIMIT` 语句后，查询时间从例子中的 `0.23 sec` 大幅缩短到 `0.11 sec`。更多信息请参见 [TopN and Limit](/topn-limit-push-down.md)。
+通过观察查询结果你会发现，在使用 `LIMIT` 语句之后，查询的时间明显缩短，这是 TiDB 对 `LIMIT` 子句进行优化后的结果，你可以通过 [TopN 和 Limit 下推](/topn-limit-push-down.md)章节了解更多细节。
 
 ## 聚合查询
 
-为了更好地了解整体数据情况，可以使用 `GROUP BY` 语句对查询结果进行聚合。
+如果你想要关注数据整体的情况，而不是部分数据，你可以通过使用 `GROUP BY` 语句配合聚合函数，构建一个聚合查询来帮助你对数据的整体情况有一个更好的了解。
 
-例如，如果你想知道在哪些年份出生的作者较多，可以按 `birth_year` 列分组，然后统计每个年份的作者数量：
+比如说，你希望知道哪些年出生的作家比较多，你可以将作家基本信息按照 `birth_year` 列进行分组，然后分别统计在当年出生的作家数量：
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
 
 ```sql
-SELECT birth_year, COUNT (DISTINCT id) AS author_count
+SELECT birth_year, COUNT(DISTINCT id) AS author_count
 FROM authors
 GROUP BY birth_year
 ORDER BY author_count DESC;
@@ -346,7 +315,7 @@ public class AuthorCount {
 
     public AuthorCount() {}
 
-     // 省略 getter 和 setter 方法。
+     // Skip the getters and setters.
 }
 
 public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
@@ -367,7 +336,7 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
             authorCounts.add(authorCount);
         }
     }
-    return authorCounts;
+    return authorCount;
 }
 ```
 
@@ -395,18 +364,4 @@ public List<AuthorCount> getAuthorCountsByBirthYear() throws SQLException {
 71 rows in set (0.00 sec)
 ```
 
-除了 `COUNT` 函数外，TiDB 还支持其他聚合函数。更多信息请参见 [Aggregate (GROUP BY) Functions](/functions-and-operators/aggregate-group-by-functions.md)。
-
-## 需要帮助吗？
-
-<CustomContent platform="tidb">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>
+除了 `COUNT` 函数外，TiDB 还支持了其他聚合函数。详情请参考 [GROUP BY 聚合函数](/functions-and-operators/aggregate-group-by-functions.md)。

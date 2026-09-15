@@ -1,107 +1,107 @@
 ---
 title: TiDB 5.4.2 Release Notes
-summary: TiDB 5.4.2 was released on July 8, 2022. It is not recommended to use this version due to a known bug, which has been fixed in v5.4.3. The release includes improvements to TiDB, TiKV, PD, and various tools, along with bug fixes for each component. These bug fixes address issues related to stability, performance, and error handling.
+summary: TiDB 5.4.2 发布日期为 2022 年 7 月 8 日。该版本存在 bug，建议升级至 v5.4.3。此版本提升了 TiDB、TiKV、PD 和 Tools 的稳定性和可用性，并修复了多个 bug。
+aliases: ['/zh/tidb/dev/release-5.4.2/','/zh/tidb/v5.4/release-5.4.2','/zh/tidb/v6.1/release-5.4.2','/zh/tidb/v6.5/release-5.4.2','/zh/tidb/v7.1/release-5.4.2','/zh/tidb/v7.5/release-5.4.2','/zh/tidb/v8.1/release-5.4.2']
 ---
 
 # TiDB 5.4.2 Release Notes
 
-Release Date: July 8, 2022
+发版日期：2022 年 7 月 8 日
 
-TiDB version: 5.4.2
+TiDB 版本：5.4.2
 
-> **Warning:**
+> **警告：**
 >
-> It is not recommended to use v5.4.2, because this version has a known bug. For details, see [#12934](https://github.com/tikv/tikv/issues/12934). This bug has been fixed in v5.4.3. It is recommended to use [v5.4.3](/releases/release-5.4.3.md).
+> 不建议使用 v5.4.2，因为该版本已知存在 bug，详情参见 [#12934](https://github.com/tikv/tikv/issues/12934)。该 bug 已在 v5.4.3 中修复，建议升级至 [v5.4.3](/releases/release-5.4.3.md)。
 
-## Improvements
+## 提升改进
 
 + TiDB
 
-    - Avoid sending requests to unhealthy TiKV nodes to improve availability [#34906](https://github.com/pingcap/tidb/issues/34906)
+    - 避免向非健康状态的 TiKV 节点发送请求，以提升可用性 [#34906](https://github.com/pingcap/tidb/issues/34906)
 
 + TiKV
 
-    - Reload TLS certificate automatically for each update to improve availability [#12546](https://github.com/tikv/tikv/issues/12546)
-    - Improve the health check to detect unavailable Raftstore, so that the TiKV client can update Region Cache in time [#12398](https://github.com/tikv/tikv/issues/12398)
-    - Transfer the leadership to CDC observer to reduce latency jitter [#12111](https://github.com/tikv/tikv/issues/12111)
+    - 当 TLS 证书更新时自动重新加载，以提升可用性 [#12546](https://github.com/tikv/tikv/issues/12546)
+    - 健康检查可以检测到无法正常工作的 Raftstore，使得 TiKV client 可以及时更新 Region Cache [#12398](https://github.com/tikv/tikv/issues/12398)
+    - 通过将 leader 转让给 CDC observer 减少延迟抖动 [#12111](https://github.com/tikv/tikv/issues/12111)
 
 + PD
 
-    - Disable compiling swagger server by default [#4932](https://github.com/tikv/pd/issues/4932)
+    - 默认关闭编译 swagger server [#4932](https://github.com/tikv/pd/issues/4932)
 
 + Tools
 
     + TiDB Lightning
 
-        - Optimize Scatter Region to batch mode to improve the stability of the Scatter Region process [#33618](https://github.com/pingcap/tidb/issues/33618)
+        - 优化 Scatter Region 为批量模式，提升 Scatter Region 过程的稳定性 [#33618](https://github.com/pingcap/tidb/issues/33618)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue of wrong TableDual plans cached in binary protocol [#34690](https://github.com/pingcap/tidb/issues/34690) [#34678](https://github.com/pingcap/tidb/issues/34678)
-    - Fix the issue of incorrectly inferred null flag of the TiFlash `firstrow` aggregate function in the EqualAll case [#34584](https://github.com/pingcap/tidb/issues/34584)
-    - Fix the issue that the planner generates wrong 2-phase aggregate plan for TiFlash [#34682](https://github.com/pingcap/tidb/issues/34682)
-    - Fix the planner wrong behaviors that occur when `tidb_opt_agg_push_down` and `tidb_enforce_mpp` are enabled [#34465](https://github.com/pingcap/tidb/issues/34465)
-    - Fix the wrong memory-usage value used when Plan Cache is evicted [#34613](https://github.com/pingcap/tidb/issues/34613)
-    - Fix the issue that the column list does not work in the `LOAD DATA` statement [#35198](https://github.com/pingcap/tidb/issues/35198)
-    - Avoid reporting `WriteConflict` errors in pessimistic transactions [#11612](https://github.com/tikv/tikv/issues/11612)
-    - Fix the issue that the prewrite requests are not idempotency when Region errors and network issues occur [#34875](https://github.com/pingcap/tidb/issues/34875)
-    - Fix the issue that the async commit transactions being rolled back might not meet atomicity [#33641](https://github.com/pingcap/tidb/issues/33641)
-    - Previously, when a network connectivity issue occurred, TiDB did not always correctly free the resources held by the disconnected session. This issue has been fixed so that open transactions can be rolled back and other associated resources can be released. [#34722](https://github.com/pingcap/tidb/issues/34722)
-    - Fix the issue that the `references invalid table` error might be incorrectly reported when TiDB queries views with CTE [#33965](https://github.com/pingcap/tidb/issues/33965)
-    - Fix the panic issue caused by the `fatal error: concurrent map read and map write` error [#35340](https://github.com/pingcap/tidb/issues/35340)
+    - 修复在 binary protocol 下 Plan Cache 有时会缓存错误的 TableDual 计划的问题 [#34690](https://github.com/pingcap/tidb/issues/34690) [#34678](https://github.com/pingcap/tidb/issues/34678)
+    - 修复了执行计划在 EqualAll 的情况下，把 TiFlash 的 `firstrow` 聚合函数的 null flag 设错的问题 [#34584](https://github.com/pingcap/tidb/issues/34584)
+    - 修复了执行处理器为 TiFlash 生成错误的两阶段 aggregate 计划的问题 [#34682](https://github.com/pingcap/tidb/issues/34682)
+    - 修复了 `tidb_opt_agg_push_down` 和 `tidb_enforce_mpp` 启用时执行处理器的错误行为 [#34465](https://github.com/pingcap/tidb/issues/34465)
+    - 修复了 Plan Cache 在被 evict 时使用了错误的 memory usage 指标的问题 [#34613](https://github.com/pingcap/tidb/issues/34613)
+    - 修复了 `LOAD DATA` 语句中列的列表不生效的问题 [#35198](https://github.com/pingcap/tidb/issues/35198)
+    - 避免在悲观事务中报出 `Write Conflict` 错误 [#11612](https://github.com/tikv/tikv/issues/11612)
+    - 修复了在遇到 Region error 和网络问题时 prewrite 请求不幂等的问题 [#34875](https://github.com/pingcap/tidb/issues/34875)
+    - 修复了回滚 async commit 事务可能导致事务不满足原子性的问题 [#33641](https://github.com/pingcap/tidb/issues/33641)
+    - 如果发生网络连接问题，TiDB 并不总是能正确释放已断开会话所占有的资源。该修复可以确保 TiDB 回滚打开的事务以及释放其他相关资源。[#34722](https://github.com/pingcap/tidb/issues/34722)
+    - 修复在查询包含 CTE 的视图时，可能误报 `references invalid table` 的问题 [#33965](https://github.com/pingcap/tidb/issues/33965)
+    - 修复 TiDB 由于 `fatal error: concurrent map read and map write` 发生崩溃的问题 [#35340](https://github.com/pingcap/tidb/issues/35340)
 
 + TiKV
 
-    - Fix the panic issue caused by analyzing statistics when `max_sample_size` is set to `0` [#11192](https://github.com/tikv/tikv/issues/11192)
-    - Fix the potential issue of mistakenly reporting TiKV panics when exiting TiKV [#12231](https://github.com/tikv/tikv/issues/12231)
-    - Fix the panic issue that might occur when the source peer catches up logs by snapshot in the Region merge process [#12663](https://github.com/tikv/tikv/issues/12663)
-    - Fix the panic issue that might occur when a peer is being split and destroyed at the same time [#12825](https://github.com/tikv/tikv/issues/12825)
-    - Fix the issue of frequent PD client reconnection that occurs when the PD client meets an error [#12345](https://github.com/tikv/tikv/issues/12345)
-    - Fix the issue of time parsing error that occurs when the `DATETIME` values contain a fraction and `Z` [#12739](https://github.com/tikv/tikv/issues/12739)
-    - Fix the issue that TiKV panics when performing type conversion for an empty string [#12673](https://github.com/tikv/tikv/issues/12673)
-    - Fix the possible duplicate commit records in pessimistic transactions when async commit is enabled [#12615](https://github.com/tikv/tikv/issues/12615)
-    - Fix the issue that TiKV reports the `invalid store ID 0` error when using Follower Read [#12478](https://github.com/tikv/tikv/issues/12478)
-    - Fix the issue of TiKV panic caused by the race between destroying peers and batch splitting Regions [#12368](https://github.com/tikv/tikv/issues/12368)
-    - Fix the issue that tikv-ctl returns an incorrect result due to its wrong string match [#12329](https://github.com/tikv/tikv/issues/12329)
-    - Fix the issue of failing to start TiKV on AUFS [#12543](https://github.com/tikv/tikv/issues/12543)
+    - 修复 `max_sample_size` 为 `0` 时 ANALYZE 可能导致 panic 的问题 [#11192](https://github.com/tikv/tikv/issues/11192)
+    - 修复 TiKV 在退出时可能误报 panic 的问题 [#12231](https://github.com/tikv/tikv/issues/12231)
+    - 修复在 Region merge 时 source peer 通过 snapshot 追日志时可能导致 panic 的问题 [#12663](https://github.com/tikv/tikv/issues/12663)
+    - 修复同时分裂和销毁一个 peer 时可能导致 panic 的问题 [#12825](https://github.com/tikv/tikv/issues/12825)
+    - 修复了 PD 客户端遇到报错时频繁重连的问题 [#12345](https://github.com/tikv/tikv/issues/12345)
+    - 修复了 `DATETIME` 类型的数据包含小数部分和 `Z` 后缀导致检查报错的问题 [#12739](https://github.com/tikv/tikv/issues/12739)
+    - 修复了对空字符串进行类型转换导致 TiKV panic 的问题 [#12673](https://github.com/tikv/tikv/issues/12673)
+    - 修复了在悲观事务中使用 Async Commit 导致重复提交记录的问题 [#12615](https://github.com/tikv/tikv/issues/12615)
+    - 修复进行 Follower Read 时，可能会报 `invalid store ID 0` 错误的问题 [#12478](https://github.com/tikv/tikv/issues/12478)
+    - 修复销毁 peer 和批量分裂 Region 之间的竞争导致的 TiKV panic [#12368](https://github.com/tikv/tikv/issues/12368)
+    - 修复 tikv-ctl 对 `bad-ssts` 结果字符串进行错误匹配的问题 [#12329](https://github.com/tikv/tikv/issues/12329)
+    - 修复在 aufs 上启动 TiKV 报错的问题 [#12543](https://github.com/tikv/tikv/issues/12543)
 
 + PD
-
-    - Fix the wrong status code of `not leader` [#4797](https://github.com/tikv/pd/issues/4797)
-    - Fix the PD panic that occurs when a hot region has no leader [#5005](https://github.com/tikv/pd/issues/5005)
-    - Fix the issue that scheduling cannot start immediately after the PD leader transfer [#4769](https://github.com/tikv/pd/issues/4769)
-    - Fix a bug of TSO fallback in some corner cases [#4884](https://github.com/tikv/pd/issues/4884)
+    - 修复 `not leader` 的 status code 有误的问题 [#4797](https://github.com/tikv/pd/issues/4797)
+    - 修复由于 Hot Region 没有 leader 导致 PD Panic 的问题 [#5005](https://github.com/tikv/pd/issues/5005)
+    - 修复 PD leader 转移后调度不能立即启动的问题 [#4769](https://github.com/tikv/pd/issues/4769)
+    - 修复在某些特殊情况下 TSO fallback 的问题 [#4884](https://github.com/tikv/pd/issues/4884)
 
 + TiFlash
 
-    - Fix the issue that TiFlash crashes after dropping a column of a table with clustered indexes in some situations [#5154](https://github.com/pingcap/tiflash/issues/5154)
-    - Fix potential data inconsistency after a lot of INSERT and DELETE operations [#4956](https://github.com/pingcap/tiflash/issues/4956)
-    - Fix wrong decimal comparison results in corner cases [#4512](https://github.com/pingcap/tiflash/issues/4512)
+    - 修复在 clustered index 表删除列导致 TiFlash 崩溃的问题 [#5154](https://github.com/pingcap/tiflash/issues/5154)
+    - 修复大量 INSERT 和 DELETE 操作后可能导致 TiFlash 数据不一致的问题 [#4956](https://github.com/pingcap/tiflash/issues/4956)
+    - 修复极端情况下 decimal 比较结果可能有误的问题 [#4512](https://github.com/pingcap/tiflash/issues/4512)
 
 + Tools
 
     + Backup & Restore (BR)
 
-        - Fix a bug that BR reports `ErrRestoreTableIDMismatch` in RawKV mode [#35279](https://github.com/pingcap/tidb/issues/35279)
-        - Fix a bug that BR does not retry when an error occurs in saving files [#34865](https://github.com/pingcap/tidb/issues/34865)
-        - Fix a panic issue when BR is running [#34956](https://github.com/pingcap/tidb/issues/34956)
-        - Fix the issue that BR cannot handle S3 internal errors [#34350](https://github.com/pingcap/tidb/issues/34350)
-        - Fix a bug that BR gets stuck when the restore operation meets some unrecoverable errors [#33200](https://github.com/pingcap/tidb/issues/33200)
+        - 修复了 RawKV 模式下 BR 报 `ErrRestoreTableIDMismatch` 错误的问题 [#35279](https://github.com/pingcap/tidb/issues/35279)
+        - 修复了出现保存文件错误时 BR 没有重试的问题 [#34865](https://github.com/pingcap/tidb/issues/34865)
+        - 修复了 BR 运行时 panic 的问题 [#34956](https://github.com/pingcap/tidb/issues/34956)
+        - 修复 BR 无法处理 S3 内部错误的问题 [#34350](https://github.com/pingcap/tidb/issues/34350)
+        - 修复了当恢复操作遇到一些无法恢复的错误时，BR 被卡住的问题 [#33200](https://github.com/pingcap/tidb/issues/33200)
 
     + TiCDC
 
-        - Fix data loss that occurs in special incremental scanning scenarios [#5468](https://github.com/pingcap/tiflow/issues/5468)
-        - Fix a bug that the redo log manager flushes logs before writing logs [#5486](https://github.com/pingcap/tiflow/issues/5486)
-        - Fix a bug that the resolved ts moves too fast when some tables are not maintained by the redo writer [#5486](https://github.com/pingcap/tiflow/issues/5486)
-        - Fix the issue that file name conflicts may cause data loss [#5486](https://github.com/pingcap/tiflow/issues/5486)
-        - Fix replication interruption that occurs when Region leader is missing and the retry exceeds the limit [#5230](https://github.com/pingcap/tiflow/issues/5230)
-        - Fix the bug that MySQL Sink may save a wrong checkpointTs [#5107](https://github.com/pingcap/tiflow/issues/5107)
-        - Fix a bug that may cause goroutine leak in the HTTP server [#5303](https://github.com/pingcap/tiflow/issues/5303)
-        - Fix the issue that changes in meta Region can lead to latency increase [#4756](https://github.com/pingcap/tiflow/issues/4756) [#4762](https://github.com/pingcap/tiflow/issues/4762)
+        - 修复了增量扫描特殊场景下的数据丢失问题 [#5468](https://github.com/pingcap/tiflow/issues/5468)
+        - 修复 redo log manager 提前 flush log 的问题 [#5486](https://github.com/pingcap/tiflow/issues/5486)
+        - 修复当一部分表没有被 redo writer 管理时 resolved ts 提前推进的问题 [#5486](https://github.com/pingcap/tiflow/issues/5486)
+        - 添加 UUID 作为 redo log file 的后缀以解决文件名冲突引起的数据丢失问题 [#5486](https://github.com/pingcap/tiflow/issues/5486)
+        - 修复了 Region Leader 丢失时重试超过次数上限后同步中断的问题 [#5230](https://github.com/pingcap/tiflow/issues/5230)
+        - 修复 MySQL Sink 可能会保存错误的 checkpointTs 的问题 [#5107](https://github.com/pingcap/tiflow/issues/5107)
+        - 修复了 HTTP server 中潜在的 goroutine 泄露问题 [#5303](https://github.com/pingcap/tiflow/issues/5303)
+        - 修复了元信息所在 Region 发生变化时可能导致延迟上升的问题 [#4756](https://github.com/pingcap/tiflow/issues/4756) [#4762](https://github.com/pingcap/tiflow/issues/4762)
 
     + TiDB Data Migration (DM)
 
-        - Fix the issue that DM occupies more disk space after a task automatically resumes [#5344](https://github.com/pingcap/tiflow/issues/5344)
-        - Fix the issue that the uppercase table cannot be replicated when `case-sensitive: true` is not set [#5255](https://github.com/pingcap/tiflow/issues/5255)
+        - 修复了任务自动恢复后 DM 会占用更大的磁盘空间的问题 [#5344](https://github.com/pingcap/tiflow/issues/5344)
+        - 修复在未设置 `case-sensitive: true` 时无法同步大写表的问题 [#5255](https://github.com/pingcap/tiflow/issues/5255)

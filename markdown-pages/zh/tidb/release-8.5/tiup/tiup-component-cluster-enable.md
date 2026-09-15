@@ -1,54 +1,54 @@
 ---
 title: tiup cluster enable
-summary: The `tiup cluster enable` command is used to automatically enable cluster services after a machine restart. It executes `systemctl enable <service>` at the specified node. Options include specifying nodes or roles for auto-enabling, and the `-h, --help` option prints help information. The output is the execution log of the tiup-cluster.
+summary: tiup cluster enable 命令用于设置集群服务在机器重启后的自启动。命令会执行 systemctl enable <service> 来开启服务的自启。可以指定节点和角色来开启自启，同时可以输出帮助信息。执行日志将由 tiup-cluster 记录。
 ---
 
 # tiup cluster enable
 
-The `tiup cluster enable` command is used to set the auto-enabling of the cluster service after a machine is restarted. This command enables the auto-enabling of the service by executing `systemctl enable <service>` at the specified node.
+命令 `tiup cluster enable` 用于设置集群服务在机器重启后的自启动，该命令会到指定的节点上去执行 `systemctl enable <service>` 来开启服务的自启。
 
-> **Note:**
+> **注意：**
 >
-> When all clusters are shut down and restarted, the order of service startup is determined by the node's operating system startup order. When the restart order is incorrect, in some cases, the restarted cluster still cannot provide services. For example, if TiKV is started first but PD is not started, systemd gives up if TiKV is restarted multiple times while PD is not found.
+> 集群全部关机重启时，服务启动的顺序由节点的操作系统启动顺序决定。重启顺序不正确时，在某些情况下，重启后的集群仍然不能提供服务（比如先启动了 TiKV 但未启动 PD，systemd 重启 TiKV 多次仍未找到 PD 则会放弃）。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster enable <cluster-name> [flags]
 ```
 
-`<cluster-name>`: the cluster whose service auto-enabling is to be enabled.
+`<cluster-name>` 为要启用自启的集群。
 
-## Options
+## 选项
 
 ### -N, --node
 
-- Specifies the nodes whose service auto-enabling is to be enabled. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the cluster status table returned by the [`tiup cluster display`](/tiup/tiup-component-cluster-display.md) command.
-- Data type: `STRINGS`
-- If this option is not specified in the command, the auto-enabling of all nodes is enabled by default.
+- 指定要开启自启的节点，该选项的值为以逗号分割的节点 ID 列表，节点 ID 为 [`tiup-component-cluster-display`](/tiup/tiup-component-cluster-display.md) 命令返回的集群状态表格的第一列。
+- 数据类型：`STRINGS`
+- 如果不指定该选项，默认开启所有节点的自启。
 
-> **Note:**
+> **注意：**
 >
-> If the `-R, --role` option is specified at the same time, the auto-enabling of services that match both the specifications of `-N, --node` and `-R, --role` is enabled.
+> 若同时指定了 `-R, --role`，那么将开启它们的交集中的服务自启。
 
 ### -R, --role
 
-- Specifies the roles whose service auto-enabling is to be enabled. The value of this option is a comma-separated list of node roles. You can get the roles of nodes from the second column of the cluster status table returned by the [`tiup cluster display`](/tiup/tiup-component-cluster-display.md) command.
-- Data type: `STRINGS`
-- If this option is not specified in the command, the auto-enabling of all roles is enabled by default.
+- 指定要开启自启的角色，该选项的值为以逗号分割的节点角色列表，角色为 [`tiup-component-cluster-display`](/tiup/tiup-component-cluster-display.md) 命令返回的集群状态表格的第二列。
+- 数据类型：`STRINGS`
+- 如果不指定该选项，默认开启所有角色的自启。
 
-> **Note:**
+> **注意：**
 >
-> If the `-N, --node` option is specified at the same time, the auto-enabling of services that match both the specifications of `-N, --node` and `-R, --role` is enabled.
+> 若同时指定了 `-N, --node`，那么将开启它们的交集中的服务自启。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The execution log of the tiup-cluster.
+tiup-cluster 的执行日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

@@ -1,67 +1,70 @@
 ---
-title: Check Cluster Status
-summary: Learn how to check the running status of the TiDB cluster.
+title: 验证集群运行状态
+summary: 介绍如何验证集群运行状态。
 ---
 
-# Check Cluster Status
+# 验证集群运行状态
 
-After a TiDB cluster is deployed, you need to check whether the cluster runs normally. This document introduces how to check the cluster status using TiUP commands, [TiDB Dashboard](/dashboard/dashboard-intro.md) and Grafana, and how to log into the TiDB database to perform simple SQL operations.
+在部署完一套 TiDB 集群后，需要检查集群是否正常运行。本文介绍如何通过 TiUP 命令、[TiDB Dashboard](/dashboard/dashboard-intro.md) 和 Grafana 检查集群状态，以及如何登录 TiDB 数据库执行简单的 SQL 操作。
 
-## Check the TiDB cluster status
+## 通过 TiUP 检查集群状态
 
-This section describes how to check the TiDB cluster status using TiUP commands, [TiDB Dashboard](/dashboard/dashboard-intro.md), and Grafana.
-
-### Use TiUP
-
-Use the `tiup cluster display <cluster-name>` command to check the cluster status. For example:
+检查集群状态的命令是 `tiup cluster display <cluster-name>`，例如：
 
 
 ```shell
 tiup cluster display tidb-test
 ```
 
-Expected output: If the `Status` information of each node is `Up`, the cluster runs normally.
+预期结果输出：各节点 Status 状态信息为 `Up` 说明集群状态正常。
 
-### Use TiDB Dashboard
+## 通过 TiDB Dashboard 和 Grafana 检查集群状态
 
-1. Log in to TiDB Dashboard at `${pd-ip}:${pd-port}/dashboard`. The username and password is the same as that of the TiDB `root` user. If you have modified the `root` password, enter the modified password. The password is empty by default.
+本节介绍如何通过 [TiDB Dashboard](/dashboard/dashboard-intro.md) 和 Grafana 检查集群状态。
 
-    ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard.png)
+### 查看 TiDB Dashboard 检查 TiDB 集群状态
 
-2. The home page displays the node information in the TiDB cluster.
+1. 通过 `{pd-ip}:{pd-port}/dashboard` 登录 TiDB Dashboard，登录用户和口令为 TiDB 数据库 `root` 用户和口令。如果你修改过数据库的 `root` 密码，则以修改后的密码为准，默认密码为空。
 
-    ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs/tiup/tidb-dashboard-status.png)
+    ![TiDB-Dashboard](https://docs-download.pingcap.com/media/images/docs-cn/tiup/tidb-dashboard.png)
 
-### Use Grafana
+2. 主页面显示 TiDB 集群中节点信息
 
-1. Log in to the Grafana monitoring at `${Grafana-ip}:3000`. The default username and password are both `admin`.
+    ![TiDB-Dashboard-status](https://docs-download.pingcap.com/media/images/docs-cn/tiup/tidb-dashboard-status.png)
 
-2. To check the TiDB port status and load monitoring information, click **Overview**.
+### 查看 Grafana 监控 Overview 页面检查 TiDB 集群状态
 
-    ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs/tiup/grafana-overview.png)
+- 通过 `{Grafana-ip}:3000` 登录 Grafana 监控，默认用户名及密码为 `admin`/`admin`。
 
-## Log in to the database and perform simple operations
+- 点击 **Overview** 监控页面检查 TiDB 端口和负载监控信息。
 
-> **Note:**
+    ![Grafana-overview](https://docs-download.pingcap.com/media/images/docs-cn/tiup/grafana-overview.png)
+
+## 登录数据库执行简单 DML/DDL 操作和查询 SQL 语句
+
+> **注意：**
 >
-> Install the MySQL client before you log in to the database.
+> 登录数据库前，你需要安装 MySQL 客户端。
 
-Log in to the database by running the following command:
+执行以下命令登录数据库：
 
 
 ```shell
 mysql -u root -h ${tidb_server_host_IP_address} -P 4000
 ```
 
-`${tidb_server_host_IP_address}` is one of the IP addresses set for `tidb_servers` when you [initialize the cluster topology file](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file), such as `10.0.1.7`.
+其中，`${tidb_server_host_IP_address}` 是在[初始化集群拓扑文件](/production-deployment-using-tiup.md#第-3-步初始化集群拓扑文件)时为 `tidb_servers` 配置的 IP 地址之一，例如 `10.0.1.7`。
 
-The following information indicates successful login:
+输出下列信息表示登录成功：
 
 ```sql
 Welcome to the MySQL monitor.  Commands end with ; or \g.
 Your MySQL connection id is 3
-Server version: 8.0.11-TiDB-8.5.8 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+Server version: 8.0.11-TiDB-v8.5.8 TiDB Server (Apache License 2.0) Community Edition, MySQL 8.0 compatible
+
 Copyright (c) 2000, 2023, Oracle and/or its affiliates. All rights reserved.
+
+
 Oracle is a registered trademark of Oracle Corporation and/or its
 affiliates. Other names may be trademarks of their respective
 owners.
@@ -69,16 +72,16 @@ owners.
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 ```
 
-### Database operations
+### 数据库操作
 
-- Check the version of TiDB:
++ 检查 TiDB 版本
 
     
     ```sql
     select tidb_version()\G
     ```
 
-    Expected output:
+    预期结果输出：
 
     ```sql
     *************************** 1. row ***************************
@@ -94,33 +97,29 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     1 row in set (0.00 sec)
     ```
 
-- Create a database named `pingcap`:
++ 创建 `my_data` database
 
     
     ```sql
-    create database pingcap;
+    create database my_data;
     ```
-
-    Expected output:
 
     ```sql
     Query OK, 0 rows affected (0.10 sec)
     ```
 
-    Switch to the `pingcap` database:
-
     
     ```sql
-    use pingcap;
+    use my_data;
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     Database changed
     ```
 
-- Create a table named `tab_tidb`:
++ 创建 `tab_tidb` 表
 
     
     ```sql
@@ -133,33 +132,33 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     KEY `idx_age` (`age`));
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     Query OK, 0 rows affected (0.11 sec)
     ```
 
-- Insert data:
++ 插入数据
 
     
     ```sql
     insert into `tab_tidb` values (1,'TiDB',5,'TiDB-v5.0.0');
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     Query OK, 1 row affected (0.03 sec)
     ```
 
-- View the entries in `tab_tidb`:
++ 查看 `tab_tidb` 结果
 
     
     ```sql
     select * from tab_tidb;
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     +----+------+-----+-------------+
@@ -170,14 +169,14 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     1 row in set (0.00 sec)
     ```
 
-- View the store state, `store_id`, capacity, and uptime of TiKV:
++ 查看 TiKV store 状态、`store_id`、存储情况以及启动时间
 
     
     ```sql
     select STORE_ID,ADDRESS,STORE_STATE,STORE_STATE_NAME,CAPACITY,AVAILABLE,UPTIME from INFORMATION_SCHEMA.TIKV_STORE_STATUS;
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     +----------+--------------------+-------------+------------------+----------+-----------+--------------------+
@@ -190,14 +189,14 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
     3 rows in set (0.00 sec)
     ```
 
-- Exit TiDB:
++ 退出
 
     
     ```sql
     exit
     ```
 
-    Expected output:
+    预期输出
 
     ```sql
     Bye

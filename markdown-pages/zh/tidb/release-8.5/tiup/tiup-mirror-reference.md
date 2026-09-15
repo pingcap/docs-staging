@@ -1,38 +1,38 @@
 ---
-title: TiUP Mirror Reference Guide
-summary: Learn the general information of TiUP mirrors.
+title: TiUP 镜像参考指南
+summary: TiUP 镜像是存放 TiUP 组件和元信息的仓库。镜像存在两种形式：本地镜像和远程镜像。镜像可通过命令创建和更新。镜像目录结构包括根证书、索引、组件、快照和时间戳。客户端通过逻辑保证下载文件安全。
 ---
 
-# TiUP Mirror Reference Guide
+# TiUP 镜像参考指南
 
-TiUP mirrors are TiUP's component warehouse, which stores components and their metadata. TiUP mirrors take the following two forms:
+TiUP 镜像是 TiUP 的组件仓库，存放了一系列的组件和这些组件的元信息。镜像有两种存在形式：
 
-+ Directory on the local disk: serves the local TiUP client, which is called a local mirror in this document.
-+ HTTP mirror started based on the remote disk directory: serves the remote TiUP client, which is called a remote mirror in this document.
+- 本地磁盘上的目录：用于服务本地的 TiUP 客户端，文档中将称之为本地镜像
+- 基于远程的磁盘目录启动的 HTTP 镜像：服务远程的 TiUP 客户端，文档中将称之为远程镜像
 
-## Create and update mirror
+## 镜像的创建与更新
 
-You can create a TiUP mirror using one of the following two methods:
+镜像可以通过以下两种方式创建：
 
-+ Execute `tiup mirror init` to create a mirror from scratch.
-+ Execute `tiup mirror clone` to clone from an existing mirror.
+- 通过命令 `tiup mirror init` 从零生成
+- 通过命令 `tiup mirror clone` 从已有镜像克隆
 
-After the mirror is created, you can add components to or delete components from the mirror using the `tiup mirror` commands. TiUP updates a mirror by adding files and assigning a new version number to it, rather than deleting any files from the mirror.
+在创建镜像之后，可以通过 `tiup mirror` 相关命令来给镜像添加组件或删除组件，无论是通过何种方式更新镜像，TiUP 都不会从镜像中删除任何文件，而是通过增加文件并分配新版本号的方式更新。
 
-## Mirror structure
+## 镜像结构
 
-A typical mirror structure is as follows:
+一个典型的镜像目录结构如下：
 
 ```
-+ <mirror-dir>                                  # Mirror's root directory
-|-- root.json                                   # Mirror's root certificate
-|-- {2..N}.root.json                            # Mirror's root certificate
-|-- {1..N}.index.json                           # Component/user index
-|-- {1..N}.{component}.json                     # Component metadata
-|-- {component}-{version}-{os}-{arch}.tar.gz    # Component binary package
-|-- snapshot.json                               # Mirror's latest snapshot
-|-- timestamp.json                              # Mirror's latest timestamp
-|--+ commits                                    # Mirror's update log (deletable)
++ <mirror-dir>                                  # 镜像根目录
+|-- root.json                                   # 镜像根证书
+|-- {2..N}.root.json                            # 镜像根证书
+|-- {1..N}.index.json                           # 组件/用户索引
+|-- {1..N}.{component}.json                     # 组件元信息
+|-- {component}-{version}-{os}-{arch}.tar.gz    # 组件二进制包
+|-- snapshot.json                               # 镜像最新快照
+|-- timestamp.json                              # 镜像最新时间戳
+|--+ commits                                    # 镜像更新日志（可删除）
    |--+ commit-{ts1..tsN}
       |-- {N}.root.json
       |-- {N}.{component}.json
@@ -40,51 +40,51 @@ A typical mirror structure is as follows:
       |-- {component}-{version}-{os}-{arch}.tar.gz
       |-- snapshot.json
       |-- timestamp.json
-|--+ keys                                       # Mirror's private key (can be moved to other locations)
-   |-- {hash1..hashN}-root.json                 # Private key of the root certificate
-   |-- {hash}-index.json                        # Private key of the indexes
-   |-- {hash}-snapshot.json                     # Private key of the snapshots
-   |-- {hash}-timestamp.json                    # Private key of the timestamps
+|--+ keys                                       # 镜像私钥（可移动到其他位置）
+   |-- {hash1..hashN}-root.json                 # 根证书私钥
+   |-- {hash}-index.json                        # 索引私钥
+   |-- {hash}-snapshot.json                     # 快照私钥
+   |-- {hash}-timestamp.json                    # 时间戳私钥
 ```
 
-> **Note:**
+> **注意：**
 >
-> + The `commits` directory stores the logs generated in the process of mirror update and is used to roll back the mirror. You can delete the old log directories regularly when the disk space is insufficient.
-> + The private key stored in the `keys` directory is sensitive. It is recommended to keep it separately.
+> + commits 目录是在更新镜像过程中产生的日志，用于回滚镜像，磁盘空间不足时可以定期删除旧的文件夹
+> + keys 文件夹中存放的私钥较敏感，建议单独妥善保管
 
-### Root directory
+### 根证书
 
-In a TiUP mirror, the root certificate is used to store the public key of other metadata files. Each time any metadata file (`*.json`) is obtained, TiUP client needs to find the corresponding public key in the installed `root.json` based on the metadata file type (root, index, snapshot, timestamp). Then TiUP client uses the public key to verify whether the signature is valid.
+在 TiUP 镜像中，根证书用于存放其他元信息文件的公钥，每次获取到任何元信息文件（*.json）都需要根据其文件类型（root，index，snapshot，timestamp）在当前已安装的 root.json 中找到对应的公钥，然后用公钥验证其签名是否合法。
 
-The root certificate's format is as follows:
+根证书文件格式如下：
 
 ```
 {
-    "signatures": [                                             # Each metadata file has some signatures which are signed by several private keys corresponding to the file.
+    "signatures": [                                             # 每个元信息文件有一系列的签名，签名由该文件对应的几个私钥签出
         {
-            "keyid": "{id-of-root-key-1}",                      # The ID of the first private key that participates in the signature. This ID is obtained by hashing the content of the public key that corresponds to the private key.
-            "sig": "{signature-by-root-key-1}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-1}",                      # 第一个参与签名私钥的 ID，该 ID 由私钥对应的公钥内容哈希得到
+            "sig": "{signature-by-root-key-1}"                  # 该私钥对此文件 signed 部分签名的结果
         },
         ...
         {
-            "keyid": "{id-of-root-key-N}",                      # The ID of the Nth private key that participates in the signature.
-            "sig": "{signature-by-root-key-N}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-N}",                      # 第 N 个参与签名私钥的 ID
+            "sig": "{signature-by-root-key-N}"                  # 该私钥对此文件 signed 部分签名的结果
         }
     ],
-    "signed": {                                                 # The signed part.
-        "_type": "root",                                        # The type of this file. root.json's type is root.
-        "expires": "{expiration-date-of-this-file}",            # The expiration time of the file. If the file expires, the client rejects the file.
-        "roles": {                                              # Records the keys used to sign each metadata file.
-            "{role:index,root,snapshot,timestamp}": {           # Each involved metadata file includes index, root, snapshot, and timestamp.
-                "keys": {                                       # Only the key's signature recorded in `keys` is valid.
-                    "{id-of-the-key-1}": {                      # The ID of the first key used to sign {role}.
-                        "keytype": "rsa",                       # The key's type. Currently, the key type is fixed as rsa.
-                        "keyval": {                             # The key's payload.
-                            "public": "{public-key-content}"    # The public key's content.
+    "signed": {                                                 # 被签名的部分
+        "_type": "root",                                        # 该字段说明本文件的类型，root.json 的类型就是 root
+        "expires": "{expiration-date-of-this-file}",            # 该文件的过期时间，过期后客户端会拒绝此文件
+        "roles": {                                              # root.json 中的 roles 用来记录对各个元文件签名的密钥
+            "{role:index,root,snapshot,timestamp}": {           # 涉及的元文件类型包括 index, root, snapshot, timestamp
+                "keys": {                                       # 只有 keys 中记录的密钥签名才是合法的
+                    "{id-of-the-key-1}": {                      # 用于签名 {role} 的第 1 个密钥 ID
+                        "keytype": "rsa",                       # 密钥类型，目前固定为 rsa
+                        "keyval": {                             # 密钥的 payload
+                            "public": "{public-key-content}"    # 表示公钥内容
                         },
-                        "scheme": "rsassa-pss-sha256"           # Currently, the scheme is fixed as rsassa-pss-sha256.
+                        "scheme": "rsassa-pss-sha256"           # 目前固定为 rsassa-pss-sha256
                     },
-                    "{id-of-the-key-N}": {                      # The ID of the Nth key used to sign {role}.
+                    "{id-of-the-key-N}": {                      # 用于签名 {role} 的第 N 个密钥 ID
                         "keytype": "rsa",
                         "keyval": {
                             "public": "{public-key-content}"
@@ -92,119 +92,119 @@ The root certificate's format is as follows:
                         "scheme": "rsassa-pss-sha256"
                     }
                 },
-                "threshold": {N},                               # Indicates that the metadata file needs at least N key signatures.
-                "url": "/{role}.json"                           # The address from which the file can be obtained. For index files, prefix it with the version number (for example, /{N}.index.json).
+                "threshold": {N},                               # threshold 指示该元文件需要至少 N 个密钥签名
+                "url": "/{role}.json"                           # url 是指该文件的获取地址，对于 index 文件，需要在前面加上版本号，即 /{N}.index.json
             }
         },
-        "spec_version": "0.1.0",                                # The specified version followed by this file. If the file structure is changed in the future, the version number needs to be upgraded. The current version number is 0.1.0.
-        "version": {N}                                          # The version number of this file. You need to create a new {N+1}.root.json every time you update the file, and set its version to N + 1.
+        "spec_version": "0.1.0",                                # 本文件遵循的规范版本，未来变更文件结构需要升级版本号，目前为 0.1.0
+        "version": {N}                                          # 本文件的版本号，每次更新文件需要创建一个新的 {N+1}.root.json，并将其 version 设置为 N + 1
     }
 }
 ```
 
-### Index
+### 索引
 
-The index file records all the components in the mirror and the owner information of the components.
+索引文件记录了镜像中所有的组件以及组件的所有者信息。
 
-The index file's format is as follows:
+其格式如下：
 
 ```
 {
-    "signatures": [                                             # The file's signature.
+    "signatures": [                                             # 该文件的签名
         {
-            "keyid": "{id-of-index-key-1}",                     # The ID of the first private key that participates in the signature.
-            "sig": "{signature-by-index-key-1}",                # The signed part of this file by this private key.
+            "keyid": "{id-of-index-key-1}",                     # 第一个参与签名的 key 的 ID
+            "sig": "{signature-by-index-key-1}",                # 该私钥对此文件 signed 部分签名的结果
         },
         ...
         {
-            "keyid": "{id-of-root-key-N}",                      # The ID of the Nth private key that participates in the signature.
-            "sig": "{signature-by-root-key-N}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-N}",                      # 第 N 个参与签名私钥的 ID
+            "sig": "{signature-by-root-key-N}"                  # 该私钥对此文件 signed 部分签名的结果
         }
     ],
     "signed": {
-        "_type": "index",                                       # The file type.
-        "components": {                                         # The component list.
-            "{component1}": {                                   # The name of the first component.
-                "hidden": {bool},                               # Whether it is a hidden component.
-                "owner": "{owner-id}",                          # The component owner's ID.
-                "standalone": {bool},                           # Whether it is a standalone component.
-                "url": "/{component}.json",                     # The address from which the component can be obtained. You need to prefix it with the version number (for example, /{N}.{component}.json).
-                "yanked": {bool}                                # Indicates whether the component is marked as deleted.
+        "_type": "index",                                       # 指示该文件类型
+        "components": {                                         # 组件列表
+            "{component1}": {                                   # 第一个组件的名称
+                "hidden": {bool},                               # 是否是隐藏组件
+                "owner": "{owner-id}",                          # 组件管理员 ID
+                "standalone": {bool},                           # 该组件是否可独立运行
+                "url": "/{component}.json",                     # 获取组件的地址，需要加上版本号：/{N}.{component}.json
+                "yanked": {bool}                                # 该组件是否已被标记为删除
             },
             ...
-            "{componentN}": {                                   # The name of the Nth component.
+            "{componentN}": {                                   # 第 N 个组件的名称
                 ...
             },
         },
-        "default_components": ["{component1}".."{componentN}"], # The default component that a mirror must contain. Currently, this field defaults to empty (disabled).
-        "expires": "{expiration-date-of-this-file}",            # The expiration time of the file. If the file expires, the client rejects the file.
+        "default_components": ["{component1}".."{componentN}"], # 镜像必须包含的默认组件，该字段目前固定为空（未启用）
+        "expires": "{expiration-date-of-this-file}",            # 该文件的过期时间，过期后客户端会拒绝此文件
         "owners": {
-            "{owner1}": {                                       # The ID of the first owner.
-                "keys": {                                       # Only the key's signature recorded in `keys` is valid.
-                    "{id-of-the-key-1}": {                      # The first key of the owner.
-                        "keytype": "rsa",                       # The key's type. Currently, the key type is fixed as rsa.
-                        "keyval": {                             # The key's payload.
-                            "public": "{public-key-content}"    # The public key's content.
+            "{owner1}": {                                       # 第一个属主的 ID
+                "keys": {                                       # 只有 keys 中记录的密钥签名才是合法的
+                    "{id-of-the-key-1}": {                      # 该属主的第一个密钥
+                        "keytype": "rsa",                       # 密钥类型，目前固定为 rsa
+                        "keyval": {                             # 密钥的 payload
+                            "public": "{public-key-content}"    # 表示公钥内容
                         },
-                        "scheme": "rsassa-pss-sha256"           # Currently, the scheme is fixed as rsassa-pss-sha256.
+                        "scheme": "rsassa-pss-sha256"           # 目前固定为 rsassa-pss-sha256
                     },
                     ...
-                    "{id-of-the-key-N}": {                      # The Nth key of the owner.
+                    "{id-of-the-key-N}": {                      # 该属主的第 N 个密钥
                         ...
                     }
                 },
-                "name": "{owner-name}",                         # The name of the owner.
-                "threshold": {N}                                 # Indicates that the components owned by the owner must have at least N valid signatures.
+                "name": "{owner-name}",                         # 该属主的名字
+                "threshold": {N}                                 # 指示该属主拥有的组件必须含有至少 N 个合法签名
             },
             ...
-            "{ownerN}": {                                       # The ID of the Nth owner.
+            "{ownerN}": {                                       # 第 N 个属主的 ID
                 ...
             }
         }
-        "spec_version": "0.1.0",                                # The specified version followed by this file. If the file structure is changed in the future, the version number needs to be upgraded. The current version number is 0.1.0.
-        "version": {N}                                          # The version number of this file. You need to create a new {N+1}.index.json every time you update the file, and set its version to N + 1.
+        "spec_version": "0.1.0",                                # 本文件遵循的规范版本，未来变更文件结构需要升级版本号，目前为 0.1.0
+        "version": {N}                                          # 本文件的版本号，每次更新文件需要创建一个新的 {N+1}.index.json，并将其 version 设置为 N + 1
     }
 }
 ```
 
-### Component
+### 组件
 
-The component's metadata file records information of the component-specific platform and the version.
+组件元信息文件记录了特定组件的平台以及版本信息。
 
-The component metadata file's format is as follows:
+其格式如下：
 
 ```
 {
-    "signatures": [                                             # The file's signature.
+    "signatures": [                                             # 该文件的签名
         {
-            "keyid": "{id-of-index-key-1}",                     # The ID of the first private key that participates in the signature.
-            "sig": "{signature-by-index-key-1}",                # The signed part of this file by this private key.
+            "keyid": "{id-of-index-key-1}",                     # 第一个参与签名的 key 的 ID
+            "sig": "{signature-by-index-key-1}",                # 该私钥对此文件 signed 部分签名的结果
         },
         ...
         {
-            "keyid": "{id-of-root-key-N}",                      # The ID of the Nth private key that participates in the signature.
-            "sig": "{signature-by-root-key-N}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-N}",                      # 第 N 个参与签名私钥的 ID
+            "sig": "{signature-by-root-key-N}"                  # 该私钥对此文件 signed 部分签名的结果
         }
     ],
     "signed": {
-        "_type": "component",                                   # The file type.
-        "description": "{description-of-the-component}",        # The description of the component.
-        "expires": "{expiration-date-of-this-file}",            # The expiration time of the file. If the file expires, the client rejects the file.
-        "id": "{component-id}",                                 # The globally unique ID of the component.
-        "nightly": "{nightly-cursor}",                          # The nightly cursor, and the value is the latest nightly version number (for example, v5.0.0-nightly-20201209).
-        "platforms": {                                          # The component's supported platforms (such as darwin/amd64, linux/arm64).
+        "_type": "component",                                   # 指示该文件类型
+        "description": "{description-of-the-component}",        # 该组件的描述信息
+        "expires": "{expiration-date-of-this-file}",            # 该文件的过期时间，过期后客户端会拒绝此文件
+        "id": "{component-id}",                                 # 该组件的 ID，具有全局唯一性
+        "nightly": "{nightly-cursor}",                          # nightly 游标，值为最新的 nightly 的版本号（如 v5.0.0-nightly-20201209）
+        "platforms": {                                          # 该组件支持的平台（如 darwin/amd64，linux/arm64 等）
             "{platform-pair-1}": {
-                "{version-1}": {                                # The semantic version number (for example, v1.0.0).
-                    "dependencies": null,                       # Specifies the dependency relationship between components. The field is not used yet and is fixed as null.
-                    "entry": "{entry}",                         # The relative path of the entry binary file in the tar package.
-                    "hashs": {                                  # The checksum of the tar package. sha256 and sha512 are used.
+                "{version-1}": {                                # Semantic Version 版本号（如 v1.0.0 等）
+                    "dependencies": null,                       # 用于约定组件之间的依赖关系，该字段尚未使用，固定为 null
+                    "entry": "{entry}",                         # 入口二进制文件位于 tar 包的相对路径
+                    "hashs": {                                  # tar 包的 checksum，我们使用 sha256 和 sha512
                         "sha256": "{sum-of-sha256}",
                         "sha512": "{sum-of-sha512}",
                     },
-                    "length": {length-of-tar},                  # The length of the tar package.
-                    "released": "{release-time}",               # The release date of the version.
-                    "url": "{url-of-tar}",                      # The download address of the tar package.
-                    "yanked": {bool}                            # Indicates whether this version is disabled.
+                    "length": {length-of-tar},                  # tar 包的长度
+                    "released": "{release-time}",               # 该版本的 release 时间
+                    "url": "{url-of-tar}",                      # tar 包的下载地址
+                    "yanked": {bool}                            # 该版本是否已被禁用
                 }
             },
             ...
@@ -212,37 +212,37 @@ The component metadata file's format is as follows:
                 ...
             }
         },
-        "spec_version": "0.1.0",                                # The specified version followed by this file. If the file structure is changed in the future, the version number needs to be upgraded. The current version number is 0.1.0.
-        "version": {N}                                          # The version number of this file. You need to create a new {N+1}.{component}.json every time you update the file, and set its version to N + 1.
+        "spec_version": "0.1.0",                                # 本文件遵循的规范版本，未来变更文件结构需要升级版本号，目前为 0.1.0
+        "version": {N}                                          # 本文件的版本号，每次更新文件需要创建一个新的 {N+1}.{component}.json，并将其 version 设置为 N + 1
 }
 ```
 
-### Snapshot
+### 快照
 
-The snapshot file records the version number of each metadata file:
+快照文件记录了各个元文件当前的版本号。
 
-The snapshot file's structure is as follows:
+其格式如下：
 
 ```
 {
-    "signatures": [                                             # The file's signature.
+    "signatures": [                                             # 该文件的签名
         {
-            "keyid": "{id-of-index-key-1}",                     # The ID of the first private key that participates in the signature.
-            "sig": "{signature-by-index-key-1}",                # The signed part of this file by this private key.
+            "keyid": "{id-of-index-key-1}",                     # 第一个参与签名的 key 的 ID
+            "sig": "{signature-by-index-key-1}",                # 该私钥对此文件 signed 部分签名的结果
         },
         ...
         {
-            "keyid": "{id-of-root-key-N}",                      # The ID of the Nth private key that participates in the signature.
-            "sig": "{signature-by-root-key-N}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-N}",                      # 第 N 个参与签名私钥的 ID
+            "sig": "{signature-by-root-key-N}"                  # 该私钥对此文件 signed 部分签名的结果
         }
     ],
     "signed": {
-        "_type": "snapshot",                                    # The file type.
-        "expires": "{expiration-date-of-this-file}",            # The expiration time of the file. If the file expires, the client rejects the file.
-        "meta": {                                               # Other metadata files' information.
+        "_type": "snapshot",                                    # 指示该文件类型
+        "expires": "{expiration-date-of-this-file}",            # 该文件的过期时间，过期后客户端会拒绝此文件
+        "meta": {                                               # 其他元文件的信息
             "/root.json": {
-                "length": {length-of-json-file},                # The length of root.json
-                "version": {version-of-json-file}               # The version of root.json
+                "length": {length-of-json-file},                # root.json 的长度
+                "version": {version-of-json-file}               # root.json 的 version
             },
             "/index.json": {
                 "length": {length-of-json-file},
@@ -257,55 +257,56 @@ The snapshot file's structure is as follows:
                 ...
             }
         },
-        "spec_version": "0.1.0",                                # The specified version followed by this file. If the file structure is changed in the future, the version number needs to be upgraded. The current version number is 0.1.0.
-        "version": 0                                            # The version number of this file, which is fixed as 0.
+        "spec_version": "0.1.0",                                # 本文件遵循的规范版本，未来变更文件结构需要升级版本号，目前为 0.1.0
+        "version": 0                                            # 本文件的版本号，固定为 0
     }
 ```
 
-### Timestamp
+### 时间戳
 
-The timestamp file records the checksum of the current snapshot.
+时间戳文件记录了当前快照 checksum。
 
-The timestamp file's format is as follows:
+其文件格式如下：
 
 ```
 {
-    "signatures": [                                             # The file's signature.
+    "signatures": [                                             # 该文件的签名
         {
-            "keyid": "{id-of-index-key-1}",                     # The ID of the first private key that participates in the signature.
-            "sig": "{signature-by-index-key-1}",                # The signed part of this file by this private key.
+            "keyid": "{id-of-index-key-1}",                     # 第一个参与签名的 key 的 ID
+            "sig": "{signature-by-index-key-1}",                # 该私钥对此文件 signed 部分签名的结果
         },
         ...
         {
-            "keyid": "{id-of-root-key-N}",                      # The ID of the Nth private key that participates in the signature.
-            "sig": "{signature-by-root-key-N}"                  # The signed part of this file by this private key.
+            "keyid": "{id-of-root-key-N}",                      # 第 N 个参与签名私钥的 ID
+            "sig": "{signature-by-root-key-N}"                  # 该私钥对此文件 signed 部分签名的结果
         }
     ],
     "signed": {
-        "_type": "timestamp",                                   # The file type.
-        "expires": "{expiration-date-of-this-file}",            # The expiration time of the file. If the file expires, the client rejects the file.
-        "meta": {                                               # The information of snapshot.json.
+        "_type": "timestamp",                                   # 指示该文件类型
+        "expires": "{expiration-date-of-this-file}",            # 该文件的过期时间，过期后客户端会拒绝此文件
+        "meta": {                                               # snapshot.json 的信息
             "/snapshot.json": {
                 "hashes": {
-                    "sha256": "{sum-of-sha256}"                 # snapshot.json's sha256.
+                    "sha256": "{sum-of-sha256}"                 # snapshot.json 的 sha256
                 },
-                "length": {length-of-json-file}                 # The length of snapshot.json.
+                "length": {length-of-json-file}                 # snapshot.json 的长度
             }
         },
-        "spec_version": "0.1.0",                                # The specified version followed by this file. If the file structure is changed in the future, the version number needs to be upgraded. The current version number is 0.1.0.
-        "version": {N}                                          # The version number of this file. You need to overwrite timestamp.json every time you update the file, and set its version to N + 1.
+        "spec_version": "0.1.0",                                # 本文件遵循的规范版本，未来变更文件结构需要升级版本号，目前为 0.1.0
+        "version": {N}                                          # 本文件的版本号，每次更新文件需要覆盖 timestamp.json，并将其 version 设置为 N + 1
 ```
 
-## Client workflow
+## 客户端工作流程
 
-The client uses the following logic to ensure that the files downloaded from the mirror are safe:
+客户端通过以下逻辑保证从镜像下载到的文件是安全的：
 
-+ A `root.json` file is included with the binary when the client is installed.
-+ The running client performs the following tasks based on the existing `root.json`:
-    1. Obtain the version from `root.json` and mark it as `N`.
-    2. Request `{N+1}.root.json` from the mirror. If the request is successful, use the public key recorded in `root.json` to verify whether the file is valid.
-    3. Request `timestamp.json` from the mirror and use the public key recorded in `root.json` to verify whether the file is valid.
-    4. Check whether the checksum of `snapshot.json` recorded in `timestamp.json` matches the checksum of the local `snapshot.json`. If the two do not match, request the latest `snapshot.json` from the mirror and use the public key recorded in `root.json` to verify whether the file is valid.
-    5. Obtain the version number `N` of the `index.json` file from `snapshot.json` and request `{N}.index.json` from the mirror. Then use the public key recorded in `root.json` to verify whether the file is valid.
-    6. For components such as `tidb.json` and `tikv.json`, the client obtains the version numbers `N` of the components from `snapshot.json` and requests `{N}.{component}.json` from the mirror. Then the client uses the public key recorded in `index.json` to verify whether the file is valid.
-    7. For component's tar files, the client obtains the URLs and checksums of the files from `{component}.json` and request the URLs for the tar packages. Then the client verifies whether the checksum is correct.
++ 客户端安装时随 binary 附带了一个 root.json
++ 客户端运行时以已有的 root.json 为基础，做如下操作：
+    1. 获取 root.json 中的 version，记为 N
+    2. 向镜像请求 {N+1}.root.json，若成功，使用 root.json 中记录的公钥验证该文件是否合法
++ 向镜像请求 timestamp.json，并使用 root.json 中记录的公钥验证该文件是否合法
++ 检查 timestamp.json 中记录的 snapshot.json 的 checksum 和本地的 snapshot.json 的 checksum 是否吻合
+    - 若不吻合，则向镜像请求最新的 snapshot.json 并使用 root.json 中记录的公钥验证该文件是否合法
++ 对于 index.json 文件，从 snapshot.json 中获取其版本号 N，并请求 {N}.index.json，然后使用 root.json 中记录的公钥验证该文件是否合法
++ 对于组件（如 tidb.json，tikv.json），从 snapshot.json 中获取其版本号 N，并请求 {N}.{component}.json，然后使用 index.json 中记录的公钥验证该文件是否合法
++ 对于组件 tar 文件，从 {component}.json 中获取其 url 及 checksum，请求 url 得到 tar 包，并验证 checksum 是否正确

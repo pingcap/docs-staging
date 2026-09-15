@@ -1,173 +1,174 @@
 ---
 title: TiDB 5.4.1 Release Notes
-summary: "TiDB 5.4.1 Release Notes: This release includes compatibility changes, improvements, and bug fixes for TiDB, TiKV, PD, TiFlash, and various tools. Improvements include support for using the PointGet plan, adding more logs and metrics, and displaying multiple Kubernetes clusters in the Grafana dashboard. Bug fixes address issues such as incorrect handling of date_format, wrong data writing, wrong query results, and various panics and errors. Fixes for TiKV, PD, TiFlash, and tools are also included."
+summary: TiDB 5.4.1 发布日期为 2022 年 5 月 13 日。该版本未引入产品设计上的兼容性变化，但 Bug 修复可能带来兼容性变更。提升改进包括对 TiDB、TiKV、PD、TiFlash 和 Tools 的多个方面的改进。Bug 修复方面包括对 TiDB、TiKV、PD、TiFlash 和 Tools 的多个问题的修复。
+aliases: ['/zh/tidb/dev/release-5.4.1/','/zh/tidb/v5.4/release-5.4.1','/zh/tidb/v6.1/release-5.4.1','/zh/tidb/v6.5/release-5.4.1','/zh/tidb/v7.1/release-5.4.1','/zh/tidb/v7.5/release-5.4.1','/zh/tidb/v8.1/release-5.4.1']
 ---
 
 # TiDB 5.4.1 Release Notes
 
-Release Date: May 13, 2022
+发版日期：2022 年 5 月 13 日
 
-TiDB version: 5.4.1
+TiDB 版本：5.4.1
 
-## Compatibility changes
+## 兼容性更改
 
-TiDB v5.4.1 does not introduce any compatibility changes in product design. But note that bug fixes in this release might result in compatibility changes, too. For more information, see [Bug Fixes](#bug-fixes).
+TiDB v5.4.1 未引入产品设计上的兼容性变化，但请注意该版本中的 Bug 修复也可能带来兼容性变更，请参考 [Bug 修复](#bug-修复)部分。
 
-## Improvements
+## 提升改进
 
 + TiDB
 
-    - Support using the PointGet plan for queries that read the `_tidb_rowid` column [#31543](https://github.com/pingcap/tidb/issues/31543)
-    - Add more logs and metrics for the `Apply` operator to show whether it is parallel [#33887](https://github.com/pingcap/tidb/issues/33887)
-    - Improve the `TopN` pruning logic for Analyze Version 2 used for collecting statistics [#34256](https://github.com/pingcap/tidb/issues/34256)
-    - Support displaying multiple Kubernetes clusters in the Grafana dashboard [#32593](https://github.com/pingcap/tidb/issues/32593)
+    - 支持读取 `_tidb_rowid` 列的查询能够使用 PointGet 计划 [#31543](https://github.com/pingcap/tidb/issues/31543)
+    - 为 `Apply` 算子添加更多日志和监控指标，方便用户了解该算子的并行状态 [#33887](https://github.com/pingcap/tidb/issues/33887)
+    - 对于统计信息使用的 Analyze Version 2，优化了 `TopN` 裁剪的逻辑 [#34256](https://github.com/pingcap/tidb/issues/34256)
+    - 在 Grafana 的仪表盘中支持显示多个 Kubernetes 集群 [#32593](https://github.com/pingcap/tidb/issues/32593)
 
 + TiKV
 
-    - Support displaying multiple Kubernetes clusters in the Grafana dashboard [#12104](https://github.com/tikv/tikv/issues/12104)
+    - 在 Grafana 的仪表盘中支持显示多个 Kubernetes 集群 [#12104](https://github.com/tikv/tikv/issues/12104)
 
 + PD
 
-    - Support displaying multiple Kubernetes clusters in the Grafana dashboard [#4673](https://github.com/tikv/pd/issues/4673)
+    - 在 Grafana 的仪表盘中支持显示多个 Kubernetes 集群 [#4673](https://github.com/tikv/pd/issues/4673)
 
 + TiFlash
 
-    - Support displaying multiple Kubernetes clusters in the Grafana dashboard [#4129](https://github.com/pingcap/tiflash/issues/4129)
+    - 在 Grafana 的仪表盘中支持显示多个 Kubernetes 集群 [#4129](https://github.com/pingcap/tiflash/issues/4129)
 
 + Tools
 
     + TiCDC
 
-        - Support multiple Kubernetes clusters in Grafana dashboards [#4665](https://github.com/pingcap/tiflow/issues/4665)
-        - Expose configuration parameters of the Kafka producer to make them configurable in TiCDC [#4385](https://github.com/pingcap/tiflow/issues/4385)
+        - 在 Grafana 监控面板中支持多个 Kubernetes 集群 [#4665](https://github.com/pingcap/tiflow/issues/4665)
+        - 暴露 Kafka producer 配置参数，使之在 TiCDC 中可配置 [#4385](https://github.com/pingcap/tiflow/issues/4385)
 
     + TiDB Data Migration (DM)
 
-        - Support Syncer using the working directory of the DM-worker rather than `/tmp` to write internal files, and cleaning the directory after the task is stopped [#4107](https://github.com/pingcap/tiflow/issues/4107)
+        - 支持 Syncer 使用 DM-worker 的工作目录写内部文件，不再使用 /tmp 目录。任务停止后会清理掉该目录 [#4107](https://github.com/pingcap/tiflow/issues/4107)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue that `date_format` in TiDB handles `'\n'` in a MySQL-incompatible way [#32232](https://github.com/pingcap/tidb/issues/32232)
-    - Fix the issue that TiDB writes wrong data due to the wrong encoding of the `ENUM` or `SET` column [#32302](https://github.com/pingcap/tidb/issues/32302)
-    - Fix the issue that the Merge Join operator gets wrong results in certain cases [#33042](https://github.com/pingcap/tidb/issues/33042)
-    - Fix the issue that TiDB gets a wrong result when a correlated subquery returns a constant  [#32089](https://github.com/pingcap/tidb/issues/32089)
-    - Fix the issue that TiDB gets the wrong result when using TiFlash to scan tables with empty range although TiFlash does not support reading tables with empty range yet [#33083](https://github.com/pingcap/tidb/issues/33083)
-    - Fix the issue that the `MAX` or `MIN` function on the `ENUM` or `SET` column returns a wrong result when the new collation is enabled in TiDB [#31638](https://github.com/pingcap/tidb/issues/31638)
-    - Fix a bug that CTE might be blocked when a query reports errors [#31302](https://github.com/pingcap/tidb/issues/31302)
-    - Fix wrong range calculation results for Nulleq function on Enum values [#32428](https://github.com/pingcap/tidb/issues/32428)
-    - Fix TiDB OOM when exporting data using ChunkRPC [#31981](https://github.com/pingcap/tidb/issues/31981) [#30880](https://github.com/pingcap/tidb/issues/30880)
-    - Fix a bug that `tidb_super_read_only` is not automatically enabled when `tidb_restricted_read_only` is enabled [#31745](https://github.com/pingcap/tidb/issues/31745)
-    - Fix the issue that the `greatest` or `least` function with collation gets a wrong result [#31789](https://github.com/pingcap/tidb/issues/31789)
-    - Fix load data panic if the data is broken at an escape character [#31589](https://github.com/pingcap/tidb/issues/31589)
-    - Fix the `invalid transaction` error when executing a query using index lookup join [#30468](https://github.com/pingcap/tidb/issues/30468)
-    - Fix wrong results of deleting data of multiple tables using `left join` [#31321](https://github.com/pingcap/tidb/issues/31321)
-    - Fix a bug that TiDB may dispatch duplicate tasks to TiFlash [#32814](https://github.com/pingcap/tidb/issues/32814)
-    - Fix the issue that granting the `all` privilege might fail in clusters that are upgraded from v4.0 [#33588](https://github.com/pingcap/tidb/issues/33588)
-    - Fix the session panic that occurs when executing the prepared statement after table schema change with the MySQL binary protocol [#33509](https://github.com/pingcap/tidb/issues/33509)
-    - Fix the issue that executing SQL statements that have the `compress()` expression with `tidb_enable_vectorized_expression` enabled will fail [#33397](https://github.com/pingcap/tidb/issues/33397)
-    - Fix the issue of high CPU usage by the `reArrangeFallback` function [#30353](https://github.com/pingcap/tidb/issues/30353)
-    - Fix the issue that the table attributes are not indexed when a new partition is added and the issue that the table range information is not updated when the partition changes [#33929](https://github.com/pingcap/tidb/issues/33929)
-    - Fix a bug that the `TopN` statistical information of a table during the initialization is not correctly sorted  [#34216](https://github.com/pingcap/tidb/issues/34216)
-    - Fix the error that occurs when reading from the `INFORMATION_SCHEMA.ATTRIBUTES` table by skipping the unidentifiable table attributes [#33665](https://github.com/pingcap/tidb/issues/33665)
-    - Fix a bug that even if `@@tidb_enable_parallel_apply` is set, the `Apply` operator is not paralleled when an `order` property exists [#34237](https://github.com/pingcap/tidb/issues/34237)
-    - Fix a bug that `'0000-00-00 00:00:00'` can be inserted into a `datetime` column when `sql_mode` is set to `NO_ZERO_DATE` [#34099](https://github.com/pingcap/tidb/issues/34099)
-    - Fix the issue that the TiDB server might run out of memory when the `INFORMATION_SCHEMA.CLUSTER_SLOW_QUERY` table is queried. This issue can be triggered when you check slow queries on the Grafana dashboard [#33893](https://github.com/pingcap/tidb/issues/33893)
-    - Fix a bug that in the `NOWAIT` statement, a transaction being executed does not return immediately when encountering a lock [#32754](https://github.com/pingcap/tidb/issues/32754)
-    - Fix a bug that causes a failure when creating a table with the `GBK` charset and `gbk_bin` collation [#31308](https://github.com/pingcap/tidb/issues/31308)
-    - Fix a bug that when `enable-new-charset` is `on`, creating a `GBK` charset table with collation fails with the "Unknown character set" error [#31297](https://github.com/pingcap/tidb/issues/31297)
+    - 修复 date_format 对 `'\n'` 的处理与 MySQL 不兼容的问题 [#32232](https://github.com/pingcap/tidb/issues/32232)
+    - 修复 `ENUM` 或 `SET` 类型的列因为编码错误导致写入数据错误的问题 [#32302](https://github.com/pingcap/tidb/issues/32302)
+    - 修复特定情况下 Merge Join 执行结果错误的问题 [#33042](https://github.com/pingcap/tidb/issues/33042)
+    - 修复关联子查询返回结果中有常量时导致执行结果出错的问题  [#32089](https://github.com/pingcap/tidb/issues/32089)
+    - 修复在 TiFlash 不支持使用空范围读表的情况，依然选择 TiFlash 导致查询结果错误的问题 [#33083](https://github.com/pingcap/tidb/issues/33083)
+    - 修复开启 New Collation 时，作用在 `ENUM` 或`SET` 列上的 `MAX` 或 `MIN` 函数结果出错的问题 [#31638](https://github.com/pingcap/tidb/issues/31638)
+    - 修复查询报错时可能阻塞 CTE 的问题 [#31302](https://github.com/pingcap/tidb/issues/31302)
+    - 修复 Nulleq 函数作用在 Enum 类型上可能出现结果错误的问题 [#32428](https://github.com/pingcap/tidb/issues/32428)
+    - 修复使用 ChunkRPC 导出数据时可能造成 TiDB OOM 的问题 [#31981](https://github.com/pingcap/tidb/issues/31981) [#30880](https://github.com/pingcap/tidb/issues/30880)
+    - 修复开启 `tidb_restricted_read_only` 后 `tidb_super_read_only` 没有自动开启的问题 [#31745](https://github.com/pingcap/tidb/issues/31745)
+    - 修复带有 collation 的 `greatest` 或 `least` 函数结果出错的问题 [#31789](https://github.com/pingcap/tidb/issues/31789)
+    - 修复 LOAD DATA 语句处理转义字符时可能 panic 的问题 [#31589](https://github.com/pingcap/tidb/issues/31589)
+    - 修复查询时用到 index lookup join 导致 `invalid transaction` 报错的问题 [#30468](https://github.com/pingcap/tidb/issues/30468)
+    - 修复使用 left join 同时删除多张表数据时可能出现错误结果的问题 [#31321](https://github.com/pingcap/tidb/issues/31321)
+    - 修复 TiDB 可能向 TiFlash 发送重复任务的问题 [#32814](https://github.com/pingcap/tidb/issues/32814)
+    - 修复了集群从 4.0 版本升级后，为用户授予 `all` 权限时报错的问题 [#33588](https://github.com/pingcap/tidb/issues/33588)
+    - 修复了在 MySQL binary 协议下，当 schema 变更后，执行 prepared statement 会导致会话崩溃的问题 [#33509](https://github.com/pingcap/tidb/issues/33509)
+    - 修复了 `compress()` 表达式在 `tidb_enable_vectorized_expression` 开启时，执行会报错的问题 [#33397](https://github.com/pingcap/tidb/issues/33397)
+    - 修复了 `reArrangeFallback()` 函数使用 CPU 资源过多的问题 [#30353](https://github.com/pingcap/tidb/issues/30353)
+    - 修复对于新加入的分区，表属性 (table attributes) 无法被检索到，以及分区更新后，表的 range 信息不会被更新的问题 [#33929](https://github.com/pingcap/tidb/issues/33929)
+    - 修复了表的 `TopN` 统计信息在初始化时未正确排序的问题 [#34216](https://github.com/pingcap/tidb/issues/34216)
+    - 修复了读取 `INFORMATION_SCHEMA.ATTRIBUTES` 表报错的问题，对于无法识别的 attributes 会做跳过处理 [#33665](https://github.com/pingcap/tidb/issues/33665)
+    - 修复了当查询要求结果有序的情况下，即使设置了 `@@tidb_enable_parallel_apply`，`Apply` 算子依然不使用并行模式执行的问题 [#34237](https://github.com/pingcap/tidb/issues/34237)
+    - 修复了在 sql_mode 为 `NO_ZERO_DATE` 的限制下，用户依然可以插入数据 `'0000-00-00 00:00:00'` 到 `datetime` 列的问题 [#34099](https://github.com/pingcap/tidb/issues/34099)
+    - 修复了查询 `INFORMATION_SCHEMA.CLUSTER_SLOW_QUERY` 表导致 TiDB 服务器 OOM 的问题，在 Grafana dashboard 中查看慢查询记录的时候可能会触发该问题 [#33893](https://github.com/pingcap/tidb/issues/33893)
+    - 修复了在 `NOWAIT` 语句中，事务执行遇到了锁后，并不会立刻返回的问题 [#32754](https://github.com/pingcap/tidb/issues/32754)
+    - 修复创建字符集为 `GBK` 且 collation 为 `gbk_bin` 的表失败的问题 [#31308](https://github.com/pingcap/tidb/issues/31308)
+    - 修复启用配置 `enable-new-charset` 后，当字符集为 GBK 且指定 collation 时，建表报错 "Unknown character set" 的问题 [#31297](https://github.com/pingcap/tidb/issues/31297)
 
 + TiKV
 
-    - Fix the issue that TiKV panics and destroys peers unexpectedly because the target Region to be merged is invalid [#12232](https://github.com/tikv/tikv/issues/12232)
-    - Fix a bug that stale messages cause TiKV to panic [#12023](https://github.com/tikv/tikv/issues/12023)
-    - Fix the issue of intermittent packet loss and out of memory (OOM) caused by the overflow of memory metrics [#12160](https://github.com/tikv/tikv/issues/12160)
-    - Fix the potential panic issue that occurs when TiKV performs profiling on Ubuntu 18.04 [#9765](https://github.com/tikv/tikv/issues/9765)
-    - Fix a bug that replica reads might violate the linearizability [#12109](https://github.com/tikv/tikv/issues/12109)
-    - Fix the TiKV panic issue that occurs when the target peer is replaced with the peer that is destroyed without being initialized when merging a Region [#12048](https://github.com/tikv/tikv/issues/12048)
-    - Fix a bug that TiKV might panic if it has been running for 2 years or more [#11940](https://github.com/tikv/tikv/issues/11940)
-    - Reduce the TiCDC recovery time by reducing the number of the Regions that require the Resolve Locks step [#11993](https://github.com/tikv/tikv/issues/11993)
-    - Fix the panic issue caused by deleting snapshot files when the peer status is `Applying` [#11746](https://github.com/tikv/tikv/issues/11746)
-    - Fix the issue that destroying a peer might cause high latency [#10210](https://github.com/tikv/tikv/issues/10210)
-    - Fix the panic issue caused by invalid assertion in resource metering [#12234](https://github.com/tikv/tikv/issues/12234)
-    - Fix the issue that slow score calculation is inaccurate in some corner cases [#12254](https://github.com/tikv/tikv/issues/12254)
-    - Fix the OOM issue caused by the `resolved_ts` module and add more metrics [#12159](https://github.com/tikv/tikv/issues/12159)
-    - Fix the issue that successfully committed optimistic transactions may report the `Write Conflict` error when the network is poor [#34066](https://github.com/pingcap/tidb/issues/34066)
-    - Fix the TiKV panic issue that occurs when replica read is enabled on a poor network [#12046](https://github.com/tikv/tikv/issues/12046)
+    - 修复待 merge 的 Region 无效会导致 TiKV panic 且非预期地销毁 peer 的问题 [#12232](https://github.com/tikv/tikv/issues/12232)
+    - 修复旧信息造成 TiKV panic 的问题 [#12023](https://github.com/tikv/tikv/issues/12023)
+    - 修复因内存统计指标溢出而造成的间歇性丢包和内存不足 (OOM) 的问题 [#12160](https://github.com/tikv/tikv/issues/12160)
+    - 修复在 Ubuntu 18.04 下进行性能分析会造成 TiKV panic 的问题 [#9765](https://github.com/tikv/tikv/issues/9765)
+    - 修复 replica read 可能违反线性一致性的问题 [#12109](https://github.com/tikv/tikv/issues/12109)
+    - 修复合并 Region 时因 target peer 被一个未进行初始化就被销毁的 peer 所替换，从而引起 TiKV panic 的问题 [#12048](https://github.com/tikv/tikv/issues/12048)
+    - 修复 TiKV 运行 2 年以上可能 panic 的问题 [#11940](https://github.com/tikv/tikv/issues/11940)
+    - 通过减少需要进行清理锁 (Resolve Locks) 步骤的 Region 数量来减少 TiCDC 恢复时间 [#11993](https://github.com/tikv/tikv/issues/11993)
+    - 修复 Peer 状态为 Applying 时快照文件被删除会造成 panic 的问题 [#11746](https://github.com/tikv/tikv/issues/11746)
+    - 修复删除 Peer 可能造成高延迟的问题 [#10210](https://github.com/tikv/tikv/issues/10210)
+    - 修复资源管理不正确断言导致 panic 的问题 [#12234](https://github.com/tikv/tikv/issues/12234)
+    - 修复部分情况下 slow score 计算不准确的问题 [#12254](https://github.com/tikv/tikv/issues/12254)
+    - 修复 `resolved_ts` 模块内存管理不合理导致的 OOM 问题，增加更多监控指标 [#12159](https://github.com/tikv/tikv/issues/12159)
+    - 修复网络出现问题的情况下，已成功提交的乐观事务可能报 `Write Conflict` 错误的问题 [#34066](https://github.com/pingcap/tidb/issues/34066)
+    - 修复启用 replica read 时，在网络出现问题的情况下 TiKV 可能 panic 的问题 [#12046](https://github.com/tikv/tikv/issues/12046)
 
 + PD
 
-    - Fix the issue that `Duration` fields of `dr-autosync` cannot be dynamically configured [#4651](https://github.com/tikv/pd/issues/4651)
-    - Fix the issue that when there exists a Store with large capacity (2T for example), fully allocated small Stores cannot be detected, which results in no balance operator being generated [#4805](https://github.com/tikv/pd/issues/4805)
-    - Fix the issue that the label distribution has residual labels in the metrics [#4825](https://github.com/tikv/pd/issues/4825)
+    - 修复不能动态设置 `dr-autosync` 的 `Duration` 字段的问题 [#4651](https://github.com/tikv/pd/issues/4651)
+    - 修复存在较大空间 Store 时（例如 2T），无法检测满的小空间 Store，从而无法进行平衡调度的问题 [#4805](https://github.com/tikv/pd/issues/4805)
+    - 修复监控信息中已删除 label 的残留问题 [#4825](https://github.com/tikv/pd/issues/4825)
 
 + TiFlash
 
-    - Fix the panic issue that occurs when TLS is enabled [#4196](https://github.com/pingcap/tiflash/issues/4196)
-    - Fix possible metadata corruption caused by Region merge on a lagging Region peer [#4437](https://github.com/pingcap/tiflash/issues/4437)
-    - Fix the issue that a query containing `JOIN` might be hung if an error occurs [#4195](https://github.com/pingcap/tiflash/issues/4195)
-    - Fix a bug that MPP tasks might leak threads forever [#4238](https://github.com/pingcap/tiflash/issues/4238)
-    - Fix the overflow that occurs when casting `FLOAT` to `DECIMAL` [#3998](https://github.com/pingcap/tiflash/issues/3998)
-    - Fix the issue that expired data is recycled slowly [#4146](https://github.com/pingcap/tiflash/issues/4146)
-    - Fix a bug that canceled MPP queries might cause tasks to hang forever when the local tunnel is enabled [#4229](https://github.com/pingcap/tiflash/issues/4229)
-    - Fix the issue of memory leak that occurs when a query is canceled [#4098](https://github.com/pingcap/tiflash/issues/4098)
-    - Fix the wrong result that occurs when casting `DATETIME` to `DECIMAL` [#4151](https://github.com/pingcap/tiflash/issues/4151)
-    - Fix the potential issue of TiFlash panic when `Snapshot` is applied simultaneously with multiple DDL operations [#4072](https://github.com/pingcap/tiflash/issues/4072)
-    - Fix the bug that invalid storage directory configurations lead to unexpected behaviors [#4093](https://github.com/pingcap/tiflash/issues/4093)
-    - Fix the bug that some exceptions are not handled properly [#4101](https://github.com/pingcap/tiflash/issues/4101)
-    - Fix the issue that casting `INT` to `DECIMAL` might cause overflow [#3920](https://github.com/pingcap/tiflash/issues/3920)
-    - Fix the issue that the result of `IN` is incorrect in multi-value expressions [#4016](https://github.com/pingcap/tiflash/issues/4016)
-    - Fix the issue that the date format identifies `'\n'` as an invalid separator [#4036](https://github.com/pingcap/tiflash/issues/4036)
-    - Fix the potential query error after adding columns under heavy read workload [#3967](https://github.com/pingcap/tiflash/issues/3967)
-    - Fix the panic issue that occurs when the memory limit is enabled [#3902](https://github.com/pingcap/tiflash/issues/3902)
-    - Fix potential data corruption in DTFiles [#4778](https://github.com/pingcap/tiflash/issues/4778)
-    - Fix potential errors when querying on a table with many delete operations [#4747](https://github.com/pingcap/tiflash/issues/4747)
-    - Fix a bug that TiFlash reports many "Keepalive watchdog fired" errors randomly [#4192](https://github.com/pingcap/tiflash/issues/4192)
-    - Fix a bug that data not matching any region range remains on a TiFlash node [#4414](https://github.com/pingcap/tiflash/issues/4414)
-    - Fix a bug that empty segments cannot be merged after GC [#4511](https://github.com/pingcap/tiflash/issues/4511)
+    - 修复启用 TLS 时可能导致的崩溃 [#4196](https://github.com/pingcap/tiflash/issues/4196)
+    - 修复在滞后的 Region peer 上执行 Region Merge 导致的元数据损坏问题 [#4437](https://github.com/pingcap/tiflash/issues/4437)
+    - 修复在执行带有 `JOIN` 的查询遇到错误时可能被挂起的问题 [#4195](https://github.com/pingcap/tiflash/issues/4195)
+    - 修复 MPP 任务可能永远泄漏线程的问题 [#4238](https://github.com/pingcap/tiflash/issues/4238)
+    - 修复将 `FLOAT` 类型转换为 `DECIMAL` 类型可能造成溢出的问题 [#3998](https://github.com/pingcap/tiflash/issues/3998)
+    - 修复过期数据回收缓慢的问题 [#4146](https://github.com/pingcap/tiflash/issues/4146)
+    - 修复启用本地隧道时取消 MPP 查询可能导致任务永远挂起的问题 [#4229](https://github.com/pingcap/tiflash/issues/4229)
+    - 修复查询被取消时出现的内存泄露问题 [#4098](https://github.com/pingcap/tiflash/issues/4098)
+    - 修复将 `DATETIME` 转换为 `DECIMAL` 时结果错误的问题 [#4151](https://github.com/pingcap/tiflash/issues/4151)
+    - 修复并发执行多个 DDL 操作和 Apply Snapshot 操作时 TiFlash 可能会崩溃问题 [#4072](https://github.com/pingcap/tiflash/issues/4072)
+    - 修复错误地配置存储目录会导致非预期行为的问题 [#4093](https://github.com/pingcap/tiflash/issues/4093)
+    - 修复一些异常没有被正确地处理的问题 [#4101](https://github.com/pingcap/tiflash/issues/4101)
+    - 修复将 `INT` 类型转换为 `DECIMAL` 类型可能造成溢出的问题 [#3920](https://github.com/pingcap/tiflash/issues/3920)
+    - 修复 `IN` 函数的结果在多值表达式中不正确的问题 [#4016](https://github.com/pingcap/tiflash/issues/4016)
+    - 修复日期格式将 `'\n'` 处理为非法分隔符的问题 [#4036](https://github.com/pingcap/tiflash/issues/4036)
+    - 修复在读取工作量大时添加列后可能出现的查询错误 [#3967](https://github.com/pingcap/tiflash/issues/3967)
+    - 修复启用内存限制后 TiFlash 崩溃的问题 [#3902](https://github.com/pingcap/tiflash/issues/3902)
+    - 修复 DTFile 中可能出现的数据损坏问题 [#4778](https://github.com/pingcap/tiflash/issues/4778)
+    - 修复查询存在大量 delete 操作的表时可能报错的问题 [#4747](https://github.com/pingcap/tiflash/issues/4747)
+    - 修复 TiFlash 随机报错 "Keepalive watchdog fired" 的问题 [#4192](https://github.com/pingcap/tiflash/issues/4192)
+    - 修复 TiFlash 节点上遗留了与 Region range 不匹配的数据的问题 [#4414](https://github.com/pingcap/tiflash/issues/4414)
+    - 修复空 segments 在 GC 后无法合并的问题 [#4511](https://github.com/pingcap/tiflash/issues/4511)
 
 + Tools
 
     + Backup & Restore (BR)
 
-        - Fix a bug that causes the restore operation to fail when the encryption information is lost during backup retry [#32423](https://github.com/pingcap/tidb/issues/32423)
-        - Fix the issue that BR fails to back up RawKV [#32607](https://github.com/pingcap/tidb/issues/32607)
-        - Fix duplicate primary keys when inserting a record into a table after incremental restoration [#33596](https://github.com/pingcap/tidb/issues/33596)
-        - Fix a bug that BR incremental restore returns errors mistakenly due to DDL jobs with empty query [#33322](https://github.com/pingcap/tidb/issues/33322)
-        - Fix the potential issue that Regions might be unevenly distributed after a restore operation is finished [#31034](https://github.com/pingcap/tidb/issues/31034)
-        - Fix the issue that BR does not retry enough times when Regions are not consistent during restoration [#33419](https://github.com/pingcap/tidb/issues/33419)
-        - Fix the issue that BR might panic occasionally when merging small files is enabled [#33801](https://github.com/pingcap/tidb/issues/33801)
-        - Fix the issue that schedulers do not resume after BR or TiDB Lightning exits abnormally [#33546](https://github.com/pingcap/tidb/issues/33546)
+        - 修复了在备份重试过程中加密信息丢失导致的恢复操作失败的问题 [#32423](https://github.com/pingcap/tidb/issues/32423)
+        - 修复 BR 无法备份 RawKV 的问题 [#32607](https://github.com/pingcap/tidb/issues/32607)
+        - 修复增量恢复后在表中插入记录时遇到的重复主键问题 [#33596](https://github.com/pingcap/tidb/issues/33596)
+        - 修复增量恢复期间，由于 DDL 查询任务为空导致的报错 [#33322](https://github.com/pingcap/tidb/issues/33322)
+        - 修复当恢复完成后，Region 有可能分布不均的问题 [#31034](https://github.com/pingcap/tidb/issues/31034)
+        - 修复恢复过程中 Region 不一致时 BR 重试次数不足的问题 [#33419](https://github.com/pingcap/tidb/issues/33419)
+        - 修复在某些情况下，恢复过程中开启 merge 小文件功能导致 BR panic 的问题 [#33801](https://github.com/pingcap/tidb/issues/33801)
+        - 修复了 BR 或 TiDB Lightning 在异常退出的时候，scheduler 没有重置的问题 [#33546](https://github.com/pingcap/tidb/issues/33546)
 
     + TiCDC
 
-        - Fix incorrect metrics caused by owner changes [#4774](https://github.com/pingcap/tiflow/issues/4774)
-        - Fix the TiCDC panic issue that might occur because `Canal-JSON` does not support nil [#4736](https://github.com/pingcap/tiflow/issues/4736)
-        - Fix a stability problem in workerpool used by Unified Sorter [#4447](https://github.com/pingcap/tiflow/issues/4447)
-        - Fix a bug that sequence is incorrectly replicated in some cases [#4552](https://github.com/pingcap/tiflow/issues/4552)
-        - Fix the TiCDC panic issue that might occur when `Canal-JSON` incorrectly handles `string` [#4635](https://github.com/pingcap/tiflow/issues/4635)
-        - Fix a bug that a TiCDC node exits abnormally when a PD leader is killed [#4248](https://github.com/pingcap/tiflow/issues/4248)
-        - Fix a bug that MySQL sink generates duplicated `replace` SQL statements when `batch-replace-enable` is disabled [#4501](https://github.com/pingcap/tiflow/issues/4501)
-        - Fix the DML construct error caused by the `rename tables` DDL [#5059](https://github.com/pingcap/tiflow/issues/5059)
-        - Fix the issue that in rare cases replication can be stuck if the owner is changed and the new scheduler is enabled (disabled by default) [#4963](https://github.com/pingcap/tiflow/issues/4963)
-        - Fix the issue that the error ErrProcessorDuplicateOperations is reported when the new scheduler is enabled (disabled by default) [#4769](https://github.com/pingcap/tiflow/issues/4769)
-        - Fix the issue that TiCDC fails to start when the first PD set in `--pd` is not available after TLS is enabled [#4777](https://github.com/pingcap/tiflow/issues/4777)
-        - Fix the issue that the checkpoint metrics are missing when tables are being scheduled [#4714](https://github.com/pingcap/tiflow/issues/4714)
+        - 修复切换 owner 会导致其 metrics 数据不正确的问题 [#4774](https://github.com/pingcap/tiflow/issues/4774)
+        - 修复 `Canal-JSON` 不支持 nil 可能导致的 TiCDC panic 问题 [#4736](https://github.com/pingcap/tiflow/issues/4736)
+        - 修复 Unified Sorter 的 workerpool 稳定性问题 [#4447](https://github.com/pingcap/tiflow/issues/4447)
+        - 修复某些情况下序列对象被错误同步的问题 [#4552](https://github.com/pingcap/tiflow/issues/4552)
+        - 修复 `Canal-JSON` 错误处理 `string` 格式可能导致的 TiCDC panic 问题 [#4635](https://github.com/pingcap/tiflow/issues/4635)
+        - 修复了 TiCDC 进程在 PD leader 被杀死时的异常退出问题 [#4248](https://github.com/pingcap/tiflow/issues/4248)
+        - 修复 MySQL sink 在禁用 `batch-replace-enable` 参数时生成重复 `replace` SQL 语句的错误 [#4501](https://github.com/pingcap/tiflow/issues/4501)
+        - 修复了 `rename tables` DDL 导致的生成 DML 错误的问题 [#5059](https://github.com/pingcap/tiflow/issues/5059)
+        - 修复了在某些极端情况下，开启 new scheduler（默认关闭）时更新 owner 导致同步卡住的问题 [#4963](https://github.com/pingcap/tiflow/issues/4963)
+        - 修复了在开启 new scheduler（默认关闭）时出现报错 (ErrProcessorDuplicateOperations) 的问题 [#4769](https://github.com/pingcap/tiflow/issues/4769)
+        - 修复了在开启 TLS 后，`--pd` 中设置的第一个 PD 不可用导致 TiCDC 无法启动的问题 [#4777](https://github.com/pingcap/tiflow/issues/4777)
+        - 修复了在表被调度时 checkpoint 监控缺失的问题 [#4714](https://github.com/pingcap/tiflow/issues/4714)
 
     + TiDB Lightning
 
-        - Fix the checksum error "GC life time is shorter than transaction duration" [#32733](https://github.com/pingcap/tidb/issues/32733)
-        - Fix the issue that TiDB Lightning gets stuck when it fails to check empty tables [#31797](https://github.com/pingcap/tidb/issues/31797)
-        - Fix a bug that TiDB Lightning may not delete the metadata schema when some import tasks do not contain source files [#28144](https://github.com/pingcap/tidb/issues/28144)
-        - Fix the issue that the precheck does not check local disk resources and cluster availability [#34213](https://github.com/pingcap/tidb/issues/34213)
+        - 修复了 checksum 报错 “GC life time is shorter than transaction duration” [#32733](https://github.com/pingcap/tidb/issues/32733)
+        - 修复了检查空表失败导致 TiDB Lightning 卡住的问题 [#31797](https://github.com/pingcap/tidb/issues/31797)
+        - 修复在某些导入操作没有包含源文件时，TiDB Lightning 不会删除 metadata schema 的问题 [#28144](https://github.com/pingcap/tidb/issues/28144)
+        - 修复前置检查中没有检查本地磁盘空间以及集群是否可用的问题 [#34213](https://github.com/pingcap/tidb/issues/34213)
 
     + TiDB Data Migration (DM)
 
-        - Fix the issue that hundreds of "checkpoint has no change, skip sync flush checkpoint" print in the log and the replication is very slow [#4619](https://github.com/pingcap/tiflow/issues/4619)
-        - Fix a bug that long varchars report an error `Column length too big` [#4637](https://github.com/pingcap/tiflow/issues/4637)
-        - Fix the issue that execution errors of the update statement in safemode may cause the DM-worker panic [#4317](https://github.com/pingcap/tiflow/issues/4317)
-        - Fix the issue that in some cases manually executing the filtered DDL in the downstream might cause task resumption failure [#5272](https://github.com/pingcap/tiflow/issues/5272)
-        - Fix a bug that no data is returned for the `query-status` command when binlog is not enabled in the upstream [#5121](https://github.com/pingcap/tiflow/issues/5121)
-        - Fix the DM worker panic issue that occurs when the primary key is not first in the index returned by the `SHOW CREATE TABLE` statement [#5159](https://github.com/pingcap/tiflow/issues/5159)
-        - Fix the issue that CPU usage may increase and a large amount of log is printed when GTID is enabled or when the task is automatically resumed [#5063](https://github.com/pingcap/tiflow/issues/5063)
+        - 修复了日志中出现数百条 "checkpoint has no change, skip sync flush checkpoint" 以及迁移性能下降的问题 [#4619](https://github.com/pingcap/tiflow/issues/4619)
+        - 修复了 varchar 类型值长度过长时的 `Column length too big` 错误 [#4637](https://github.com/pingcap/tiflow/issues/4637)
+        - 修复了 UPDATE 语句在安全模式下执行错误会导致 DM 进程挂掉的问题 [#4317](https://github.com/pingcap/tiflow/issues/4317)
+        - 修复了某些情况下，过滤 DDL 并在下游手动执行会导致同步任务不能自动重试恢复的问题 [#5272](https://github.com/pingcap/tiflow/issues/5272)
+        - 修复了在上游没有开启 binlog 时执行 `query-status` 命令返回结果为空的问题 [#5121](https://github.com/pingcap/tiflow/issues/5121)
+        - 修复了在 `SHOW CREATE TABLE` 语句返回的索引中，主键没有排在第一位导致的 DM worker panic 的问题 [#5159](https://github.com/pingcap/tiflow/issues/5159)
+        - 修复了当开启 GTID 模式或者任务自动恢复时，可能出现一段时间 CPU 占用高并打印大量日志的问题 [#5063](https://github.com/pingcap/tiflow/issues/5063)

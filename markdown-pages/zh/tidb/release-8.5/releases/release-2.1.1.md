@@ -1,46 +1,47 @@
 ---
 title: TiDB 2.1.1 Release Notes
-summary: TiDB 2.1.1 was released on December 12, 2018, with improvements in stability, SQL optimizer, statistics information, and execution engine. Fixes include round error of negative date, uncompress function data length check, and transaction retries. Default character set and collation of tables changed to utf8mb4. PD and TiKV also received various fixes and optimizations. Lightning tool optimized analyze mechanism and added support for storing checkpoint information locally. TiDB Binlog fixed output bug of pb files for tables with only primary key column.
+summary: TiDB 2.1.1 版本发布，对系统稳定性、优化器、统计信息和执行引擎做了改进。修复了多个问题，包括时间四舍五入错误、uncompress 函数未检查数据长度、PD 故障获取错误 TSO、不规范语句导致启动失败等。DDL 改变了表的默认字符集和排序规则，增加了控制添加索引速度的变量。PD 修复了配置项无法设置为 0 的问题，避免了 transfer leader 至新创建的 Peer 产生的延迟增加问题。TiKV 也避免了相同的问题。 Lightning 优化了对导入表的 analyze 机制，提升了导入速度。 TiDB Binlog 修复了 pb files 输出 bug。
+aliases: ['/zh/tidb/dev/release-2.1.1/','/zh/tidb/v2.1/release-2.1.1','/docs-cn/dev/releases/release-2.1.1/','/docs-cn/dev/releases/2.1.1/','/zh/tidb/v5.4/release-2.1.1','/zh/tidb/v6.1/release-2.1.1','/zh/tidb/v6.5/release-2.1.1','/zh/tidb/v7.1/release-2.1.1','/zh/tidb/v7.5/release-2.1.1','/zh/tidb/v8.1/release-2.1.1']
 ---
 
 # TiDB 2.1.1 Release Notes
 
-On December 12, 2018, TiDB 2.1.1 is released. Compared with TiDB 2.1.0, this release has great improvement in stability, SQL optimizer, statistics information, and execution engine.
+2018 年 12 月 12 日，TiDB 发布 2.1.1 版。相比 2.1.0 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer/Executor
-    - Fix the round error of the negative date [#8574](https://github.com/pingcap/tidb/pull/8574)
-    - Fix the issue that the `uncompress` function does not check the data length [#8606](https://github.com/pingcap/tidb/pull/8606)
-    - Reset bind arguments of the `prepare` statement after the `execute` command is executed [#8652](https://github.com/pingcap/tidb/pull/8652)
-    - Support automatically collecting the statistics information of a partition table [#8649](https://github.com/pingcap/tidb/pull/8649)
-    - Fix the wrongly configured integer type when pushing down the `abs` function [#8628](https://github.com/pingcap/tidb/pull/8628)
-    - Fix the data race on the JSON column [#8660](https://github.com/pingcap/tidb/pull/8660)
++ 优化器/执行器
+    - 修复时间为负值时的四舍五入错误 [#8574](https://github.com/pingcap/tidb/pull/8574)
+    - 修复 `uncompress` 函数未检查数据长度的问题 [#8606](https://github.com/pingcap/tidb/pull/8606)
+    - 在执行 `execute` 命令后重置 `prepare` 语句绑定的变量 [#8652](https://github.com/pingcap/tidb/pull/8652)
+    - 支持对分区表自动收集统计信息 [#8649](https://github.com/pingcap/tidb/pull/8649)
+    - 修复在下推 `abs` 函数时设置错误的整数类型 [#8628](https://github.com/pingcap/tidb/pull/8628)
+    - 修复 JSON 列的数据竞争问题 [#8660](https://github.com/pingcap/tidb/pull/8660)
 + Server
-    - Fix the issue that the transaction obtained TSO is incorrect when PD breaks down [#8567](https://github.com/pingcap/tidb/pull/8567)
-    - Fix the bootstrap failure caused by the statement that does not conform to ANSI standards [#8576](https://github.com/pingcap/tidb/pull/8576)
-    - Fix the issue that incorrect parameters are used in transaction retries [#8638](https://github.com/pingcap/tidb/pull/8638)
+    - 修复在 PD 故障时获取错误 TSO 的问题 [#8567](https://github.com/pingcap/tidb/pull/8567)
+    - 修复不规范的语句导致启动失败的问题 [#8576](https://github.com/pingcap/tidb/pull/8576)
+    - 修复在事务重试时使用了错误的参数 [#8638](https://github.com/pingcap/tidb/pull/8638)
 + DDL
-    - Change the default character set and collation of tables into `utf8mb4` [#8590](https://github.com/pingcap/tidb/pull/8590)
-    - Add the `ddl_reorg_batch_size` variable to control the speed of adding indexes [#8614](https://github.com/pingcap/tidb/pull/8614)
-    - Make the character set and collation options content in DDL case-insensitive [#8611](https://github.com/pingcap/tidb/pull/8611)
-    - Fix the issue of adding indexes for generated columns [#8655](https://github.com/pingcap/tidb/pull/8655)
+    - 将表的默认字符集和排序规则改为 `utf8mb4` 和 `utf8mb4_bin` [#8590](https://github.com/pingcap/tidb/pull/8590)
+    - 增加变量 `ddl_reorg_batch_size` 来控制添加索引的速度 [#8614](https://github.com/pingcap/tidb/pull/8614)
+    - DDL 中的 character set 和 collation 选项内容不再大小写敏感 [#8611](https://github.com/pingcap/tidb/pull/8611)
+    - 修复对于生成列添加索引的问题 [#8655](https://github.com/pingcap/tidb/pull/8655)
 
 ## PD
 
-- Fix the issue that some configuration items cannot be set to `0` in the configuration file [#1334](https://github.com/pingcap/pd/pull/1334)
-- Check the undefined configuration when starting PD [#1362](https://github.com/pingcap/pd/pull/1362)
-- Avoid transferring the leader to a newly created peer, to optimize the possible delay [#1339](https://github.com/pingcap/pd/pull/1339)
-- Fix the issue that `RaftCluster` cannot stop caused by deadlock [#1370](https://github.com/pingcap/pd/pull/1370)
+- 修复一些配置项无法在配置文件中设置为 `0` 的问题 [#1334](https://github.com/pingcap/pd/pull/1334)
+- 启动时检查未定义的配置 [#1362](https://github.com/pingcap/pd/pull/1362)
+- 避免 transfer leader 至新创建的 Peer，优化可能产生的延迟增加问题 [#1339](https://github.com/pingcap/pd/pull/1339)
+- 修复 RaftCluster 在退出时可能的死锁问题 [#1370](https://github.com/pingcap/pd/pull/1370)
 
 ## TiKV
 
-- Avoid transferring the leader to a newly created peer, to optimize the possible delay [#3878](https://github.com/tikv/tikv/pull/3878)
+- 避免 transfer leader 至新创建的 Peer，优化可能产生的延迟增加问题 [#3878](https://github.com/tikv/tikv/pull/3878)
 
 ## Tools
 
 + Lightning
-    - Optimize the `analyze` mechanism on imported tables to increase the import speed
-    - Support storing the checkpoint information to a local file
+    - 优化对导入表的 `analyze` 机制，提升了导入速度
+    - 支持 checkpoint 信息储存在本地文件
 + TiDB Binlog
-    - Fix the output bug of pb files that a table only with the primary key column cannot generate the pb event
+    - 修复 pb files 输出 bug，表只有主键列则无法产生 pb event

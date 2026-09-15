@@ -1,24 +1,20 @@
 ---
 title: SHUTDOWN
-summary: An overview of the usage of SHUTDOWN for the TiDB database.
+summary: TiDB 数据库中 SHUTDOWN 的使用概况。
 ---
 
 # SHUTDOWN
 
-The `SHUTDOWN` statement is used to perform a shutdown operation in TiDB. Execution of the `SHUTDOWN` statement requires the user to have `SHUTDOWN privilege`.
+`SHUTDOWN` 语句用于在 TiDB 中执行停机操作。执行 `SHUTDOWN` 语句需要用户拥有 `SHUTDOWN privilege`。
 
-> **Note:**
->
-> This feature is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
-
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 ShutdownStmt ::=
     "SHUTDOWN"
 ```
 
-## Examples
+## 示例
 
 ```sql
 SHUTDOWN;
@@ -28,10 +24,10 @@ SHUTDOWN;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-> **Note:**
+> **注意：**
 >
-> Because TiDB is a distributed database, the shutdown operation in TiDB stops the client-connected TiDB instance, not the entire TiDB cluster.
+> 由于 TiDB 是分布式数据库，因此 TiDB 中的停机操作停止的是客户端连接的 TiDB 实例，而不是整个 TiDB 集群。
 
-The `SHUTDOWN` statement is partly compatible with MySQL. If you encounter any compatibility issues, you can [report a bug](https://docs.pingcap.com/tidb/stable/support).
+`SHUTDOWN` 语句与 MySQL 不完全兼容。如发现任何其他兼容性差异，请尝试 [TiDB 支持资源](/support.md)。

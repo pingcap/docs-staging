@@ -1,324 +1,241 @@
 ---
-title: TiDB Software and Hardware Requirements
-summary: Learn the software and hardware recommendations for deploying and running TiDB.
+title: TiDB 软件和硬件环境需求
+summary: TiDB 是一款开源的一站式实时 HTAP 数据库，支持部署在多种硬件环境和操作系统上。软件和硬件环境建议配置包括操作系统要求、编译和运行依赖库、Docker 镜像依赖、软件配置要求、服务器建议配置、网络要求、磁盘空间要求、客户端 Web 浏览器要求以及 TiFlash 存算分离架构的软硬件要求。
 ---
 
-# TiDB Software and Hardware Requirements
+# TiDB 软件和硬件环境需求
 
 <!-- Localization note for TiDB:
 
-- English: use distributed SQL, and start to emphasize HTAP
-- Chinese: can keep "NewSQL" and emphasize one-stop real-time HTAP ("一栈式实时 HTAP")
-- Japanese: use NewSQL because it is well-recognized
+- 英文：用 distributed SQL，同时开始强调 HTAP
+- 中文：可以保留 NewSQL 字眼，同时强调一栈式实时 HTAP
+- 日文：NewSQL 认可度高，用 NewSQL
 
 -->
 
-This document describes the software and hardware requirements for deploying and running the TiDB database. As an open-source distributed SQL database with high performance, TiDB can be deployed in the Intel architecture server, ARM architecture server, and major virtualization environments and runs well. TiDB supports most of the major hardware networks and Linux operating systems.
+本文介绍 TiDB 数据库对软件和硬件环境的需求。TiDB 作为一款开源一栈式实时 HTAP 数据库，可以很好地部署和运行在 Intel 架构服务器环境、ARM 架构的服务器环境及主流虚拟化环境，并支持绝大多数的主流硬件网络。作为一款高性能数据库系统，TiDB 支持主流的 Linux 操作系统环境。
 
-## OS and platform requirements
+## 操作系统及平台要求
 
-In v8.5 LTS, TiDB ensures multi-level quality standards for various combinations of operating systems and CPU architectures.
+在 v8.5 LTS 版本中，针对不同操作系统和 CPU 架构的组合，TiDB 提供不同级别质量标准的支持。
 
-+ For the following combinations of operating systems and CPU architectures, TiDB **provides enterprise-level production quality**, and the product features have been comprehensively and systematically verified:
++ **经过测试和验证的平台**：对于以下操作系统和 CPU 架构组合，每个 TiDB 版本均会通过 PingCAP 的系统性测试矩阵进行验证。这些组合推荐用于生产环境部署。
 
-    <table>
-    <thead>
-      <tr>
-        <th>Operating systems</th>
-        <th>Supported CPU architectures</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Red Hat Enterprise Linux 8.4 or a later 8.x version</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Amazon Linux 2</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Amazon Linux 2023</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Rocky Linux 9.1 or later</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Kylin V10 SP1/SP2/SP3 (SP3 is supported starting from v7.5.5)</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>UnionTech OS (UOS) V20</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>openEuler 22.03 LTS SP1/SP3</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-    </tbody>
-    </table>
+    | 操作系统                                       | 支持的 CPU 架构                         |
+    |:-----------------------------------------------|:----------------------------------------|
+    | Red Hat Enterprise Linux 9.4 及以上的 9.x 版本 | <ul><li>x86_64</li><li>ARM 64</li></ul> |
+    | Red Hat Enterprise Linux 8.6 及以上的 8.x 版本 | <ul><li>x86_64</li><li>ARM 64</li></ul> |
+    | Amazon Linux 2                                 | <ul><li>x86_64</li><li>ARM 64</li></ul> |
+    | Amazon Linux 2023       |  <ul><li>x86_64</li><li>ARM 64</li></ul>   |
+    | Rocky Linux 9.1 及以上的版本 |  <ul><li>x86_64</li><li>ARM 64</li></ul> |
+    | 银河麒麟 V10 SP1/SP2/SP3（从 v7.5.5 开始支持 SP3）   |   <ul><li>x86_64</li><li>ARM 64</li></ul>   |
+    | 统信操作系统 (UOS) V20                 |   <ul><li>x86_64</li><li>ARM 64</li></ul>   |
+    | openEuler 22.03 LTS SP1/SP3 |   <ul><li>x86_64</li><li>ARM 64</li></ul>   |
 
-    > **Warning:**
+    > **警告：**
     >
-    > - According to [CentOS Linux EOL](https://blog.centos.org/2023/04/end-dates-are-coming-for-centos-stream-8-and-centos-linux-7/), the upstream support for CentOS Linux 7 ended on June 30, 2024.
-    >     - Before upgrading TiDB, make sure to check your operating system version. TiDB v8.4.0 DMR and v8.5.0 removed the support of glibc 2.17, and dropped support and testing with CentOS Linux 7. It is recommended to use Rocky Linux 9.1 or a later version. Upgrading a TiDB cluster on CentOS 7 to v8.4.0 or v8.5.0 will cause the risk of cluster unavailability.
-    >     - Starting from v8.5.1, to assist users still using CentOS Linux 7, TiDB resumes the support of glibc 2.17, resumes testing of CentOS Linux 7, and is now compatible with CentOS Linux 7. However, due to the EOL status of CentOS Linux, it is strongly recommended that you review the [official announcements and security guidance](https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol) for CentOS Linux 7 and migrate to an operating system supported by TiDB for production use, such as Rocky Linux 9.1 or later.
-    > - According to [Red Hat Enterprise Linux Life Cycle](https://access.redhat.com/support/policy/updates/errata/#Life_Cycle_Dates), the maintenance support for Red Hat Enterprise Linux 7 ended on June 30, 2024. TiDB ends the support for Red Hat Enterprise Linux 7 starting from the 8.4 DMR version. It is recommended to use Rocky Linux 9.1 or a later version. Upgrading a TiDB cluster on Red Hat Enterprise Linux 7 to v8.4.0 or later will cause the cluster to become unavailable. Before upgrading TiDB, make sure to check your operating system version.
+    > - 根据 [CentOS Linux EOL](https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol)，CentOS Linux 7 的上游支持已于 2024 年 6 月 30 日终止。
+    >     - 升级 TiDB 前，请务必检查你的操作系统版本。TiDB 在 v8.4.0 DMR 和 v8.5.0 版本中移除了对 glibc 2.17 的适配，以及对 CentOS Linux 7 的兼容性测试和支持，建议使用 Rocky Linux 9.1 及以上的版本。如果在使用 CentOS Linux 7 的情况下将 TiDB 升级到 v8.4.0 DMR 或 v8.5.0 版本，将存在导致集群不可用的风险。
+    >     - 为了更好地服务仍在使用 CentOS Linux 7 的用户，TiDB 从 v8.5.1 版本起重新适配 glibc 2.17，恢复了对 CentOS Linux 7 的兼容性支持和测试。然而，由于 CentOS Linux 7 已到达 EOL，强烈建议用户参考该系统的[官方声明和安全建议](https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol)，将生产环境迁移到 TiDB 支持的操作系统版本，如 Rocky Linux 9.1 及以上版本。
+    > - 根据 [Red Hat Enterprise Linux Life Cycle](https://access.redhat.com/support/policy/updates/errata/#Life_Cycle_Dates)，Red Hat Enterprise Linux 7 的 Maintenance Support 于 2024 年 6 月 30 日终止。从 8.4 DMR 版本开始，TiDB 已结束对 Red Hat Enterprise Linux 7 的支持，建议使用 Rocky Linux 9.1 及以上的版本。如果将运行在 Red Hat Enterprise Linux 7 上的 TiDB 集群升级到 v8.4.0 或之后版本，将存在导致集群不可用的风险。升级 TiDB 前，请务必检查你的操作系统版本。
 
-+ For the following combinations of operating systems and CPU architectures, you can compile, build, and deploy TiDB. In addition, you can also use the basic features of OLTP, OLAP, and the data tools. However, TiDB **does not guarantee enterprise-level production quality**:
-
-    <table>
-    <thead>
-      <tr>
-        <th>Operating systems</th>
-        <th>Supported CPU architectures</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>macOS 12 (Monterey) or later</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Oracle Enterprise Linux 8 or a later</td>
-        <td>x86_64</td>
-      </tr>
-      <tr>
-        <td>Ubuntu LTS 20.04 or later</td>
-        <td>x86_64</td>
-      </tr>
-      <tr>
-        <td>CentOS Stream 8</td>
-        <td><ul><li>x86_64</li><li>ARM 64</li></ul></td>
-      </tr>
-      <tr>
-        <td>Debian 10 (Buster) or later</td>
-        <td>x86_64</td>
-      </tr>
-      <tr>
-        <td>Fedora 38 or later</td>
-        <td>x86_64</td>
-      </tr>
-      <tr>
-        <td>openSUSE Leap later than v15.5 (not including Tumbleweed)</td>
-        <td>x86_64</td>
-      </tr>
-      <tr>
-        <td>SUSE Linux Enterprise Server 15</td>
-        <td>x86_64</td>
-      </tr>
-    </tbody>
-    </table>
-
-    > **Note:**
+    > **注意：**
     >
-    > - For Oracle Enterprise Linux, TiDB supports the Red Hat Compatible Kernel (RHCK) and does not support the Unbreakable Enterprise Kernel provided by Oracle Enterprise Linux.
-    > - Support for Ubuntu 16.04 will be removed in future versions of TiDB. Upgrading to Ubuntu 18.04 or later is strongly recommended.
-    > - CentOS Stream 8 reaches [End of Builds](https://blog.centos.org/2023/04/end-dates-are-coming-for-centos-stream-8-and-centos-linux-7/) on May 31, 2024.
+    > 对 Red Hat Enterprise Linux 9.x 版本的支持从 [TiUP](https://github.com/pingcap/tiup/releases) v1.16.5 开始。
 
-+ If you are using the 32-bit version of an operating system listed in the preceding two tables, TiDB **is not guaranteed** to be compilable, buildable or deployable on the 32-bit operating system and the corresponding CPU architecture, or TiDB does not actively adapt to the 32-bit operating system.
++ **兼容平台**：在以下组合中，TiDB 可以进行编译、构建和部署，并支持 OLTP、OLAP 和数据工具。这些组合未纳入每个版本的系统性测试矩阵；其兼容性通过编译构建、部署验证以及 TiDB 用户的实际使用得到确认。如需在这些平台上进行生产部署，请联系 PingCAP，以确认你的订阅服务是否涵盖相应支持。
 
-+ Other operating system versions not mentioned above might work but are not officially supported.
+    |  操作系统   |   支持的 CPU 架构   |
+    |   :---   |   :---   |
+    | macOS 12 (Monterey) 及以上的版本 |  <ul><li>x86_64</li><li>ARM 64</li></ul>  |
+    |  Oracle Enterprise Linux 8 及以上的版本  |  x86_64           |
+    |   Ubuntu LTS 20.04 及以上的版本  |  x86_64           |
+    | CentOS Stream 8 | <ul><li>x86_64</li><li>ARM 64</li></ul> |
+    |  Debian 10 (Buster) 及以上的版本  |  x86_64           |
+    |  Fedora 38 及以上的版本   |  x86_64           |
+    |  openSUSE Leap 15.5 以上的版本（不包含 Tumbleweed） |  x86_64           |
+    |  SUSE Linux Enterprise Server 15  |  x86_64                        |
 
-### Libraries required for compiling and running TiDB
+    > **注意：**
+    >
+    > - TiDB 只支持 Red Hat 兼容内核 (RHCK) 的 Oracle Enterprise Linux，不支持 Oracle Enterprise Linux 提供的 Unbreakable Enterprise Kernel。
+    > - TiDB 将不再支持 Ubuntu 16.04。强烈建议升级到 Ubuntu 18.04 或更高版本。
+    > - CentOS Stream 8 已于 2024 年 5 月 31 日 [End of Builds](https://blog.centos.org/2023/04/end-dates-are-coming-for-centos-stream-8-and-centos-linux-7/)。
 
-|  Libraries required for compiling and running TiDB |  Version   |
++ 对于以上两个表格中所列操作系统的 32 位版本，TiDB 在这些 32 位操作系统以及对应的 CPU 架构上**不保障**可编译、可构建以及可部署，或 TiDB 不主动适配这些 32 位的操作系统。
+
++ 以上未提及的操作系统版本**也许可以**运行 TiDB，但尚未得到 TiDB 官方支持。
+
+### 编译和运行 TiDB 所依赖的库
+
+|  编译和构建 TiDB 所需的依赖库   |  版本   |
 |   :---   |   :---   |
-|   Golang  |  1.23 or later |
-|   Rust    |   nightly-2023-12-28 or later  |
+|   Golang  |  1.25 及以上版本  |
+|   Rust    |   nightly-2025-02-28 及以上版本  |
 |  GCC      |   7.x      |
-|  LLVM     |  17.0 or later  |
+|  LLVM     |  17.0 及以上版本  |
 
-Library required for running TiDB: glibc (2.28-151.el8 version)
+运行时所需的依赖库：glibc（2.28-151.el8 版本）
 
-### Docker image dependencies
+### Docker 镜像依赖
 
-The following CPU architectures are supported:
+支持的 CPU 架构如下：
 
-- x86_64. Starting from TiDB v6.6.0, the [x86-64-v2 instruction set](https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level) is required.
+- x86_64，从 TiDB v6.6.0 开始，需要 [x86-64-v2 指令集](https://developers.redhat.com/blog/2021/01/05/building-red-hat-enterprise-linux-9-for-the-x86-64-v2-microarchitecture-level)
 - ARM 64
 
-## Software requirements
+## 软件配置要求
 
-### Control machine
+### 中控机软件配置
 
-| Software | Version |
-| :--- | :--- |
-| sshpass | 1.06 or later |
-| TiUP | 1.5.0 or later |
+| 软件 | 版本 |
+| :----------------------- | :----------: |
+| sshpass | 1.06 及以上 |
+| TiUP | 1.5.0 及以上 |
 
-> **Note:**
+> **注意：**
 >
-> It is required that you [deploy TiUP on the control machine](/production-deployment-using-tiup.md#step-2-deploy-tiup-on-the-control-machine) to operate and manage TiDB clusters.
+> 中控机需要部署 [TiUP 软件](/tiup/tiup-documentation-guide.md)来完成 TiDB 集群运维管理。
 
-### Target machines
+### 目标主机建议配置软件
 
-| Software | Version |
-| :--- | :--- |
-| sshpass | 1.06 or later |
-| numa | 2.0.12 or later |
-| tar | any |
+| 软件 | 版本 |
+| :----- | :----------: |
+| sshpass | 1.06 及以上 |
+| numa | 2.0.12 及以上 |
+| tar  | 任意      |
 
-## Server requirements
+## 服务器配置要求
 
-You can deploy and run TiDB on the 64-bit generic hardware server platform in the Intel x86-64 architecture or on the hardware server platform in the ARM architecture. The requirements and recommendations about server hardware configuration (ignoring the resources occupied by the operating system itself) for development, test, and production environments are as follows:
+TiDB 支持部署和运行在 Intel x86-64 架构的 64 位通用硬件服务器平台或者 ARM 架构的硬件服务器平台。对于开发、测试及生产环境的服务器硬件配置（不包含操作系统 OS 本身的占用）有以下要求和建议：
 
-### Development and test environments
+### 开发及测试环境
 
-| Component | CPU     | Memory | Local Storage  | Network  | Number of Instances (Minimum Requirement) |
-| :------: | :-----: | :-----: | :----------: | :------: | :----------------: |
-| TiDB    | 8 core+   | 16 GB+  | [Storage requirements](#storage-requirements) | Gigabit network card | 1 (can be deployed on the same machine with PD)      |
-| PD      | 4 core+   | 8 GB+  | SAS, 200 GB+ | Gigabit network card | 1 (can be deployed on the same machine with TiDB)       |
-| TiKV    | 8 core+   | 32 GB+  | SAS, 200 GB+ | Gigabit network card | 3       |
-| TiFlash | 32 core+  | 64 GB+  | SSD, 200 GB+ | Gigabit network card | 1     |
-| TiCDC | 8 core+ | 16 GB+ | SAS, 200 GB+ | Gigabit network card | 1 |
+| **组件**  | **CPU** | **内存** | **本地存储**      | **网络** | **实例数量(最低要求)** |
+| -------- | ------ | ------ | -------------------- | ------- | --------------------- |
+| TiDB     | 8 核+  | 16 GB+ | [存储要求](#存储要求)  | 千兆网卡 | 1（可与 PD 同机器） |
+| PD       | 4 核+  | 8 GB+  | SAS, 200 GB+ | 千兆网卡 | 1（可与 TiDB 同机器） |
+| TiKV     | 8 核+  | 32 GB+ | SSD, 200 GB+ | 千兆网卡 | 3 |
+| TiFlash  | 32 核+ | 64 GB+ | SSD, 200 GB+ | 千兆网卡 | 1 |
+| TiCDC    | 8 核+  | 16 GB+ | SAS, 200 GB+ | 千兆网卡 | 1 |
+| TiProxy  | 4 核+  | 8 GB+  | SAS          | 千兆网卡 | 1 |
 
-> **Note:**
+> **注意：**
 >
-> - In the test environment, the TiDB and PD instances can be deployed on the same server.
-> - For performance-related test, do not use low-performance storage and network hardware configuration, in order to guarantee the correctness of the test result.
-> - For the TiKV server, it is recommended to use NVMe SSDs to ensure faster reads and writes.
-> - If you only want to test and verify the features, follow [Quick Start Guide for TiDB](/quick-start-with-tidb.md) to deploy TiDB on a single machine.
-> - Starting from v6.3.0, to deploy TiFlash under the Linux AMD64 architecture, the CPU must support the AVX2 instruction set. Ensure that `grep avx2 /proc/cpuinfo` has output. To deploy TiFlash under the Linux ARM64 architecture, the CPU must support the ARMv8 instruction set architecture. Ensure that `grep 'crc32' /proc/cpuinfo | grep 'asimd'` has output. By using the instruction set extensions, TiFlash's vectorization engine can deliver better performance.
+> - 验证测试环境中的 TiDB 和 PD 可以部署在同一台服务器上。
+> - 如进行性能相关的测试，避免采用低性能存储和网络硬件配置，防止对测试结果的正确性产生干扰。
+> - TiKV 的 SSD 盘推荐使用 NVME 接口以保证读写更快。
+> - 如果仅验证功能，建议使用 [TiDB 数据库快速上手指南](/quick-start-with-tidb.md)进行单机功能测试。
+> - 从 v6.3.0 开始，在 Linux AMD64 架构的硬件平台部署 TiFlash 时，CPU 必须支持 AVX2 指令集。确保命令 `grep avx2 /proc/cpuinfo` 有输出。而在 Linux ARM64 架构的硬件平台部署 TiFlash 时，CPU 必须支持 ARMv8 架构。确保命令 `grep 'crc32' /proc/cpuinfo | grep 'asimd'` 有输出。通过使用向量扩展指令集，TiFlash 的向量化引擎能提供更好的性能。
 
-### Production environment
+### 生产环境
 
-| Component | CPU | Memory | Hard Disk Type | Network | Number of Instances (Minimum Requirement) |
-| :-----: | :------: | :------: | :------: | :------: | :-----: |
-| TiDB  | 16 core+ | 48 GB+ | SSD | 10 Gigabit network card (2 preferred) | 2 |
-| PD | 8 core+ | 16 GB+ | SSD | 10 Gigabit network card (2 preferred) | 3 |
-| TiKV | 16 core+ | 64 GB+ | SSD | 10 Gigabit network card (2 preferred) | 3 |
-| TiFlash | 48 core+ | 128 GB+ | 1 or more SSDs | 10 Gigabit network card (2 preferred) | 2 |
-| TiCDC | 16 core+ | 64 GB+ | SSD | 10 Gigabit network card (2 preferred) | 2 |
-| Monitor | 8 core+ | 16 GB+ | SAS | Gigabit network card | 1 |
+| **组件** | **CPU** | **内存** | **硬盘类型** | **网络** | **实例数量(最低要求)** |
+| --- | --- | --- | --- | --- | --- |
+| TiDB | 16 核+ | 48 GB+ | SSD | 万兆网卡（2 块最佳） | 2 |
+| PD   | 8 核+ | 16 GB+ | SSD | 万兆网卡（2 块最佳） | 3 |
+| TiKV | 16 核+ | 64 GB+ | SSD | 万兆网卡（2 块最佳） | 3 |
+| TiFlash | 48 核+ | 128 GB+ | 1 or more SSDs | 万兆网卡（2 块最佳） | 2 |
+| TiCDC   | 16 核+ | 64 GB+ | SSD | 万兆网卡（2 块最佳） | 2 |
+| 监控    | 8 核+ | 16 GB+ | SAS | 千兆网卡 | 1 |
+| TiProxy | 8 核+ | 16 GB+ | SAS | 万兆网卡（2 块最佳） | 2 |
 
-> **Note:**
+> **注意：**
 >
-> - In the production environment, the TiDB and PD instances can be deployed on the same server. If you have a higher requirement for performance and reliability, try to deploy them separately.
-> - It is strongly recommended to configure TiDB, TiKV, and TiFlash with at least 8 CPU cores each in the production environment. To get better performance, a higher configuration is recommended.
-> - It is recommended to keep the size of TiKV hard disk within 4 TB if you are using PCIe SSDs or within 1.5 TB if you are using regular SSDs.
-> - If you deploy TiKV on a cloud provider, such as AWS, Google Cloud, or Azure, it is recommended to use cloud disks for TiKV nodes. Data on local disks might be lost if the TiKV instance crashes in the cloud environment.
+> - 生产环境中的 TiDB 和 PD 可以部署和运行在同一台服务器上，如对性能和可靠性有更高的要求，应尽可能分开部署。
+> - 强烈建议分别为生产环境中的 TiDB、TiKV 和 TiFlash 配置至少 8 核的 CPU。强烈推荐使用更高的配置，以获得更好的性能。
+> - TiKV 硬盘大小配置建议 PCIe SSD 不超过 4 TB，普通 SSD 不超过 1.5 TB。
+> - 如果你在云服务商（如 AWS、Google Cloud 或 Azure）上部署 TiDB 集群，建议 TiKV 节点使用云盘，而不要使用实例存储 (Instance Store)。
+>
+>     - 实例存储的数据持久性相对较低。实例存储的生命期与虚拟机绑定，一旦实例出现重启、停止、迁移、硬件损坏、维护等，数据可能丢失。大部分云厂商明确将实例存储标记为“临时存储”，以 [AWS](https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/Storage.html) 为例：“实例存储卷上的数据仅在关联实例的生命周期内保留；如果您停止、休眠或终止实例，则实例存储卷上的所有数据都会丢失。”
+>     - 实例存储通常不支持快照、跨节点或区域复制，一旦出现损坏或者故障，无法快速恢复。
+>     - 实例存储的容量与机型绑定，无法进行独立扩容。
 
-Before you deploy TiFlash, note the following items:
+在部署 TiFlash 之前，请注意以下事项：
 
-- TiFlash can be [deployed on multiple disks](/tiflash/tiflash-configuration.md#multi-disk-deployment).
-- It is recommended to use a high-performance SSD as the first disk of the TiFlash data directory to buffer the real-time replication of TiKV data. The performance of this disk should not be lower than that of TiKV, such as PCIe SSD. The disk capacity should be no less than 10% of the total capacity; otherwise, it might become the bottleneck of this node. You can deploy ordinary SSDs for other disks, but note that a better PCIe SSD brings better performance.
-- It is recommended to deploy TiFlash on different nodes from TiKV. If you must deploy TiFlash and TiKV on the same node, increase the number of CPU cores and memory, and try to deploy TiFlash and TiKV on different disks to avoid interfering each other.
-- The total capacity of the TiFlash disks is calculated in this way: `the data volume of the entire TiKV cluster to be replicated / the number of TiKV replicas * the number of TiFlash replicas`. For example, if the overall planned capacity of TiKV is 1 TB, the number of TiKV replicas is 3, and the number of TiFlash replicas is 2, then the recommended total capacity of TiFlash is `1024 GB / 3 * 2`. You can replicate only the data of some tables. In such case, determine the TiFlash capacity according to the data volume of the tables to be replicated.
+- TiFlash 支持[多盘部署](/tiflash/tiflash-configuration.md#多盘部署)。
+- TiFlash 数据目录的第一块磁盘推荐用高性能 SSD 来缓冲 TiKV 同步数据的实时写入，该盘性能应不低于 TiKV 所使用的磁盘，比如 PCIe SSD。并且该磁盘容量建议不小于总容量的 10%，否则它可能成为这个节点的能承载的数据量的瓶颈。而其他磁盘可以根据需求部署多块普通 SSD，当然更好的 PCIe SSD 硬盘会带来更好的性能。
+- TiFlash 推荐与 TiKV 部署在不同节点，如果条件所限必须将 TiFlash 与 TiKV 部署在相同节点，则需要适当增加 CPU 核数和内存，且尽量将 TiFlash 与 TiKV 部署在不同的磁盘，以免互相干扰。
+- TiFlash 硬盘总容量大致为：`整个 TiKV 集群的需同步数据容量 / TiKV 副本数 * TiFlash 副本数`。例如整体 TiKV 的规划容量为 1 TB、TiKV 副本数为 3、TiFlash 副本数为 2，则 TiFlash 的推荐总容量为 `1024 GB / 3 * 2`。用户可以选择同步部分表数据而非全部，具体容量可以根据需要同步的表的数据量具体分析。
 
-Before you deploy TiCDC, note that it is recommended to deploy TiCDC on PCIe SSD disks larger than 500 GB.
+在部署 TiCDC 时，建议在大于 500 GB 的 PCIe SSD 磁盘上部署。
 
-## Network requirements
+## 网络要求
 
 <!-- Localization note for TiDB:
 
-- English: use distributed SQL, and start to emphasize HTAP
-- Chinese: can keep "NewSQL" and emphasize one-stop real-time HTAP ("一栈式实时 HTAP")
-- Japanese: use NewSQL because it is well-recognized
+- 英文：用 distributed SQL，同时开始强调 HTAP
+- 中文：可以保留 NewSQL 字眼，同时强调一栈式实时 HTAP
+- 日文：NewSQL 认可度高，用 NewSQL
 
 -->
 
-As an open-source distributed SQL database, TiDB requires the following network port configuration to run. Based on the TiDB deployment in actual environments, the administrator can open relevant ports in the network side and host side.
+TiDB 作为开源一栈式实时 HTAP 数据库，其正常运行需要网络环境提供如下的网络端口配置要求，管理员可根据实际环境中 TiDB 组件部署的方案，在网络侧和主机侧开放相关端口：
 
-| Component | Default Port | Description |
-| :--:| :--: | :-- |
-| TiDB |  4000  | the communication port for the application and DBA tools |
-| TiDB | 10080  | the communication port to report TiDB status |
-| TiKV | 20160 | the TiKV communication port |
-| TiKV |  20180 | the communication port to report TiKV status |
-| PD | 2379 | the communication port between TiDB and PD |
-| PD | 2380 | the inter-node communication port within the PD cluster |
-| TiFlash | 9000 | the TiFlash TCP service port |
-| TiFlash | 3930 | the TiFlash RAFT and Coprocessor service port |
-| TiFlash | 20170 |the TiFlash Proxy service port |
-| TiFlash | 20292 | the port for Prometheus to pull TiFlash Proxy metrics |
-| TiFlash | 8234 | the port for Prometheus to pull TiFlash metrics |
-| TiCDC | 8300 | the TiCDC communication port |
-| Monitoring | 9090 | the communication port for the Prometheus service|
-| Monitoring | 12020 | the communication port for the NgMonitoring service|
-| Node_exporter | 9100 | the communication port to report the system information of every TiDB cluster node |
-| Blackbox_exporter | 9115 | the Blackbox_exporter communication port, used to monitor the ports in the TiDB cluster |
-| Grafana | 3000 | the port for the external Web monitoring service and client (Browser) access|
-| Alertmanager | 9093 | the port for the alert web service |
-| Alertmanager | 9094 | the alert communication port |
+| 组件 | 默认端口 | 说明 |
+| :-- | :-- | :-- |
+| TiDB |  4000  | 应用及 DBA 工具访问通信端口 |
+| TiDB | 10080  | TiDB 状态信息上报通信端口 |
+| TiKV |  20160 | TiKV 通信端口 |
+| TiKV |  20180 | TiKV 状态信息上报通信端口 |
+| PD | 2379 | 提供 TiDB 和 PD 通信端口 |
+| PD | 2380 | PD 集群节点间通信端口 |
+|TiFlash|9000|TiFlash TCP 服务端口|
+|TiFlash|3930|TiFlash RAFT 服务和 Coprocessor 服务端口|
+|TiFlash|20170|TiFlash Proxy 服务端口|
+|TiFlash|20292|Prometheus 拉取 TiFlash Proxy metrics 端口|
+|TiFlash|8234|Prometheus 拉取 TiFlash metrics 端口|
+| CDC | 8300 | CDC 通信接口 |
+| Monitoring | 9090 | Prometheus 服务通信端口 |
+| Monitoring | 12020 | NgMonitoring 服务通信端口 |
+| Node_exporter | 9100 | TiDB 集群每个节点的系统信息上报通信端口 |
+| Blackbox_exporter | 9115 | Blackbox_exporter 通信端口，用于 TiDB 集群端口监控 |
+| Grafana | 3000 | Web 监控服务对外服务和客户端(浏览器)访问端口 |
+| Alertmanager | 9093 | 告警 web 服务端口 |
+| Alertmanager | 9094 | 告警通信端口 |
 
-## Storage requirements
+## 存储要求
 
-<table>
-<thead>
-  <tr>
-    <th>Component</th>
-    <th>Disk space requirement</th>
-    <th>Healthy disk usage</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td>TiDB</td>
-    <td><ul><li>At least 30 GB for the log disk</li><li>Starting from v6.5.0, Fast Online DDL (controlled by the <a href="https://docs.pingcap.com/tidb/dev/system-variables#tidb_ddl_enable_fast_reorg-new-in-v630">tidb_ddl_enable_fast_reorg</a> variable) is enabled by default to accelerate DDL operations, such as adding indexes. If DDL operations involving large objects exist in your application, or you want to use <a href="https://docs.pingcap.com/tidb/dev/sql-statement-import-into">IMPORT INTO</a> to import data, it is highly recommended to prepare additional SSD disk space for TiDB (100 GB or more). For detailed configuration instructions, see <a href="https://docs.pingcap.com/tidb/dev/check-before-deployment#set-temporary-spaces-for-tidb-instances-recommended">Set a temporary space for a TiDB instance</a></li></ul></td>
-    <td>Lower than 90%</td>
-  </tr>
-  <tr>
-    <td>PD</td>
-    <td>At least 20 GB for the data disk and for the log disk, respectively</td>
-    <td>Lower than 90%</td>
-  </tr>
-  <tr>
-    <td>TiKV</td>
-    <td>At least 100 GB for the data disk and for the log disk, respectively</td>
-    <td>Lower than 80%</td>
-  </tr>
-  <tr>
-    <td>TiFlash</td>
-    <td>At least 100 GB for the data disk and at least 30 GB for the log disk, respectively</td>
-    <td>Lower than 80%</td>
-  </tr>
-  <tr>
-    <td>TiUP</td>
-    <td><ul><li>Control machine: No more than 1 GB space is required for deploying a TiDB cluster of a single version. The space required increases if TiDB clusters of multiple versions are deployed.</li><li>Deployment servers (machines where the TiDB components run): TiFlash occupies about 700 MB space and other components (such as PD, TiDB, and TiKV) occupy about 200 MB space respectively. During the cluster deployment process, the TiUP cluster requires less than 1 MB of temporary space (<code>/tmp</code> directory) to store temporary files.</li></ul></td>
-    <td>N/A</td>
-  </tr>
-  <tr>
-    <td>Ngmonitoring</td>
-    <td><ul><li>Conprof: 3 x 1 GB x Number of components (each component occupies about 1 GB per day, 3 days in total) + 20 GB reserved space</li><li>Top SQL: 30 x 50 MB x Number of components (each component occupies about 50 MB per day, 30 days in total)</li><li>Conprof and Top SQL share the reserved space</li></ul></td>
-    <td>N/A</td>
-  </tr>
-</tbody>
-</table>
+| 组件 | 磁盘空间要求 | 健康水位使用率 |
+| :-- | :-- | :-- |
+| TiDB | <ul><li>日志盘建议最少预留 30 GB。</li> <li>v6.5.0 及以上版本默认启用了 Fast Online DDL 对添加索引等 DDL 操作进行加速（通过变量 [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-从-v630-版本开始引入) 控制）。如果业务中可能存在针对大对象的 DDL 操作，或需要使用 [<code>IMPORT INTO</code>](/sql-statements/sql-statement-import-into.md) SQL 语句导入数据，推荐为 TiDB 准备额外的 SSD 磁盘空间（建议 100 GB+）。配置方式详见[设置 TiDB 节点的临时空间](/check-before-deployment.md#设置-tidb-节点的临时空间推荐)。</li></ul>| 低于 90% |
+| PD | 数据盘和日志盘建议最少各预留 20 GB | 低于 90% |
+| TiKV | 数据盘和日志盘建议最少各预留 100 GB | 低于 80% |
+| TiFlash | 数据盘建议最少预留 100 GB，日志盘建议最少预留 30 GB | 低于 80% |
+| TiUP | <ul><li>中控机：部署一个版本的 TiDB 集群占用不超过 1 GB 空间，部署多个版本集群所占用的空间会相应增加 </li> <li>部署服务器（实际运行 TiDB 各组件的机器）：TiFlash 占用约 700 MB 空间，其他组件（PD、TiDB、TiKV 等）各占用约 200 MB 空间。同时，部署过程会占用小于 1 MB 临时空间（/tmp）存放临时文件 </li></ul> | 不涉及|
+| Ngmonitoring | <ul><li>Conprof：3 x 1 GB x 组件数量（表示每个组件每天占用约 1 GB，总共 3 天） + 20 GB 预留空间 </li><li> Top SQL：30 x 50 MB x 组件数量（每个组件每天占用约 50 MB，总共 30 天） </li><li> Top SQL 和 Conprof 共享预留空间</li></ul> | 不涉及 |
 
-TiDB supports the XFS and Ext4 file systems. Other file systems are not recommended for production environments.  
+TiDB 支持 XFS 和 Ext4 文件系统。其他文件系统不推荐用于生产环境。
 
-## Web browser requirements
+## 客户端 Web 浏览器要求
 
-TiDB relies on [Grafana](https://grafana.com/) to provide visualization of database metrics. A recent version of Microsoft Edge, Safari, Chrome or Firefox with Javascript enabled is sufficient.
+TiDB 提供了基于 [Grafana](https://grafana.com/) 的技术平台，对数据库集群的各项指标进行可视化展现。采用支持 Javascript 的微软 Edge、Apple Safari、Google Chrome、Mozilla Firefox 的较新版本即可访问监控入口。
 
-## Hardware and software requirements for TiFlash disaggregated storage and compute architecture
+## TiFlash 存算分离架构的软硬件要求
 
-The preceding TiFlash software and hardware requirements are for the coupled storage and compute architecture. Starting from v7.0.0, TiFlash supports the [disaggregated storage and compute architecture](/tiflash/tiflash-disaggregated-and-s3.md). In this architecture, TiFlash is divided into two types of nodes: the Write Node and the Compute Node. The requirements for these nodes are as follows:
+上面的 TiFlash 软硬件要求是针对存算一体架构的。从 v7.0.0 开始，TiFlash 支持[存算分离架构](/tiflash/tiflash-disaggregated-and-s3.md)，该架构下 TiFlash 分为 Write Node 和 Compute Node 两个角色，对应的软硬件要求如下：
 
-- Software: remain the same as the coupled storage and compute architecture, see [OS and platform requirements](#os-and-platform-requirements).
-- Network port: remain the same as the coupled storage and compute architecture, see [Network](#network-requirements).
-- Disk space:
-    - TiFlash Write Node: it is recommended to configure at least 200 GB of disk space, which is used as a local buffer when adding TiFlash replicas and migrating Region replicas before uploading data to Amazon S3. In addition, an object storage compatible with Amazon S3 is required.
-    - TiFlash Compute Node: it is recommended to configure at least 100 GB of disk space, which is mainly used to cache the data read from the Write Node to improve performance. The cache of the Compute Node might be fully used, which is normal.
-- CPU and memory requirements are described in the following sections.
+- 软件：与存算一体架构一致，详见[操作系统及平台要求](#操作系统及平台要求)。
+- 网络端口：与存算一体架构一致，详见[网络要求](#网络要求)。
+- 磁盘空间：
+    - TiFlash Write Node：推荐 200 GB+，用作增加 TiFlash 副本、Region 副本迁移时向 Amazon S3 上传数据前的本地缓冲区。此外，还需要一个与 Amazon S3 兼容的对象存储。
+    - TiFlash Compute Node：推荐 100 GB+，主要用于缓存从 Write Node 读取的数据以提升性能。Compute Node 的缓存可能会被完全使用，这是正常现象。
+- CPU 以及内存等要求参考下文。
 
-### Development and test environments
+### 开发及测试环境
 
-| Component | CPU | Memory | Local Storage | Network | Number of Instances (Minimum Requirement) |
+| 组件 | CPU | 内存 | 本地存储 | 网络 | 实例数量（最低要求） |
 | --- | --- | --- | --- | --- | --- |
-| TiFlash Write Node | 16 cores+ | 32 GB+ | SSD, 200 GB+ | Gigabit Ethernet | 1 |
-| TiFlash Compute Node | 16 cores+ | 32 GB+ | SSD, 100 GB+ | Gigabit Ethernet | 0 (see the following note) |
+| TiFlash Write Node | 16 核+ | 32 GB+ | SSD, 200 GB+ | 千兆网卡 | 1 |
+| TiFlash Compute Node | 16 核+ | 32 GB+ | SSD, 100 GB+ | 千兆网卡 | 0（参见下文“注意”说明） |
 
-### Production environment
+### 生产环境
 
-| Component | CPU | Memory | Disk Type | Network | Number of Instances (Minimum Requirement) |
+| 组件 | CPU | 内存 | 硬盘类型 | 网络 | 实例数量（最低要求） |
 | --- | --- | --- | --- | --- | --- |
-| TiFlash Write Node | 32 cores+ | 64 GB+ | 1 or more SSDs | 10 Gigabit Ethernet (2 recommended) | 1 |
-| TiFlash Compute Node | 32 cores+ | 64 GB+ | 1 or more SSDs | 10 Gigabit Ethernet (2 recommended) | 0 (see the following note) |
+| TiFlash Write Node | 32 核+ | 64 GB+ | SSD, 200 GB+ | 万兆网卡（2 块最佳） | 2 |
+| TiFlash Compute Node | 32 核+ | 64 GB+ | SSD, 100 GB+  | 万兆网卡（2 块最佳） | 0（参见下文“注意”说明） |
 
-> **Note:**
+> **注意：**
 >
-> You can use deployment tools such as TiUP to quickly scale in or out the TiFlash Compute Node, within the range of `[0, +inf]`.
+> TiFlash Compute Node 可以使用 TiUP 等部署工具快速扩缩容，扩缩容范围是 `[0, +inf]`。

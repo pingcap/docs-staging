@@ -1,66 +1,66 @@
 ---
-title: Access TiDB Dashboard
-summary: To access TiDB Dashboard, visit the specified URL in your browser. For multiple PD instances, replace the address with any PD instance address and port. Use Chrome, Firefox, or Edge browsers of newer versions. Sign in with the TiDB root account or a user-defined SQL user. The session remains valid for 24 hours. Switch between English and Chinese languages. To log out, click the user name and then the Logout button.
+title: 访问 TiDB Dashboard
+summary: TiDB Dashboard 可通过浏览器访问，支持多 PD 实例访问。浏览器兼容性包括 Chrome、Firefox 和 Edge。登录界面可使用 root 用户或自定义 SQL 用户登录。支持简体中文和英文语言切换。可在用户页面登出当前用户。
 ---
 
-# Access TiDB Dashboard
+# 访问 TiDB Dashboard
 
-To access TiDB Dashboard, visit <http://127.0.0.1:2379/dashboard> via your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
+通过浏览器访问 <http://127.0.0.1:2379/dashboard/>（将 `127.0.0.1:2379` 替换为实际 PD 实例的地址和端口）即可打开 TiDB Dashboard。
 
-> **Note:**
+> **注意：**
 >
-> TiDB v6.5.0 (and later) and TiDB Operator v1.4.0 (and later) support deploying TiDB Dashboard as an independent Pod on Kubernetes. Using TiDB Operator, you can access the IP address of this Pod to start TiDB Dashboard. For details, see [Deploy TiDB Dashboard independently in TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently).
+> TiDB v6.5.0 且 TiDB Operator v1.4.0 之后，在 Kubernetes 上支持将 TiDB Dashboard 作为独立的 Pod 部署。在 TiDB Operator 环境，可直接访问该 Pod 的 IP 来打开 TiDB Dashboard。具体信息，参考 [TiDB Operator 部署独立的 TiDB Dashboard](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/get-started#部署独立的-tidb-dashboard)。
 
-## Access TiDB Dashboard when multiple PD instances are deployed
+## 多 PD 实例访问
 
-When multiple PD instances are deployed in your cluster and you can directly access **every** PD instance and port, you can simply replace `127.0.0.1:2379` in the <http://127.0.0.1:2379/dashboard/> address with **any** PD instance address and port.
+当集群中部署有多个 PD 实例、且您可以直接访问到**每个** PD 实例地址和端口时，可以简单地将 <http://127.0.0.1:2379/dashboard/> 地址中的 `127.0.0.1:2379` 替换为集群中**任意一个** PD 实例的地址和端口进行访问。
 
-> **Note:**
+> **注意：**
 >
-> If a firewall or reverse proxy is configured and you cannot directly access every PD instance, you might not be able to access TiDB Dashboard. Usually, this is because the firewall or reverse proxy is not correctly configured. See [Use TiDB Dashboard behind Reverse Proxy](/dashboard/dashboard-ops-reverse-proxy.md) and [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md) to learn how to correctly configure the firewall or reverse proxy when multiple PD instances are deployed.
+> 当处于防火墙或反向代理等环境下、无法直接访问每个 PD 实例时，可能会无法访问 TiDB Dashboard。这通常是防火墙或反向代理没有正确配置导致的。可参阅[通过反向代理使用 TiDB Dashboard](/dashboard/dashboard-ops-reverse-proxy.md) 或[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)章节了解如何在多 PD 实例情况下正确配置防火墙或反向代理规则。
 
-## Browser compatibility
+## 浏览器兼容性
 
-You can use TiDB Dashboard in the following common desktop browsers of a relatively newer version:
+TiDB Dashboard 可在常见的、更新及时的桌面浏览器中使用，具体版本号为：
 
 - Chrome >= 77
 - Firefox >= 68
 - Edge >= 17
 
-> **Note:**
+> **注意：**
 >
-> If you use the browsers above of earlier versions or other browsers to access TiDB Dashboard, some functions might not work properly.
+> 若使用旧版本浏览器或其他浏览器访问 TiDB Dashboard，部分界面可能不能正常工作。
 
-## Sign in
+## 登录
 
-After accessing TiDB Dashboard, you will be directed to the user login interface.
+访问 TiDB Dashboard 将会显示用户登录界面。 
 
-- You can sign in to TiDB Dashboard using the TiDB `root` account.
-- You can also sign in to TiDB Dashboard via Single Sign-On (SSO). For more information, see [Configure SSO for TiDB Dashboard](/dashboard/dashboard-session-sso.md).
-- If you have created a [User-defined SQL User](/dashboard/dashboard-user.md), you can sign in using this account and the corresponding password.
+- 可使用 TiDB 的 root 用户登录。
+- 也可以使用单点登录 (Single Sign-On, SSO)。详情参见[配置 TiDB Dashboard 使用 SSO 登录](/dashboard/dashboard-session-sso.md)。
+- 如果创建了[自定义 SQL 用户](/dashboard/dashboard-user.md)，也可以使用自定义的 SQL 用户和密码登录。
 
-If one of the following situations exists, the login might fail:
+如果存在以下情况，则可能会登录失败：
 
-- TiDB `root` user does not exist.
-- PD is not started or cannot be accessed.
-- TiDB is not started or cannot be accessed.
-- Wrong `root` password.
+- TiDB root 用户不存在
+- PD 未启动或无法访问
+- TiDB 未启动或无法访问
+- root 密码错误
 
-Once you have signed in, the session remains valid within the next 24 hours. To learn how to sign out, refer to the [Logout](#logout) section.
+登录后，24 小时内将保持自动登录状态。参见[登出](#登出)章节了解如何登出用户。
 
-## Switch language
+## 切换语言
 
-The following languages are supported in TiDB Dashboard:
+TiDB Dashboard 目前支持以下语言：
 
-- English
-- Chinese (simplified)
+- 简体中文
+- 英文
 
-In the **SQL User Sign In** page, you can click the **Switch Language** drop-down list to switch the interface language.
+在登录界面中，可点击 **Switch Language** 下拉框切换界面显示语言：
 
-![Switch language](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-switch-language.png)
+![切换语言](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-switch-language.png)
 
-## Logout
+## 登出
 
-Once you have logged in, click the login user name in the left navigation bar to switch to the user page. Click the **Logout** button on the user page to log out the current user. After logging out, you need to re-enter your username and password.
+登录后，在左侧导航处点击登录用户名，可切换到用户页面。在用户页面点击**登出** (Logout) 按钮即可登出当前用户。登出后，需重新输入用户名密码。
 
-![Logout](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-access-logout.png)
+![登出](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-access-logout.png)

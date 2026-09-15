@@ -1,19 +1,15 @@
 ---
 title: INSPECTION_RESULT
-summary: Learn the `INSPECTION_RESULT` diagnostic result table.
+summary: 了解 TiDB 系统表 `INSPECTION_RESULT`。
 ---
 
 # INSPECTION_RESULT
 
-TiDB has some built-in diagnostic rules for detecting faults and hidden issues in the system.
+TiDB 内置了一些诊断规则，用于检测系统中的故障以及隐患。
 
-The `INSPECTION_RESULT` diagnostic table can help you quickly find problems and reduce your repetitive manual work. You can use the `select * from information_schema.inspection_result` statement to trigger the internal diagnostics.
+该诊断功能可以帮助用户快速发现问题，减少用户的重复性手动工作。可使用 `select * from information_schema.inspection_result` 语句来触发内部诊断。
 
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
-
-The structure of the `information_schema.inspection_result` diagnostic result table `information_schema.inspection_result` is as follows:
+诊断结果表 `information_schema.inspection_result` 的表结构如下：
 
 
 ```sql
@@ -38,26 +34,26 @@ DESC inspection_result;
 9 rows in set (0.00 sec)
 ```
 
-Field description:
+字段解释：
 
-* `RULE`: The name of the diagnostic rule. Currently, the following rules are available:
-    * `config`: Checks whether the configuration is consistent and proper. If the same configuration is inconsistent on different instances, a `warning` diagnostic result is generated.
-    * `version`: The consistency check of version. If the same version is inconsistent on different instances, a `warning` diagnostic result is generated.
-    * `node-load`: Checks the server load. If the current system load is too high, the corresponding `warning` diagnostic result is generated.
-    * `critical-error`: Each module of the system defines critical errors. If a critical error exceeds the threshold within the corresponding time period, a warning diagnostic result is generated.
-    * `threshold-check`: The diagnostic system checks the thresholds of key metrics. If a threshold is exceeded, the corresponding diagnostic information is generated.
-* `ITEM`: Each rule diagnoses different items. This field indicates the specific diagnostic items corresponding to each rule.
-* `TYPE`: The instance type of the diagnostics. The optional values are `tidb`, `pd`, and `tikv`.
-* `INSTANCE`: The specific address of the diagnosed instance.
-* `STATUS_ADDRESS`: The HTTP API service address of the instance.
-* `VALUE`: The value of a specific diagnostic item.
-* `REFERENCE`: The reference value (threshold value) for this diagnostic item. If `VALUE` exceeds the threshold, the corresponding diagnostic information is generated.
-* `SEVERITY`: The severity level. The optional values are `warning` and `critical`.
-* `DETAILS`: Diagnostic details, which might also contain SQL statement(s) or document links for further diagnostics.
+* `RULE`：诊断规则名称，目前实现了以下规则：
+    * `config`：配置一致性以及合理性检测。如果同一个配置在不同实例不一致，会生成 `warning` 诊断结果。
+    * `version`：版本一致性检测。如果同一类型的实例版本不同，会生成 `critical` 诊断结果。
+    * `node-load`：服务器负载检测。如果当前系统负载太高，会生成对应的 `warning` 诊断结果。
+    * `critical-error`：系统各个模块定义了严重的错误，如果某一个严重错误在对应时间段内超过阈值，会生成 `warning` 诊断结果。
+    * `threshold-check`：诊断系统会对一些关键指标进行阈值判断，如果超过阈值会生成对应的诊断信息。
+* `ITEM`：每一个规则会对不同的项进行诊断，该字段表示对应规则下面的具体诊断项。
+* `TYPE`：诊断的实例类型，可取值为 `tidb`，`pd` 和 `tikv`。
+* `INSTANCE`：诊断的具体实例地址。
+* `STATUS_ADDRESS`：实例的 HTTP API 服务地址。
+* `VALUE`：针对这个诊断项得到的值。
+* `REFERENCE`：针对这个诊断项的参考值（阈值）。如果 `VALUE` 超过阈值，就会产生对应的诊断信息。
+* `SEVERITY`：严重程度，取值为 `warning` 或 `critical`。
+* `DETAILS`：诊断的详细信息，可能包含进一步调查的 SQL 或文档链接。
 
-## Diagnostics example
+## 诊断示例
 
-Diagnose issues currently existing in the cluster.
+对当前时间的集群进行诊断。
 
 
 ```sql
@@ -103,13 +99,13 @@ SEVERITY  | warning
 DETAILS   | max duration of 172.16.5.40:20151 tikv rocksdb-write-duration was too slow
 ```
 
-The following issues can be detected from the diagnostic result above:
+上述诊断结果发现了以下几个问题：
 
-* The first row indicates that TiDB's `log.slow-threshold` value is configured to `0`, which might affect performance.
-* The second row indicates that two different TiDB versions exist in the cluster.
-* The third and fourth rows indicate that the TiKV write delay is too long. The expected delay is no more than 0.1 second, while the actual delay is far longer than expected.
+* 第一行表示 TiDB 的 `log.slow-threshold` 配置值为 `0`，可能会影响性能。
+* 第二行表示集群中有 2 个不同的 TiDB 版本
+* 第三、四行表示 TiKV 的写入延迟太大，期望时间是不超过 0.1s，但实际值远超预期。
 
-You can also diagnose issues existing within a specified range, such as from "2020-03-26 00:03:00" to "2020-03-26 00:08:00". To specify the time range, use the SQL Hint of `/*+ time_range() */`. See the following query example:
+诊断集群在时间段 "2020-03-26 00:03:00", "2020-03-26 00:08:00" 的问题。指定时间范围需要使用 `/*+ time_range() */` 的 SQL Hint，参考下面的查询示例：
 
 
 ```sql
@@ -137,30 +133,30 @@ SEVERITY  | warning
 DETAILS   | max duration of 172.16.5.40:10089 tidb get-token-duration is too slow
 ```
 
-The following issues can be detected from the diagnostic result above:
+上面的诊断结果发现了以下问题：
 
-* The first row indicates that the `172.16.5.40:4009` TiDB instance is restarted at `2020/03/26 00:05:45.670`.
-* The second row indicates that the maximum `get-token-duration` time of the `172.16.5.40:10089` TiDB instance is 0.234s, but the expected time is less than 0.001s.
+* 第一行表示 172.16.5.40:4009 TiDB 实例在 `2020/03/26 00:05:45.670` 发生了重启。
+* 第二行表示 172.16.5.40:10089 TiDB 实例的最大的 `get-token-duration` 时间为 0.234s，期望时间是小于 0.001s。
 
-You can also specify conditions, for example, to query the `critical` level diagnostic results:
+也可以指定条件，比如只查询 `critical` 严重级别的诊断结果：
 
 
 ```sql
 select * from information_schema.inspection_result where severity='critical';
 ```
 
-Query only the diagnostic result of the `critical-error` rule:
+只查询 `critical-error` 规则的诊断结果:
 
 
 ```sql
 select * from information_schema.inspection_result where rule='critical-error';
 ```
 
-## Diagnostic rules
+## 诊断规则介绍
 
-The diagnostic module contains a series of rules. These rules compare the results with the thresholds after querying the existing monitoring tables and cluster information tables. If the results exceed the thresholds, the diagnostics of `warning` or `critical` is generated and the corresponding information is provided in the `details` column.
+诊断模块内部包含一系列的规则，这些规则会通过查询已有的监控表和集群信息表，对结果和阈值进行对比。如果结果超过阈值将生成 `warning` 或 `critical` 的结果，并在 `details` 列中提供相应信息。
 
-You can query the existing diagnostic rules by querying the `inspection_rules` system table:
+可以通过查询 `inspection_rules` 系统表查询已有的诊断规则:
 
 
 ```sql
@@ -179,14 +175,14 @@ select * from information_schema.inspection_rules where type='inspection';
 +-----------------+------------+---------+
 ```
 
-### `config` diagnostic rule
+### `config` 诊断规则
 
-In the `config` diagnostic rule, the following two diagnostic rules are executed by querying the `CLUSTER_CONFIG` system table:
+`config` 诊断规则通过查询 `CLUSTER_CONFIG` 系统表，执行以下两个诊断规则：
 
-* Check whether the configuration values of the same component are consistent. Not all configuration items has this consistency check. The allowlist of consistency check is as follows:
+* 检测相同组件的配置值是否一致，并非所有配置项都会有一致性检查，下面是一致性检查的白名单：
 
     ```go
-    // The allowlist of the TiDB configuration consistency check
+    // TiDB 配置一致性检查白名单
     port
     status.status-port
     host
@@ -197,7 +193,7 @@ In the `config` diagnostic rule, the following two diagnostic rules are executed
     log.slow-query-file
     tmp-storage-path
 
-    // The allowlist of the PD configuration consistency check
+    // PD 配置一致性检查白名单
     advertise-client-urls
     advertise-peer-urls
     client-urls
@@ -208,7 +204,7 @@ In the `config` diagnostic rule, the following two diagnostic rules are executed
     name
     peer-urls
 
-    // The allowlist of the TiKV configuration consistency check
+    // TiKV 配置一致性检查白名单
     server.addr
     server.advertise-addr
     server.status-addr
@@ -218,15 +214,15 @@ In the `config` diagnostic rule, the following two diagnostic rules are executed
     storage.block-cache.capacity
     ```
 
-* Check whether the values of the following configuration items are as expected.
+* 检测以下配置项的值是否符合预期。
 
-    |  Component  | Configuration item | Expected value |
-    |  ----  | ----  |  ----  |
-    | TiDB | log.slow-threshold | larger than `0` |
+    |  组件  | 配置项 | 预期值 |
+    |  :----  | :----  |  :----  |
+    | TiDB | log.slow-threshold | 大于 0 |
 
-### `version` diagnostic rule
+### version 诊断规则
 
-The `version` diagnostic rule checks whether the version hash of the same component is consistent by querying the `CLUSTER_INFO` system table. See the following example:
+`version` 诊断规则通过查询 `CLUSTER_INFO` 系统表，检测相同组件的版本 hash 是否一致。示例如下：
 
 
 ```sql
@@ -245,50 +241,50 @@ SEVERITY  | critical
 DETAILS   | the cluster has 2 different tidb versions, execute the sql to see more detail: SELECT * FROM information_schema.cluster_info WHERE type='tidb'
 ```
 
-### `critical-error` diagnostic rule
+### `critical-error` 诊断规则
 
-In `critical-error` diagnostic rule, the following two diagnostic rules are executed:
+`critical-error` 诊断规则执行以下两个诊断规则：
 
-* Detect whether the cluster has the following errors by querying the related monitoring system tables in the metrics schema:
+* 通过查询 [metrics schema](/metrics-schema.md) 数据库中相关的监控系统表，检测集群是否有出现以下比较严重的错误：
 
-    |  Component  | Error name | Monitoring table | Error description |
+    |  组件  | 错误名字 | 相关监控表 | 错误说明 |
     |  ----  | ----  |  ----  |  ----  |
-    | TiDB | panic-count | tidb_panic_count_total_count | Panic occurs in TiDB. |
-    | TiKV | critical-error | tikv_critical_error_total_count | The critical error of TiKV. |
-    | TiKV | scheduler-is-busy       | tikv_scheduler_is_busy_total_count | The TiKV scheduler is too busy, which makes TiKV temporarily unavailable. |
-    | TiKV | coprocessor-is-busy | tikv_coprocessor_is_busy_total_count | The TiKV Coprocessor is too busy. |
-    | TiKV | channel-is-full | tikv_channel_full_total_count | The "channel full" error occurs in TiKV. |
-    | TiKV | tikv_engine_write_stall | tikv_engine_write_stall | The "stall" error occurs in TiKV. |
+    | TiDB | panic-count | tidb_panic_count_total_count | TiDB 出现 panic 错误 |
+    | TiKV | critical-error | tikv_critical_error_total_count | TiKV 的 critical error |
+    | TiKV | scheduler-is-busy       | tikv_scheduler_is_busy_total_count | TiKV 的 scheduler 太忙，会导致 TiKV 临时不可用 |
+    | TiKV | coprocessor-is-busy | tikv_coprocessor_is_busy_total_count | TiKV 的 coprocessor 太忙 |
+    | TiKV | channel-is-full | tikv_channel_full_total_count | TiKV 出现 channel full 的错误 |
+    | TiKV | tikv_engine_write_stall | tikv_engine_write_stall | TiKV 出现写入 stall 的错误 |
 
-* Check whether any component is restarted by querying the `metrics_schema.up` monitoring table and the `CLUSTER_LOG` system table.
+* 通过查询 `metrics_schema.up` 监控表和 `CLUSTER_LOG` 系统表，检查是否有组件发生重启。
 
-### `threshold-check` diagnostic rule
+### `threshold-check` 诊断规则
 
-The `threshold-check` diagnostic rule checks whether the following metrics in the cluster exceed the threshold by querying the related monitoring system tables in the metrics schema:
+`threshold-check` 诊断规则通过查询 [metrics schema](/metrics-schema.md) 数据库中相关的监控系统表，检测集群中以下指标是否超出阈值：
 
-|  Component  | Monitoring metric | Monitoring table | Expected value |  Description  |
+|  组件  | 监控指标 | 相关监控表 | 预期值 |  说明  |
 |  :----  | :----  |  :----  |  :----  |  :----  |
-| TiDB | tso-duration              | pd_tso_wait_duration                | < 50ms  |   The wait duration of getting the TSO of transaction. |
-| TiDB | get-token-duration        | tidb_get_token_duration             | < 1ms   |  Queries the time it takes to get the token. The related TiDB configuration item is [`token-limit`](/command-line-flags-for-tidb-configuration.md#--token-limit).  |
-| TiDB | load-schema-duration      | tidb_load_schema_duration           | < 1s    |   The time it takes for TiDB to update the schema metadata.|
-| TiKV | scheduler-cmd-duration    | tikv_scheduler_command_duration     | < 0.1s  |  The time it takes for TiKV to execute the KV `cmd` request. |
-| TiKV | handle-snapshot-duration  | tikv_handle_snapshot_duration       | < 30s   |  The time it takes for TiKV to handle the snapshot. |
-| TiKV | storage-write-duration    | tikv_storage_async_request_duration | < 0.1s  |  The write latency of TiKV. |
-| TiKV | storage-snapshot-duration | tikv_storage_async_request_duration | < 50ms  |  The time it takes for TiKV to get the snapshot. |
-| TiKV | rocksdb-write-duration    | tikv_engine_write_duration          | < 100ms |  The write latency of TiKV RocksDB. |
-| TiKV | rocksdb-get-duration | tikv_engine_max_get_duration | < 50ms |   The read latency of TiKV RocksDB. |
-| TiKV | rocksdb-seek-duration | tikv_engine_max_seek_duration | < 50ms |  The latency of TiKV RocksDB to execute `seek`.   |
-| TiKV | scheduler-pending-cmd-coun | tikv_scheduler_pending_commands  | < 1000 |  The number of commands stalled in TiKV.  |
-| TiKV | index-block-cache-hit | tikv_block_index_cache_hit | > 0.95 |  The hit rate of index block cache in TiKV. |
-| TiKV | filter-block-cache-hit | tikv_block_filter_cache_hit | > 0.95 |  The hit rate of filter block cache in TiKV. |
-| TiKV | data-block-cache-hit | tikv_block_data_cache_hit | > 0.80 |  The hit rate of data block cache in TiKV. |
-| TiKV | leader-score-balance | pd_scheduler_store_status  | < 0.05 |  Checks whether the leader score of each TiKV instance is balanced. The expected difference between instances is less than 5%. |
-| TiKV | region-score-balance | pd_scheduler_store_status  | < 0.05 |  Checks whether the Region score of each TiKV instance is balanced. The expected difference between instances is less than 5%. |
-| TiKV | store-available-balance | pd_scheduler_store_status  | < 0.2 | Checks whether the available storage of each TiKV instance is balanced. The expected difference between instances is less than 20%. |
-| TiKV | region-count | pd_scheduler_store_status  | < 20000 |  Checks the number of Regions on each TiKV instance. The expected number of Regions in a single instance is less than 20,000. |
-| PD | region-health | pd_region_health | < 100  |  Detects the number of Regions that are in the process of scheduling in the cluster. The expected number is less than 100 in total. |
+| TiDB | tso-duration              | pd_tso_wait_duration                | 小于 50 ms  |  获取事务 TSO 时间戳的等待耗时 |
+| TiDB | get-token-duration        | tidb_get_token_duration             | 小于 1 ms   |  查询获取 token 的耗时，相关的 TiDB 配置参数是 token-limit  |
+| TiDB | load-schema-duration      | tidb_load_schema_duration           | 小于 1 s    |  TiDB 更新表元信息的耗时 |
+| TiKV | scheduler-cmd-duration    | tikv_scheduler_command_duration     | 小于 0.1 s  |  TiKV 执行 KV cmd 请求的耗时 |
+| TiKV | handle-snapshot-duration  | tikv_handle_snapshot_duration       | 小于 30 s   |  TiKV 处理 snapshot 的耗时 |
+| TiKV | storage-write-duration    | tikv_storage_async_request_duration | 小于 0.1 s  |  TiKV 写入的延迟 |
+| TiKV | storage-snapshot-duration | tikv_storage_async_request_duration | 小于 50 ms  |  TiKV 获取 snapshot 的耗时 |
+| TiKV | rocksdb-write-duration    | tikv_engine_write_duration          | 小于 100 ms |  TiKV RocksDB 的写入延迟 |
+| TiKV | rocksdb-get-duration | tikv_engine_max_get_duration | 小于 50 ms |  TiKV RocksDB 的读取延迟 |
+| TiKV | rocksdb-seek-duration | tikv_engine_max_seek_duration | 小于 50 ms |  TiKV RocksDB 执行 seek 的延迟 |
+| TiKV | scheduler-pending-cmd-coun | tikv_scheduler_pending_commands  | 小于 1000 | TiKV 中被阻塞的命令数量  |
+| TiKV | index-block-cache-hit | tikv_block_index_cache_hit | 大于 0.95 | TiKV 中 index block 缓存的命中率 |
+| TiKV | filter-block-cache-hit | tikv_block_filter_cache_hit | 大于 0.95 | TiKV 中 filter block 缓存的命中率 |
+| TiKV | data-block-cache-hit | tikv_block_data_cache_hit | 大于 0.80 | TiKV 中 data block 缓存的命中率 |
+| TiKV | leader-score-balance | pd_scheduler_store_status  | 小于 0.05 | 检测各个 TiKV 实例的 leader score 是否均衡，期望实例间的差异小于 5% |
+| TiKV | region-score-balance | pd_scheduler_store_status  | 小于 0.05 | 检测各个 TiKV 实例的 Region score 是否均衡，期望实例间的差异小于 5% |
+| TiKV | store-available-balance | pd_scheduler_store_status  | 小于 0.2 | 检测各个 TiKV 实例的存储可用空间大小是否均衡，期望实例间的差异小于 20% |
+| TiKV | region-count | pd_scheduler_store_status  | 小于 20000 | 检测各个 TiKV 实例的 Region 数量，期望单个实例的 Region 数量小于 20000 |
+| PD | region-health | pd_region_health | 小于 100  | 检测集群中处于调度中间状态的 Region 数量，期望总数小于 100 |
 
-In addition, this rule also checks whether the CPU usage of the following threads in a TiKV instance is too high:
+另外还会检测 TiKV 实例的以下 thread cpu usage 是否过高:
 
 * scheduler-worker-cpu
 * coprocessor-normal-cpu
@@ -302,4 +298,4 @@ In addition, this rule also checks whether the CPU usage of the following thread
 * storage-readpool-low-cpu
 * split-check-cpu
 
-The built-in diagnostic rules are constantly being improved. If you have more diagnostic rules, welcome to create a PR or an issue in the [`tidb` repository](https://github.com/pingcap/tidb).
+TiDB 内置的诊断规则还在不断的完善改进中，如果你也想到了一些诊断规则，非常欢迎在 [tidb repository](https://github.com/pingcap/tidb) 下提 PR 或 Issue。

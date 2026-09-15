@@ -1,84 +1,82 @@
 ---
-title: PingCAP Clinic Overview
-summary: PingCAP Clinic is a diagnostic service for TiDB clusters deployed using TiUP or TiDB Operator. It helps troubleshoot cluster problems remotely, ensures stable operation, and provides quick cluster status checks. The service includes Diag client for data collection and Clinic Server for online diagnostic reports. Users can troubleshoot problems remotely and quickly check cluster status. Diag collects diagnostic data through various methods, and Clinic Server has limitations on clusters, storage, and data size. The service is free until April 15, 2025. Next steps include using PingCAP Clinic in different environments.
+title: PingCAP Clinic 诊断服务简介
+summary: 介绍 PingCAP Clinic 诊断服务，包括工具组件、使用场景和工作原理。
 ---
 
-# PingCAP Clinic Overview
+# PingCAP Clinic 诊断服务简介
 
-PingCAP Clinic Diagnostic Service (PingCAP Clinic) is a diagnostic service provided by PingCAP for TiDB clusters that are deployed using either TiUP or TiDB Operator. This service helps to troubleshoot cluster problems remotely and provides a quick check of cluster status locally. With PingCAP Clinic, you can ensure the stable operation of your TiDB cluster for its full life-cycle, predict potential problems, reduce the probability of problems, troubleshoot cluster problems quickly, and fix cluster problems.
+PingCAP Clinic 诊断服务（以下简称为 PingCAP Clinic）是 PingCAP 为 TiDB 集群提供的诊断服务，支持对使用 TiUP 或 TiDB Operator 部署的集群进行远程定位集群问题和本地快速检查集群状态，用于从全生命周期确保 TiDB 集群稳定运行、预测可出现的集群问题、降低问题出现概率、快速定位并修复问题。
 
-PingCAP Clinic provides the following two components to diagnose cluster problems:
+PingCAP Clinic 服务提供以下两个组件进行集群诊断：
 
-- [Diag client](https://github.com/pingcap/diag):
+- [Diag 诊断客户端](https://github.com/pingcap/diag)：部署在集群侧的开源工具，用于采集集群的诊断数据 (collect)、上传诊断数据到 Clinic Server、对集群进行本地快速健康检查 (check)。如需了解 Diag 工具可采集的详细的数据列表，请参阅 [PingCAP Clinic 数据采集说明](/clinic/clinic-data-instruction-for-tiup.md)。
 
-    Diag client (Diag) is an open-source diagnostic tool deployed on the cluster side. Diag is used to collect cluster diagnostic data, upload diagnostic data to the Clinic Server, and perform a quick health check locally on your cluster. For a full list of diagnostic data that can be collected by Diag, see [PingCAP Clinic Diagnostic Data](/clinic/clinic-data-instruction-for-tiup.md).
-
-    > **Note:**
+    > **注意：**
     >
-    > Diag supports TiDB v4.0 and later versions, but **does not support** collecting data from clusters deployed using TiDB Ansible.
+    > Diag 诊断客户端支持 TiDB v4.0 及以上的集群，**不支持**使用 TiDB Ansible 部署的集群。
 
-- Clinic Server:
+- Clinic Server：部署在云端的云服务。Clinic Server 提供 SaaS 模式的诊断服务，不仅能接收上传到该组件的诊断数据，也可以提供在线诊断环境，用于存储、查看和诊断已上传的诊断数据，并提供集群诊断报告。根据数据存储的位置不同，Clinic Server 分为以下两个独立的服务：
+    - [Clinic Server 中国区](https://clinic.pingcap.com.cn)，数据存储在 AWS 中国区（北京）。
+    - [Clinic Server 美国区](https://clinic.pingcap.com)，数据存储在 AWS 美国区。
 
-    Clinic Server is a cloud service deployed in the cloud. By providing diagnostic services in the SaaS model, the Clinic Server can not only receive uploaded diagnostic data but also work as an online diagnostic environment to store data, view data, and provide cluster diagnostic reports. Clinic Server provides two independent services depending on the storage location:
+## 使用场景
 
-    - [Clinic Server for international users](https://clinic.pingcap.com): Data is stored in AWS in US.
-    - [Clinic Server for users in the Chinese mainland](https://clinic.pingcap.com.cn): Data is stored in AWS in China (Beijing) regions.
+- 远程定位集群问题
 
-## User scenarios
+    当集群出现无法快速修复的问题时，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。当申请远程协助时，你需要先保存问题现场的各种诊断数据，然后将其转发给相关技术人员。此时，你可以使用 Diag 诊断客户端，对诊断数据进行一键采集，快速收集完整的诊断数据，替代复杂的手动数据采集操作。随后，你可以将其诊断数据上传到 Clinic Server，供 PingCAP 技术人员查看。Clinic Server 为诊断数据提供了安全的存储，并支持在线诊断，提升了技术人员进行问题定位的效率。
 
-- Troubleshoot cluster problems remotely
+- 快速检查集群状态
 
-    When your cluster has some problems that cannot be fixed quickly, you can [get support](/support.md) from PingCAP or the community. When contacting technical support for remote assistance, you need to save various diagnostic data from the cluster and forward the data to the support staff. In this case, you can use Diag to collect diagnostic data with one click. Diag helps you to collect complete diagnostic data quickly, which can avoid complex manual data collection operations. After collecting data, you can upload the data to the Clinic Server for PingCAP technical support staff to troubleshoot cluster problems. The Clinic Server provides secure storage for uploaded diagnostic data and supports the online diagnosis, which greatly improves the troubleshooting efficiency.
+    即使集群可以正常运行，也需要定期检查集群是否有潜在的稳定性风险。PingCAP Clinic 提供的本地和 Server 端的快速诊断功能，用于检查集群潜在的健康风险。
 
-- Quickly check cluster status
+## 工作原理
 
-    Even if your cluster is running stably for now, it is necessary to periodically check the cluster to detect potential stability risks. You can identify potential health risks of a cluster using the local and server-side quick check feature provided by PingCAP Clinic.
+本章节主要介绍 Diag 诊断客户端（以下简称为 Diag）采集集群诊断数据的工作原理。
 
-## Implementation principles
+首先，Diag 需要从部署工具 TiUP (tiup-cluster) 或 TiDB Operator (tidb-operator) 获取集群拓扑信息，然后通过不同的数据采集方式来采集不同类型的诊断数据，具体采集方式如下：
 
-This section introduces the implementation principles about how Diag collects diagnostic data from a cluster.
+- 通过 SCP 传输服务器文件
 
-First, Diag gets cluster topology information from the deployment tool TiUP (tiup-cluster) or TiDB Operator (tidb-operator). Then, Diag collects different types of diagnostic data through various data collection methods as follows:
+    对于使用 TiUP 部署的集群，Diag 可通过 SCP (Secure copy protocol) 直接从目标组件的节点采集日志文件和配置文件。
 
-- Transfer server files through SCP
+- 通过 SSH 远程执行命令采集数据
 
-    For clusters deployed using TiUP, Diag can collect log files and configuration files directly from the nodes of the target component through the Secure copy protocol (SCP).
+    对于 TiUP 部署的集群，Diag 可以通过 SSH (Secure Shell) 连接到目标组件系统，并可执行 Insight 等命令获取系统信息，包括内核日志、内核参数、系统和硬件的基础信息等。
 
-- Collect data by running commands remotely through SSH
+- 通过 HTTP 调用采集数据
 
-    For clusters deployed using TiUP, Diag can connect to the target component system through SSH (Secure Shell) and run commands (such as Insight) to obtain system information, including kernel logs, kernel parameters, and basic information of the system and hardware.
+    - 通过调用 TiDB 组件的 HTTP 接口，Diag 可获取 TiDB、TiKV、PD 等组件的实时配置采样信息与实时性能采样信息。
+    - 通过调用 Prometheus 的 HTTP 接口，Diag 可获取报警信息和 metrics 监控数据。
 
-- Collect data through HTTP call
+- 通过 SQL 语句查询数据库参数
 
-    - By calling the HTTP interface of TiDB components, Diag can get the real-time configuration sampling information and the real-time performance sampling information of TiDB, TiKV, PD, and other components.
-    - By calling the HTTP interface of Prometheus, Diag can get alert information and monitoring metrics data.
+    通过 SQL 语句，Diag 可以查询 TiDB 数据库的系统参数等信息。对于这种方式，你需要在采集数据时**额外提供**访问 TiDB 数据库的用户名和密码。
 
-- Query database parameters through SQL statements
+## Clinic Server 使用限制
 
-    Using SQL statements, Diag can query system variables and other information of TiDB. To use this method, you need to **additionally provide** the username and password to access TiDB when collecting data.
-
-## The limitations of Clinic Server
-
-> **Note:**
+> **注意：**
 >
-> - Clinic Server is free from July 15, 2022 to April 15, 2025. You will be notified through email before April 15, 2025 if the service starts charging fee afterwards.
-> - If you want to adjust the usage limitations, [get support](/support.md) from PingCAP.
+> - Clinic Server 诊断服务在 2022 年 7 月 15 日至 2025 年 4 月 15 日期间提供免费服务。后续如需收取相关费用，PingCAP Clinic 运营团队将在 2025 年 4 月 15 日前通过邮件通知用户。
+> - 如果需要调整使用限制，可以[联系技术支持](/support.md)。
 
-| Service Type| Limitation |
+| 诊断服务类型| 使用限制 |
 | :------ | :------ |
-| Number of clusters | 10/organization |
-| Storage capacity | 50 GB/cluster |
-| Storage duration | 180 days |
-| Data size | 3 GB/package |
-| Saving duration of the data rebuild environment | 3 days |
+| 每个组织最多可以创建的集群数量 | 10 个 |
+| 诊断数据存储容量 | 50 GB/集群 |
+| 诊断数据最长存储时间 |  180 天 |
+| 数据包最大大小 | 3 GB |
+| 诊断数据重建保存时间| 最长 3 天|
 
-## Next step
+## 探索更多
 
-- Use PingCAP Clinic in an on-premise environment
-    - [Quick Start with PingCAP Clinic](/clinic/quick-start-with-clinic.md)
-    - [Troubleshoot Clusters using PingCAP Clinic](/clinic/clinic-user-guide-for-tiup.md)
-    - [PingCAP Clinic Diagnostic Data](/clinic/clinic-data-instruction-for-tiup.md)
+- 在 TiUP 部署环境使用 PingCAP Clinic
 
-- Use PingCAP Clinic on Kubernetes
-    - [Troubleshoot TiDB Cluster using PingCAP Clinic](https://docs.pingcap.com/tidb-in-kubernetes/stable/clinic-user-guide)
-    - [PingCAP Clinic Diagnostic Data](https://docs.pingcap.com/tidb-in-kubernetes/stable/clinic-data-collection)
+    - [快速上手 PingCAP Clinic](/clinic/quick-start-with-clinic.md)
+    - [使用 PingCAP Clinic 诊断集群](/clinic/clinic-user-guide-for-tiup.md)
+    - [使用 PingCAP Clinic 生成诊断报告](/clinic/clinic-report.md)
+    - [PingCAP Clinic 数据采集说明](/clinic/clinic-data-instruction-for-tiup.md)
+
+- 在 TiDB Operator 部署环境使用 PingCAP Clinic
+
+    - [使用 PingCAP Clinic](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/clinic-user-guide)
+    - [PingCAP Clinic 数据采集说明](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/clinic-data-instruction)

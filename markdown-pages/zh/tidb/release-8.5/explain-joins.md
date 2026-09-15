@@ -1,11 +1,15 @@
 ---
-title: 解释使用 Join 的语句
+title: 用 EXPLAIN 查看 JOIN 查询的执行计划
 summary: 了解 TiDB 中 EXPLAIN 语句返回的执行计划信息。
 ---
 
-# 解释使用 Join 的语句
+# 用 EXPLAIN 查看 JOIN 查询的执行计划
 
-在 TiDB 中，SQL 优化器需要决定哪些表应以何种顺序进行连接，以及为特定 SQL 语句选择最有效的连接算法。本文中的示例基于以下样本数据：
+SQL 查询中可能会使用 JOIN 进行表连接，可以通过 `EXPLAIN` 语句来查看 JOIN 查询的执行计划。本文提供多个示例，以帮助用户理解表连接查询是如何执行的。
+
+在 TiDB 中，SQL 优化器需要确定数据表的连接顺序，且要判断对于某条特定的 SQL 语句，哪一种 Join 算法最为高效。
+
+本文档使用的示例数据如下：
 
 
 ```sql
@@ -38,11 +42,11 @@ ANALYZE TABLE t1, t2;
 
 ## Index Join
 
-如果需要连接的估算行数较少（通常少于 10000 行），优先考虑使用 index join 方法。这种连接方式类似于 MySQL 中的主方法。在以下示例中，操作符 `├─TableReader_29(Build)` 首先读取表 `t1`。对于每一行匹配的记录，TiDB 将探测表 `t2`：
+如果预计需要连接的行数较少（一般小于 1 万行），推荐使用 Index Join 算法。这个算法与 MySQL 主要使用的 Join 算法类似。在下表的示例中，`TableReader_29(Build)` 算子首先读取表 `t1`，然后根据在 `t1` 中匹配到的每行数据，依次探查表 `t2` 中的数据：
 
 > **注意：**
 >
-> 在返回的执行计划中，从 v6.4.0 版本开始，`IndexJoin` 和 `Apply` 操作符的 probe 端子节点中 `estRows` 的含义与 v6.4.0 之前不同。更多细节请参见 [TiDB 查询执行计划概览](/explain-overview.md#understand-explain-output)。
+> 在执行计划返回结果中，自 v6.4.0 版本起，特定算子（即 `IndexJoin` 和 `Apply` 算子的 Probe 端所有子节点）的 `estRows` 字段意义与 v6.4.0 版本之前的有所不同。细节请参考 [TiDB 执行计划概览](/explain-overview.md#解读-explain-的返回结果)。
 
 
 ```sql
@@ -62,19 +66,19 @@ EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_
 +---------------------------------+----------+-----------+------------------------------+---------------------------------------------------------------------------------------------------------------------------+
 ```
 
-index join 在内存使用方面较为高效，但在需要大量 probe 操作时，可能比其他连接方法执行得更慢。考虑以下查询：
+Index Join 算法对内存消耗较小，但如果需要执行大量探查操作，运行速度可能会慢于其他 Join 算法。以下面这条查询语句为例：
 
 ```sql
 SELECT * FROM t1 INNER JOIN t2 ON t1.id=t2.t1_id WHERE t1.pad1 = 'value' and t2.pad1='value';
 ```
 
-在内连接操作中，TiDB 实现了连接重排序，可能先访问 `t1` 或 `t2`。假设 TiDB 选择 `t1` 作为第一个表进行 `build` 步骤，然后在探测 `t2` 之前，能够在 `t1.pad1 = 'value'` 的条件下过滤。对 `t2.pad1='value'` 条件的过滤会在每次探测 `t2` 时应用，这可能比其他连接方法效率低。
+在 Inner Join 操作中，TiDB 会先执行 Join Reorder 算法，所以不能确定会先读取 `t1` 还是 `t2`。假设 TiDB 先读取了 `t1` 来构建 Build 端，那么 TiDB 会在探查 `t2` 前先根据谓词 `t1.pad1 = 'value'` 筛选数据，但接下来每次探查 `t2` 时都要应用谓词 `t2.pad1='value'`。所以对于这条语句，Index Join 算法可能不如其他 Join 算法高效。
 
-index join 在 build 端较小且 probe 端已建立索引且较大时效果最佳。考虑以下查询，index join 的性能甚至比 hash join 更差，且未被 SQL 优化器选中：
+但如果 Build 端的数据量比 Probe 端小，且 Probe 端的数据已预先建立了索引，那么这种情况下 Index Join 算法效率更高。在下面这段查询语句中，因为 Index Join 比 Hash Join 效率低，所以 SQL 优化器选择了 Hash Join 算法：
 
 
 ```sql
--- DROP previously added index
+-- 删除已有索引
 ALTER TABLE t2 DROP INDEX t1_id;
 
 EXPLAIN ANALYZE SELECT /*+ INL_JOIN(t1, t2) */  * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id WHERE t1.int_col = 1;
@@ -117,7 +121,7 @@ EXPLAIN ANALYZE SELECT * FROM t1 INNER JOIN t2 ON t1.id = t2.t1_id WHERE t1.int_
 +------------------------------+----------+---------+-----------+---------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+---------+---------+
 ```
 
-在上述示例中，index join 操作缺少 `t1.int_col` 的索引。一旦添加该索引，性能由 0.3 秒提升到 0.06 秒，具体结果如下：
+在上面所示的 Index Join 操作中，`t1.int_col` 一列的索引被删除了。如果加上这个索引，操作执行速度可以从 `0.3 秒` 提高到 `0.06 秒`，如下表所示：
 
 ```sql
 -- 重新添加索引
@@ -215,7 +219,7 @@ TiDB 会按照以下顺序执行 `HashJoin_27` 算子：
 
 ### 运行数据
 
-如果在执行操作时，内存使用超过了 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 规定的值（默认为 1 GB），且 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) 的值为 `ON` （默认为 `ON`），那么 TiDB 会尝试使用临时存储，并可能将哈希连接 Build 端的数据溢写到磁盘。`EXPLAIN ANALYZE` 返回结果中的 `execution info` 一栏记录了有关内存使用情况等运行数据。下面的例子展示了 `tidb_mem_quota_query` 的值分别设为 1 GB（默认）及 500 MB 时，`EXPLAIN ANALYZE` 的返回结果（当内存配额设为 500 MB 时，磁盘用作临时存储区）：
+如果在执行操作时，内存使用超过了 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 规定的值（默认为 1 GB），且 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) 的值为 `ON` （默认为 `ON`），那么 TiDB 会尝试使用临时存储，在磁盘上创建 Hash Join 的 Build 端。`EXPLAIN ANALYZE` 返回结果中的 `execution info` 一栏记录了有关内存使用情况等运行数据。下面的例子展示了 `tidb_mem_quota_query` 的值分别设为 1 GB（默认）及 500 MB 时，`EXPLAIN ANALYZE` 的返回结果（当内存配额设为 500 MB 时，磁盘用作临时存储区）：
 
 ```sql
 EXPLAIN ANALYZE SELECT /*+ HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -289,3 +293,13 @@ TiDB 会按照以下顺序执行 Merge Join 算子：
 1. 从 Build 端把一个 Join Group 的数据全部读取到内存中。
 2. 读取 Probe 端的数据。
 3. 将 Probe 端的每行数据与 Build 端的一个完整 Join Group 比较，依次查看是否匹配（除了满足等值条件以外，还有其他非等值条件，这里的“匹配”主要是指查看是否满足非等值条件）。Join Group 指的是所有 Join Key 上值相同的数据。
+
+## 其他类型查询的执行计划
+
++ [MPP 模式查询的执行计划](/explain-mpp.md)
++ [索引查询的执行计划](/explain-indexes.md)
++ [子查询的执行计划](/explain-subqueries.md)
++ [聚合查询的执行计划](/explain-aggregation.md)
++ [视图查询的执行计划](/explain-views.md)
++ [分区查询的执行计划](/explain-partitions.md)
++ [索引合并查询的执行计划](/explain-index-merge.md)

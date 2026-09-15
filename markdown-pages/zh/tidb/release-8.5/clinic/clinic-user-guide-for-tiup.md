@@ -1,112 +1,104 @@
 ---
-title: Troubleshoot Clusters Using PingCAP Clinic
-summary: PingCAP Clinic Diagnostic Service (PingCAP Clinic) helps troubleshoot TiDB and DM clusters deployed using TiUP. It allows remote troubleshooting and local cluster status checks using Diag client and Clinic Server. Prerequisites include installing Diag, setting an access token, and configuring the region. Troubleshooting remotely involves collecting, viewing, and uploading diagnostic data. Performing a quick check on the cluster status locally involves collecting and diagnosing configuration data. Data upload supports breakpoint upload, and uploaded data is kept on the Clinic Server for a maximum of 180 days.
+title: 使用 PingCAP Clinic 诊断集群
+summary: 详细介绍在使用 TiUP 部署的 TiDB 集群或 DM 集群上如何通过 PingCAP Clinic 诊断服务远程定位集群问题和本地快速检查集群状态。
 ---
 
-# Troubleshoot Clusters Using PingCAP Clinic
+# 使用 PingCAP Clinic 诊断集群
 
-For TiDB clusters and DM clusters deployed using TiUP, you can use PingCAP Clinic Diagnostic Service (PingCAP Clinic) to troubleshoot cluster problems remotely and perform a quick check on cluster status locally using [Diag client (Diag)](https://github.com/pingcap/diag) and Clinic Server.
+对于使用 TiUP 部署的 TiDB 集群和 DM 集群，PingCAP Clinic 诊断服务（以下简称为 PingCAP Clinic）可以通过 [Diag 诊断客户端](https://github.com/pingcap/diag)（以下简称为 Diag）与 Clinic Server 云诊断平台（以下简称为 Clinic Server）实现远程定位集群问题和本地快速检查集群状态。
 
-> **Note:**
+> **注意：**
 >
-> - This document **only** applies to clusters deployed using TiUP in a self-hosted environment. For clusters deployed using TiDB Operator on Kubernetes, see [PingCAP Clinic for TiDB Operator environments](https://docs.pingcap.com/tidb-in-kubernetes/stable/clinic-user-guide).
+> - 本文档**仅**适用于使用 TiUP 部署的集群。如需查看适用于使用 Operator 部署的集群，请参阅[在 TiDB Operator 部署环境使用 PingCAP Clinic](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/clinic-user-guide)。
 >
-> - PingCAP Clinic **does not support** collecting data from clusters deployed using TiDB Ansible.
+> - PingCAP Clinic 暂时**不支持**对使用 TiDB Ansible 部署的集群进行数据采集。
 
-## User scenarios
+## 使用场景
 
-- [Troubleshoot cluster problems remotely](#troubleshoot-cluster-problems-remotely)
+- [远程定位集群问题](#远程定位集群问题)
 
-    - When your cluster has some problems, if you need to [get support](/support.md) from PingCAP, you can perform the following operations to facilitate the remote troubleshooting: collect diagnostic data with Diag, upload the collected data to the Clinic Server, and provide the data access link to the technical support staff.
-    - When your cluster has some problems, if you cannot analyze the problems immediately, you can use Diag to collect and save the data for later analysis.
+    - 当集群出现问题，需要远程咨询 PingCAP 技术支持时，你可以先使用 Diag 采集诊断数据，然后将其数据上传到 Clinic Server，最后把数据链接提供给技术支持人员，协助远程定位集群问题。
+    - 当集群出现问题，但无法马上进行问题分析时，你可以先使用 Diag 采集数据，并将其数据保存下来，用于自己后期进行问题分析。
 
-- [Perform a quick check on the cluster status locally](#perform-a-quick-check-on-the-cluster-status-locally)
+- [本地快速检查集群状态](#本地快速检查集群状态)
 
-    Even if your cluster is running stably for now, it is necessary to periodically check the cluster to detect potential stability risks. You can identify potential health risks of a cluster using the local quick check feature provided by PingCAP Clinic. The local check only checks configuration. To check more items, such as metrics and logs, it is recommended to upload the diagnostic data to the Clinic Server and use the Health Report feature.
+    即使集群可以正常运行，也需要定期检查集群是否有潜在的稳定性风险。PingCAP Clinic 提供的本地快速诊断功能，用于检查集群潜在的健康风险，本地诊断只覆盖配置项检查。如果需要更全面的检查，推荐上传诊断数据包到 Clinic Server，使用 Clinic Server 提供的 Health Report 对 Metrics、日志和配置项进行全面的快速检查。
 
-## Prerequisites
+## 准备工作
 
-Before using PingCAP Clinic, you need to install Diag (a component to collect data provided by PingCAP Clinic) and prepare the environment to upload data.
+在使用 PingCAP Clinic 功能之前，你需要先安装数据采集组件 Diag 并准备数据上传环境。
 
-1. Install Diag.
+1. 安装 Diag。
 
-    - If you have installed TiUP on your control machine, run the following command to install Diag:
+    - 如果你的中控机上已经安装了 TiUP，可以使用以下命令一键安装 Diag：
 
         ```bash
         tiup install diag
         ```
 
-    - If you have installed Diag, you can use the following command to upgrade Diag to the latest version:
+    - 若已安装了 Diag，你可以通过以下命令，将本地的 Diag 一键升级至最新版本：
 
         ```bash
         tiup update diag
         ```
 
-    > **Note:**
+    > **注意：**
     >
-    > - For clusters without an internet connection, you need to deploy Diag offline. For details, refer to [Deploy TiUP offline: Method 2](/production-deployment-using-tiup.md#deploy-tiup-offline).
-    > - Diag is **only** provided in the TiDB Server offline mirror package of v5.4.0 or later.
+    > - 对于离线集群，你需要离线部署 Diag 诊断客户端。具体方法，请参照[离线部署 TiUP 组件：方式 2](/production-deployment-using-tiup.md#离线部署)。
+    > - Diag 诊断客户端**仅**包含在 v6.0.0 及后续版本的 TiDB Server 离线镜像包中。
 
-2. Get and set an access token (token) to upload data.
+2. 获取并设置用于上传数据的 Access Token（以下简称为 Token）。
 
-    When uploading collected data through Diag, you need a token for user authentication. If you already set a token Diag, you can reuse the token and skip this step.
+    使用 Diag 上传采集到的数据时，你需要通过 Token 进行用户认证，以保证数据上传到组织后被安全地隔离。获取一个 Token 后，你可以重复使用该 Token。如果你已经获取过并在 Diag 上设置过 Token，可跳过此步骤。
 
-    To get a token, perform the following steps:
+    首先，通过以下方法获取 Token：
 
-    - Log in to the Clinic Server.
+    - 登录 Clinic Server。
 
         <SimpleTab groupId="clinicServer">
-        <div label="Clinic Server for international users" value="clinic-us">
+        <div label="Clinic Server 中国区" value="clinic-cn">
 
-        [Clinic Server for international users](https://clinic.pingcap.com): Data is stored in AWS in US regions.
-
-        </div>
-        <div label="Clinic Server for users in the Chinese mainland" value="clinic-cn">
-
-        [Clinic Server for users in the Chinese mainland](https://clinic.pingcap.com.cn): Data is stored in AWS in China (Beijing) regions.
+        [Clinic Server 中国区](https://clinic.pingcap.com.cn)，数据存储在亚马逊云服务中国区。
 
         </div>
 
+        <div label="Clinic Server 美国区" value="clinic-us">
+
+        [Clinic Server 美国区](https://clinic.pingcap.com)，数据存储在亚马逊云服务美国区。
+
+        </div>
         </SimpleTab>
 
-    - Click the icon in the lower-right corner of the Cluster page, select **Get Access Token For Diag Tool**, and click **+** in the pop-up window. Make sure that you have copied and saved the token that is displayed.
+    - 点击 Cluster 页面右下角的图标，选择 **Get Access Token For Diag Tool**，在弹出窗口中点击 **+** 符号获取 Token 后，复制并保存 Token 信息。
 
-        ![Get the Token](https://docs-download.pingcap.com/media/images/docs/clinic-get-token.png)
+        ![Token 示例](https://docs-download.pingcap.com/media/images/docs-cn/clinic-get-token.png)
 
-    > **Note:**
+    > **注意：**
     >
-    > - When accessing Clinic Server for the first time, before getting a token, you need to prepare the environment by referring to [Quick Start with PingCAP Clinic](/clinic/quick-start-with-clinic.md#prerequisites).
-    > - For data security, TiDB only displays the token upon the token creation. If you have lost the token, delete the old token and create a new one.
-    > - A token is only used for uploading data.
+    > - 如果你第一次访问 Clinic Server，请参考[快速上手指南：准备数据上传环境](/clinic/quick-start-with-clinic.md#准备工作)的相关步骤。
+    > - 为了确保数据的安全性，TiDB 只在创建 Token 时显示 Token 信息。如果丢失了 Token 信息，你可以删除旧 Token 后重新创建。
+    > - Token 只用于上传数据。
 
-    - Then, set the token in Diag. For example:
-
-        ```bash
-        tiup diag config clinic.token ${token-value}
-        ```
-
-3. Set the `region` in Diag.
-
-    `region` determines the encryption certificate used for packing data and the target service when uploading the data. For example:
-
-    > **Note:**
-    >
-    > - Diag v0.9.0 and later versions support setting `region`.
-    > - For versions earlier than Diag v0.9.0, data is uploaded to Clinic Server in the Chinese region by default. To set `region` in these versions, run the `tiup update diag` command to upgrade Diag to the latest version and then set `region` in Diag.
-
-    <SimpleTab groupId="clinicServer">
-    <div label="Clinic Server for international users" value="clinic-us">
-
-    When using Clinic Server for international users, set `region` to `US` using the following command:
+    然后，参考以下命令，在 Diag 中设置该 Token：
 
     ```bash
-    tiup diag config clinic.region US
+    tiup diag config clinic.token ${token-value}
     ```
 
-    </div>
-    <div label="Clinic Server for users in the Chinese mainland" value="clinic-cn">
+3. 在 Diag 中设置 `region`。
 
-    When using Clinic Server for users in the Chinese mainland, set `region` to `CN` using the following command:
+    `region` 决定数据打包时使用的加密证书和上传的目标 Clinic Server 地址。参考以下命令，根据你的 Clinic Server 在 Diag 中设置 `clinic.region`。
+
+    > **注意：**
+    >
+    > - Diag v0.9.0 及以后的版本支持 `region` 设置。
+    > - 对于 Diag v0.9.0 之前的版本，数据默认上传到 Clinic Server 中国区。
+    > - 如果你的 Diag 是 v0.9.0 之前的版本，你可以通过 `tiup update diag` 命令将其升级至最新版本后设置 `region`。
+
+    <SimpleTab groupId="clinicServer">
+    <div label="Clinic Server 中国区" value="clinic-cn">
+
+    对于 Clinic Server 中国区，参考以下命令，将 `region` 设置为 `CN`：
 
     ```bash
     tiup diag config clinic.region CN
@@ -114,39 +106,49 @@ Before using PingCAP Clinic, you need to install Diag (a component to collect da
 
     </div>
 
+    <div label="Clinic Server 美国区" value="clinic-us">
+
+    对于 Clinic Server 美国区，参考以下命令，将 `region` 设置为 `US`：
+
+    ```bash
+    tiup diag config clinic.region US
+    ```
+
+    </div>
     </SimpleTab>
 
-4. (Optional) Enable log redaction.
+4. 开启日志脱敏配置（可选步骤）。
 
-    When TiDB provides detailed log information, it might print sensitive information (for example, user data) in the log. If you want to avoid leaking sensitive information in the local log and Clinic Server, you can enable log redaction in the TiDB side. For more information, see [log redaction](/log-redaction.md#log-redaction-in-tidb-side).
+    TiDB 在提供详细的日志信息时可能会打印数据库的敏感信息（例如用户数据）。如果希望本地日志及上传到 Clinic Server 的日志中不带有敏感信息，你可以开启日志脱敏配置。具体操作请参考[日志脱敏](/log-redaction.md#tidb-组件日志脱敏)。
 
-## Troubleshoot cluster problems remotely
+## 远程定位集群问题
 
-You can use Diag to quickly collect diagnostic data from TiDB clusters and DM clusters, including monitoring data and configuration information.
+你可以使用 Diag 快速抓取 TiDB 集群和 DM 集群的诊断数据，其中包括监控数据、配置信息等。
 
-### Step 1. Check the data to be collected
+### 第 1 步：确定需要采集的数据
 
-For a full list of data that can be collected by Diag, see [PingCAP Clinic Diagnostic Data](/clinic/clinic-data-instruction-for-tiup.md).
+如需查看 Diag 支持采集的数据的详细列表，请参阅 [PingCAP Clinic 数据采集说明](/clinic/clinic-data-instruction-for-tiup.md)。
 
-To improve the efficiency of the later diagnosis, you are recommended to collect full diagnostic data including monitoring data and configuration information. For details, see [Collect data from clusters](#step-2-collect-data).
+建议收集监控数据、配置信息等全量诊断数据，有助于提升后续诊断效率。具体方法，请参考[采集集群的数据](#第-2-步采集数据)。
 
-### Step 2. Collect data
+### 第 2 步：采集数据
 
-With Diag, you can collect data from the TiDB clusters and the DM clusters deployed using TiUP.
+你可以使用 Diag 采集使用 TiUP 部署的 TiDB 集群和 DM 集群的数据。
 
-1. Run the data collection command of Diag.
+1. 运行 Diag 数据采集命令。
 
-    For example, to collect the diagnostic data from 4 hours ago to 2 hours ago based on the current time, run the following command:
+    例如，如需采集集群从当前时间的 4 小时前到 2 小时前的诊断数据，可以运行以下命令：
 
     <SimpleTab>
-    <div label="TiDB Cluster">
+    <div label="TiDB 集群">
 
     ```bash
     tiup diag collect ${cluster-name} -f="-4h" -t="-2h"
     ```
 
     </div>
-    <div label="DM Cluster">
+
+    <div label="DM 集群">
 
     ```bash
     tiup diag collectdm ${dm-cluster-name} -f="-4h" -t="-2h"
@@ -155,36 +157,36 @@ With Diag, you can collect data from the TiDB clusters and the DM clusters deplo
     </div>
     </SimpleTab>
 
-    Descriptions of the parameters for data collection:
+    采集参数说明：
 
-    - `-f/--from`: specifies the start time of the data collection. If you do not specify this parameter, the default start time is 2 hours before the current time. To modify the time zone, use the `-f="12:30 +0800"` syntax. If you do not specify the time zone information in this parameter, such as `+0800`, the time zone is UTC by default.
-    - `-t/--to`: specifies the end time of the data collection. If you do not specify this parameter, the default end time is the current moment. To modify the time zone, use the `-f="12:30 +0800"` syntax. If you do not specify the time zone information in this parameter, such as `+0800`, the time zone is UTC by default.
+    - `-f/--from`：指定采集时间的起始点。如果不指定该参数，默认起始点为当前时间的 2 小时前。如需修改时区，可使用 `-f="12:30 +0800"` 语法。如果没有在该参数中指定时区信息，如 `+0800`，则默认时区为 UTC。
+    - `-t/--to`：指定采集时间的结束点。如果不指定该参数，默认结束点为当前时刻。如需修改时区，可使用 `-f="12:30 +0800"` 语法。如果没有在该参数中指定时区信息，如 `+0800`，则默认时区为 UTC。
 
-    Parameter usage tips:
+    参数使用提示：
 
-    In addition to specifying the data collection time, you can use Diag to specify more parameters. To get all parameters, run the `tiup diag collect -h` or `tiup diag collectdm -h` command.
+    除了指定采集时间，你还可以使用 Diag 指定更多参数。如需查看所有参数，请使用 `tiup diag collect -h` 或 `tiup diag collectdm -h` 命令。
 
-    > **Note:**
+    > **注意：**
     >
-    > - Diag does not collect system variables data (db_vars) by default. To collect this data, you need to additionally provide a username and password that can access the database. Note that the reading access to system variables should be enabled in this database.
-    > - Diag does not collect performance data (`perf`) and debug data (`debug`) by default.
-    > - To collect full diagnostic data including system variables, use the command `tiup diag collect <cluster-name> --include="system,monitor,log,config,db_vars,perf,debug"`.
+    > - Diag 默认**不收集**系统变量数据 (`db_vars`)。如需收集该数据，你需要额外提供开启了系统变量可读权限的数据库用户名和密码。
+    > - Diag 默认**不收集**性能数据 (`perf`)和 Debug 数据 (`debug`)。
+    > - 如需收集全量诊断数据，可以使用命令 `tiup diag collect <cluster-name> --include="system,monitor,log,config,db_vars,perf,debug"`。
 
-    - `-l`: the bandwidth limit for transferring files, the unit is Kbit/s, and the default value is `100000` (the `-l` parameter of scp).
-    - `-N/--node`: only collects data from a specified node. The format is `ip:port`.
-    - `--include`: only collects specific types of data. The optional values are `system`, `monitor`, `log`, `config`, and `db_vars`. To include two or more types, you can use `,` as a separator between the types.
-    - `--exclude`: does not collect specific types of data. The optional values are `system`, `monitor`, `log`, `config`, and `db_vars`. To exclude two or more types, you can use `,` as a separator between the types.
-    - `--metricsfilter`: only collects specified Prometheus metrics. You can specify metrics using a comma-separated list of metric prefixes. For example, `--metricsfilter=tidb,pd` collects metrics that start with `tidb` and metrics that start with `pd`.
-    
+    - `-l`：传输文件时的带宽限制，单位为 Kbit/s，默认值为 `100000`（即 scp 的 `-l` 参数）。
+    - `-N/--node`：支持只收集指定节点的数据，格式为 `ip:port`。
+    - `--include`：只收集特定类型的数据，可选值为 `system`，`monitor`，`log`，`config`，`db_vars`。如需同时列出多种类型的数据，你可以使用逗号 `,` 来分割不同的数据类型。
+    - `--exclude`：不收集特定类型的数据，可选值为 `system`，`monitor`，`log`，`config`，`db_vars`。如需同时列出多种类型的数据，你可以使用逗号 `,` 来分割不同的数据类型。
+    - `--metricsfilter`：只收集指定的 Prometheus 监控指标。你可以使用以逗号分隔的指标前缀列表来指定要收集的指标。例如，`--metricsfilter=tidb,pd` 将收集以 `tidb` 开头的指标和以 `pd` 开头的指标。
+
         > **Tip:**
         >
-        > To get available metric prefixes, you can query the TiDB monitoring API using the following command:
+        > 要查看可用的指标前缀，可以运行以下命令查询 TiDB 监控 API:
         >
         > ```bash
         > curl -s 'http://${prometheus-host}:${prometheus-port}/api/v1/label/__name__/values' | jq -r '.data[]' | cut -d\_ -f1 | uniq -c | sort -rn
         > ```
 
-    After you run the command, Diag does not start collecting data immediately. Instead, Diag provides the estimated data size and the target data storage path in the output for you to confirm whether to continue. For example:
+    运行 Diag 数据采集命令后，Diag 不会立即开始采集数据，而会在输出中提供预估数据量大小和数据存储路径，并询问你是否进行数据收集。例如：
 
     ```bash
     Estimated size of data to collect:
@@ -199,146 +201,135 @@ With Diag, you can collect data from the TiDB clusters and the DM clusters deplo
     Do you want to continue? [y/N]: (default=N)
     ```
 
-2. Enter `Y` to confirm that you want to start collecting data.
+2. 如果确认要开始采集数据，请输入 `Y`。
 
-    Collecting data takes a certain amount of time. The time varies according to the volume of data to be collected. For example, in a test environment, collecting 1 GB of data takes about 10 minutes.
+    采集数据需要一定的时间，具体所需时间与需要收集的数据量有关。例如，在测试环境中收集 1 GB 数据，大概需要 10 分钟。
 
-    After the collection is complete, Diag provides the folder path where the collected data is located. For example:
+    采集完成后，Diag 会提示采集数据所在的文件夹路径。例如：
 
     ```bash
     Collected data are stored in /home/user/diag-fNTnz5MGhr6
     ```
 
-### Step 3. View data locally (optional)
+### 第 3 步：本地查看数据（可选步骤）
 
-The collected data is stored in separate subdirectories based on its data source. These subdirectories are named after machine names and port numbers. The storage locations of the configuration, logs, and other files of each node are the same as their relative storage paths in the real server of your TiDB cluster:
+已收集的数据会根据其数据来源存储于独立的子目录中，这些子目录以机器名和端口号来命名。每个节点的配置、日志等文件的存放位置与在真实服务器中存放的相对路径相同，其中：
 
-- Basic information of the system and hardware: in `insight.json`
-- Contents in the system `/etc/security/limits.conf`: in `limits.conf`
-- List of kernel parameters: in `sysctl.conf`
-- Kernel logs: in `dmesg.log`
-- Network connection during data collection: in `ss.txt`
-- Configuration data: in the `config.json` directory of each node
-- Meta-information for the cluster itself: in `meta.yaml` (this file is located at the top level of the directory that stores collected data)
-- Monitoring data: in the `/monitor` file directory. The monitoring data is compressed by default and cannot be viewed directly. To directly view the JSON files with monitoring data, disable compression with the `--compress-metrics=false` parameter when collecting data.
+- 系统和硬件的基础信息：位于 `insight.json`
+- 系统 `/etc/security/limits.conf` 中的内容：位于 `limits.conf`
+- 内核参数列表：位于 `sysctl.conf`
+- 内核日志：位于 `dmesg.log`
+- 采集时的网络连接情况：位于 `ss.txt`
+- 配置数据：位于每节点目录下的 `config.json`
+- 集群本身的元信息：位于 `meta.yaml`（此文件位于采集数据存储目录的顶层）
+- 监控数据：位于 `/monitor` 文件目录。默认经过压缩，无法直接查看。如需直接查看监控指标的 JSON 文件内容，可在采集时通过 `--compress-metrics=false` 参数禁用压缩。
 
-### Step 4. Upload data
+### 第 4 步：上传数据
 
-To provide cluster diagnostic data to PingCAP technical support staff, you need to upload the data to the Clinic Server first, and then send the obtained data access link to the staff. The Clinic Server is a cloud service that stores and shares diagnostic data securely.
+如需将集群诊断数据提供给 PingCAP 技术支持人员，请先将数据上传到 Clinic Server 后，再把获取到的数据访问链接发送给技术支持人员。Clinic Server 为 PingCAP Clinic 的云服务，可提供安全的诊断数据存储和共享。
 
-Depending on the network connection of the cluster, you can choose one of the following methods to upload data:
+根据集群的网络连接情况，你可以选择以下上传方式之一：
 
-- Methods 1: if the network where the cluster is located can access the internet, you can [directly upload data using the upload command](#method-1-upload-directly).
-- Methods 2: if the network where the cluster is located cannot access the internet, you need to [pack the data and then upload it](#method-2-pack-and-upload-data).
+- 方式 1：如果集群所在的网络能访问互联网，你可以[通过上传命令直接上传数据](#方式-1直接上传)。
+- 方式 2：如果集群所在的网络不能访问互联网，你需要[打包后再上传数据](#方式-2打包后上传)。
 
-> **Note:**
+> **注意：**
 >
-> If you did not set a token or `region` in Diag before uploading data, Diag reports the upload failure and reminds you to set a token or `region`. To set a token, see [the second step in Prerequisites](#prerequisites).
+> 如果在上传前没有在 Diag 中设置 Token 或 `region`，Diag 会提示上传失败，并提醒你进行设置。关于 Token 获取方法，请参考[准备工作：第 2 步](#准备工作)。
 
-#### Method 1. Upload directly
+#### 方式 1：直接上传
 
-If the network where the cluster is located can access the internet, you can directly upload the folder with collected data obtained in [Step 2: Collect data](#step-2-collect-data) using the following command:
+如果你的集群所在的网络可以访问互联网，你可以直接通过以下命令上传在[第 2 步：采集数据](#第-2-步采集数据)中收集的数据包文件夹：
 
 
 ```bash
-tiup diag upload
-```
+ tiup diag upload
+ ```
 
-After the upload is completed, the `Download URL` is displayed in the output. You can open the link of `Download URL` to see the uploaded data or send the link to the PingCAP technical support staff you contacted before.
+完成上传后，Diag 会提示诊断数据的下载路径 `Download URL`。你可以打开 `Download URL` 中的链接查看数据，也可以将 `Download URL` 中的链接发给与你对接的 PingCAP 技术支持人员。
 
-#### Method 2. Pack and upload data
+#### 方式 2：打包后上传
 
-If the network where your cluster is located cannot access the internet, you need to pack the data on your intranet and upload the data package to the Clinic Server using a device with internet access. The detailed operations are as follows:
+如果你的集群所在的网络无法访问互联网，你需要先在内网打包数据后，再将其数据包发送到网络连通的设备上进行上传。具体操作方法如下：
 
-1. Pack the collected data obtained in [Step 2. Collect data](#step-2-collect-data) by running the following command:
+1. 打包在[第 2 步：采集数据](#第-2-步采集数据)中采集的数据，并对其数据包进行压缩和加密：
 
     ```bash
     tiup diag package ${filepath}
     ```
 
-    During packaging, Diag encrypts and compresses the data at the same time. In the test environment, 800 MB of data was compressed to 57 MB. The following is an example output:
+    打包时，Diag 会同时对数据进行压缩和加密。在测试环境中，800 MB 数据压缩后变为 57 MB。示例输出如下：
 
     ```bash
     Starting component `diag`: /root/.tiup/components/diag/v0.7.0/diag package diag-fNTnz5MGhr6
     packaged data set saved to /home/user/diag-fNTnz5MGhr6.diag
     ```
 
-    After the packaging is complete, the data is packaged to the `.diag` format. The `.diag` file can only be decrypted and viewed after being uploaded to the Clinic Server. If you want to directly forward the collected data instead of uploading it to the Clinic Server, you can compress the data by your own method and forward it.
+    完成打包后，数据包为 `.diag` 格式。只有上传到 Clinic Server 后，该数据包才能被解密并查看。如需直接转发已收集的数据，而不在 Clinic Server 中查看，你可以自行压缩后转发数据。
 
-2. From a machine with internet access, upload the compressed data package:
+2. 使用可以访问互联网的机器上传数据压缩包。
 
     ```bash
     tiup diag upload ${filepath}
     ```
 
-    The following is an example output:
+    完成上传后，Diag 会提示诊断数据的下载路径 `Download URL`。你可以打开 `Download URL` 中的链接，在 Clinic Server 页面进行数据查看，也可以将 `Download URL` 中的链接发给与你对接的 PingCAP 技术支持人员。
 
-    ```bash
-    [root@Copy-of-VM-EE-CentOS76-v1 user]# tiup diag upload /home/user/diag-fNTnz5MGhr6
-    Starting component `diag`: /root/.tiup/components/diag/v0.7.0/diag upload /home/user/diag-fNTnz5MGhr6
-    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>><>>>>>>>>>
-    Completed!
-    Download URL: "https://clinic.pingcap.com.cn/portal/#/orgs/4/clusters/XXXX"
-    ```
+## 本地快速检查集群状态
 
-3. After the upload is complete, you can open the link of `Download URL` to see the uploaded data or send the link to the PingCAP technical support staff you contacted before.
+你可以使用 Diag 对集群状态进行快速诊断。即使集群可以正常运行，也需要定期检查集群是否有潜在的稳定性风险。PingCAP Clinic 提供的本地快速诊断功能，用于检查集群潜在的健康风险，本地诊断只覆盖配置项检查。如果需要更全面的检查，推荐上传诊断数据包到 Clinic Server，使用 Clinic Server 提供的 Health Report 对 Metrics、日志和配置项进行全面的快速检查。
 
-## Perform a quick check on the cluster status locally
-
-You can have a quick check on the cluster status locally using Diag. Even if your cluster is running stably for now, it is necessary to periodically check the cluster to detect potential stability risks. You can identify potential health risks of a cluster using the local quick check feature provided by PingCAP Clinic. The local check only checks configuration. To check more items, such as metrics and logs, it is recommended to upload the diagnostic data to the Clinic Server and use the Health Report feature.
-
-1. Collect configuration data:
+1. 采集配置数据：
 
     ```bash
     tiup diag collect ${cluster-name} --include="config"
     ```
 
-    The data of configuration files are relatively small. After the collection, the collected data is stored in the current path by default. In the test environment, for a cluster with 18 nodes, the data size of configuration files is less than 10 KB.
+    配置文件数据较小，采集后会默认存放至当前路径下。在测试环境中，对于一个 18 个节点的集群，配置文件数据量小于 10 KB。
 
-2. Diagnose configuration data:
+2. 诊断配置数据：
 
     ```bash
     tiup diag check ${subdir-in-output-data}
     ```
 
-    `${subdir-in-output-data}` in the above command is the path that stores the collected data, and this path has the `meta.yaml` file.
+    其中，`${subdir-in-output-data}` 为采集数据的存放路径，其路径中存放 `meta.yaml` 文件。
 
-3. View the diagnostic result:
+3. 查看诊断结果：
 
-    The diagnostic result is returned on the command line. For example:
+    诊断结果会在命令行中返回，示例如下：
 
     ```bash
     Starting component `diag`: /root/.tiup/components/diag/v0.7.0/diag check diag-fNTnz5MGhr6
 
-    # Diagnostic result
+    # 诊断结果
     lili 2022-01-24T09:33:57+08:00
 
-    ## 1. Cluster basic information
+    ## 1. 诊断集群名称等基础信息
     - Cluster ID: 7047403704292855808
     - Cluster Name: lili
     - Cluster Version: v5.3.0
 
-    ## 2. Sampling information
+    ## 2. 诊断数据来源信息
     - Sample ID: fNTnz5MGhr6
     - Sampling Date: 2022-01-24T09:33:57+08:00
     - Sample Content:: [system monitor log config]
 
-    ## 3. Diagnostic result, including potential configuration problems
+    ## 3. 诊断结果信息，包括发现的可能的配置问题
     In this inspection, 22 rules were executed.
 
     The results of **1** rules were abnormal and needed to be further discussed with support team.
 
     The following is the details of the abnormalities.
 
-    ### Diagnostic result summary
-    The configuration rules are all derived from PingCAP's OnCall Service.
+    ### 诊断结果摘要
+    The configuration rules are all derived from PingCAP’s OnCall Service.
 
     If the results of the configuration rules are found to be abnormal, they may cause the cluster to fail.
 
     There were **1** abnormal results.
 
-    #### Path to save the diagnostic result file
-
+    #### 诊断结果文档的保存路径
     Rule Name: tidb-max-days
     - RuleID: 100
     - Variation: TidbConfig.log.file.max-days
@@ -351,18 +342,18 @@ You can have a quick check on the cluster status locally using Diag. Even if you
     Result report and record are saved at diag-fNTnz5MGhr6/report-220125153215
     ```
 
-    In the last section of the diagnostic result (under `#### Path to save the diagnostic result file` in the above example output), for each configuration potential risk found, Diag provides a corresponding knowledge base link with detailed configuration suggestions. In the example above, the relevant link is `https://s.tidb.io/msmo6awg`.
+    在上述示例诊断结果信息的最后一部分（即“#### 诊断结果文档的保存路径”）中，对于被发现的每一条潜在的配置问题，Diag 都会提供对应的知识库链接，以便查看详细的配置建议。在上面示例中，相关链接为 `https://s.tidb.io/msmo6awg`。
 
-## FAQ
+## 常见问题
 
-1. If the data upload fails, can I re-upload it?
+1. 如果数据上传失败了，可以重新上传吗？
 
-    Yes. Data upload supports breakpoint upload. If the upload fails, you can upload it again directly.
+    可以。数据上传支持断点上传，如果上传失败了，可以直接再次上传。
 
-2. After uploading data, I cannot open the returned data access link. What should I do?
+2. 数据上传后，无法打开返回的数据访问链接，怎么办？
 
-    Log in to Clinic Server first. If you still cannot open the link after login success, check whether you have access to data. If not, contact the data owner for permission. After getting the permission, log in to Clinic Server and open the link again.
+    你可以先尝试登录 Clinic Server。如果登录后依然无法打开链接，请确认你是否拥有访问该数据的权限。如果没有权限，你需要联系数据所有人给你添加权限后，重新登录 Clinic Server 并访问数据链接。
 
-3. How long will the uploaded data be kept on the Clinic Server?
+3. 上传到 Clinic Server 的数据后会保存多久？
 
-    The longest time is 180 days. You can delete the data you uploaded on the Clinic Server page at any time.
+    最长 180 天，用户可以随时通过 Clinic Server 页面删除自己上传的集群诊断数据。

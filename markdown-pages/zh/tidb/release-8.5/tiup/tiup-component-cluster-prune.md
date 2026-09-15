@@ -1,28 +1,28 @@
 ---
 title: tiup cluster prune
-summary: When scaling in the cluster, TiUP does not immediately stop services or delete data for some components. You must wait for data scheduling to complete and then manually execute the 'tiup cluster prune' command to clean up. The syntax is 'tiup cluster prune <cluster-name> [flags]'. The option '-h, --help' prints help information and the output is the log of the cleanup process.
+summary: tiup cluster prune 命令用于在缩容集群时清理数据。对于某些组件，需要等数据调度完成后，用户手动执行该命令。选项包括 -h 或 --help，用于输出帮助信息。清理过程会生成日志。
 ---
 
 # tiup cluster prune
 
-When [scaling in the cluster](/tiup/tiup-component-cluster-scale-in.md), for some components, TiUP does not immediately stop their services or delete their data. You need to wait for the data scheduling to complete and then manually execute the `tiup cluster prune` command to clean up.
+在[缩容集群](/tiup/tiup-component-cluster-scale-in.md)时，对于某些组件，并不会立即停止服务并删除数据，而是需要等数据调度完成之后，用户手动执行 `tiup cluster prune` 命令清理。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster prune <cluster-name> [flags]
 ```
 
-## Option
+## 选项
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- Default: false
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The log of the cleanup process.
+清理过程的日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

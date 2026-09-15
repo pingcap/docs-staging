@@ -1,44 +1,44 @@
 ---
-title: Migration FAQs
-summary: Learn about the FAQs related to data migration.
+title: 迁移常见问题
+summary: 介绍 TiDB 迁移中的常见问题。
 ---
 
-# Migration FAQs
+# 迁移常见问题
 
-This document summarizes the frequently asked questions (FAQs) related to TiDB data migration.
+本文介绍 TiDB 数据迁移中的常见问题。
 
-For the frequently asked questions about migration-related tools, click the corresponding links in the list below:
+如果要查看迁移相关工具的常见问题，请参考以下链接：
 
-- [Backup & Restore FAQs](/faq/backup-and-restore-faq.md)
-- [TiDB Lightning FAQs](/tidb-lightning/tidb-lightning-faq.md)
-- [TiDB Data Migration (DM) FAQs](/dm/dm-faq.md)
-- [TiCDC FAQs](/ticdc/ticdc-faq.md)
+- [备份与恢复常见问题](/faq/backup-and-restore-faq.md)
+- [TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)
+- [Data Migration 常见问题](/dm/dm-faq.md)
+- [TiCDC 常见问题](/ticdc/ticdc-faq.md)
 
-## Full data export and import
+## 全量数据导出导入
 
-### How to migrate an application running on MySQL to TiDB?
+### 如何将一个运行在 MySQL 上的应用迁移到 TiDB 上？
 
-Because TiDB supports most MySQL syntax, generally you can migrate your applications to TiDB without changing a single line of code in most cases.
+TiDB 支持绝大多数 MySQL 语法，一般不需要修改代码。
 
-### Data import and export is slow, and many retries and EOF errors appear in the log of each component without other errors
+### 导入导出速度慢，各组件日志中出现大量重试、EOF 错误并且没有其他错误
 
-If no other logical errors occur, retries and EOF errors might be caused by network issues. It is recommended to first use tools to check the network connectivity. In the following example, [iperf](https://iperf.fr/) is used for troubleshooting:
+在没有其他逻辑出错的情况下，重试、EOF 可能是由网络问题引起的，建议首先使用相关工具排查网络连通状况。以下示例使用 [iperf](https://iperf.fr/) 进行排查：
 
-+ Execute the following command on the server-side node where the retries and EOF errors occur:
++ 在出现重试、EOF 错误的服务器端节点执行以下命令：
 
     
     ```shell
     iperf3 -s
     ```
 
-+ Execute the following command on the client-side node where the retries and EOF errors occur:
++ 在出现重试、EOF 错误的客户端节点执行以下命令：
 
     
     ```shell
     iperf3 -c <server-IP>
     ```
 
-The following example is the output of a client node with a good network connection:
+下面是一个网络连接良好的客户端节点的输出：
 
 ```shell
 $ iperf3 -c 192.168.196.58
@@ -63,40 +63,35 @@ Connecting to host 192.168.196.58, port 5201
 iperf Done.
 ```
 
-If the output shows low network bandwidth and high bandwidth fluctuations, a large number of retries and EOF errors might appear in each component log. In this case, you need to consult your network service provider to improve the network quality.
+如果输出显示网络带宽较低、带宽波动大，各组件日志中就可能出现大量重试、EOF 错误。此时你需要咨询网络服务供应商以提升网络质量。
 
-If the output of each metric looks good, try to update each component. If the problem persists after the updating, [get support](/support.md) from PingCAP or the community.
+如果输出的各指标良好，请尝试更新各组件版本。如果更新后仍无法解决问题，请移步 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/)寻求帮助。
 
-### If I accidentally import the MySQL user table into TiDB, or forget the password and cannot log in, how to deal with it?
+### 不小心把 MySQL 的 user 表导入到 TiDB 了，或者忘记密码，无法登录，如何处理？
 
-Restart the TiDB service, add the `-skip-grant-table=true` parameter in the configuration file. Log into the cluster without password and recreate the user, or recreate the `mysql.user` table. For the specific table schema, search the official documentation.
+重启 TiDB 服务，配置文件中增加 `-skip-grant-table=true` 参数，无密码登录集群后，可以根据情况重建用户，或者重建 mysql.user 表，具体表结构搜索官网。
 
-### How to export the data in TiDB?
+### 如何导出 TiDB 数据？
 
-You can use the following methods to export the data in TiDB:
+你可以通过以下方式导出 TiDB 数据：
 
-- Export data using Dumpling. For more information, see [Dumpling documentation](/dumpling-overview.md).
-- Export data using mysqldump and the `WHERE` clause.
-- Use the MySQL client to export the results of `select` to a file.
+- 参考 [MySQL 使用 mysqldump 导出某个表的部分数据](https://blog.csdn.net/xin_yu_xin/article/details/7574662)，使用 mysqldump 加 where 条件导出。
+- 使用 MySQL client 将 select 的结果输出到一个文件。
 
-### How to migrate from Db2 or Oracle to TiDB?
+### 如何从 Db2、Oracle 数据库迁移到 TiDB？
 
-To migrate all the data or migrate incrementally from Db2 or Oracle to TiDB, see the following solution:
+Db2、Oracle 到 TiDB 数据迁移（增量+全量），通常做法有：
 
-- Use the official migration tool of Oracle, such as OGG, Gateway, CDC (Change Data Capture).
-- Develop a program for importing and exporting data.
-- Export Spool as text file, and import data using Load infile.
-- Use a third-party data migration tool.
+- 使用 Oracle 官方迁移工具，如 OGG、Gateway（透明网关）、CDC (Change Data Capture)。
+- 自研数据导出导入程序实现。
+- 导出 (Spool) 成文本文件，然后通过 Load infile 进行导入。
+- 使用第三方数据迁移工具。
 
-Currently, it is recommended to use OGG.
+目前看来 OGG 最为合适。
 
-### Error: `java.sql.BatchUpdateException:statement count 5001 exceeds the transaction limitation` while using Sqoop to write data into TiDB in `batches`
+### 用 Sqoop 批量写入 TiDB 数据，虽然配置了 `--batch` 选项，但还是会遇到 `java.sql.BatchUpdateException:statement count 5001 exceeds the transaction limitation` 的错误，该如何解决？
 
-In Sqoop, `--batch` means committing 100 `statement`s in each batch, but by default each `statement` contains 100 SQL statements. So, 100 * 100 = 10000 SQL statements, which exceeds 5000, the maximum number of statements allowed in a single TiDB transaction.
-
-Two solutions:
-
-- Add the `-Dsqoop.export.records.per.statement=10` option as follows:
+- 在 Sqoop 中，`--batch` 是指每个批次提交 100 条 statement，但是默认每个 statement 包含 100 条 SQL 语句，所以此时 100 * 100 = 10000 条 SQL 语句，超出了 TiDB 的事务限制 5000 条，可以增加选项 `-Dsqoop.export.records.per.statement=10` 来解决这个问题，完整的用法如下：
 
     
     ```bash
@@ -110,72 +105,72 @@ Two solutions:
         --batch
     ```
 
-- You can also increase the limited number of statements in a single TiDB transaction, but this will consume more memory.
+- 也可以选择增大 TiDB 单个事务允许的语句条数限制，不过这样会占用更多内存。
 
-### Why does Dumpling return `The local disk space is insufficient` error or cause the upstream database to run out of memory when exporting a table?
+### Dumpling 导出时引发上游数据库 OOM 或报错“磁盘空间不足”
 
-This issue might have the following causes:
+该问题可能有如下原因：
 
-+ The database's primary keys are not evenly distributed (for example, when you enable [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)).
-+ The upstream database is TiDB and the exported table is a partitioned table.
+- 数据库主键分布不均匀，例如启用了 [SHARD_ROW_ID_BITS](/shard-row-id-bits.md)
+- 上游数据库为 TiDB，导出表是分区表
 
-For the above cases, Dumpling splits excessively large data chunk for the export and sends queries with excessively large results. To address the issue, you can get the latest version of Dumpling.
+在上述情况下，Dumpling 划分导出子范围时，会划分出过大的子范围，从而向上游发送结果过大的查询。请联系 [AskTUG 社区专家](https://pingkai.cn/tidbcommunity/forum/)获取实验版本的 Dumpling。
 
-### Does TiDB have a function like the Flashback Query in Oracle? Does it support DDL?
+### TiDB 有像 Oracle 那样的 Flashback Query 功能么，DDL 支持么？
 
- Yes, it does. And it supports DDL as well. For details, see [how TiDB reads data from history versions](/read-historical-data.md).
+有，也支持 DDL。详细参考 [TiDB 历史数据回溯](/read-historical-data.md)。
 
-## Migrate the data online
+## 在线数据同步
 
-### Is there a current solution to replicating data from TiDB to other databases like HBase and Elasticsearch?
+### 有没有现成的同步方案，可以将数据同步到 Hbase、Elasticsearh 等其他存储？
 
-No. Currently, the data replication depends on the application itself.
+没有，目前依赖程序自行实现。
 
-## Migrate the traffic
+## 业务流量迁入
 
-### How to migrate the traffic quickly?
+### 如何快速迁移业务流量？
 
-It is recommended to migrate application data from MySQL to TiDB using [TiDB Data Migration](/dm/dm-overview.md) tool. You can migrate the read and write traffic in batches by editing the network configuration as needed. Deploy a stable network LB (such as HAproxy, LVS, F5, and DNS) on the upper layer, in order to implement seamless migration by directly editing the network configuration.
+我们建议通过 [TiDB Data Migration](/dm/dm-overview.md) 进行 MySQL -> TiDB 的业务数据的迁移；业务读写可以按照需求分阶段通过修改网络配置进行流量迁移，建议 DB 上层部署一个稳定的网络 LB（HAproxy、LVS、F5、DNS 等），这样直接修改网络配置就能实现无缝流量迁移。
 
-### Is there a limit for the total write and read capacity in TiDB?
+### TiDB 总读写流量有限制吗？
 
-The total read capacity has no limit. You can increase the read capacity by adding more TiDB servers. Generally the write capacity has no limit as well. You can increase the write capacity by adding more TiKV nodes.
+TiDB 读流量可以通过增加 TiDB server 进行扩展，总读容量无限制，写流量可以通过增加 TiKV 节点进行扩容，基本上写容量也没有限制。
 
-### The error message `transaction too large` is displayed
+### Transaction too large 是什么原因，怎么解决？
 
-Due to the limitation of the underlying storage engine, each key-value entry (one row) in TiDB should be no more than 6MB. You can adjust the [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) configuration value up to 120MB.
+TiDB 限制了单条 KV entry 不超过 6MB，可以修改配置文件中的 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 配置项进行调整，最大可以修改到 120MB。
 
-Distributed transactions need two-phase commit and the bottom layer performs the Raft replication. If a transaction is very large, the commit process would be quite slow and the write conflict is more likely to occur. Moreover, the rollback of a failed transaction leads to an unnecessary performance penalty. To avoid these problems, we limit the total size of key-value entries to no more than 100MB in a transaction by default. If you need larger transactions, modify the value of `txn-total-size-limit` in the TiDB configuration file. The maximum value of this configuration item is up to 10G. The actual limitation is also affected by the physical memory of the machine.
+分布式事务要做两阶段提交，而且底层还需要做 Raft 复制。如果一个事务非常大，提交过程会非常慢，事务写冲突概率会增加，而且事务失败后回滚会导致不必要的性能开销。所以我们设置了 key-value entry 的总大小默认不超过 100MB。如果业务需要使用大事务，可以修改配置文件中的 `txn-total-size-limit` 配置项进行调整，最大可以修改到 10G。实际的大小限制还受机器的物理内存影响。
 
-There are [similar limits](https://cloud.google.com/spanner/docs/limits) on Google Cloud Spanner.
+在 Google 的 Cloud Spanner 上面，也有类似的[限制](https://cloud.google.com/spanner/docs/limits)。
 
-### How to import data in batches?
+### 如何批量导入？
 
-When you import data, insert in batches and keep the number of rows within 10,000 for each batch.
+导入数据的时候，可以分批插入，每批最好不要超过 1w 行。
 
-### Does TiDB release space immediately after deleting data?
+### TiDB 中删除数据后会立即释放空间吗？
 
-None of the `DELETE`, `TRUNCATE` and `DROP` operations release data immediately. For the `TRUNCATE` and `DROP` operations, after the TiDB GC (Garbage Collection) time (10 minutes by default), the data is deleted and the space is released. For the `DELETE` operation, the data is deleted but the space is not released according to TiDB GC. When subsequent data is written into RocksDB and executes `COMPACT`, the space is reused.
+DELETE，TRUNCATE 和 DROP 都不会立即释放空间。对于 TRUNCATE 和 DROP 操作，在达到 TiDB 的 GC (garbage collection) 时间后（默认 10 分钟），TiDB 的 GC 机制会删除数据并释放空间。对于 DELETE 操作 TiDB 的 GC 机制会删除数据，但不会释放空间，而是当后续数据写入 RocksDB 且进行 compact 时对空间重新利用。
 
-### Can I execute DDL operations on the target table when loading data?
+### Load 数据时可以对目标表执行 DDL 操作吗？
 
-No. None of the DDL operations can be executed on the target table when you load data, otherwise the data fails to be loaded.
+不可以，加载数据期间不能对目标表执行任何 DDL 操作，这会导致数据加载失败。
 
-### Does TiDB support the `replace into` syntax?
+### TiDB 是否支持 replace into 语法？
 
-Yes.
+支持。
 
-### Why does the query speed getting slow after deleting data?
+### 删除数据后查询速度为何会变慢？
 
-Deleting a large amount of data leaves a lot of useless keys, affecting the query efficiency. The [Region Merge feature](/best-practices/massive-regions-best-practices.md#method-3-enable-region-merge) can solve this problem. For more details, see the [deleting data section in TiDB Best Practices](https://www.pingcap.com/blog/tidb-best-practice/#write).
+删除大量数据后，会有很多无用的 key 存在，影响查询效率。要解决该问题，可以尝试开启 [Region Merge](/best-practices/massive-regions-best-practices.md#方法五开启-region-merge) 功能，具体可参考[最佳实践](https://pingkai.cn/tidbcommunity/blog/7f818fc0)中的删除数据部分。
 
-### What is the most efficient way of deleting data?
+### 数据删除最高效最快的方式？
 
-When deleting a large amount of data, it is recommended to use `Delete from t where xx limit 5000;`. It deletes through the loop and uses `Affected Rows == 0` as a condition to end the loop, so as not to exceed the limit of transaction size. With the prerequisite of meeting business filtering logic, it is recommended to add a strong filter index column or directly use the primary key to select the range, such as `id >= 5000*n+m and id < 5000*(n+1)+m`.
+在删除大量数据的时候，建议使用 `Delete from t where xx limit 5000`（xx 建议在满足业务过滤逻辑下，尽量加上强过滤索引列或者直接使用主键选定范围，如 `id >= 5000*n+m and id <= 5000*(n+1)+m` 这样的方案，通过循环来删除，用 `Affected Rows == 0` 作为循环结束条件，这样避免遇到事务大小的限制。如果一次删除的数据量非常大，这种循环的方式会越来越慢，因为每次删除都是从前向后遍历，前面的删除之后，短时间内会残留不少删除标记（后续会被 GC 掉），影响后面的 Delete 语句。如果有可能，建议把 Where 条件细化。可以参考官网[最佳实践](https://pingkai.cn/tidbcommunity/blog/7f818fc0)。
 
-If the amount of data that needs to be deleted at a time is very large, this loop method will get slower and slower because each deletion traverses backward. After deleting the previous data, lots of deleted flags remain for a short period (then all will be processed by Garbage Collection) and influence the following Delete statement. If possible, it is recommended to refine the Where condition. See [details in TiDB Best Practices](https://www.pingcap.com/blog/tidb-best-practice/#write).
+### TiDB 如何提高数据加载速度？
 
-### How to improve the data loading speed in TiDB?
+主要有两个方面：
 
-- The [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) tool is developed for distributed data import. It should be noted that the data import process does not perform a complete transaction process for performance reasons. Therefore, the ACID constraint of the data being imported during the import process cannot be guaranteed. The ACID constraint of the imported data can only be guaranteed after the entire import process ends. Therefore, the applicable scenarios mainly include importing new data (such as a new table or a new index) or the full backup and restoring (truncate the original table and then import data).
-- Data loading in TiDB is related to the status of disks and the whole cluster. When loading data, pay attention to metrics like the disk usage rate of the host, TiClient Error, Backoff, Thread CPU and so on. You can analyze the bottlenecks using these metrics.
+- 目前已开发分布式导入工具 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)，需要注意的是数据导入过程中为了性能考虑，不会执行完整的事务流程，所以没办法保证导入过程中正在导入的数据的 ACID 约束，只能保证整个导入过程结束以后导入数据的 ACID 约束。因此适用场景主要为新数据的导入（比如新的表或者新的索引），或者是全量的备份恢复（先 Truncate 原表再导入）。
+- TiDB 的数据加载与磁盘以及整体集群状态相关，加载数据时应关注该主机的磁盘利用率，TiClient Error/Backoff/Thread CPU 等相关 metric，可以分析相应瓶颈。

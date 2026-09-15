@@ -1,22 +1,21 @@
 ---
-title: Create a Private Mirror
-summary: Learn how to create a private mirror.
+title: 搭建私有镜像
+summary: TiUP 提供了构建私有镜像的方案，使用 mirror 指令来实现，可用于离线部署。执行 `tiup mirror clone` 命令，可构建本地地镜像。克隆完成后，可以通过 SCP、NFS、HTTP 或 HTTPS 共享仓库。使用 `TIUP_MIRRORS` 环境变量来使用镜像。重新运行 `tiup mirror clone` 命令会创建新的 manifest，并下载可用的最新版本的组件。可以创建自定义仓库，并使用自己构建的 TiDB 组件。
 ---
 
-# Create a Private Mirror
+# 搭建私有镜像
 
-When creating a private cloud, usually, you need to use an isolated network environment, where the official mirror of TiUP is not accessible. Therefore, you can create a private mirror, which is mainly implemented by the `mirror` command. You can also use the `mirror` command for offline deployment. A private mirror also allows you to use components that you build and package by yourself.
+在构建私有云时，通常会使用隔离的网络环境，此时无法访问 TiUP 的官方镜像。因此，TiUP 提供了构建私有镜像的方案，它主要由 mirror 指令来实现，该方案也可用于离线部署。使用私有镜像，你可以使用自己构建和打包的组件。
 
-## TiUP `mirror` overview
+## mirror 指令介绍
 
-Execute the following command to get the help information of the `mirror` command:
-
+`mirror` 指令的帮助文档如下：
 
 ```bash
 tiup mirror --help
 ```
 
-```bash
+```
 The `mirror` command is used to manage a component repository for TiUP, you can use
 it to create a private repository, or to add new component to an existing repository.
 The repository can be used either online or offline.
@@ -30,7 +29,7 @@ Available Commands:
   init        Initialize an empty repository
   sign        Add signatures to a manifest file
   genkey      Generate a new key pair
-  clone       Clone a local mirror from a remote mirror and download all selected components
+  clone       Clone a local mirror from remote mirror and download all selected components
   merge       Merge two or more offline mirrors
   publish     Publish a component
   show        Show the mirror address
@@ -40,59 +39,62 @@ Available Commands:
   grant       grant a new owner
   rotate      Rotate root.json
 
+Flags:
+  -h, --help          help for mirror
+      --repo string   Path to the repository
+
 Global Flags:
-      --help                 Help for this command
+      --help Help for this command
 
 Use "tiup mirror [command] --help" for more information about a command.
 ```
 
-## Clone a mirror
+## 克隆镜像
 
-You can run the `tiup mirror clone` command to build a local mirror:
-
+执行 `tiup mirror clone` 命令，可构建本地地镜像：
 
 ```bash
 tiup mirror clone <target-dir> [global-version] [flags]
 ```
 
-- `target-dir`: used to specify the directory in which cloned data is stored.
-- `global-version`: used to quickly set a global version for all components.
+- `target-dir`：指需要把克隆下来的数据放到哪个目录里。
+- `global-version`：用于为所有组件快速设置一个共同的版本。
 
-The `tiup mirror clone` command provides many optional flags (might provide more in the future). These flags can be divided into the following categories according to their intended usages:
+`tiup mirror clone` 命令提供了很多可选参数，日后可能会提供更多。但这些参数其实可以分为四类：
 
-- Determines whether to use prefix matching to match the version when cloning
+1. 克隆时是否使用前缀匹配方式匹配版本
 
-    If the `--prefix` flag is specified, the version number is matched by prefix for the clone. For example, if you specify `--prefix` as "v5.0.0", then "v5.0.0-rc", and "v5.0.0" are matched.
+    如果指定了 `--prefix` 参数，则会才用前缀匹配方式匹配克隆的版本号。例：指定 `--prefix` 时，填写版本 "v5.0.0" 将会匹配 "v5.0.0-rc", "v5.0.0"
 
-- Determines whether to use the full clone
+2. 是否全量克隆
 
-    If you specify the `--full` flag, you can clone the official mirror fully.
+    如果指定了 `--full` 参数，则会完整地克隆官方镜像。
 
-    > **Note:**
+    > **注意：**
     >
-    > If `--full`, `global-version` flags, and the component versions are not specified, only some meta information is cloned.
+    > 如果既不指定 `--full` 参数，又不指定 `global-version` 或克隆的 component 版本，那么 TiUP 就只会克隆一些元信息。
 
-- Determines whether to clone packages from the specific platform
+3. 限定只克隆特定平台的包
 
-    If you want to clone packages only for a specific platform, use `-os` and `-arch` to specify the platform. For example:
+    如果只想克隆某个平台的包，那么可以使用 `--os` 和 `--arch` 来限定：
 
-    - Execute the `tiup mirror clone <target-dir> [global-version] --os=linux` command to clone for linux.
-    - Execute the `tiup mirror clone <target-dir> [global-version] --arch=amd64` command to clone for amd64.
-    - Execute the `tiup mirror clone <target-dir> [global-version] --os=linux --arch=amd64` command to clone for linux/amd64.
+    - 只想克隆 linux 平台的，则执行 `tiup mirror clone <target-dir> [global-version] --os=linux`
+    - 只想克隆 amd64 架构的，则执行 `tiup mirror clone <target-dir> [global-version] --arch=amd64`
+    - 只想克隆 linux/amd64 的，则执行 `tiup mirror clone <target-dir> [global-version] --os=linux --arch=amd64`
 
-- Determines whether to clone a specific version of a package
+4. 限定只克隆组件的特定版本
 
-    If you want to clone only one version (not all versions) of a component, use `--<component>=<version>` to specify this version. For example:
+    如果只想克隆某个组件的某一个版本而不是所有版本，则使用 `--<component>=<version>` 来限定，例如：
 
-    - Execute the `tiup mirror clone <target-dir> --tidb 8.5.8` command to clone the 8.5.8 version of the TiDB component.
-    - Run the `tiup mirror clone <target-dir> --tidb 8.5.8 --tikv all` command to clone the 8.5.8 version of the TiDB component and all versions of the TiKV component.
-    - Run the `tiup mirror clone <target-dir> 8.5.8` command to clone the 8.5.8 version of all components in a cluster.
+    - 只想克隆 TiDB 的 v8.5.8 版本，则执行 `tiup mirror clone <target-dir> --tidb v8.5.8`
+    - 只想克隆 TiDB 的 v8.5.8 版本，以及 TiKV 的所有版本，则执行 `tiup mirror clone <target-dir> --tidb v8.5.8 --tikv all`
+    - 克隆一个集群的所有组件的 v8.5.8 版本，则执行 `tiup mirror clone <target-dir> v8.5.8`
 
-After cloning, signing keys are set up automatically.
+克隆完成后，签名密钥会自动设置。
 
-### Manage the private repository
+### 管理私有仓库
 
-You can share the repository cloned using `tiup mirror clone` among hosts either by sharing files via SCP, NFS, or by making the repository available over the HTTP or HTTPS protocol. Use `tiup mirror set <location>` to specify the location of the repository.
+你可以通过 SCP 和 NFS 文件共享方式，将 `tiup mirror clone` 克隆下来的仓库共享给其他主机，也可以通过 HTTP 或 HTTPS 协议来共享。可以使用 `tiup mirror set <location>` 指定仓库的位置。
 
 ```bash
 tiup mirror set /shared_data/tiup
@@ -102,59 +104,59 @@ tiup mirror set /shared_data/tiup
 tiup mirror set https://tiup-mirror.example.com/
 ```
 
-> **Note:**
+> **注意：**
 >
-> If you run `tiup mirror set...` on the machine where you run `tiup mirror clone`, the next time you run `tiup mirror clone...`, the machine clones from the local mirror, not the remote one. Therefore, you need to reset the mirror by running `tiup mirror set --reset` before updating the private mirror.
+> 如果在执行了 `tiup mirror clone` 的机器上执行 `tiup mirror set`，下次执行 `tiup mirror clone` 时，机器会从本地镜像而非远程镜像进行克隆。因此，更新私有镜像前，需要执行 `tiup mirror set --reset` 来重置镜像。
 
-Another way of using a mirror is to use the `TIUP_MIRRORS` environment variable. Here is an example for running `tiup list` with a private repository.
+还可以通过 `TIUP_MIRRORS` 环境变量来使用镜像。下面是一个使用私有仓库运行 `tiup list` 的例子。
 
 ```bash
 export TIUP_MIRRORS=/shared_data/tiup
 tiup list
 ```
 
-`TIUP_MIRRORS` setting can permanently change the mirror configuration, for example, `tiup mirror set`. For details, see [tiup issue #651](https://github.com/pingcap/tiup/issues/651).
+设置 `TIUP_MIRRORS` 会永久改变镜像配置，例如 `tiup mirror set`。详情请参考 [tiup issue #651](https://github.com/pingcap/tiup/issues/651)。
 
-### Update the private repository
+### 更新私有仓库
 
-If you run the `tiup mirror clone` command again with the same `target-dir`, the machine will create new manifests and download the latest versions of components available.
+如果使用同样的 `target-dir` 目录再次运行 `tiup mirror clone` 命令，机器会创建新的 manifest，并下载可用的最新版本的组件。
 
-> **Note:**
+> **注意：**
 >
-> Before recreating the manifest, ensure that all components and versions (including earlier ones downloaded previously) are included.
+> 重新创建 manifest 之前，请确保所有组件和版本（包括之前下载的早期版本）都包含在内。
 
-## Custom repository
+## 自定义仓库
 
-You can create a custom repository to work with TiDB components like TiDB, TiKV, or PD that you build by yourself. It is also possible to create your own tiup components.
+你可以创建一个自定义仓库，以使用自己构建的 TiDB 组件，例如 TiDB、TiKV 或 PD。你也可以创建自己的 TiUP 组件。
 
-To create your own components, run the `tiup package` command and perform as instructed in [Component packaging](https://github.com/pingcap/tiup/blob/master/doc/user/package.md).
+要创建自己的组件，请执行 `tiup package` 命令，并按照[组件打包](https://github.com/pingcap/tiup/blob/master/doc/user/package.md)的说明进行操作。
 
-### Create a custom repository
+### 创建自定义仓库
 
-To create an empty repository in `/data/mirror`:
+以下命令在 `/data/mirror` 目录下创建一个空仓库：
 
 ```bash
 tiup mirror init /data/mirror
 ```
 
-As part of creating the repository, keys will be written to `/data/mirror/keys`.
+创建仓库时，密钥会被写入 `/data/mirror/keys`。
 
-To create a new private key in `~/.tiup/keys/private.json`:
+以下命令在 `~/.tiup/keys/private.json` 中创建一个私钥：
 
 ```bash
 tiup mirror genkey
 ```
 
-Grant `jdoe` with private key `~/.tiup/keys/private.json` ownership of `/data/mirror`:
+以下命令为 `jdoe` 授予 `/data/mirror` 路径下私钥 `~/.tiup/keys/private.json` 的所有权：
 
 ```bash
 tiup mirror set /data/mirror
 tiup mirror grant jdoe
 ```
 
-### Work with custom components
+### 使用自定义组件
 
-1. Create a custom component called hello.
+1. 创建一个名为 `hello` 的自定义组件：
 
     ```bash
     $ cat > hello.c << END
@@ -168,9 +170,9 @@ tiup mirror grant jdoe
     $ tiup package hello --entry hello --name hello --release v0.0.1
     ```
 
-    `package/hello-v0.0.1-linux-amd64.tar.gz` is created.
+    `package/hello-v0.0.1-linux-amd64.tar.gz` 创建成功。
 
-2. Create a repository and a private key, and grant ownership to the repository.
+2. 创建一个仓库和一个私钥，并为仓库授予所有权：
 
     ```bash
     $ tiup mirror init /tmp/m
@@ -183,7 +185,7 @@ tiup mirror grant jdoe
     tiup mirror publish hello v0.0.1 package/hello-v0.0.1-linux-amd64.tar.gz hello
     ```
 
-3. Run the component. If it is not installed yet, it will be downloaded first.
+3. 运行组件。如果组件还没有安装，会先下载安装：
 
     ```bash
     $ tiup hello
@@ -195,7 +197,7 @@ tiup mirror grant jdoe
     hello
     ```
 
-    With `tiup mirror merge`, you can merge a repository with custom components into another one. This assumes that all components in `/data/my_custom_components` are signed by the current `$USER`.
+    执行 `tiup mirror merge` 命令，可以将自定义组件的仓库合并到另一个仓库中。这一操作假设 `/data/my_custom_components` 中的所有组件都使用 `$USER` 签名：
 
     ```bash
     $ tiup mirror set /data/my_mirror

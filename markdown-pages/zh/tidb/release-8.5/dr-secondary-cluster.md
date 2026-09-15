@@ -1,72 +1,71 @@
 ---
-title: DR Solution Based on Primary and Secondary Clusters
-summary: Learn how to implement primary-secondary disaster recovery based on TiCDC.
+title: 基于主备集群的容灾方案
+summary: 了解如何使用 TiCDC 构建主备集群进行容灾。
 ---
 
-# DR Solution Based on Primary and Secondary Clusters
+# 基于主备集群的容灾方案
 
-Disaster recovery (DR) based on primary and secondary databases is a common solution. In this solution, the DR system has a primary cluster and a secondary cluster. The primary cluster handles user requests, while the secondary cluster backs up data from the primary cluster. When the primary cluster fails, the secondary cluster takes over services and continues to provide services using the backup data. This ensures that the business system continues to run normally without any interruptions caused by a failure.
+使用主、备数据库进行容灾是一种常用的容灾方式。在这种方案下，系统有一个主用集群和一个备用集群。主集群用于处理用户的请求，备集群负责备份主集群的数据。当主集群发生故障时，系统可以切换到备集群，使用备份的数据继续提供服务。这样，系统就可以在发生故障的情况下继续正常运行，避免因为故障而导致的服务中断。
 
-The primary-secondary DR solution has the following benefits:
+主备集群容灾方案具有如下优势：
 
-- High availability: The primary-secondary architecture enhances system availability, ensuring fast recovery from any failure.
-- Fast switchover: When the primary cluster fails, the system can quickly switch to the secondary cluster and continue to provide services.
-- Data consistency: The secondary cluster backs up the data from the primary cluster in almost real time. In this way, the data is basically up-to-date when the system switches to the secondary cluster due to a failure.
+- 高可用性：主、备集群的架构可以有效提高系统的可用性，使得系统在遇到故障时能够快速恢复。
+- 快速切换：在主集群发生故障的情况下，系统可以快速切换到备用集群，继续提供服务。
+- 数据一致性：备用集群会近实时备份主集群的数据，因此，在故障发生后切换到备集群时，数据基本是最新的。
 
-This document includes the following contents:
+本文包含以下主要内容：
 
-- Set up a primary cluster and a secondary cluster.
-- Replicate data from the primary cluster to the secondary cluster.
-- Monitor the clusters.
-- Perform a DR switchover.
+- 构建主备集群
+- 从主集群复制数据至备集群
+- 监控集群
+- 容灾切换
 
-Meanwhile, this document also describes how to query business data on the secondary cluster and how to perform bidirectional replication between the primary and secondary clusters.
+同时，本文还介绍了如何在备用集群上进行业务查询，以及如何在主备集群间进行双向同步。
 
-## Set up primary and secondary clusters based on TiCDC
+## 基于 TiCDC 构建 TiDB 主备集群
 
-### Architecture
+### 架构概览
 
-![TiCDC secondary cluster architecture](https://docs-download.pingcap.com/media/images/docs/dr/dr-ticdc-secondary-cluster.png)
+![TiCDC secondary cluster architecture](https://docs-download.pingcap.com/media/images/docs-cn/dr/dr-ticdc-secondary-cluster.png)
 
-The preceding architecture includes two TiDB clusters: a primary cluster and a secondary cluster.
+上述架构包含两个 TiDB 集群：Primary Cluster 和 Secondary Cluster。
 
-- Primary cluster: The active cluster that runs in region 1 and has three replicas. This cluster handles read and write requests.
-- Secondary cluster: The standby cluster that runs in region 2 and replicates data from the primary cluster through TiCDC.
+- Primary Cluster：主用集群，运行在区域 1 (Region 1)，三副本，用于处理读写业务。
+- Secondary Cluster：备用集群，运行在区域 2 (Region 2)，通过 TiCDC 从 Primary Cluster 同步数据。
 
-This DR architecture is simple and easy to use. Being capable of tolerating regional failures, the DR system guarantees that the write performance of the primary cluster does not deteriorate, and the secondary cluster can handle some read-only business that is not latency-sensitive. The Recovery Point Objective (RPO) of this solution is in seconds, and the Recovery Time Objective (RTO) can be minutes or even lower. This is a solution recommended by many database vendors for important production systems.
+这种容灾架构简洁易用，可以容忍区域级别的故障，既可以保证主用集群的写入性能不会下降，还可以在备用集群处理一些延迟不敏感的只读业务。该方案的 Recovery Point Objective (RPO) 在秒级别，Recovery Time Objective (RTO) 可以达到分钟级别甚至更低。这个方案适用于重要的生产系统。
 
-> **Note:**
+> **注意：**
 >
-> - ["Region" in TiKV](/glossary.md#regionpeerraft-group) means a range of data while the term "region" means a physical location. The two terms are not interchangeable.
-> - Do not run multiple changefeeds to replicate data to the secondary cluster, or run another secondary cluster with the presence of a secondary cluster already. Otherwise, the integrity of data transactions of the secondary cluster cannot be guaranteed.
+> 不要使用多个 TiCDC Changefeed 同步数据至备用集群，也不要在备用集群基础上运行另一个备用集群，否则，备用集群的数据事务完整性无法保证。
 
-### Set up primary and secondary clusters
+### 搭建主备集群
 
-In this document, the TiDB primary and secondary clusters are deployed in two different regions (region 1 and region 2). TiCDC is deployed together with the secondary cluster, because there is a certain network latency between the primary and secondary clusters. Deploying TiCDC with the secondary cluster can avoid the impact of network latency, which helps achieve optimal replication performance. The deployment topology of the example provided in this document is as follows (one component node is deployed on one server):
+本文将 TiDB 主集群和备用集群分别部署在两个不同的区域（区域 1 和区域 2）。由于主备集群之间存在一定的网络延迟，TiCDC 与 TiDB 备用集群应部署在一起，以实现最好的数据同步性能。在本教程示例中，每台服务器部署一个组件节点，具体的部署拓扑如下：
 
-|Region | Host | Cluster | Component |
+|区域 | 主机 | 集群 | 组件 |
 | --- | --- | --- | --- |
-| Region 1 | 10.0.1.9 | Primary | Monitor, Grafana, or AlterManager |
-| Region 2 | 10.0.1.11 | Secondary | Monitor, Grafana, or AlterManager |
-| Region 1 | 10.0.1.1/10.0.1.2/10.0.1.3 | Primary | PD |
-| Region 2 | 10.1.1.1/10.1.1.2/10.1.1.3 | Secondary | PD |
-| Region 2 | 10.1.1.9/10.1.1.10 | Primary | TiCDC |
-| Region 1 | 10.0.1.4/10.0.1.5 | Primary| TiDB |
-| Region 2 | 10.1.1.4/10.1.1.5 | Secondary | TiDB |
-| Region 1 | 10.0.1.6/10.0.1.7/10.0.1.8 | Primary | TiKV |
-| Region 2 | 10.1.1.6/10.1.1.7/10.1.1.8 | Secondary | TiKV |
+| 区域 1 | 10.0.1.1/10.0.1.2/10.0.1.3 | Primary | PD |
+| 区域 1 | 10.0.1.4/10.0.1.5 | Primary| TiDB |
+| 区域 1 | 10.0.1.6/10.0.1.7/10.0.1.8 | Primary | TiKV |
+| 区域 1 | 10.0.1.9 | Primary | Monitor、Grafana 或 AlterManager |
+| 区域 2 | 10.1.1.9/10.1.1.10 | Primary | TiCDC |
+| 区域 2 | 10.1.1.1/10.1.1.2/10.1.1.3 | Secondary | PD |
+| 区域 2 | 10.1.1.4/10.1.1.5 | Secondary | TiDB |
+| 区域 2 | 10.1.1.6/10.1.1.7/10.1.1.8 | Secondary | TiKV |
+| 区域 2 | 10.0.1.11 | Secondary | Monitor、Grafana 或 AlterManager |
 
-For server configurations, see the following documents:
+关于服务器配置信息，可以参考如下文档：
 
-- [Software and hardware recommendations for TiDB](/hardware-and-software-requirements.md)
-- [Software and hardware recommendations for TiCDC](/ticdc/deploy-ticdc.md#software-and-hardware-recommendations)
+- [TiDB 软件和硬件环境需求](/hardware-and-software-requirements.md)
+- [TiCDC 软件和硬件环境推荐配置](/ticdc/deploy-ticdc.md#软件和硬件环境推荐配置)
 
-For details about how to deploy TiDB primary and secondary clusters, see [Deploy a TiDB cluster](/production-deployment-using-tiup.md).
+部署 TiDB 主集群和备用集群的详细过程，可以参考[部署 TiDB 集群](/production-deployment-using-tiup.md)。
 
-When deploying TiCDC, note that the secondary cluster and TiCDC must be deployed and managed together, and the network between them must be connected.
+部署 TiCDC 组件需要注意的是，Secondary Cluster 和 TiCDC 需要在一起部署和管理，并且它们之间的网络需要能够连通。
 
-- To deploy TiCDC on an existing primary cluster, see [Deploy TiCDC](/ticdc/deploy-ticdc.md#add-or-scale-out-ticdc-to-an-existing-tidb-cluster-using-tiup).
-- To deploy a new primary cluster and TiCDC, use the following deployment template and modify the configuration parameters as needed:
+- 如果需要在已有的 Primary Cluster 上部署 TiCDC，请参考[部署 TiCDC 组件](/ticdc/deploy-ticdc.md#使用-tiup-在原有-tidb-集群上新增或扩容-ticdc-组件)。
+- 如果部署全新的 Primary Cluster 和 TiCDC 组件，则可以使用以下 TiUP 部署模版，并按照需要修改配置参数：
 
     ```yaml
     global:
@@ -103,65 +102,65 @@ When deploying TiCDC, note that the secondary cluster and TiCDC must be deployed
         ticdc_cluster_id: "DR_TiCDC"
     ```
 
-### Replicate data from the primary cluster to the secondary cluster
+### 从主集群复制数据到备用集群
 
-After setting up the TiDB primary and secondary clusters, first migrate the data from the primary cluster to the secondary cluster, and then create a replication task to replicate real-time change data from the primary cluster to the secondary cluster.
+搭建好 TiDB 主集群和备用集群之后，需要先将主集群的数据迁移到备用集群，然后创建同步任务从主集群复制实时变更数据到备用集群。
 
-#### Select an external storage
+#### 选择外部存储
 
-An external storage is used when migrating data and replicating real-time change data. Amazon S3 is a recommended choice. If the TiDB cluster is deployed in a self-built data center, the following methods are recommended:
+数据迁移和实时变更数据复制都需要使用外部存储。推荐使用 Amazon S3 作为存储系统。如果 TiDB 集群部署在自建机房中，则推荐以下方式：
 
-* Build [MinIO](https://docs.min.io/docs/minio-quickstart-guide.html) as the backup storage system, and use the S3 protocol to back up data to MinIO.
-* Mount Network File System (NFS, such as NAS) disks to br command-line tool, TiKV, and TiCDC instances, and use the POSIX file system interface to write backup data to the corresponding NFS directory.
+* 搭建 [MinIO](https://docs.min.io/docs/minio-quickstart-guide.html) 作为备份存储系统，使用 S3 协议将数据备份到 MinIO 中。
+* 挂载 NFS 盘（如 NAS）到 br、TiKV 和 TiCDC 实例节点，使用 POSIX 文件系统接口将备份数据写入对应的 NFS 目录中。
 
-The following example uses MinIO as the storage system and is for reference only. Note that you need to prepare a separate server to deploy MinIO in region 1 or region 2.
+下面以 MinIO 为示例，仅供参考。注意需要在区域 1 或者区域 2 中准备独立的服务器部署 MinIO。
 
 ```shell
 wget https://dl.min.io/server/minio/release/linux-amd64/minio
 chmod +x minio
-# Configure access-key and access-secret-id to access MinIO
-export HOST_IP='10.0.1.10' # Replace it with the IP address of MinIO
+# 配置访问 MinIO 的 access-key 和 access-secret-id
+export HOST_IP='10.0.1.10' # 替换为实际部署 MinIO 的机器 IP 地址
 export MINIO_ROOT_USER='minio'
 export MINIO_ROOT_PASSWORD='miniostorage'
-# Create the redo and backup directories. `backup` and `redo` are bucket names.
+# 创建 TiCDC redo log 和 backup 数据保存的目录，其中 redo、backup 为 bucket 名字
 mkdir -p data/redo
 mkdir -p data/backup
-# Start minio at port 6060
+# 启动 MinIO，暴露端口在 6060
 nohup ./minio server ./data --address :6060 &
 ```
 
-The preceding command starts a MinIO server on one node to simulate Amazon S3 services. Parameters in the command are configured as follows:
+上述命令启动了一个单节点的 MinIO server 模拟 S3 服务，相关参数为：
 
-* `endpoint`: `http://10.0.1.10:6060/`
-* `access-key`: `minio`
-* `secret-access-key`: `miniostorage`
-* `bucket`: `redo`/`backup`
+* `endpoint`：`http://10.0.1.10:6060/`
+* `access-key`：`minio`
+* `secret-access-key`：`miniostorage`
+* `bucket`：`redo`/`backup`
 
-The link is as follows:
+其访问链接为：
 
 ```
 s3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true
 ```
 
-#### Migrate data
+#### 数据迁移
 
-Use the [backup and restore feature](/br/backup-and-restore-overview.md) to migrate data from the primary cluster to the secondary cluster.
+在 TiDB 主备集群之间使用 [TiDB 备份恢复功能 BR](/br/backup-and-restore-overview.md) 进行数据迁移。
 
-1. Disable GC. To ensure that newly written data is not deleted during incremental migration, you should disable GC for the upstream cluster before backup. In this way, history data is not deleted.
+1. 关闭垃圾回收机制 (GC)。为了保证增量迁移过程中新写入的数据不丢失，在开始备份之前，需要关闭上游集群的 GC 机制，以确保系统不再清理历史数据。
 
-    Execute the following statement to disable GC:
+    执行如下命令关闭 GC：
 
     ```sql
     SET GLOBAL tidb_gc_enable=FALSE;
     ```
 
-    To verify that the change takes effect, query the value of `tidb_gc_enable`:
+    查询 `tidb_gc_enable` 的取值，以确认 GC 是否已关闭：
 
     ```sql
     SELECT @@global.tidb_gc_enable;
     ```
 
-    If the value is `0`, it means that GC is disabled:
+    输出结果为 `0` 表明 GC 已关闭：
 
     ```
     +-------------------------+
@@ -172,11 +171,11 @@ Use the [backup and restore feature](/br/backup-and-restore-overview.md) to migr
     1 row in set (0.00 sec)
     ```
 
-    > **Note:**
+    > **注意：**
     >
-    > In production clusters, performing a backup with GC disabled might affect cluster performance. It is recommended that you back up data during off-peak hours, and set `RATE_LIMIT` to a proper value to avoid performance degradation.
+    > 在生产集群中，关闭 GC 机制和备份操作会一定程度上降低集群的读性能。建议在业务低峰期进行备份，并设置合适的 `RATE_LIMIT` 限制备份操作对线上业务的影响。
 
-2. Back up data. Execute the `BACKUP` statement in the upstream cluster to back up data:
+2. 备份数据。在 TiDB 主集群中执行 `BACKUP` 语句备份数据：
 
     ```sql
     BACKUP DATABASE * TO '`s3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true`';
@@ -191,9 +190,9 @@ Use the [backup and restore feature](/br/backup-and-restore-overview.md) to migr
     1 row in set (2.11 sec)
     ```
 
-    After the `BACKUP` statement is executed, TiDB returns metadata about the backup data. Pay attention to `BackupTS`, because data generated before it is backed up. In this document, `BackupTS` is used as **the start of incremental migration**.
+    备份语句提交成功后，TiDB 会返回关于备份数据的元信息，这里需要重点关注 `BackupTS`，它意味着该时间点之前的数据会被备份。本文后续步骤中，使用 `BackupTS` 作为**实时变更数据复制的起始时间点**。
 
-3. Restore data. Execute the `RESTORE` statement in the secondary cluster to restore data:
+3. 恢复数据。在 TiDB 备用集群中执行 `RESTORE` 语句恢复数据：
 
     ```sql
     RESTORE DATABASE * FROM '`s3://backup?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true`';
@@ -208,37 +207,35 @@ Use the [backup and restore feature](/br/backup-and-restore-overview.md) to migr
     1 row in set (41.85 sec)
     ```
 
-#### Replicate incremental data
+#### 复制实时变更数据
 
-After migrating data as described in the preceding section, you can replicate incremental data from the primary cluster to the secondary cluster starting from the **BackupTS**.
+完成以上数据迁移的操作步骤后，从备份的 **BackupTS** 时间点开始同步主集群增量变更数据到备用集群。
 
-1. Create a changefeed.
+1. 创建 TiCDC 同步任务 Changefeed。
 
-    Create a changefeed configuration file `changefeed.toml`.
+    创建 Changefeed 配置文件并保存为 `changefeed.toml`。
 
     ```toml
     [consistent]
-    # eventual consistency: redo logs are used to ensure eventual consistency in disaster scenarios.
+    # eventual consistency：使用 redo log，提供上游灾难情况下的最终一致性。
     level = "eventual"
-    # The size of a single redo log, in MiB. The default value is 64, and the recommended value is less than 128.
+    # 单个 redo log 文件大小，单位 MiB，默认值 64，建议该值不超过 128。
     max-log-size = 64
-    # The interval for refreshing or uploading redo logs to Amazon S3, in milliseconds. The default value is 1000, and the recommended value range is 500-2000.
+    # 刷新或上传 redo log 至 S3 的间隔，单位毫秒，默认 1000，建议范围 500-2000。
     flush-interval = 2000
-    # The path where redo logs are saved.
+    # 存储 redo log 的地址
     storage = "s3://redo?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true"
     ```
 
-    In the primary cluster, run the following command to create a changefeed from the primary to the secondary cluster:
+    在主用集群中，执行以下命令创建从主用集群到备用集群的同步链路：
 
     ```shell
-    tiup cdc cli changefeed create --server=http://10.1.1.9:8300 \
-    --sink-uri="mysql://{username}:{password}@10.1.1.4:4000" \
-    --changefeed-id="dr-primary-to-secondary" --start-ts="431434047157698561"
+    tiup cdc cli changefeed create --server=http://10.1.1.9:8300 --sink-uri="mysql://{username}:{password}@10.1.1.4:4000" --changefeed-id="dr-primary-to-secondary" --start-ts="431434047157698561" --config changefeed.toml
     ```
 
-    For more information about the changefeed configurations, see [TiCDC Changefeed Configurations](/ticdc/ticdc-changefeed-config.md).
+    更多关于 Changefeed 的配置，请参考 [TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)。
 
-2. To check whether a changefeed task runs properly, run the `changefeed query` command. The query result includes the task information and the task state. You can specify the `--simple` or `-s` argument to display only the basic replication state and the checkpoint information. If you do not specify this argument, the output includes detailed task configuration, replication state, and replication table information.
+2. 查询 Changefeed 是否正常运行。使用 `changefeed query` 命令可以查询特定同步任务（对应某个同步任务的信息和状态），指定 `--simple` 或 `-s` 参数会简化输出，提供基本的同步状态和 checkpoint 信息。不指定该参数会输出详细的任务配置、同步状态和同步表信息。
 
     ```shell
     tiup cdc cli changefeed query -s --server=http://10.1.1.9:8300 --changefeed-id="dr-primary-to-secondary"
@@ -247,29 +244,29 @@ After migrating data as described in the preceding section, you can replicate in
     ```shell
     {
     "state": "normal",
-    "tso": 431434047157998561,  # The TSO to which the changefeed has been replicated
-    "checkpoint": "2020-08-27 10:12:19.579", # The physical time corresponding to the TSO
+    "tso": 431434047157998561,  # changefeed 已经同步到的时间点
+    "checkpoint": "2020-08-27 10:12:19.579", # TSO 对应的物理时间点
     "error": null
     }
     ```
 
-3. Enable GC.
+3. 重新开启 GC。
 
-    TiCDC ensures that history data is not garbage collected before it is replicated. Therefore, after creating a changefeed from the primary cluster to the secondary cluster, you can execute the following statement to enable GC again.
+    TiCDC 可以保证未同步的历史数据不会被回收。因此，创建完从主集群到备用集群的 Changefeed 之后，就可以执行如下命令恢复集群的垃圾回收功能。
 
-   Execute the following statement to enable GC:
+   执行如下命令打开 GC：
 
     ```sql
     SET GLOBAL tidb_gc_enable=TRUE;
     ```
 
-    To verify that the change takes effect, query the value of `tidb_gc_enable`:
+    查询 `tidb_gc_enable` 的取值，判断 GC 是否已开启：
 
     ```sql
     SELECT @@global.tidb_gc_enable;
     ```
 
-    If the value is `1`, it means that GC is enabled:
+    结果输出 `1` 表明 GC 已开启：
 
     ```
     +-------------------------+
@@ -280,23 +277,23 @@ After migrating data as described in the preceding section, you can replicate in
     1 row in set (0.00 sec)
     ```
 
-### Monitor the primary and secondary clusters
+### 主备集群状态监控
 
-Currently, no DR dashboard is available in TiDB. You can check the status of TiDB primary and secondary clusters using the following dashboards and decide whether to perform a DR switchover:
+TiDB 目前还没有提供 DR Dashboard，你可以通过以下 Dashboard 了解 TiDB 主备集群的状态，从而决定是否需要进行容灾切换：
 
-- [TiDB Key Metrics](/grafana-overview-dashboard.md)
-- [Changefeed Metrics](/ticdc/monitor-ticdc.md#changefeed)
+- [TiDB 集群运行状态 Dashboard](/grafana-overview-dashboard.md)
+- [Changefeed 运行状态](/ticdc/monitor-ticdc.md#changefeed-面板)
 
-### Perform DR switchover
+### 容灾切换
 
-This section describes how to perform a planned DR switchover, a DR switchover upon disasters, and the steps to rebuild a secondary cluster.
+本部分介绍容灾演练，遇到真正灾难时的主备切换，以及重建灾备集群的步骤。
 
-#### Planned primary and secondary switchover
+#### 计划中的主备切换
 
-It is important to conduct regular DR drills for critical business systems to test their reliability. The following are the recommended steps for DR drills. Note that simulated business writes and usage of proxy services to access databases are not considered, and therefore the steps might differ from actual application scenarios. You can modify the configurations as required.
+定期对非常重要的业务系统进行容灾演练，检验系统的可靠性是非常有必要的。下面是容灾演练推荐的操作步骤，因为没有考虑演练中业务写入是否为模拟、业务访问数据库是否使用 proxy 服务等，与实际的演练场景会有出入，请根据你的实际情况进行修改。
 
-1. Stop business writes on the primary cluster.
-2. After there are no more writes, query the latest TSO (`Position`) of the TiDB cluster:
+1. 停止主集群上的业务写入。
+2. 业务写入完全停止后，查询 TiDB 集群当前最新的 TSO (`Position`)：
 
     ```sql
     BEGIN; SELECT TIDB_CURRENT_TSO(); ROLLBACK;
@@ -315,109 +312,109 @@ It is important to conduct regular DR drills for critical business systems to te
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-3. Poll the changefeed `dr-primary-to-secondary` until it meets the condition `TSO >= Position`.
+3. 轮询 Changefeed `dr-primary-to-secondary` 的同步位置时间点 TSO 直到满足 `TSO >= Position`。
 
     ```shell
     tiup cdc cli changefeed query -s --server=http://10.1.1.9:8300 --changefeed-id="dr-primary-to-secondary"
 
     {
         "state": "normal",
-        "tso": 438224029039198209,  # The TSO to which the changefeed has been replicated
-        "checkpoint": "2022-12-22 14:53:25.307", # The physical time corresponding to the TSO
+        "tso": 438224029039198209,  # Changefeed 已经同步到的时间点
+        "checkpoint": "2022-12-22 14:53:25.307", # TSO 对应的物理时间点
         "error": null
     }
     ```
 
-4. Stop the changefeed `dr-primary-to-secondary`. You can pause the changefeed by removing it:
+4. 停止 Changefeed `dr-primary-to-secondary`。通过删除 Changefeed 的方式，暂停 Changefeed `dr-primary-to-secondary`：
 
     ```shell
     tiup cdc cli changefeed remove --server=http://10.1.1.9:8300 --changefeed-id="dr-primary-to-secondary"
     ```
 
-5. Create a changefeed `dr-secondary-to-primary` without specifying the `start-ts` parameter. The changefeed starts replicating data from the current time.
-6. Modify the database access configurations of business applications. Restart the business applications so that they can access the secondary cluster.
-7. Check whether the business applications are running normally.
+5. 创建 Changefeed `dr-secondary-to-primary`。不需要指定 Changefeed `start-ts` 参数，Changefeed 从当前时间开始同步即可。
+6. 修改业务应用的数据库访问配置，并重启业务应用，使得业务访问备用集群。
+7. 检查业务状态是否正常。
 
-You can restore the previous primary and secondary cluster configurations by repeating the preceding steps.
+容灾演练后，再重复一遍以上步骤，即可恢复原有的系统主备配置。
 
-#### Primary and secondary switchover upon disasters
+#### 真正灾难中主备切换
 
-When a disaster occurs, for example, power outage in the region where the primary cluster locates, the replication between the primary and secondary clusters might be interrupted suddenly. As a result, the data in the secondary cluster is inconsistent with the primary cluster.
+当发生真正的灾难，比如主集群所在区域停电，主备集群的同步链路可能会突然中断，从而导致备用集群数据处于事务不一致的状态。
 
-1. Restore the secondary cluster to a transaction-consistent state. Specifically, run the following command on any TiCDC node in region 2 to apply the redo log to the secondary cluster:
+1. 恢复备用集群到事务一致的状态。在区域 2 的任意 TiCDC 节点执行以下命令，以向备用集群重放 redo log，使备用集群达到最终一致性状态：
 
     ```shell
     tiup cdc redo apply --storage "s3://redo?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true" --tmp-dir /tmp/redo --sink-uri "mysql://{username}:{password}@10.1.1.4:4000"
     ```
 
-    The descriptions of parameters in this command are as follows:
+    命令中参数描述如下：
 
-    - `--storage`: The path where redo logs are stored in Amazon S3
-    - `--tmp-dir`: The cache directory for downloading redo logs from Amazon S3
-    - `--sink-uri`: The address of the secondary cluster
+    - `--storage`：指定 redo log 所在的 S3 位置
+    - `--tmp-dir`：为从 S3 下载 redo log 的缓存目录
+    - `--sink-uri`：指定备份集群的地址
 
-2. Modify the database access configurations of business applications. Restart the business applications so that they can access the secondary cluster.
-3. Check whether the business applications are running normally.
+2. 修改业务应用的数据库访问配置，并重启业务应用，使得业务访问备用集群。
+3. 检查业务状态是否正常。
 
-#### Rebuild the primary and secondary clusters
+#### 灾难后重建主备集群
 
-After the disaster encountered by the primary cluster is resolved or the primary cluster cannot be recovered temporarily, the TiDB cluster is fragile because only the secondary cluster is in service as the primary cluster. To maintain the reliability of the system, you need to rebuild the DR cluster.
+当 TiDB 主集群所遭遇的灾难解决后，或者主集群暂时不能恢复，此时 TiDB 集群是脆弱的，只有一个备用集群临时作为新的主集群提供服务。为了维持系统的可靠性，需要重建灾备集群保护系统的可靠性。
 
-To rebuild the TiDB primary and secondary clusters, you can deploy a new cluster to form a new DR system. For details, see the following documents:
+目前，重建 TiDB 主备集群，通用的方案是重新部署一个新的集群，组成新的容灾主备集群。操作请参考：
 
-- [Set up primary and secondary clusters](#set-up-primary-and-secondary-clusters-based-on-ticdc)
-- [Replicate data from the primary cluster to the secondary cluster](#replicate-data-from-the-primary-cluster-to-the-secondary-cluster)
-- After the preceding steps are completed, to make the new primary cluster, see [Primary and secondary switchover](#planned-primary-and-secondary-switchover).
+1. [搭建主备集群](#搭建主备集群)。
+2. [从主集群复制数据到备用集群](#从主集群复制数据到备用集群)。
+3. 完成以上操作步骤后，如果你希望新集群成为主集群，那么请参考[主从切换](#计划中的主备切换)。
 
-> **Note:**
+> **注意：**
 >
-> If data inconsistency between the primary and secondary clusters can be resolved, you can use the repaired cluster to rebuild the DR system instead of deploying a new cluster.
+> 如果在业务上能够修正灾难发生后主集群和备用集群的数据不一致的问题，那么也可以使用修正后的集群重建主备集群，而不需要重建新集群。
 
-### Query business data on the secondary cluster
+### 在备用集群上进行业务查询
 
-In a primary-secondary DR scenario, it is common that the secondary cluster is used as a read-only cluster to run some latency-insensitive queries. TiDB also provides this feature by its primary-secondary DR solution.
+在主备集群容灾场景中，将备用集群作为只读集群来运行一些延迟不敏感的查询是常见的需求，TiDB 主备集群容灾方案也提供了这种功能。
 
-When creating the changefeed, enable the Syncpoint feature in the configuration file. Then the changefeed periodically (at `sync-point-interval`) sets the consistent snapshot point that has been replicated to the secondary cluster by executing `SET GLOBAL tidb_external_ts = @@tidb_current_ts` on the secondary cluster.
+创建 Changefeed 时，你只需要在 changefeed 配置文件中开启 Syncpoint 功能，Changefeed 就会定期 (`sync-point-interval`) 在备用集群中通过执行 `SET GLOBAL tidb_external_ts = @@tidb_current_ts` 设置已复制完成的一致性快照点。
 
-To query data from the secondary cluster, configure `SET GLOBAL|SESSION tidb_enable_external_ts_read = ON;` in the business application. Then you can get the data that is transactionally consistent with the primary cluster.
+当业务需要从备用集群查询数据的时候，在业务应用中设置 `SET GLOBAL|SESSION tidb_enable_external_ts_read = ON;` 就可以在备用集群上获得事务状态完成的数据。
 
 ```toml
-# Starting from v6.4.0, only the changefeed with the SYSTEM_VARIABLES_ADMIN or SUPER privilege can use the TiCDC Syncpoint feature.
+# 从 v6.4.0 开始支持，使用 Syncpoint 功能需要同步任务拥有下游集群的 SYSTEM_VARIABLES_ADMIN 或者 SUPER 权限
 enable-sync-point = true
 
-# Specifies the interval at which Syncpoint aligns the primary and secondary snapshots. It also indicates the maximum latency at which you can read the complete transaction, for example, read the transaction data generated on the primary cluster two minutes ago from the secondary cluster.
-# The format is in h m s. For example, "1h30m30s". The default value is "10m" and the minimum value is "30s".
+# 记录主集群和备用集群一致快照点的时间间隔，它也代表能读到完整事务的最大延迟时间，比如在备用集群读取到主集群两分钟之前的事务数据
+# 配置格式为 h m s，例如 "1h30m30s"。默认值为 10m，最小值为 30s
 sync-point-interval = "10m"
 
-# Specifies how long the data is retained by Syncpoint in the downstream table. When this duration is exceeded, the data is cleaned up.
-# The format is in h m s. For example, "24h30m30s". The default value is "24h".
+# Syncpoint 功能在下游表中保存的数据的时长，超过这个时间的数据会被清理
+# 配置格式为 h m s，例如 "24h30m30s"。默认值为 24h
 sync-point-retention = "1h"
 
 [consistent]
-# eventual consistency: redo logs are used to ensure eventual consistency in disaster scenarios.
+# eventual consistency： 使用 redo log，提供上游灾难情况下的最终一致性。
 level = "eventual"
-# The size of a single redo log, in MiB. The default value is 64, and the recommended value is less than 128.
+# 单个 redo log 文件大小，单位 MiB，默认值 64，建议该值不超过 128。
 max-log-size = 64
-# Interval for refreshing or uploading redo logs to Amazon S3, in milliseconds. The default value is 1000, and the recommended value range is 500-2000.
+# 刷新或上传 redo log 至 S3 的间隔，单位毫秒，默认 1000，建议范围 500-2000。
 flush-interval = 2000
-# The path where redo logs are saved.
+# 存储 redo log
 storage = "s3://redo?access-key=minio&secret-access-key=miniostorage&endpoint=http://10.0.1.10:6060&force-path-style=true"
 ```
 
-> **Note:**
+> **注意：**
 >
-> In a primary-secondary DR architecture, a secondary cluster can only replicate data from one changefeed. Otherwise, the data transaction integrity of the secondary cluster cannot be guaranteed.
+> 在主备集群容灾架构中，每个备用集群只能被一个 Changefeed 同步数据，否则就无法保证备用集群的事务完整性。
 
-### Perform bidirectional replication between the primary and secondary clusters
+### 在主备集群之间进行双向复制
 
-In this DR scenario, the TiDB clusters in two regions can act as each other's disaster recovery clusters: the business traffic is written to the corresponding TiDB cluster based on the region configuration, and the two TiDB clusters back up each other's data.
+在主备集群容灾场景中，部分用户希望让两个区域的 TiDB 集群互为灾备集群：用户的业务流量按其区域属性写入对应的 TiDB 集群，同时两套 TiDB 集群备份对方集群的数据。
 
-![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs/dr/bdr-ticdc.png)
+![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs-cn/dr/bdr-ticdc.png)
 
-With the bidirectional replication feature, the TiDB clusters in two regions can replicate each other's data. This DR solution guarantees data security and reliability, and also ensures the write performance of the database. In a planned DR switchover, you do not need to stop the running changefeeds before starting a new changefeed, which simplifies the operation and maintenance.
+在双向复制容灾集群方案中，两个区域的 TiDB 集群互相备份对方的数据，使得它们可以在故障发生时互为灾备集群。这种方案既能满足安全性和可靠性的需求，同时也能保证数据库的写入性能。在计划中的主备切换场景中，不需要停止正在运行的 Changefeed 和启动新的 Changefeed 等操作，在运维上也更加简单。
 
-To build a bidirectional DR cluster, see [TiCDC bidirectional replication](/ticdc/ticdc-bidirectional-replication.md).
+搭建双向容灾复制集群的步骤，请参考教程 [TiCDC 双向复制](/ticdc/ticdc-bidirectional-replication.md)。
 
-## Troubleshooting
+## 常见问题处理
 
-If you encounter any problem in the preceding steps, you can first find the solution to the problem in [TiDB FAQs](/faq/faq-overview.md). If the problem is not resolved, you can [report a bug](/support.md).
+以上任何步骤遇到问题，可以先通过 [TiDB FAQ](/faq/faq-overview.md) 查找问题的处理方法。如果问题仍不能解决，请尝试 [TiDB 支持资源](/support.md)。

@@ -1,240 +1,241 @@
 ---
-title: Configure SSO for TiDB Dashboard
-summary: TiDB Dashboard supports OIDC-based SSO for sign-in authentication. To enable SSO, fill OIDC Client ID and Discovery URL, authorize impersonation, and save the configuration. To disable SSO, deselect the option and update the configuration. If the SQL user password changes, re-enter it to enable SSO again. After configuration, sign in via SSO by clicking "Sign in via Company Account" and completing the sign-in process. Examples of using Okta, Auth0, and Casdoor for SSO configuration are provided.
+title: 配置 TiDB Dashboard 使用 SSO 登录
+summary: 了解如何配置 TiDB Dashboard 启用 SSO 登录。
 ---
 
-# Configure SSO for TiDB Dashboard
+# 配置 TiDB Dashboard 使用 SSO 登录
 
-TiDB Dashboard supports [OIDC](https://openid.net/connect/)-based Single Sign-On (SSO). After enabling the SSO feature of TiDB Dashboard, the configured SSO service is used for your sign-in authentication and then you can access TiDB Dashboard without entering the SQL user password.
+TiDB Dashboard 支持基于 [OIDC](https://openid.net/connect/) 协议的单点登录 (Single Sign-On)。配置 TiDB Dashboard 启用 SSO 登录后，你可以通过配置的 SSO 服务进行登录鉴权，无需输入 SQL 用户名和密码即可登录到 TiDB Dashboard。
 
-## Configure OIDC SSO
+## 配置 OIDC SSO
 
-### Enable SSO
+### 启用 SSO
 
-1. Sign into TiDB Dashboard.
+1. 登录 TiDB Dashboard。
 
-2. Click the username in the left sidebar to access the configuration page.
+2. 点击边栏左下角的用户名访问配置界面。
 
-3. In the **Single Sign-On** section, select **Enable to use SSO when sign into TiDB Dashboard**.
+3. 在**单点登录** (Single Sign-On) 区域下，开启**允许使用 SSO 登录到 TiDB Dashboard** (Enable to use SSO when sign into TiDB Dashboard)。
 
-4. Fill the **OIDC Client ID** and the **OIDC Discovery URL** fields in the form.
-
-    Generally, you can obtain the two fields from the SSO service provider:
-
-    - OIDC Client ID is also called OIDC Token Issuer.
-    - OIDC Discovery URL is also called OIDC Token Audience.
-
-5. Click **Authorize Impersonation** and input the SQL password.
-
-    TiDB Dashboard will store this SQL password and use it to impersonate a normal SQL sign-in after an SSO sign-in is finished.
-
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-1.png)
-
-    > **Note:**
+    > **注意：**
     >
-    > The password you have entered will be encrypted and stored. The SSO sign-in will fail after the password of the SQL user is changed. In this case, you can re-enter the password to bring SSO back.
+    > 如果你的账号没有 `SYSTEM_VARIABLES_ADMIN` 权限，**允许使用 SSO 登录到 TiDB Dashboard** (Enable to use SSO when sign into TiDB Dashboard) 选项会被禁用。有关权限的更多信息，请参考 [TiDB Dashboard 用户管理](/dashboard/dashboard-user.md)。
 
-6. Click **Authorize and Save**.
+4. 在表单中填写 **OIDC Client ID** 和 **OIDC Discovery URL** 字段。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-2.png)
+    一般可以从 SSO 服务的提供商处获取到这两个字段信息：
 
-7. Click **Update** (Update) to save the configuration.
+    - OIDC Client ID 有时也被称为 OIDC Token Issuer
+    - OIDC Discovery URL 有时也被称为 OIDC Token Audience。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-enable-3.png)
+5. 将 SQL 登录密码录入到 TiDB Dashboard 中，以便在 SSO 鉴权通过后完成登录。点击**授权登录为该用户** (Authorize Impersonation) 录入密码。
 
-Now SSO sign-in has been enabled for TiDB Dashboard.
+    这是因为 TiDB Dashboard SSO 的原理是在 SSO 成功鉴权后，采用 TiDB Dashboard 内加密存储的 SQL 登录密码进行替代登录。
 
-> **Note:**
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-1.png)
+
+    > **注意：**
+    >
+    > 你录入的密码将被加密存储。若 SQL 用户密码后续发生了变更，将导致 SSO 登录失败。这时可以重新录入密码使 SSO 登录恢复正常。
+
+6. 在对话框中填写完密码后，点击**授权并保存** (Authorize and Save)。
+
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-2.png)
+
+7. 点击**更新** (Update) 保存配置。
+
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-enable-3.png)
+
+至此 TiDB Dashboard 中已经成功开启了 SSO 登录。
+
+> **注意：**
 >
-> For security reasons, some SSO services require additional configuration for the SSO service, such as the trusted sign-in and sign-out URIs. Refer to the documentation of the SSO service for further information.
+> 出于安全原因，部分 SSO 服务还需要你进一步在 SSO 服务中配置受信任的登录和登出跳转地址，请参见 SSO 服务的具体帮助完成配置。
 
-### Disable SSO
+### 禁用 SSO
 
-You can disable the SSO, which will completely erase the stored SQL password:
+你可以随时禁用 SSO。禁用后，之前已录入并存储在本地的替代登录 SQL 密码将被彻底清除。禁用步骤如下：
 
-1. Sign into TiDB Dashboard.
+1. 登录 TiDB Dashboard。
 
-2. Click the username in the left sidebar to access the configuration page.
+2. 点击边栏左下角用户名访问配置界面。
 
-3. In the **Single Sign-On** section, deselect **Enable to use SSO when sign into TiDB Dashboard**.
+3. 在**单点登录** (Single Sign-On) 区域下，关闭**允许使用 SSO 登录到 TiDB Dashboard** (Enable to use SSO when sign into TiDB Dashboard)。
 
-4. Click **Update** (Update) to save the configuration.
+4. 点击**更新** (Update) 保存配置。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-disable.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-disable.png)
 
-### Re-enter the password after a password change
+### 密码发生变更后重新录入密码
 
-The SSO sign-in will fail once the password of the SQL user is changed. In this case, you can bring back the SSO sign-in by re-entering the SQL password:
+若替代登录的 SQL 用户密码发生了变更，则 SSO 登录将会失败。此时，你可以将新的登录密码录入到 TiDB Dashboard 中以恢复正常 SSO 登录功能，步骤如下：
 
-1. Sign into TiDB Dashboard.
+1. 登录 TiDB Dashboard。
 
-2. Click the username in the left sidebar to access the configuration page.
+2. 点击边栏左下角用户名访问配置界面。
 
-3. In the **Single Sign-On** section, Click **Authorize Impersonation** and input the updated SQL password.
+3. 在**单点登录** (Single Sign-On) 区域下，点击**授权登录为该用户** (Authorize Impersonation) 来录入新的密码。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-reauthorize.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-reauthorize.png)
 
-4. Click **Authorize and Save**.
+4. 在对话框中填写完毕密码后，点击**授权并保存** (Authorize and Save)。
 
-## Sign in via SSO
+## 使用 SSO 登录
 
-Once SSO is configured for TiDB Dashboard, you can sign in via SSO by taking following steps:
+若 TiDB Dashboard 已经完成了 SSO 的配置，你可使用以下步骤完成登录：
 
-1. In the sign-in page of TiDB Dashboard, click **Sign in via Company Account**.
+1. 在 TiDB Dashboard 登录界面上，点击**使用公司账号 SSO 登录** (Sign in via Company Account)。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-signin.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-signin.png)
 
-2. Sign into the system with SSO service configured.
+2. 在配置 SSO 的系统中进行登录。
 
-3. You are redirected back to TiDB Dashboard to finish the sign-in.
+3. 你将被重定向回 TiDB Dashboard 完成登录。
 
-## Example 1: Use Okta for TiDB Dashboard SSO sign-in
+## 示例一：使用 Okta 进行 TiDB Dashboard SSO 登录认证
 
-[Okta](https://www.okta.com/) is an OIDC SSO identity service, which is compatible with the SSO feature of TiDB Dashboard. The steps below demonstrate how to configure Okta and TiDB Dashboard so that Okta can be used as the TiDB Dashboard SSO provider.
+[Okta](https://www.okta.com/) 是一个提供 OIDC SSO 的身份认证服务。以下步骤展示了如何配置 Okta 及 TiDB Dashboard，使得 TiDB Dashboard 可以通过 Okta 进行 SSO 登录。
 
-### Step 1: Configure Okta
+### 步骤一：配置 Okta
 
-First, create an Okta Application Integration to integrate SSO.
+首先需要在 Okta 中创建一个用于集成 SSO 的 Application Integration。
 
-1. Access the Okta administration site.
+1. 访问 Okta 管理后台。
 
-2. Navigate from the left sidebar **Applications** > **Applications**.
+2. 点击左侧边栏的 **Applications** > **Applications**。
 
-3. Click **Create App Integration**.
+3. 点击 **Create App Integration**。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-1.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-1.png)
 
-4. In the popped up dialog, choose **OIDC - OpenID Connect** in **Sign-in method**.
+4. 在弹出的对话框中，**Sign-in method** 字段选择 **OIDC - OpenID Connect**。
 
-5. Choose **Single-Page Application** in **Application Type**.
+5. **Application Type** 字段选择 **Single-Page Application**。
 
-6. Click the **Next** button.
+6. 对话框中点击 **Next** 按钮。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-2.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-2.png)
 
-7. Fill **Sign-in redirect URIs** as follows:
+7. **Sign-in redirect URIs** 字段填写如下内容：
 
     ```
     http://DASHBOARD_IP:PORT/dashboard/?sso_callback=1
     ```
 
-    Substitute `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port that you use to access the TiDB Dashboard in the browser.
+    以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。
 
-8. Fill **Sign-out redirect URIs** as follows:
+8. **Sign-out redirect URIs** 字段填写如下内容：
 
     ```
     http://DASHBOARD_IP:PORT/dashboard/
     ```
 
-    Similarly, substitute `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port.
+    类似地，将 `DASHBOARD_IP:PORT` 替换为实际的域名（或 IP）及端口。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-3.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-3.png)
 
-9. Configure what type of users in your organization is allowed for SSO sign-in in the **Assignments** field, and then click **Save** to save the configuration.
+9. 在 **Assignments** 中按你的实际需求配置组织中哪些用户可以通过这个 SSO 登录 TiDB Dashboard，然后点击 **Save** 保存配置。
 
-    ![Sample Step](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-4.png)
+    ![操作示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-4.png)
 
-### Step 2: Obtain OIDC information and fill in TiDB Dashboard
+### 步骤二：获取 TiDB Dashboard 所需的配置参数并填入 TiDB Dashboard
 
-1. In the Application Integration just created in Okta, click **Sign On**.
+1. 在 Okta 创建的 App Integration 中，点击 **Sign On**。
 
-    ![Sample Step 1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-1.png)
+    ![操作示例 1](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-1.png)
 
-2. Copy values of the **Issuer** and **Audience** fields from the **OpenID Connect ID Token** section.
+2. **OpenID Connect ID Token** 区域中有 **Issuer** 和 **Audience** 字段，复制这两个字段的值。
 
-    ![Sample Step 2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-2.png)
+    ![操作示例 2](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-2.png)
 
-3. Open the TiDB Dashboard configuration page, fill **OIDC Client ID** with **Issuer** obtained from the last step and fill **OIDC Discovery URL** with **Audience**. Then finish the authorization and save the configuration. For example:
+3. 打开 TiDB Dashboard 配置界面，将上一步获取到的 **Issuer** 填入 **OIDC Client ID**，将 **Audience** 填入 **OIDC Discovery URL** 后，完成授权并保存配置。示例如下：
 
-    ![Sample Step 3](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-okta-info-3.png)
+    ![操作示例 3](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-okta-info-3.png)
 
-Now TiDB Dashboard has been configured to use Okta SSO for sign-in.
+至此，TiDB Dashboard 已被配置为使用 Okta 进行 SSO 登录。
 
-## Example 2: Use Auth0 for TiDB Dashboard SSO sign-in
+## 示例二：使用 Auth0 进行 TiDB Dashboard SSO 登录认证
 
-Similar to Okta, [Auth0](https://auth0.com/) also provides OIDC SSO identity service. The following steps describe how to configure Auth0 and TiDB Dashboard so that Auth0 can be used as the TiDB Dashboard SSO provider.
+和 Okta 类似，[Auth0](https://auth0.com/) 也可以提供 OIDC SSO 的身份认证服务。
 
-### Step 1: Configure Auth0
+### 步骤一：配置 Auth0
 
-1. Access the Auth0 administration site.
+1. 访问 Auth0 的管理后台。
 
-2. Navigate on the left sidebar **Applications** > **Applications**.
+2. 点击左侧边栏的 **Applications** > **Applications**。
 
-3. Click **Create App Integration**.
+3. 点击 **Create Application**，在弹出窗口中输入 Name，例如 "TiDB Dashboard"。在 **Choose an application type** 下选择 "Single Page Web Application"。
 
-    ![Create Application](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-create-app.png)
+    ![Create Application](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-create-app.png)
 
-    In the popped-up dialog, fill **Name**, for example, "TiDB Dashboard". Choose **Single Page Web Applications** in **Choose an application type**. Click **Create**.
+4. 点击 **Settings** 栏。
 
-4. Click **Settings**.
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-1.png)
 
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-1.png)
-
-5. Fill **Allowed Callback URLs** as follows:
+5. 在 **Allowed Callback URLs** 字段中填写如下内容：
 
     ```
     http://DASHBOARD_IP:PORT/dashboard/?sso_callback=1
     ```
 
-    Replace `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port that you use to access the TiDB Dashboard in your browser.
+    在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。
 
-6. Fill **Allowed Logout URLs** as follows:
+6. 在 **Allowed Logout URLs** 字段中填写如下内容：
 
     ```
     http://DASHBOARD_IP:PORT/dashboard/
     ```
 
-    Similarly, replace `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port.
+    类似地，将 `DASHBOARD_IP:PORT` 替换为实际的域名（或 IP）及端口。
 
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-2.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-2.png)
 
-7. Keep the default values for other settings and click **Save Changes**.
+7. 其它设置保持默认，点击 **Save Changes** 保存。
 
-### Step 2: Obtain OIDC information and fill in TiDB Dashboard
+### 步骤二：获取 TiDB Dashboard 所需的配置参数并填入 TiDB Dashboard
 
-1. Fill **OIDC Client ID** of TiDB Dashboard with **Client ID** in **Basic Information** under the **Settings** tab of Auth0.
+1. 将 Auth0 **Settings** 栏 **Basic Information** 项的 **Client ID** 字段的值填入 TiDB Dashboard 的 **OIDC Client ID**，将 **Domain** 字段的值，加上 `https://` 前缀和 `/` 后缀后填入 **OIDC Discovery URL** 中，例如 `https://example.us.auth0.com/`。完成授权并保存配置即可。
 
-2. Fill **OIDC Discovery URL** with the **Domain** field value prefixed with `https://` and suffixed with `/`, for example, `https://example.us.auth0.com/`. Complete authorization and save the configuration.
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-auth0-settings-3.png)
 
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-auth0-settings-3.png)
+至此，TiDB Dashboard 已被配置为使用 Auth0 进行 SSO 登录。
 
-Now TiDB Dashboard has been configured to use Auth0 SSO for sign-in.
+## 示例三：使用 Casdoor 进行 TiDB Dashboard SSO 登录认证
 
-## Example 3: Use Casdoor for TiDB Dashboard SSO sign-in
+[Casdoor](https://casdoor.org/) 是一个开源的、可以部署在私人服务器上的 SSO 平台。它与 TiDB Dashboard 的 SSO 功能兼容。以下步骤展示了如何配置 Casdoor 及 TiDB Dashboard，使得 TiDB Dashboard 可以通过 Casdoor 进行 SSO 登录。
 
-[Casdoor](https://casdoor.org/) is an open-source SSO platform that can be deployed in your own hosts. It is compatible with the SSO feature of TiDB Dashboard. The following steps describe how to configure Casdoor and TiDB Dashboard so that Casdoor can be used as the TiDB Dashboard SSO provider.
+### 步骤一：配置 Casdoor
 
-### Step 1: Configure Casdoor
+1. 部署并访问 Casdoor 的管理后台。
 
-1. Deploy and access the Casdoor administration site.
+2. 点击上方菜单栏的**应用**。
 
-2. Navigate from the top sidebar **Applications**.
+3. 点击**添加**按钮。
 
-3. Click **Applications - Add**.
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-1.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-1.png)
 
-4. Fill **Name** and **Display name**, for example, **TiDB Dashboard**.
+4. 填写**名称**和**显示名称**，比如：**TiDB Dashboard**。
 
-5. Add **Redirect URLs** as follows:
+5. 在**回调 URLs** 中添加如下内容：
 
     ```
     http://DASHBOARD_IP:PORT/dashboard/?sso_callback=1
     ```
 
-    Replace `DASHBOARD_IP:PORT` with the actual domain (or IP address) and port that you use to access the TiDB Dashboard in your browser.
+    在以上内容中，将 `DASHBOARD_IP:PORT` 替换为你在浏览器中实际访问 TiDB Dashboard 所使用的域名（或 IP）及端口。
 
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-2.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-2.png)
 
-6. Keep the default values for other settings and click **Save & Exit**.
+6. 其他设置保留默认值，点击**保存 & 退出**。
 
-7. Save the **Client ID** seen on the page.
+7. 保存页面上的**客户端 ID**。
 
-### Step 2: Obtain OIDC information and fill in TiDB Dashboard
+### 步骤二：获取 TiDB Dashboard 所需的配置参数并填入 TiDB Dashboard
 
-1. Fill **OIDC Client ID** of TiDB dashboard with **Client ID** saved in the previous step.
+1. 将上一步获得的**客户端 ID** 字段的值填入 TiDB Dashboard 的 **OIDC Client ID**。
 
-2. Fill **OIDC Discovery URL** with the **Domain** field value prefixed with `https://` and suffixed with `/`, for example, `https://casdoor.example.com/`. Complete authorization and save the configuration.
+2. 将 Casdoor 部署地址加上 `https://` 前缀和 `/` 后缀后填入 **OIDC Discovery URL** 中，例如 `https://casdoor.example.com/`。完成授权并保存配置即可。
 
-    ![Settings](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-session-sso-casdoor-settings-3.png)
+    ![Settings](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-session-sso-casdoor-settings-3.png)
 
-Now TiDB Dashboard has been configured to use Casdoor SSO for sign-in.
+至此，TiDB Dashboard 已被配置为使用 Casdoor 进行 SSO 登录。

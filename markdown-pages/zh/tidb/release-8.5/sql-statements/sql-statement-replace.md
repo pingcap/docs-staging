@@ -1,13 +1,13 @@
 ---
-title: REPLACE | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 REPLACE 的用法概述。
+title: REPLACE
+summary: TiDB 数据库中 REPLACE 的使用概况。
 ---
 
 # REPLACE
 
-`REPLACE` 语句在语义上是一个结合了 `DELETE`+`INSERT` 的语句。它可以用来简化应用程序代码。
+从语义上看，`REPLACE` 语句是 `DELETE` 语句和 `INSERT` 语句的结合，可用于简化应用程序代码。
 
-## 语法概要
+## 语法图
 
 ```ebnf+diagram
 ReplaceIntoStmt ::=
@@ -30,23 +30,41 @@ InsertValues ::=
 |   SelectStmt
 |   UnionStmt
 |   'SET' ColumnSetValue? ( ',' ColumnSetValue )*
+
+
 ```
 
-> **Note:**
+> **注意：**
 >
-> 从 v6.6.0 版本开始，TiDB 支持 [Resource Control](/tidb-resource-control-ru-groups.md)。你可以利用此功能在不同的资源组中以不同优先级执行 SQL 语句。通过为这些资源组配置合适的配额和优先级，可以获得更好的调度控制。当启用资源控制后，语句优先级（`PriorityOpt`）将不再生效。建议你使用 [Resource Control](/tidb-resource-control-ru-groups.md) 来管理不同 SQL 语句的资源使用。
+> TiDB 从 v6.6.0 版本开始支持[使用资源管控 (Resource Control) 实现资源组限制和流控](/tidb-resource-control-ru-groups.md)功能。该功能可以将不同优先级的语句放在不同的资源组中执行，并为这些资源组分配不同的配额和优先级，可以达到更好的资源管控效果。在开启资源管控功能后，语句的调度主要受资源组的控制，`PriorityOpt` 将不再生效。建议在支持资源管控的版本优先使用资源管控功能。
 
 ## 示例
 
-```sql
-mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
-Query OK, 0 rows affected (0.12 sec)
 
-mysql> INSERT INTO t1 (c1) VALUES (1), (2), (3);
+```sql
+CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
+```
+
+```
+Query OK, 0 rows affected (0.12 sec)
+```
+
+
+```sql
+INSERT INTO t1 (c1) VALUES (1), (2), (3);
+```
+
+```
 Query OK, 3 rows affected (0.02 sec)
 Records: 3  Duplicates: 0  Warnings: 0
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -55,11 +73,23 @@ mysql> SELECT * FROM t1;
 |  3 |  3 |
 +----+----+
 3 rows in set (0.00 sec)
+```
 
-mysql> REPLACE INTO t1 (id, c1) VALUES(3, 99);
+
+```sql
+REPLACE INTO t1 (id, c1) VALUES(3, 99);
+```
+
+```
 Query OK, 2 rows affected (0.01 sec)
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -72,9 +102,9 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `REPLACE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`REPLACE` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [DELETE](/sql-statements/sql-statement-delete.md)
 * [INSERT](/sql-statements/sql-statement-insert.md)

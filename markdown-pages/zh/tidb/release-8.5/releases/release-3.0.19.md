@@ -1,53 +1,54 @@
 ---
 title: TiDB 3.0.19 Release Notes
-summary: TiDB 3.0.19 was released on September 25, 2020. Compatibility changes include import path and copyright information updates. Improvements were made to mitigate failure recovery impact, support concurrency adjustment, and set nonadjustable values. Bug fixes were made for query errors, privilege checks, type changes, constraint checks, table lock release, operator handling, and panic parsing. Tools like TiDB Lightning also received fixes for process exit timing.
+summary: TiDB 3.0.19 发布，兼容性变化包括更改 PD 的导入路径和版权信息。提升改进方面，缓解故障恢复对 QPS 的影响，支持调整 `union` 运算符的并发数。Bug 修复包括解决 `slow-log` 文件不存在导致查询出错的问题，添加权限检查命令，修复类型转换问题等。TiKV 修复了 status server 解析响应出错导致 panic 的问题。TiDB Lightning 修复了严格模式下 CSV 中遇到不合法 UTF 字符集没有及时退出进程的问题。
+aliases: ['/zh/tidb/dev/release-3.0.19/','/zh/tidb/v3.0/release-3.0.19','/zh/tidb/v5.4/release-3.0.19','/zh/tidb/v6.1/release-3.0.19','/zh/tidb/v6.5/release-3.0.19','/zh/tidb/v7.1/release-3.0.19','/zh/tidb/v7.5/release-3.0.19','/zh/tidb/v8.1/release-3.0.19']
 ---
 
 # TiDB 3.0.19 Release Notes
 
-Release date: September 25, 2020
+发版日期：2020 年 9 月 25 日
 
-TiDB version: 3.0.19
+TiDB 版本：3.0.19
 
-## Compatibility Changes
-
-+ PD
-
-    - Change the import path from `pingcap/pd` to `tikv/pd` [#2779](https://github.com/pingcap/pd/pull/2779)
-    - Change the copyright information from `PingCAP, Inc` to `TiKV Project Authors` [#2777](https://github.com/pingcap/pd/pull/2777)
-
-## Improvements
-
-+ TiDB
-
-    - Mitigate the impact of failure recovery on QPS performance [#19764](https://github.com/pingcap/tidb/pull/19764)
-    - Support adjusting the concurrency of the `union` operator [#19885](https://github.com/pingcap/tidb/pull/19885)
-
-+ TiKV
-
-    - Set `sync-log` to `true` as a nonadjustable value [#8636](https://github.com/tikv/tikv/pull/8636)
+## 兼容性变化
 
 + PD
 
-    - Add an alert rule for PD restart [#2789](https://github.com/pingcap/pd/pull/2789)
+    - 更改 PD 的导入路径 `pingcap/pd` 为 `tikv/pd` [#2779](https://github.com/pingcap/pd/pull/2779)
+    - 更改 PD 的 copyright 信息 `PingCAP, Inc` 为 `TiKV Project Authors` [#2777](https://github.com/pingcap/pd/pull/2777)
 
-## Bug Fixes
+## 提升改进
 
 + TiDB
 
-    - Fix the query error that occurs when the `slow-log` file does not exist [#20050](https://github.com/pingcap/tidb/pull/20050)
-    - Add the privilege check for `SHOW STATS_META` and `SHOW STATS_BUCKET` [#19759](https://github.com/pingcap/tidb/pull/19759)
-    - Forbid changing the decimal type to the integer type [#19681](https://github.com/pingcap/tidb/pull/19681)
-    - Fix the issue that the constraint is not checked when altering the `ENUM`/`SET` type column [#20045](https://github.com/pingcap/tidb/pull/20045)
-    - Fix the bug that tidb-server does not release table locks after a panic [#20021](https://github.com/pingcap/tidb/pull/20021)
-    - Fix the bug that the `OR` operator is not handled correctly in the `WHERE` clause [#19901](https://github.com/pingcap/tidb/pull/19901)
+    - 缓解故障恢复对 QPS 的影响 [#19764](https://github.com/pingcap/tidb/pull/19764)
+    - 支持调整 `union` 运算符的并发数 [#19885](https://github.com/pingcap/tidb/pull/19885)
 
 + TiKV
 
-    - Fix the bug that TiKV panics when parsing responses with missing reason phrases [#8540](https://github.com/tikv/tikv/pull/8540)
+    - 永久开启 `sync-log` [#8636](https://github.com/tikv/tikv/pull/8636)
+
++ PD
+
+    - 添加关于 PD 重启的告警规则 [#2789](https://github.com/pingcap/pd/pull/2789)
+
+## Bug 修复
+
++ TiDB
+
+    - 修复 `slow-log` 文件不存在导致查询出错的问题 [#20050](https://github.com/pingcap/tidb/pull/20050)
+    - 添加对 `SHOW STATS_META` 和 `SHOW STATS_BUCKET` 这两个命令的权限检查 [#19759](https://github.com/pingcap/tidb/pull/19759)
+    - 禁止将 Decimal 类型改成 Integer 类型 [#19681](https://github.com/pingcap/tidb/pull/19681)
+    - 修复更改 `ENUM`/`SET` 类型的列时没有检查限制的问题 [#20045](https://github.com/pingcap/tidb/pull/20045)
+    - 修复 tidb-server 在 panic 后没有释放 table lock 的问题 [#20021](https://github.com/pingcap/tidb/pull/20021)
+    - 修复 `OR` 运算符在 `WHERE` 子句中没有正确处理的问题 [#19901](https://github.com/pingcap/tidb/pull/19901)
+
++ TiKV
+
+    - 修复 TiKV 的 status server 解析响应出错导致 panic 的问题 [#8540](https://github.com/tikv/tikv/pull/8540)
 
 + Tools
 
     + TiDB Lightning
 
-        - Fix the issue that the TiDB Lightning process does not exit in time when encountering illegal UTF characters in CSV in the strict mode [#378](https://github.com/pingcap/tidb-lightning/pull/378)
+        - 修复了严格模式下 CSV 中遇到不合法 UTF 字符集没有及时退出进程的问题 [#378](https://github.com/pingcap/tidb-lightning/pull/378)

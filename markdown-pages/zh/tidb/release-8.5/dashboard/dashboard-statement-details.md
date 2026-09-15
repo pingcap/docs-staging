@@ -1,149 +1,149 @@
 ---
-title: Statement Execution Details of TiDB Dashboard
-summary: TiDB Dashboard provides detailed information on SQL statement execution, including SQL template overview, execution plan list, and plan binding feature. Starting from v6.6.0, fast plan binding allows quick binding and dropping of execution plans. However, it has limitations and requires SUPER privilege. The execution detail of plans includes SQL sample, complete execution plan information, and basic execution details. Visual representations of execution plans are available in table, text, and graph formats. Additional tabs provide information on execution time, Coprocessor read, transaction, and slow queries.
+title: TiDB Dashboard SQL 语句分析执行详情页面
+summary: 查看单个 SQL 语句执行的详细情况
 ---
 
-# Statement Execution Details of TiDB Dashboard
+# TiDB Dashboard SQL 语句分析执行详情页面
 
-Click any item in the list to enter the detail page of the SQL statement to view more detailed information. This information includes the following parts:
+在列表中点击任意一行可以进入该 SQL 语句的详情页查看更详细的信息，此信息包括三大部分：
 
-- The overview of SQL statements, which includes the SQL template, the SQL template ID, the current time range of displayed SQL executions, the number of execution plans, the database in which the SQL statement is executed, and the fast plan binding feature (area 1 in the following figure).
-- The execution plan list: If a SQL statement has multiple execution plans, this list is displayed. Besides text information of execution plans, TiDB v6.2.0 introduces visual execution plans, through which you can learn each operator of a statement and detailed information more intuitively. You can select different execution plans, and the details of the selected plans are displayed below the list (area 2 in the following figure).
-- Execution detail of plans, which displays the detailed information of the selected execution plans. See [Execution plan in details](#execution-details-of-plans) (area 3 in the following figure).
+- SQL 语句概况：包括 SQL 模板、SQL 模板 ID、当前查看的时间范围、执行计划个数、执行所在的数据库以及快速绑定执行计划功能（下图区域 1）
+- 执行计划列表：如果一个 SQL 语句有多个执行计划，则显示执行计划列表。除了文本信息显示，TiDB 自 v6.2.0 开始引入图形化执行计划，通过图形化的执行计划，你可以更清晰地了解一个语句的具体算子和对应的内容。可以选择不同的执行计划，在列表和图形下方会显示该执行计划详情（下图区域 2）
+- 执行计划详情：显示选中的执行计划的详细信息，具体见下一小节（下图区域 3）
 
-![Details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-detail-v660.png)
+![详情](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-detail-v660.png)
 
-## Fast plan binding
+## 快速绑定执行计划
 
-Starting from v6.6.0, TiDB introduces the fast plan binding feature. You can quickly bind a SQL statement to a specific execution plan in TiDB Dashboard.
+自 v6.6.0 起，TiDB 引入了快速绑定执行计划的功能。你可以在 TiDB Dashboard 中，快速完成 SQL 语句与特定计划的绑定。
 
-### Usage
+### 使用方式
 
-#### Bind an execution plan
+#### 绑定一个执行计划
 
-1. Click **Plan Binding**. The **Plan Binding** dialog box is displayed.
+1. 点击**执行计划绑定** (Plan Binding)，弹出弹窗。
 
-    ![Fast plan binding - not bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-notbound.png)
+    ![快速绑定执行计划-未绑定-入口](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-entry-notbound.png)
 
-2. Select a plan that you want to bind and click **Bind**.
+2. 选择一个需要绑定的执行计划，点击**绑定** (Bind)。
 
-    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![快速绑定执行计划-弹窗](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-popup-notbound.png)
 
-3. After the binding is completed, you can see the **Bound** label.
+3. 绑定成功后，可以看到**已绑定** (Bound) 提示。
 
-    ![Fast plan binding - popup - binding completed](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![快速绑定执行计划-弹窗-绑定成功](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-popup-bound.png)
 
-#### Drop an existing binding
+#### 取消已有的执行计划绑定
 
-1. On the page of a SQL statement that has an existing binding, click **Plan Binding**. The **Plan Binding** dialog box is displayed.
+1. 在已经绑定了执行计划的 SQL 语句页面上，点击**执行计划绑定** (Plan Binding)，弹出弹窗。
 
-    ![Fast plan binding - bound - entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-entry-bound.png)
+    ![快速绑定执行计划-已绑定-入口](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-entry-bound.png)
 
-2. Click **Drop**.
+2. 点击**取消绑定** (Drop)。
 
-    ![Fast plan binding - popup - bound](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-bound.png)
+    ![快速绑定执行计划-弹窗-绑定成功](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-popup-bound.png)
 
-3. After the binding is dropped, you can see the **Not bound** label.
+3. 取消成功后，可以看到**未绑定** (Not Bound) 提示。
 
-    ![Fast plan binding - popup](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-quick-binding-popup-notbound.png)
+    ![快速绑定执行计划-弹窗](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-quick-binding-popup-notbound.png)
 
-### Limitation
+### 使用限制
 
-Currently, the fast plan binding feature does not support the following types of SQL statements:
+目前还不支持通过 TiDB Dashboard 绑定下列语句的执行计划：
 
-- Statements that are not `SELECT`, `DELETE`, `UPDATE`, `INSERT`, or `REPLACE`
-- Queries with subqueries
-- Queries that access TiFlash
-- Queries that join three or more tables
+- 非 `SELECT`、`DELETE`、`UPDATE`、`INSERT`、`REPLACE` 类型语句
+- 带有子查询的查询
+- 访问 TiFlash 的查询
+- 对三张表或更多表进行 Join 的查询
 
-To use this feature, you must have the SUPER privilege. If you encounter permission issues while using it, refer to [TiDB Dashboard User Management](/dashboard/dashboard-user.md) to add the necessary privileges.
+目前该功能需用户拥有 `SUPER` 权限才可使用。如果在使用过程中提示权限不足，请参考 [TiDB Dashboard 用户管理](/dashboard/dashboard-user.md)补充所需权限。
 
-## Execution details of plans
+## 执行计划详情
 
-The execution detail of plans includes the following information:
+执行计划详情包括以下内容：
 
-- SQL sample: The text of a certain SQL statement that is actually executed corresponding to the plan. Any SQL statement that has been executed within the time range might be used as a SQL sample.
-- Execution plan: Complete information about execution plans, displayed in table, graph, and text. For details of the execution plan, see [Understand the Query Execution Plan](/explain-overview.md). If multiple execution plans are selected, only (any) one of them is displayed.
-- For basic information, execution time, Coprocessor read, transaction, and slow query of the SQL statement, you can click the corresponding tab titles to switch among different information.
+- SQL 样本：该计划对应的实际执行的某一条 SQL 语句文本。时间范围内任何出现过的 SQL 都可能作为 SQL 样本。
+- 执行计划：执行计划的完整内容，有表格、图形和文本三种展示形式。参阅[理解 TiDB 执行计划](/explain-overview.md)文档了解如何解读执行计划。如果选择了多个执行计划，则显示的是其中任意一个。
+- 其他关于该 SQL 的基本信息、执行时间、Coprocessor 读取、事务、慢查询等信息，可点击相应标签页标题切换。
 
-![Execution details of plans](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-detail.png)
+![执行计划详情](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-detail.png)
 
-### SQL sample
+### SQL 样本
 
-To view the detailed information of an item, you can click **Expand**. To copy the detailed information to the clipboard, click **Copy**.
+点击**展开** (**Expand**) 可以展开相应项的完整内容，点击**复制** (**Copy**) 可以复制内容到剪贴板。
 
-### Execution plans
+### 执行计划
 
-On TiDB Dashboard, you can view execution plans in three ways: table, text, and graph. To learn how to read an execution plan, see [Understand the query execution plan](/explain-overview.md).
+TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形。关于如何解读执行计划，请参考[理解 TiDB 执行计划](/explain-overview.md)。
 
-#### Execution plan in table format
+#### 表格形态的执行计划
 
-The table format provides detailed information about the execution plan, which helps you quickly identify abnormal operator metrics and compare the status of different operators. The following figure shows an execution plan in table format:
+表格形态的执行计划提供详细的执行计划信息，便于你快速识别算子指标的异常情况，以及对比不同算子的状态。下图是一个表格形态的执行计划示例：
 
-![Execution plan in table format](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-table-plan.png)
+![表格形态的执行计划](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan.png)
 
-The table format displays similar information to the text format but provides more user-friendly interactions:
+表格形态展示的内容与文本形态类似，但具有更易用的交互：
 
-- You can adjust the column width freely.
-- When content exceeds the column width, it is automatically truncated and a tooltip is shown for the full information.
-- If the execution plan is large, you can download it as a text file for local analysis.
-- You can hide and manage columns using the column picker.
+- 支持自由调整列宽
+- 当内容超出列宽时，支持自动截断并提供悬浮窗展示完整信息
+- 如果执行计划内容较多，可以下载 txt 格式到本地分析
+- 允许隐藏任意列，并且能够在列选择中进行管理
 
-![Execution plan in table format - column picker](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-table-plan-columnpicker.png)
+![表格形态的执行计划-选择列](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan-columnpicker.png)
 
-#### Execution plan in graph format
+#### 图形形态的执行计划
 
-The graph format is more suitable for viewing the execution plan tree of a complex SQL statement and understanding each operator and its corresponding content in detail. The following figure shows an execution plan in graph format:
+图形形态的执行计划更适合宏观地查看一个复杂 SQL 的执行计划树，并且详细了解每个算子及对应的内容。下图是一个图形形态的执行计划示例：
 
-![Execution plan in graph format](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-2.png)
+![图形形态的执行计划](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
 
-- The graph shows the execution from left to right, and from top to bottom.
-- Upper nodes are parent operators and lower nodes are child operators.
-- The color of the title bar indicates the component where the operator is executed: yellow stands for TiDB, blue stands for TiKV, and pink stands for TiFlash.
-- The title bar shows the operator name and the text shown below is the basic information of the operator.
+- 执行计划的展示顺序是从左到右，从上到下。
+- 上面的节点是父算子，下面的节点是子算子。
+- 节点顶栏的颜色代表算子执行的组件：黄色代表 TiDB，蓝色代表 TiKV，粉色代表 TiFlash。
+- 节点的顶栏为算子的名称，正文为算子的基本信息。
 
-Click the node area, and the detailed operator information is displayed on the right sidebar.
+点击节点区域，右侧将弹出算子的详细信息。
 
-![Execution plan in graph format - sidebar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-popup.png)
+![图形形态的执行计划-侧栏](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
 
-### SQL execution details
+### SQL 执行相关信息
 
-For basic information, execution time, Coprocessor read, transaction, and slow query of the SQL statement, you can click the corresponding tab titles to switch among different information.
+其他关于该 SQL 的基本信息、执行时间、Coprocessor 读取、事务、慢查询等信息，可点击相应标签页标题切换。
 
-![Show different execution information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)
+![显示不同分类执行信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)
 
-#### Basic tab
+#### 基本信息
 
-The basic information of a SQL execution includes the table names, index name, execution count, and total latency. The **Description** column provides detailed description of each field.
+包含关于表名、索引名、执行次数、累计耗时等信息。**描述** (Description) 列对各个字段进行了具体描述。
 
-![Basic information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-basic.png)
+![基本信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-basic.png)
 
-#### Time tab
+#### 执行时间
 
-Click the **Time** tab, and you can see how long each stage of the execution plan lasts.
+显示执行计划执行的各阶段所耗费时间。
 
-> **Note:**
+> **注意：**
 >
-> Because some operations might be performed in parallel within a single SQL statement, the cumulative duration of each stage might exceed the actual execution time of the SQL statement.
+> 由于单个 SQL 语句内部可能有并行执行的操作，因此各阶段累加时间可能超出该 SQL 语句的实际执行时间。
 
-![Execution time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-time.png)
+![执行时间](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-time.png)
 
-#### Coprocessor Read tab
+#### Coprocessor 读取
 
-Click the **Coprocessor Read** tab, and you can see information related to Coprocessor read.
+显示 Coprocessor 读取的相关信息。
 
-![Coprocessor read](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-cop-read.png)
+![Coprocessor 读取](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-cop-read.png)
 
-#### Transaction tab
+#### 事务
 
-Click the **Transaction** tab, and you can see information related to execution plans and transactions, such as the average number of written keys or the maximum number of written keys.
+显示执行计划与事务相关的信息，比如平均写入 key 个数，最大写入 key 个数等。
 
-![Transaction](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-transaction.png)
+![事务](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-transaction.png)
 
-#### Slow Query tab
+#### 慢查询
 
-If an execution plan is executed too slowly, you can see its associated slow query records under the **Slow Query** tab.
+如果该执行计划执行过慢，则在慢查询标签页下可以看到其关联的慢查询记录。
 
-![Slow Query](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-statement-plans-slow-queries.png)
+![慢查询](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-statement-plans-slow-queries.png)
 
-The information displayed in this area has the same structure with the slow query page. See [TiDB Dashboard Slow Query Page](/dashboard/dashboard-slow-query.md) for details.
+该区域显示的内容结构与慢查询页面一致，详见[慢查询页面](/dashboard/dashboard-slow-query.md)。

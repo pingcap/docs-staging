@@ -1,108 +1,110 @@
 ---
 title: TiDB 3.0.0 Beta.1 Release Notes
-summary: TiDB 3.0.0 Beta.1 was released on March 26, 2019, with improved stability, usability, features, SQL optimizer, statistics, and execution engine. The release includes support for various SQL functions, privilege management, server enhancements, DDL improvements, and PD and TiKV optimizations. Tools like TiDB Binlog, Lightning, and data replication comparison tool have also been updated with new features and improvements.
+summary: TiDB 3.0.0 Beta.1 发布，对系统稳定性、易用性、功能、优化器、统计信息和执行引擎做了很多改进。包括 SQL 优化器、SQL 执行引擎、权限管理、Server、DDL、PD、TiKV 和 Tools 的更新。
+aliases: ['/zh/tidb/dev/release-3.0.0-beta.1/','/zh/tidb/v3.0/release-3.0.0-beta.1','/docs-cn/dev/releases/release-3.0.0-beta.1/','/docs-cn/dev/releases/3.0.0-beta.1/','/zh/tidb/v5.4/release-3.0.0-beta.1','/zh/tidb/v6.1/release-3.0.0-beta.1','/zh/tidb/v6.5/release-3.0.0-beta.1','/zh/tidb/v7.1/release-3.0.0-beta.1','/zh/tidb/v7.5/release-3.0.0-beta.1','/zh/tidb/v8.1/release-3.0.0-beta.1']
 ---
 
 # TiDB 3.0.0 Beta.1 Release Notes
 
-Release Date: March 26, 2019
+发版日期：2019 年 3 月 26 日
 
-TiDB version: 3.0.0-beta.1
+TiDB 版本：3.0.0-beta.1
 
-TiDB Ansible version: 3.0.0-beta.1
+TiDB Ansible 版本：3.0.0-beta.1
 
 ## Overview
 
-On March 26, 2019, TiDB 3.0.0 Beta.1 is released. The corresponding TiDB Ansible version is 3.0.0 Beta.1. Compared with TiDB 3.0.0 Beta, this release has greatly improved the stability, usability, features, the SQL optimizer, statistics, and the execution engine.
+2019 年 03 月 26 日，TiDB 发布 3.0.0 Beta.1 版，对应的 TiDB Ansible 版本为 3.0.0 Beta.1。相比 3.0.0 Beta 版本，该版本对系统稳定性、易用性、功能、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer
-    - Support calculating the Cartesian product by using `Sort Merge Join` [#9032](https://github.com/pingcap/tidb/pull/9037)
-    - Support Skyline Pruning, with some rules to prevent the execution plan from relying too heavily on statistics [#9337](https://github.com/pingcap/tidb/pull/9337)
-    + Support Window Functions
++ SQL 优化器
+    - 支持使用 Sort Merge Join 计算笛卡尔积 [#9032](https://github.com/pingcap/tidb/pull/9037)
+    - 支持 Skyline Pruning，用一些规则来防止执行计划过于依赖统计信息 [#9337](https://github.com/pingcap/tidb/pull/9337)
+    + 支持 Window Functions
         - `NTILE` [#9682](https://github.com/pingcap/tidb/pull/9682)
-        - `LEAD` and `LAG` [#9672](https://github.com/pingcap/tidb/pull/9672)
+        - `LEAD` 和 `LAG` [#9672](https://github.com/pingcap/tidb/pull/9672)
         - `PERCENT_RANK` [#9671](https://github.com/pingcap/tidb/pull/9671)
         - `NTH_VALUE` [#9596](https://github.com/pingcap/tidb/pull/9596)
         - `CUME_DIST` [#9619](https://github.com/pingcap/tidb/pull/9619)
-        - `FIRST_VALUE` and `LAST_VALUE` [#9560](https://github.com/pingcap/tidb/pull/9560)
-        - `RANK` and `DENSE_RANK` [#9500](https://github.com/pingcap/tidb/pull/9500)
+        - `FIRST_VALUE` 和 `LAST_VALUE` [#9560](https://github.com/pingcap/tidb/pull/9560)
+        - `RANK` 和 `DENSE_RANK` [#9500](https://github.com/pingcap/tidb/pull/9500)
         - `RANGE FRAMED` [#9450](https://github.com/pingcap/tidb/pull/9450)
         - `ROW FRAMED` [#9358](https://github.com/pingcap/tidb/pull/9358)
         - `ROW NUMBER` [#9098](https://github.com/pingcap/tidb/pull/9098)
-    - Add a type of statistic that indicates the order correlation between columns and the handle column [#9315](https://github.com/pingcap/tidb/pull/9315)
-+ SQL Execution Engine
-    + Add built-in functions
+    - 增加了一类统计信息，表示列和 handle 列之间顺序的相关性 [#9315](https://github.com/pingcap/tidb/pull/9315)
++ SQL 执行引擎
+    + 增加内建函数
         - `JSON_QUOTE` [#7832](https://github.com/pingcap/tidb/pull/7832)
         - `JSON_ARRAY_APPEND` [#9609](https://github.com/pingcap/tidb/pull/9609)
         - `JSON_MERGE_PRESERVE` [#8931](https://github.com/pingcap/tidb/pull/8931)
         - `BENCHMARK` [#9252](https://github.com/pingcap/tidb/pull/9252)
         - `COALESCE` [#9087](https://github.com/pingcap/tidb/pull/9087)
         - `NAME_CONST` [#9261](https://github.com/pingcap/tidb/pull/9261)
-    - Optimize the Chunk size based on the query context, to reduce the execution time of SQL statements and resources consumption of the cluster [#6489](https://github.com/pingcap/tidb/issues/6489)
-+ Privilege management
-    - Support `SET ROLE` and `CURRENT_ROLE` [#9581](https://github.com/pingcap/tidb/pull/9581)
-    - Support `DROP ROLE` [#9616](https://github.com/pingcap/tidb/pull/9616)
-    - Support `CREATE ROLE` [#9461](https://github.com/pingcap/tidb/pull/9461)
+    - 根据查询上下文优化 Chunk 大小，降低 SQL 执行时间和集群的资源消耗 [#6489](https://github.com/pingcap/tidb/issues/6489)
++ 权限管理
+    - 支持 `SET ROLE` 和 `CURRENT_ROLE` [#9581](https://github.com/pingcap/tidb/pull/9581)
+    - 支持 `DROP ROLE` [#9616](https://github.com/pingcap/tidb/pull/9616)
+    - 支持 `CREATE ROLE` [#9461](https://github.com/pingcap/tidb/pull/9461)
 + Server
-    - Add the `/debug/zip` HTTP interface to get information of the current TiDB instance [#9651](https://github.com/pingcap/tidb/pull/9651)
-    - Support the `show pump status` and `show drainer status` SQL statements to check the Pump or Drainer status [#9456](https://github.com/pingcap/tidb/pull/9456)
-    - Support modifying the Pump or Drainer status by using SQL statements [#9789](https://github.com/pingcap/tidb/pull/9789)
-    - Support adding HASH fingerprints to SQL text for easy tracking of slow SQL statements [#9662](https://github.com/pingcap/tidb/pull/9662)
-    - Add the `log_bin` system variable ("0" by default) to control the enabling state of binlog; only support checking the state currently [#9343](https://github.com/pingcap/tidb/pull/9343)
-    - Support managing the sending binlog strategy by using the configuration file [#9864](https://github.com/pingcap/tidb/pull/9864)
-    - Support querying the slow log by using the `INFORMATION_SCHEMA.SLOW_QUERY` memory table [#9290](https://github.com/pingcap/tidb/pull/9290)
-    - Change the MySQL version displayed in TiDB from 5.7.10 to 5.7.25 [#9553](https://github.com/pingcap/tidb/pull/9553)
-    - Unify the [log format](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md) for easy collection and analysis by tools
-    - Add the `high_error_rate_feedback_total` monitoring item to record the difference between the actual data volume and the estimated data volume based on statistics [#9209](https://github.com/pingcap/tidb/pull/9209)
-    - Add the QPS monitoring item in the database dimension, which can be enabled by using a configuration item [#9151](https://github.com/pingcap/tidb/pull/9151)
+    - 新增 `/debug/zip` HTTP 接口，获取当前 TiDB 实例的信息 [#9651](https://github.com/pingcap/tidb/pull/9651)
+    - 支持使用 `show pump status`/`show drainer status` 语句查看 Pump/Drainer 状态 [#9456](https://github.com/pingcap/tidb/pull/9456)
+    - 支持使用 SQL 语句在线修改 Pump/Drainer 状态 [#9789](https://github.com/pingcap/tidb/pull/9789)
+    - 支持给 SQL 文本加上 HASH 指纹，方便追查慢 SQL [#9662](https://github.com/pingcap/tidb/pull/9662)
+    - 新增 `log_bin` 系统变量，默认：0，管理 binlog 开启状态，当前仅支持查看状态 [#9343](https://github.com/pingcap/tidb/pull/9343)
+    - 支持通过配置文件管理发送 binlog 策略 [#9864](https://github.com/pingcap/tidb/pull/9864)
+    - 支持通过内存表 `INFORMATION_SCHEMA.SLOW_QUERY` 查询慢日志 [#9290](https://github.com/pingcap/tidb/pull/9290)
+    - 将 TiDB 显示的 MySQL Version 从 5.7.10 变更为 5.7.25 [#9553](https://github.com/pingcap/tidb/pull/9553)
+    - 统一日志格式规范，利于工具收集分析
+    - 增加监控项 `high_error_rate_feedback_total`，记录实际数据量与统计信息估算数据量差距情况 [#9209](https://github.com/pingcap/tidb/pull/9209)
+    - 新增 Database 维度的 QPS 监控项 , 可以通过配置项开启 [#9151](https://github.com/pingcap/tidb/pull/9151)
 + DDL
-    - Add the `ddl_error_count_limit` global variable ("512" by default) to limit the number of DDL task retries (If this number exceeds the limit, the DDL task is canceled) [#9295](https://github.com/pingcap/tidb/pull/9295)
-    - Support ALTER ALGORITHM `INPLACE`/`INSTANT` [#8811](https://github.com/pingcap/tidb/pull/8811)
-    - Support the `SHOW CREATE VIEW` statement [#9309](https://github.com/pingcap/tidb/pull/9309)
-    - Support the `SHOW CREATE USER` statement [#9240](https://github.com/pingcap/tidb/pull/9240)
+    - 增加`ddl_error_count_limit`全局变量，默认值：512，限制 DDL 任务重试次数，超过限制次数会取消出错的 DDL [#9295](https://github.com/pingcap/tidb/pull/9295)
+    - 支持 ALTER ALGORITHM `INPLACE`/`INSTANT` [#8811](https://github.com/pingcap/tidb/pull/8811)
+    - 支持 `SHOW CREATE VIEW` 语句 [#9309](https://github.com/pingcap/tidb/pull/9309)
+    - 支持 `SHOW CREATE USER` 语句 [#9240](https://github.com/pingcap/tidb/pull/9240)
 
 ## PD
 
-+ Unify the [log format](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md) for easy collection and analysis by tools
-+ Simulator
-    - Support different heartbeat intervals in different stores [#1418](https://github.com/pingcap/pd/pull/1418)
-    - Add a case about importing data [#1263](https://github.com/pingcap/pd/pull/1263)
-+ Make hotspot scheduling configurable [#1412](https://github.com/pingcap/pd/pull/1412)
-+ Add the store address as the dimension monitoring item to replace the previous Store ID [#1429](https://github.com/pingcap/pd/pull/1429)
-+ Optimize the `GetStores` overhead to speed up the Region inspection cycle [#1410](https://github.com/pingcap/pd/pull/1410)
-+ Add an interface to delete the Tombstone Store [#1472](https://github.com/pingcap/pd/pull/1472)
++ 统一日志格式规范，利于工具收集分析
++ 模拟器
+    - 支持不同 store 可采用不同的心跳间隔时间 [#1418](https://github.com/pingcap/pd/pull/1418)
+    - 添加导入数据的场景 [#1263](https://github.com/pingcap/pd/pull/1263)
++ 热点调度可配置化 [#1412](https://github.com/pingcap/pd/pull/1412)
++ 增加 store 地址为维度的监控项，代替原有的 Store ID [#1429](https://github.com/pingcap/pd/pull/1429)
++ 优化 `GetStores` 开销，加快 Region 巡检周期 [#1410](https://github.com/pingcap/pd/pull/1410)
++ 新增删除 Tombstone Store 的接口 [#1472](https://github.com/pingcap/pd/pull/1472)
 
 ## TiKV
 
-+ Optimize the Coprocessor calculation execution framework and implement the TableScan section, with the Single TableScan performance improved by 5% ~ 30%
-    - Implement the definition of the `BatchRows` row and the `BatchColumn` column [#3660](https://github.com/tikv/tikv/pull/3660)
-    - Implement `VectorLike` to support accessing encoded and decoded data in the same way [#4242](https://github.com/tikv/tikv/pull/4242)
-    - Define the `BatchExecutor` to interface and implement the way of converting requests to `BatchExecutor` [#4243](https://github.com/tikv/tikv/pull/4243)
-    - Implement transforming the expression tree into the RPN format [#4329](https://github.com/tikv/tikv/pull/4329)
-    - Implement the `BatchTableScanExecutor` vectorization operator to accelerate calculation [#4351](https://github.com/tikv/tikv/pull/4351)
-+ Unify the [log format](https://github.com/tikv/rfcs/blob/master/text/0018-unified-log-format.md) for easy collection and analysis by tools
-+ Support using the Local Reader to read in the Raw Read interface [#4222](https://github.com/tikv/tikv/pull/4222)
-+ Add metrics about configuration information [#4206](https://github.com/tikv/tikv/pull/4206)
-+ Add metrics about key exceeding bound [#4255](https://github.com/tikv/tikv/pull/4255)
-+ Add an option to control panic or return an error when encountering the key exceeding bound error [#4254](https://github.com/tikv/tikv/pull/4254)
-+ Add support for the `INSERT` operation, make prewrite succeed only when keys do not exist, and eliminate `Batch Get` [#4085](https://github.com/tikv/tikv/pull/4085)
-+ Use more fair batch strategy in the Batch System [#4200](https://github.com/tikv/tikv/pull/4200)
-+ Support Raw scan in tikv-ctl [#3825](https://github.com/tikv/tikv/pull/3825)
++ 优化 Coprocessor 计算执行框架，完成 TableScan 算子，单 TableScan 即扫表操作性能提升 5% ~ 30%
+    - 实现行 `BatchRows` 和列 `BatchColumn` 的定义 [#3660](https://github.com/tikv/tikv/pull/3660)
+    - 实现 `VectorLike` 使得编码和解码的数据能够用统一的方式访问 [#4242](https://github.com/tikv/tikv/pull/4242)
+    - 定义 `BatchExecutor` 接口，实现将请求转化为 `BatchExecutor` 的方法 [#4243](https://github.com/tikv/tikv/pull/4243)
+    - 实现将表达式树转化成 RPN 格式 [#4329](https://github.com/tikv/tikv/pull/4329)
+    - TableScan 算子实现为 Batch 方式，通过向量化计算加速计算 [#4351](https://github.com/tikv/tikv/pull/4351)
+
+- 统一日志格式规范，利于工具收集分析
+- 支持 Raw Read 接口使用 Local Reader 进行读 [#4222](https://github.com/tikv/tikv/pull/4222)
+- 新增配置信息的 Metrics [#4206](https://github.com/tikv/tikv/pull/4206)
+- 新增 Key 越界的 Metrics [#4255](https://github.com/tikv/tikv/pull/4255)
+- 新增碰到扫越界错误时 Panic 或者报错选项 [#4254](https://github.com/tikv/tikv/pull/4254)
+- 增加 Insert 语义，只有在 Key 不存在的时候 Prewrite 才成功，消除 Batch Get [#4085](https://github.com/tikv/tikv/pull/4085)
+- Batch System 使用更加公平的 batch 策略 [#4200](https://github.com/tikv/tikv/pull/4200)
+- tikv-ctl 支持 Raw scan [#3825](https://github.com/tikv/tikv/pull/3825)
 
 ## Tools
 
 + TiDB Binlog
-    - Add the Arbiter tool that supports reading binlog from Kafka and replicate the data into MySQL
-    - Support filtering files that do not need to be replicated
-    - Support replicating generated columns
+    - 新增 Arbiter 工具支持从 Kafka 读取 binlog 同步到 MySQL
+    - Reparo 支持过滤不需要同步的文件
+    - 支持同步 generated column
 + Lightning
-    - Support disabling TiKV periodic Level-1 compaction, and when the TiKV cluster version is 2.1.4 or later, Level-1 compaction is automatically executed in the import mode [#119](https://github.com/pingcap/tidb-lightning/pull/119), [#4199](https://github.com/tikv/tikv/pull/4199)
-    - Add the `table_concurrency` configuration item to limit the number of import engines ("16" by default) and avoid overusing the importer disk space [#119](https://github.com/pingcap/tidb-lightning/pull/119)
-    - Support saving the intermediate state SST to the disk, to reduce memory usage [#4369](https://github.com/tikv/tikv/pull/4369)
-    - Optimize the import performance of TiKV-Importer and support separate import of data and indexes for large tables [#132](https://github.com/pingcap/tidb-lightning/pull/132)
-    - Support importing CSV files [#111](https://github.com/pingcap/tidb-lightning/pull/111)
-+ Data replication comparison tool (sync-diff-inspector)
-    - Support using TiDB statistics to split chunks to be compared [#197](https://github.com/pingcap/tidb-tools/pull/197)
-    - Support using multiple columns to split chunks to be compared [#197](https://github.com/pingcap/tidb-tools/pull/197)
+    - 支持禁用 TiKV periodic Level-1 compaction，当 TiKV 集群为 2.1.4 或更高时，在导入模式下会自动执行 Level-1 compaction [#119](https://github.com/pingcap/tidb-lightning/pull/119)，[#4199](https://github.com/tikv/tikv/pull/4199)
+    - 根据 `table_concurrency` 配置项限制 import engines 数量，默认值：16，防止过多占用 importer 磁盘空间 [#119](https://github.com/pingcap/tidb-lightning/pull/119)
+    - 支持保存中间状态的 SST 到磁盘，减少内存使用 [#4369](https://github.com/tikv/tikv/pull/4369)
+    - 优化 TiKV-Importer 导入性能，支持将大表的数据和索引分离导入 [#132](https://github.com/pingcap/tidb-lightning/pull/132)
+    - 支持 CSV 文件导入 [#111](https://github.com/pingcap/tidb-lightning/pull/111)
++ 数据同步对比工具 (sync-diff-inspector)
+    - 支持使用 TiDB 统计信息来划分对比的 chunk [#197](https://github.com/pingcap/tidb-tools/pull/197)
+    - 支持使用多个 column 来划分对比的 chunk [#197](https://github.com/pingcap/tidb-tools/pull/197)

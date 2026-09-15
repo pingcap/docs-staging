@@ -1,63 +1,61 @@
 ---
 title: tiup mirror rotate
-summary: TiUP mirror rotate is used to update the root.json file in a TiUP mirror. It contains public keys, expiration date, and is signed by administrators. The command automates the update process and requires all administrators to sign the file. Before using the command, ensure all TiUP clients are upgraded to v1.5.0 or later.
+summary: TiUP 的镜像中有一个重要文件 root.json，记录了系统需要使用的公钥和信任链基础。包含管理员签名、用于验证的公钥和过期时间。更新 root.json 需要管理员重新签名，使用命令 `tiup mirror rotate` 自动化更新流程。需要确保 TiUP 客户端升级到 v1.5.0 或以上版本。命令启动编辑器修改内容，等待管理员签名。选项包括临时服务器监听地址。输出为各个镜像管理员当前的签名状态。
 ---
 
 # tiup mirror rotate
 
-`root.json` is an important file in a TiUP mirror. It stores the public keys needed for the entire system and is the basis of the chain of trust in TiUP. It mainly contains the following parts:
+TiUP 的镜像中有一个非常重要的文件：root.json，里面记录了整个系统需要使用的公钥，是 TiUP 信任链的基础，它的内容主要包含几个部分：
 
-- Signatures of mirror administrators. For the official mirror, there are five signatures. For an initialized mirror, there are three signatures by default.
-- The public keys used to verify the following files:
+- N 个管理员的签名，对于官方镜像，N 为 5，默认初始化的镜像 N 为 3
+- 用于验证以下文件的公钥：
     - root.json
     - index.json
     - snapshot.json
     - timestamp.json
-- Expiration date of `root.json`. For the official mirror, the expiration date is one year later than the creation date of `root.json`.
+- 过期时间，对于官方镜像，为 root.json 创建时间后延一年
 
-For detailed description of TiUP mirror, see [TiUP Mirror Reference](/tiup/tiup-mirror-reference.md).
+关于镜像的详细介绍可以参考[镜像说明](/tiup/tiup-mirror-reference.md)。
 
-You need to update `root.json` in the following cases:
+在某些情况下，用户需要更新 root.json:
 
-- Replace the key of the mirror.
-- Update the expiration date of certificate files.
+- 更换镜像的密钥
+- 更新证书过期时间
 
-After the content of `root.json` is updated, the file must be re-signed by all administrators; otherwise, the client rejects the file. The update process is as follows:
+更新 root.json 内容之后，必须由管理员对其进行重新签名，否则客户端会拒绝，更新流程如下：
 
-1. The user (client) updates the content of `root.json`.
-2. All administrators sign the new `root.json` file.
-3. tiup-server updates `snapshot.json` to record the version of the new `root.json` file.
-4. tiup-server signs the new `snapshot.json` file.
-5. tiup-server updates `timestamp.json` to record the hash value of the new `snapshot.json` file.
-6. tiup-server signs the new `timestamp.json` file.
+1. 更新 root.json 的内容
+2. N 个管理员对新的 root.json 进行签名
+3. 更新 snapshot.json，记录新的 root.json 的 version
+4. 对新的 snapshot.json 进行签名
+5. 更新 timestamp.json，记录新的 snapshot.json 的 hash
+6. 对新的 timestamp.json 进行签名
 
-TiUP uses the command `tiup mirror rotate` to automate the above process.
+TiUP 使用命令 `tiup mirror rotate` 来自动化以上流程。
 
-> **Note:**
+> **注意：**
 >
-> + For TiUP versions earlier than v1.5.0, running this command does not return a correct new `root.json` file. See [#983](https://github.com/pingcap/tiup/issues/983).
-> + Before using this command, make sure that all TiUP clients are upgraded to v1.5.0 or a later version.
+> + 经测试，小于 TiUP v1.5.0 的版本无法正确获得新的 root.json [#983](https://github.com/pingcap/tiup/issues/983)。
+> + 使用此功能前请确保所有的 TiUP 客户端升级到了 v1.5.0 或以上版本。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror rotate [flags]
 ```
 
-After executing this command, TiUP starts an editor for the user to modify the file content to the target value, such as changing the value of the `expires` field to a later date. Then, TiUP changes the `version` field from `N` to `N+1` and saves the file. After the file is saved, TiUP starts a temporary HTTP server and waits for all mirror administrators to sign the file.
+该命令会启动一个编辑器，修改其内容为目标值（比如将 `expires` 字段的值向后推移），然后需要将 `version` 字段加一并保存。保存之后会启动一个临时的 http 服务器，等待 N 个不同的镜像管理员签名。
 
-For how mirror administrators sign files, refer to the [`sign` command](/tiup/tiup-command-mirror-sign.md).
+镜像管理员签名的方式参考 [sign 命令](/tiup/tiup-command-mirror-sign.md)。
 
-## Options
+## 选项
 
-### --addr
+### --addr（string，默认 0.0.0.0:8080）
 
-- Specifies the listening address of the temporary server. You need to make sure that the address is accessible to other mirror administrators so that they can use the [`sign` command](/tiup/tiup-command-mirror-sign.md) to sign the file.
-- Data type: `STRING`
-- If this option is not specified in the command, TiUP listens on `0.0.0.0:8080` by default.
+临时服务器的监听地址，需要确保该地址可以被其他镜像管理员访问，这样管理员才能使用 [sign 命令](/tiup/tiup-command-mirror-sign.md)签名。
 
-## Outputs
+## 输出
 
-The current signature status of each mirror administrator.
+- 各个镜像管理员当前的签名状态
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

@@ -1,107 +1,108 @@
 ---
 title: TiDB 3.0 Beta Release Notes
-summary: TiDB 3.0 Beta, released on January 19, 2019, focuses on stability, SQL optimizer, statistics, and execution engine. New features include support for views, window functions, range partitioning, and hash partitioning. The SQL optimizer has been enhanced with various optimizations, including support for index join in transactions, constant propagation optimization, and support for subqueries in the DO statement. The SQL executor has also been optimized for better performance. Privilege management, server, compatibility, and DDL have all been improved. TiDB Lightning now supports batch import for a single table, while PD and TiKV have also received various enhancements and new features.
+summary: TiDB 3.0 Beta 版本发布，新增支持 View、窗口函数、Range 分区、Hash 分区等特性。SQL 优化器做了很多改进，包括重新支持聚合消除、优化 `NOT EXISTS` 子查询、支持 Index Join 等。SQL 执行引擎优化了 Merge Join 算子、日志打印等功能。权限管理增加了对 `ANALYZE`、`USE`、`SET GLOBAL`、`SHOW PROCESSLIST` 语句的权限检查。Server 支持了 `Trace` 功能、插件框架、`unix_socket` 和 TCP 连接等功能。兼容性方面支持了 `ALLOW_INVALID_DATES` SQL mode、load data 对 CSV 文件的容错能力等。DDL 支持了快速恢复误删除的表、动态调整 ADD INDEX 的并发数等功能。Tools 方面 TiDB Lightning 大幅优化了 SQL 转 KV 的处理速度。PD 和 TiKV 也做了很多功能增加和优化。
+aliases: ['/zh/tidb/dev/release-3.0-beta/','/zh/tidb/v3.0/release-3.0-beta','/docs-cn/dev/releases/release-3.0-beta/','/docs-cn/dev/releases/3.0beta/','/zh/tidb/v5.4/release-3.0-beta','/zh/tidb/v6.1/release-3.0-beta','/zh/tidb/v6.5/release-3.0-beta','/zh/tidb/v7.1/release-3.0-beta','/zh/tidb/v7.5/release-3.0-beta','/zh/tidb/v8.1/release-3.0-beta']
 ---
 
 # TiDB 3.0 Beta Release Notes
 
-On January 19, 2019, TiDB 3.0 Beta is released. The corresponding TiDB Ansible 3.0 Beta is also released. TiDB 3.0 Beta builds on TiDB 2.1 with an added focus in stability, the SQL optimizer, statistics, and the execution engine.
+2019 年 1 月 19 日，TiDB 发布 3.0 Beta 版，TiDB Ansible 相应发布 3.0 Beta 版本。相比 2.1 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ New Features
-    - Support Views
-    - Support Window Functions
-    - Support Range Partitioning
-    - Support Hash Partitioning
-+ SQL Optimizer
-    - Re-support the optimization rule of `AggregationElimination` [#7676](https://github.com/pingcap/tidb/pull/7676)
-    - Optimize the `NOT EXISTS` subquery and convert it to Anti Semi Join [#7842](https://github.com/pingcap/tidb/pull/7842)
-    - Add the `tidb_enable_cascades_planner` variable to support the new Cascades optimizer. Currently, the Cascades optimizer is not yet fully implemented and is turned off by default [#7879](https://github.com/pingcap/tidb/pull/7879)
-    - Support using Index Join in transactions [#7877](https://github.com/pingcap/tidb/pull/7877)
-    - Optimize the constant propagation on the Outer Join, so that the filtering conditions related to the Outer table in the Join result can be pushed down through the Outer Join to the Outer table, reducing the useless calculation of the Outer Join and improving the execution performance [#7794](https://github.com/pingcap/tidb/pull/7794)
-    - Adjust the optimization rule of Projection Elimination to the position after the Aggregation Elimination, to avoid redundant `Project` operators [#7909](https://github.com/pingcap/tidb/pull/7909)
-    - Optimize the `IFNULL` function and eliminate this function when the input parameter has a non-NULL attribute [#7924](https://github.com/pingcap/tidb/pull/7924)
-    - Support Range for `_tidb_rowid` construction queries, to avoid full table scan and reduce cluster stress [#8047](https://github.com/pingcap/tidb/pull/8047)
-    - Optimize the `IN` subquery to do the Inner Join after the aggregation, and add the `tidb_opt_insubq_to_join_and_agg` variable to control whether to enable this optimization rule and open it by default [#7531](https://github.com/pingcap/tidb/pull/7531)
-    - Support using subqueries in the `DO` statement [#8343](https://github.com/pingcap/tidb/pull/8343)
-    - Add the optimization rule of Outer Join elimination to reduce unnecessary table scan and Join operations and improve execution performance [#8021](https://github.com/pingcap/tidb/pull/8021)
-    - Modify the Hint behavior of the `TIDB_INLJ` optimizer, and the optimizer will use the table specified in Hint as the Inner table of Index Join [#8243](https://github.com/pingcap/tidb/pull/8243)
-    - Use `PointGet` in a wide range so that it can be used when the execution plan cache of the `Prepare` statement takes effect [#8108](https://github.com/pingcap/tidb/pull/8108)
-    - Introduce the greedy `Join Reorder` algorithm to optimize the join order selection when joining multiple tables [#8394](https://github.com/pingcap/tidb/pull/8394)
-    - Support View [#8757](https://github.com/pingcap/tidb/pull/8757)
-    - Support Window Function [#8630](https://github.com/pingcap/tidb/pull/8630)
-    - Return warning to the client when `TIDB_INLJ` is not in effect, to enhance usability [#9037](https://github.com/pingcap/tidb/pull/9037)
-    - Support deducing the statistics for filtered data based on filtering conditions and table statistics [#7921](https://github.com/pingcap/tidb/pull/7921)
-    - Improve the Partition Pruning optimization rule of Range Partition [#8885](https://github.com/pingcap/tidb/pull/8885)
-+ SQL Executor
-    - Optimize the `Merge Join` operator to support the empty `ON` condition [#9037](https://github.com/pingcap/tidb/pull/9037)
-    - Optimize the log and print the user variables used when executing the `EXECUTE` statement [#7684](https://github.com/pingcap/tidb/pull/7684)
-    - Optimize the log to print slow query information for the `COMMIT` statement [#7951](https://github.com/pingcap/tidb/pull/7951)
-    - Support the `EXPLAIN ANALYZE` feature to make the SQL tuning process easier [#7827](https://github.com/pingcap/tidb/pull/7827)
-    - Optimize the write performance of wide tables with many columns [#7935](https://github.com/pingcap/tidb/pull/7935)
-    - Support `admin show next_row_id` [#8242](https://github.com/pingcap/tidb/pull/8242)
-    - Add the `tidb_init_chunk_size` variable to control the size of the initial Chunk used by the execution engine [#8480](https://github.com/pingcap/tidb/pull/8480)
-    - Improve `shard_row_id_bits` and cross-check the auto-increment ID [#8936](https://github.com/pingcap/tidb/pull/8936)
-+ `Prepare` Statement
-    - Prohibit adding the `Prepare` statement containing subqueries to the query plan cache to guarantee the query plan is correct when different user variables are input [#8064](https://github.com/pingcap/tidb/pull/8064)
-    - Optimize the query plan cache to guarantee the plan can be cached when the statement contains non-deterministic functions [#8105](https://github.com/pingcap/tidb/pull/8105)
-    - Optimize the query plan cache to guarantee the query plan of `DELETE`/`UPDATE`/`INSERT` can be cached [#8107](https://github.com/pingcap/tidb/pull/8107)
-    - Optimize the query plan cache to remove the corresponding plan when executing the `DEALLOCATE` statement [#8332](https://github.com/pingcap/tidb/pull/8332)
-    - Optimize the query plan cache to avoid the TiDB OOM issue caused by caching too many plans by limiting the memory usage [#8339](https://github.com/pingcap/tidb/pull/8339)
-    - Optimize the `Prepare` statement to support using the `?` placeholder in the `ORDER BY`/`GROUP BY`/`LIMIT` clause [#8206](https://github.com/pingcap/tidb/pull/8206)
-+ Privilege Management
-    - Add the privilege check for the `ANALYZE` statement [#8486](https://github.com/pingcap/tidb/pull/8486)
-    - Add the privilege check for the `USE` statement [#8414](https://github.com/pingcap/tidb/pull/8418)
-    - Add the privilege check for the `SET GLOBAL` statement [#8837](https://github.com/pingcap/tidb/pull/8837)
-    - Add the privilege check for the `SHOW PROCESSLIST` statement [#7858](https://github.com/pingcap/tidb/pull/7858)
++ 新特性
+    - 支持 View
+    - 支持窗口函数
+    - 支持 Range 分区
+    - 支持 Hash 分区
++ SQL 优化器
+    - 重新支持聚合消除的优化规则 [#7676](https://github.com/pingcap/tidb/pull/7676)
+    - 优化 `NOT EXISTS` 子查询，将其转化为 Anti Semi Join [#7842](https://github.com/pingcap/tidb/pull/7842)
+    - 添加 `tidb_enable_cascades_planner` 变量以支持新的 Cascades 优化器。目前 Cascades 优化器尚未实现完全，默认关闭 [#7879](https://github.com/pingcap/tidb/pull/7879)
+    - 支持在事务中使用 Index Join [#7877](https://github.com/pingcap/tidb/pull/7877)
+    - 优化 Outer Join 上的常量传播，使得对 Join 结果里和 Outer 表相关的过滤条件能够下推过 Outer Join 到 Outer 表上，减少 Outer Join 的无用计算量，提升执行性能 [#7794](https://github.com/pingcap/tidb/pull/7794)
+    - 调整投影消除的优化规则到聚合消除之后，消除掉冗余的 `Project` 算子 [#7909](https://github.com/pingcap/tidb/pull/7909)
+    - 优化 `IFNULL` 函数，当输入参数具有非 NULL 的属性的时候，消除该函数 [#7924](https://github.com/pingcap/tidb/pull/7924)
+    - 支持对 `_tidb_rowid` 构造查询的 Range，避免全表扫，减轻集群压力 [#8047](https://github.com/pingcap/tidb/pull/8047)
+    - 优化 `IN` 子查询为先聚合后做 Inner Join 并，添加变量 `tidb_opt_insubq_to_join_and_agg` 以控制是否开启该优化规则并默认打开 [#7531](https://github.com/pingcap/tidb/pull/7531)
+    - 支持在 `DO` 语句中使用子查询 [#8343](https://github.com/pingcap/tidb/pull/8343)
+    - 添加 Outer Join 消除的优化规则，减少不必要的扫表和 Join 操作，提升执行性能 [#8021](https://github.com/pingcap/tidb/pull/8021)
+    - 修改 `TIDB_INLJ` 优化器 Hint 的行为，优化器将使用 Hint 中指定的表当做 Index Join 的 Inner 表 [#8243](https://github.com/pingcap/tidb/pull/8243)
+    - 更大范围的启用 `PointGet`，使得当 Prepare 语句的执行计划缓存生效时也能利用上它 [#8108](https://github.com/pingcap/tidb/pull/8108)
+    - 引入贪心的 Join Reorder 算法，优化多表 Join 时 Join 顺序选择的问题 [#8394](https://github.com/pingcap/tidb/pull/8394)
+    - 支持 View [#8757](https://github.com/pingcap/tidb/pull/8757)
+    - 支持 Window Function [#8630](https://github.com/pingcap/tidb/pull/8630)
+    - 当 `TIDB_INLJ` 未生效时，返回 warning 给客户端，增强易用性 [#9037](https://github.com/pingcap/tidb/pull/9037)
+    - 支持根据过滤条件和表的统计信息推导过滤后数据的统计信息的功能 [#7921](https://github.com/pingcap/tidb/pull/7921)
+    - 增强 Range Partition 的 Partition Pruning 优化规则 [#8885](https://github.com/pingcap/tidb/pull/8885)
++ SQL 执行引擎
+    - 优化 Merge Join 算子，使其支持空的 `ON` 条件 [#9037](https://github.com/pingcap/tidb/pull/9037)
+    - 优化日志，打印执行 `EXECUTE` 语句时使用的用户变量 [#7684](https://github.com/pingcap/tidb/pull/7684)
+    - 优化日志，为 `COMMIT` 语句打印慢查询信息 [#7951](https://github.com/pingcap/tidb/pull/7951)
+    - 支持 `EXPLAIN ANALYZE` 功能，使得 SQL 调优过程更加简单 [#7827](https://github.com/pingcap/tidb/pull/7827)
+    - 优化列很多的宽表的写入性能 [#7935](https://github.com/pingcap/tidb/pull/7935)
+    - 支持 `admin show next_row_id` [#8242](https://github.com/pingcap/tidb/pull/8242)
+    - 添加变量 `tidb_init_chunk_size` 以控制执行引擎使用的初始 Chunk 大小 [#8480](https://github.com/pingcap/tidb/pull/8480)
+    - 完善 `shard_row_id_bits`，对自增 ID 做越界检查 [#8936](https://github.com/pingcap/tidb/pull/8936)
++ `Prepare` 语句
+    - 对包含子查询的 `Prepare` 语句，禁止其添加到 `Prepare` 语句的执行计划缓存中，确保输入不同的用户变量时执行计划的正确性 [#8064](https://github.com/pingcap/tidb/pull/8064)
+    - 优化 `Prepare` 语句的执行计划缓存，使得当语句中包含非确定性函数的时候，该语句的执行计划也能被缓存 [#8105](https://github.com/pingcap/tidb/pull/8105)
+    - 优化 `Prepare` 语句的执行计划缓存，使得 `DELETE`/`UPDATE`/`INSERT` 的执行计划也能被缓存 [#8107](https://github.com/pingcap/tidb/pull/8107)
+    - 优化 `Prepare` 语句的执行计划缓存，当执行 `DEALLOCATE` 语句时从缓存中剔除对应的执行计划 [#8332](https://github.com/pingcap/tidb/pull/8332)
+    - 优化 `Prepare` 语句的执行计划缓存，通过控制其内存使用以避免缓存过多执行计划导致 TiDB OOM 的问题 [#8339](https://github.com/pingcap/tidb/pull/8339)
+    - 优化 `Prepare` 语句，使得 `ORDER BY`/`GROUP BY`/`LIMIT` 子句中可以使用 “?” 占位符 [#8206](https://github.com/pingcap/tidb/pull/8206)
++ 权限管理
+    - 增加对 `ANALYZE` 语句的权限检查 [#8486](https://github.com/pingcap/tidb/pull/8486)
+    - 增加对 `USE` 语句的权限检查 [#8414](https://github.com/pingcap/tidb/pull/8418)
+    - 增加对 `SET GLOBAL` 语句的权限检查 [#8837](https://github.com/pingcap/tidb/pull/8837)
+    - 增加对 `SHOW PROCESSLIST` 语句的权限检查 [#7858](https://github.com/pingcap/tidb/pull/7858)
 + Server
-    - Support the `Trace` feature [#9029](https://github.com/pingcap/tidb/pull/9029)
-    - Support the plugin framework [#8788](https://github.com/pingcap/tidb/pull/8788)
-    - Support using `unix_socket` and TCP simultaneously to connect to the database [#8836](https://github.com/pingcap/tidb/pull/8836)
-    - Support the `interactive_timeout` system variable [#8573](https://github.com/pingcap/tidb/pull/8573)
-    - Support the `wait_timeout` system variable [#8346](https://github.com/pingcap/tidb/pull/8346)
-    - Support splitting a transaction into multiple transactions based on the number of statements using the `tidb_batch_commit` variable [#8293](https://github.com/pingcap/tidb/pull/8293)
-    - Support using the `ADMIN SHOW SLOW` statement to check slow logs [#7785](https://github.com/pingcap/tidb/pull/7785)
-+ Compatibility
-    - Support the `ALLOW_INVALID_DATES` SQL mode [#9027](https://github.com/pingcap/tidb/pull/9027)
-    - Improve `LoadData` fault-tolerance for the CSV file [#9005](https://github.com/pingcap/tidb/pull/9005)
-    - Support the MySQL 320 handshake protocol [#8812](https://github.com/pingcap/tidb/pull/8812)
-    - Support using the unsigned `bigint` column as the auto-increment column [#8181](https://github.com/pingcap/tidb/pull/8181)
-    - Support the `SHOW CREATE DATABASE IF NOT EXISTS` syntax [#8926](https://github.com/pingcap/tidb/pull/8926)
-    - Abandon the predicate pushdown operation when the filtering condition contains a user variable to improve the compatibility with MySQL's behavior of using user variables to mock the Window Function behavior [#8412](https://github.com/pingcap/tidb/pull/8412)
+    - 支持了对 SQL 语句的 `Trace` 功能 [#9029](https://github.com/pingcap/tidb/pull/9029)
+    - 支持了插件框架 [#8788](https://github.com/pingcap/tidb/pull/8788)
+    - 支持同时使用 `unix_socket` 和 TCP 两种方式连接数据库 [#8836](https://github.com/pingcap/tidb/pull/8836)
+    - 支持了系统变量 `interactive_timeout` [#8573](https://github.com/pingcap/tidb/pull/8573)
+    - 支持了系统变量 `wait_timeout` [#8346](https://github.com/pingcap/tidb/pull/8346)
+    - 提供了变量 `tidb_batch_commit`，可以按语句数将事务分解为多个事务 [#8293](https://github.com/pingcap/tidb/pull/8293)
+    - 支持 `ADMIN SHOW SLOW` 语句，方便查看慢日志 [#7785](https://github.com/pingcap/tidb/pull/7785)
++ 兼容性
+    - 支持了 `ALLOW_INVALID_DATES` 这种 SQL mode [#9027](https://github.com/pingcap/tidb/pull/9027)
+    - 提升了 load data 对 CSV 文件的容错能力 [#9005](https://github.com/pingcap/tidb/pull/9005)
+    - 支持了 MySQL 320 握手协议 [#8812](https://github.com/pingcap/tidb/pull/8812)
+    - 支持将 unsigned bigint 列声明为自增列 [#8181](https://github.com/pingcap/tidb/pull/8181)
+    - 支持 `SHOW CREATE DATABASE IF NOT EXISTS` 语法 [#8926](https://github.com/pingcap/tidb/pull/8926)
+    - 当过滤条件中包含用户变量时不对其进行谓词下推的操作，更加兼容 MySQL 中使用用户变量模拟 Window Function 的行为 [#8412](https://github.com/pingcap/tidb/pull/8412)
 + DDL
-    - Support fast recovery of mistakenly deleted tables [#7937](https://github.com/pingcap/tidb/pull/7937)
-    - Support adjusting the number of concurrencies of `ADD INDEX` dynamically [#8295](https://github.com/pingcap/tidb/pull/8295)
-    - Support changing the character set of tables or columns to `utf8`/`utf8mb4` [#8037](https://github.com/pingcap/tidb/pull/8037)
-    - Change the default character set from `utf8` to `utf8mb4` [#7965](https://github.com/pingcap/tidb/pull/7965)
-    - Support Range Partition [#8011](https://github.com/pingcap/tidb/pull/8011)
+    - 支持快速恢复误删除的表 [#7937](https://github.com/pingcap/tidb/pull/7937)
+    - 支持动态调整 ADD INDEX 的并发数 [#8295](https://github.com/pingcap/tidb/pull/8295)
+    - 支持更改表或者列的字符集到 utf8/utf8mb4 [#8037](https://github.com/pingcap/tidb/pull/8037)
+    - 默认字符集从 `utf8` 变为 `utf8mb4` [#7965](https://github.com/pingcap/tidb/pull/7965)
+    - 支持 RANGE PARTITION [#8011](https://github.com/pingcap/tidb/pull/8011)
 
 ## Tools
 
 + TiDB Lightning
-    - Speed up converting SQL statements to KV pairs remarkably [#110](https://github.com/pingcap/tidb-lightning/pull/110)
-    - Support batch import for a single table to improve import performance and stability [#113](https://github.com/pingcap/tidb-lightning/pull/113)
+    - 大幅优化 SQL 转 KV 的处理速度 [#110](https://github.com/pingcap/tidb-lightning/pull/110)
+    - 对单表支持 batch 导入，提高导入性能和稳定性 [#113](https://github.com/pingcap/tidb-lightning/pull/113)
 
 ## PD
 
-- Add `RegionStorage` to store Region metadata separately [#1237](https://github.com/pingcap/pd/pull/1237)
-- Add shuffle hot Region scheduler [#1361](https://github.com/pingcap/pd/pull/1361)
-- Add scheduling parameter related metrics [#1406](https://github.com/pingcap/pd/pull/1406)
-- Add cluster label related metrics [#1402](https://github.com/pingcap/pd/pull/1402)
-- Add the importing data simulator [#1263](https://github.com/pingcap/pd/pull/1263)
-- Fix the `Watch` issue about leader election [#1396](https://github.com/pingcap/pd/pull/1396)
+- 增加 `RegionStorage` 单独存储 Region 元信息 [#1237](https://github.com/pingcap/pd/pull/1237)
+- 增加 shuffle hot region 调度 [#1361](https://github.com/pingcap/pd/pull/1361)
+- 增加调度参数相关 Metrics [#1406](https://github.com/pingcap/pd/pull/1406)
+- 增加集群 Label 信息相关 Metrics [#1402](https://github.com/pingcap/pd/pull/1402)
+- 增加导入数据场景模拟 [#1263](https://github.com/pingcap/pd/pull/1263)
+- 修复 Leader 选举相关的 Watch 问题 [#1396](https://github.com/pingcap/pd/pull/1396)
 
 ## TiKV
 
-- Support distributed GC [#3179](https://github.com/tikv/tikv/pull/3179)
-- Check RocksDB Level 0 files before applying snapshots to avoid Write Stall [#3606](https://github.com/tikv/tikv/pull/3606)
-- Support reverse `raw_scan` and `raw_batch_scan` [#3742](https://github.com/tikv/tikv/pull/3724)
-- Support using HTTP to obtain monitoring information [#3855](https://github.com/tikv/tikv/pull/3855)
-- Support DST better [#3786](https://github.com/tikv/tikv/pull/3786)
-- Support receiving and sending Raft messages in batch [#3931](https://github.com/tikv/tikv/pull/3913)
-- Introduce a new storage engine Titan [#3985](https://github.com/tikv/tikv/pull/3985)
-- Upgrade gRPC to v1.17.2 [#4023](https://github.com/tikv/tikv/pull/4023)
-- Support receiving the client requests and sending replies in batch [#4043](https://github.com/tikv/tikv/pull/4043)
-- Support multi-thread Apply [#4044](https://github.com/tikv/tikv/pull/4044)
-- Support multi-thread Raftstore [#4066](https://github.com/tikv/tikv/pull/4066)
+- 支持了分布式 GC [#3179](https://github.com/tikv/tikv/pull/3179)
+- 在 Apply snapshot 之前检查 RocksDB level 0 文件，避免产生 Write stall [#3606](https://github.com/tikv/tikv/pull/3606)
+- 支持了逆向 `raw_scan` 和 `raw_batch_scan` [#3742](https://github.com/tikv/tikv/pull/3724)
+- 更好的夏令时支持 [#3786](https://github.com/tikv/tikv/pull/3786)
+- 支持了使用 HTTP 方式获取监控信息 [#3855](https://github.com/tikv/tikv/pull/3855)
+- 支持批量方式接收和发送 Raft 消息 [#3931](https://github.com/tikv/tikv/pull/3913)
+- 引入了新的存储引擎 Titan [#3985](https://github.com/tikv/tikv/pull/3985)
+- 升级 gRPC 到 v1.17.2 [#4023](https://github.com/tikv/tikv/pull/4023)
+- 支持批量方式接收客户端请求和发送回复 [#4043](https://github.com/tikv/tikv/pull/4043)
+- 多线程 Apply [#4044](https://github.com/tikv/tikv/pull/4044)
+- 多线程 Raftstore [#4066](https://github.com/tikv/tikv/pull/4066)

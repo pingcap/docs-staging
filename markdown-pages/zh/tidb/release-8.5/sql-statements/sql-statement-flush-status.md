@@ -1,13 +1,13 @@
 ---
-title: FLUSH STATUS | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中使用 FLUSH STATUS 的概述。
+title: FLUSH STATUS
+summary: TiDB 数据库中 FLUSH STATUS 的使用概况。
 ---
 
 # FLUSH STATUS
 
-此语句为兼容 MySQL 而设计。它在 TiDB 中没有任何效果，TiDB 使用 Prometheus 和 Grafana 进行集中式指标收集，而不是 `SHOW STATUS`。
+`FLUSH STATUS` 语句用于提供 MySQL 兼容性，但在 TiDB 上并无作用。因为 TiDB 使用 Prometheus 和 Grafana 而非 `SHOW STATUS` 来进行集中度量收集。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 FlushStmt ::=
@@ -27,8 +27,12 @@ FlushOption ::=
 
 ## 示例
 
+
 ```sql
-mysql> show status;
+show status;
+```
+
+```
 +--------------------+--------------------------------------+
 | Variable_name      | Value                                |
 +--------------------+--------------------------------------+
@@ -40,8 +44,14 @@ mysql> show status;
 | Ssl_cipher         |                                      |
 +--------------------+--------------------------------------+
 6 rows in set (0.01 sec)
+```
 
-mysql> show global status;
+
+```sql
+show global status;
+```
+
+```
 +--------------------+--------------------------------------+
 | Variable_name      | Value                                |
 +--------------------+--------------------------------------+
@@ -53,11 +63,23 @@ mysql> show global status;
 | ddl_schema_version | 141                                  |
 +--------------------+--------------------------------------+
 6 rows in set (0.00 sec)
+```
 
-mysql> flush status;
+
+```sql
+flush status;
+```
+
+```
 Query OK, 0 rows affected (0.00 sec)
+```
 
-mysql> show status;
+
+```sql
+show status;
+```
+
+```
 +--------------------+--------------------------------------+
 | Variable_name      | Value                                |
 +--------------------+--------------------------------------+
@@ -73,9 +95,9 @@ mysql> show status;
 
 ## MySQL 兼容性
 
-* 此语句与 MySQL 兼容。
+* `FLUSH STATUS` 语句与 MySQL 兼容。
 
-## 相关链接
+## 另请参阅
 
 * [SHOW \[GLOBAL|SESSION\] STATUS](/sql-statements/sql-statement-show-status.md)
-* [Server Status Variables](/status-variables.md)
+* [服务器状态变量](/status-variables.md)

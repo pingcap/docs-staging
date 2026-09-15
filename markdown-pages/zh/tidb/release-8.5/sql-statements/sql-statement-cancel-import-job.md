@@ -1,17 +1,17 @@
 ---
 title: CANCEL IMPORT
-summary: 关于 TiDB 中 CANCEL IMPORT 的用法概述。
+summary: TiDB 数据库中 CANCEL IMPORT 的使用概况。
 ---
 
 # CANCEL IMPORT
 
-`CANCEL IMPORT` 语句用于取消在 TiDB 中创建的数据导入任务。
+`CANCEL IMPORT` 语句用于取消 TiDB 中创建的数据导入任务。
 
 ## 所需权限
 
-要取消数据导入任务，你需要是导入任务的创建者或拥有 `SUPER` 权限。
+只有导入任务的创建者或拥有 `SUPER` 权限的用户才能够取消任务。
 
-## 语法
+## 语法图
 
 ```ebnf+diagram
 CancelImportJobsStmt ::=
@@ -20,7 +20,7 @@ CancelImportJobsStmt ::=
 
 ## 示例
 
-要取消 ID 为 `1` 的导入任务，执行以下语句：
+下面示例取消 ID 为 1 的导入任务：
 
 ```sql
 CANCEL IMPORT JOB 1;
@@ -34,9 +34,9 @@ Query OK, 0 rows affected (0.01 sec)
 
 ## MySQL 兼容性
 
-此语句是 TiDB 对 MySQL 语法的扩展。
+该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 相关链接
+## 另请参阅
 
 * [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md)
 * [`SHOW IMPORT JOB`](/sql-statements/sql-statement-show-import-job.md)

@@ -1,95 +1,116 @@
 ---
-title: Snapshot Backup and Restore Guide
-summary: This document describes how to back up and restore TiDB snapshots using the br command-line tool. It includes instructions for snapshot backup, restoring data of a specified time point, and restoring a database or table. The document also covers the performance and impact of snapshot backup and restore.
+title: TiDB 快照备份与恢复使用指南
+summary: 了解如何使用 br 命令行工具进行 TiDB 快照备份与恢复。
 ---
 
-# Snapshot Backup and Restore Guide
+# TiDB 快照备份与恢复使用指南
 
-This document describes how to back up and restore TiDB snapshots using the br command-line tool (hereinafter referred to as `br`). Before backing up and restoring data, you need to [install the br command-line tool](/br/br-use-overview.md#deploy-and-use-br) first.
+本文介绍如何使用 br 命令行工具进行 TiDB 快照备份和恢复。使用前，请先[安装 br 命令行工具](/br/br-use-overview.md#部署和使用-br)。
 
-Snapshot backup is an implementation to back up the entire cluster. It is based on [multi-version concurrency control (MVCC)](/tidb-storage.md#mvcc) and backs up all data in the specified snapshot to a target storage. The size of the backup data is approximately the size of the compressed single replica in the cluster. After the backup is completed, you can restore the backup data to an empty cluster or a cluster that does not contain conflict data (with the same schema or same tables), restore the cluster to the time point of the snapshot backup, and restore multiple replicas according to the cluster replica settings.
+快照备份是集群全量备份的一种实现。它基于 TiDB 的[多版本并发控制 (MVCC)](/tidb-storage.md#mvcc) 实现，将指定快照包含的所有数据备份到目标存储中。备份下来的数据大小约等于集群（压缩后的）单副本数据大小。备份完成之后，你可以在一个空集群或不存在数据冲突（相同 schema 或 table）的集群执行快照备份恢复，将集群恢复到快照备份时的数据状态，同时恢复功能会依据集群副本设置恢复出多副本。
 
-Besides basic backup and restore, snapshot backup and restore also provides the following features:
+除了基础的备份和恢复功能，快照备份和恢复还提供以下功能：
 
-* [Backup data of a specified time point](#back-up-cluster-snapshots)
-* [Restore data of a specified database or table](#restore-a-database-or-a-table)
+* 备份指定时间点的快照数据
+* [恢复指定数据库或表的数据](#恢复备份数据中指定库表的数据)
 
-## Back up cluster snapshots
+## 对集群进行快照备份
 
-> **Note:**
+> **注意：**
 >
-> - The following examples assume that Amazon S3 access keys and secret keys are used to authorize permissions. If IAM roles are used to authorize permissions, you need to set `--send-credentials-to-tikv` to `false`.
-> - If other storage systems or authorization methods are used to authorize permissions, adjust the parameter settings according to [Backup Storages](/br/backup-and-restore-storages.md).
+> - 以下场景采用 Amazon S3 Access key 和 Secret key 授权方式来进行模拟。如果使用 IAM Role 授权，需要设置 `--send-credentials-to-tikv` 为 `false`。
+> - 如果使用不同存储或者其他授权方式，请参考[备份存储](/br/backup-and-restore-storages.md)来进行参数调整。
 
-You can back up a TiDB cluster snapshot by running the `tiup br backup full` command. Run `tiup br backup full --help` to see the help information:
+使用 `tiup br backup full` 可以进行一次快照备份。该命令的详细使用帮助可以通过执行 `tiup br backup full --help` 查看。
 
 ```shell
 tiup br backup full --pd "${PD_IP}:2379" \
     --backupts '2022-09-08 13:30:00 +08:00' \
-    --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}" 
+    --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}" \
 ```
 
-In the preceding command:
+以上命令中：
 
-- `--backupts`: The time point of the snapshot. The format can be [TSO](/tso.md) or timestamp, such as `400036290571534337` or `2018-05-11 01:42:23 +08:00`. If the data of this snapshot is garbage collected, the `tiup br backup` command returns an error and `br` exits. When backing up using a timestamp, it is recommended to specify the time zone as well. Otherwise, `br` uses the local time zone to construct the timestamp by default, which might lead to an incorrect backup time point. If you leave this parameter unspecified, `br` picks the snapshot corresponding to the backup start time.
-- `--storage`: The storage address of the backup data. Snapshot backup supports Amazon S3, Google Cloud Storage, and Azure Blob Storage as backup storage. The preceding command uses Amazon S3 as an example. For more details, see [URI Formats of External Storage Services](/external-storage-uri.md).
+- `--backupts`：快照对应的物理时间点，格式可以是 [TSO](/tso.md) 或者时间戳，例如 `400036290571534337` 或者 `2018-05-11 01:42:23 +08:00`。如果该快照的数据被垃圾回收 (GC) 了，那么 `tiup br backup` 命令会报错并退出。使用日期方式备份时，建议同时指定时区，否则 br 默认使用本地时间构造时间戳，可能导致备份时间点错误。如果你没有指定该参数，那么 br 会选取备份开始的时间点所对应的快照。
+- `--storage`：数据备份到的存储地址。快照备份支持以 Amazon S3、Google Cloud Storage、Azure Blob Storage 为备份存储，以上命令以 Amazon S3 为示例。详细存储地址格式请参考[外部存储服务的 URI 格式](/external-storage-uri.md)。
 
-During backup, a progress bar is displayed in the terminal as shown below. When the progress bar advances to 100%, the backup task is completed and statistics such as total backup time, average backup speed, and backup data size are displayed.
+在快照备份过程中，终端会显示备份进度条。在备份完成后，会输出备份耗时、速度、备份数据大小等信息。其中：
+
+- `total-ranges`：备份的文件总数量
+- `ranges-succeed`：备份成功的文件数量
+- `ranges-failed`：备份失败的文件数量
+- `backup-total-ranges`：备份的表（包括分区表）与索引的数量
+- `write-CF-files`：备份文件中含有 `write CF` 数据的 SST 文件数量
+- `default-CF-files`：备份文件中含有 `default CF` 数据的 SST 文件数量
 
 ```shell
 Full Backup <-------------------------------------------------------------------------------> 100.00%
 Checksum <----------------------------------------------------------------------------------> 100.00%
-*** ["Full Backup success summary"] *** [backup-checksum=3.597416ms] [backup-fast-checksum=2.36975ms] *** [total-take=4.715509333s] [BackupTS=435844546560000000] [total-kv=1131] [total-kv-size=250kB] [average-speed=53.02kB/s] [backup-data-size(after-compressed)=71.33kB] [Size=71330]
+*** ["Full Backup success summary"] *** [total-ranges=20] [ranges-succeed=20] [ranges-failed=0] [backup-checksum=3.597416ms] [backup-fast-checksum=2.36975ms] [backup-total-ranges=11] [backup-total-regions=10] [write-CF-files=14] [default-CF-files=6] [total-take=4.715509333s] [BackupTS=435844546560000000] [total-kv=1131] [total-kv-size=250kB] [average-speed=53.02kB/s] [backup-data-size(after-compressed)=71.33kB] [Size=71330]
 ```
 
-## Get the backup time point of a snapshot backup
+## 查询快照备份的时间点信息
 
-To manage a lot of backups, if you need to get the physical time of a snapshot backup, you can run the following command:
+出于管理备份数的需要，如果你需要查看某个快照备份对应的快照物理时间点，可以执行下面的命令：
 
 ```shell
 tiup br validate decode --field="end-version" \
 --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}" | tail -n1
 ```
 
-The output is as follows, corresponding to the physical time `2022-09-08 13:30:00 +0800 CST`:
+结果输出如下，对应物理时间 `2022-09-08 13:30:00 +0800 CST`：
 
 ```
 435844546560000000
 ```
 
-## Restore cluster snapshots
+## 恢复快照备份数据
 
-> **Note:**
+> **注意：**
 >
-> - For BR v7.5.0 and earlier versions, the snapshot restore speed per TiKV node is approximately 100 MiB/s.
-> - Starting from BR v7.6.0, to address potential restore bottlenecks in scenarios with large-scale Regions, BR supports accelerating restore through the coarse-grained Region scattering algorithm (experimental). You can enable this feature by specifying the command-line parameter `--granularity="coarse-grained"`.
-> - Starting from BR v8.0.0, the snapshot restore through the coarse-grained Region scattering algorithm is generally available (GA) and enabled by default. BR improves the snapshot restore speed significantly by implementing various optimizations such as adopting the coarse-grained Region scattering algorithm, creating databases and tables in batches, reducing the mutual impact between SST file downloads and ingest operations, and accelerating the restore of table statistics. According to test results from real-world cases, the SST file download speed for snapshot restore is improved by approximately up to 10 times, the data restore speed per TiKV node stabilizes at 1.2 GiB/s, the end-to-end restore speed is improved by approximately 1.5 to 3 times, and 100 TiB of data can be restored within one hour.
-> - Starting from BR v8.2.0, the command line parameter `--granularity` is deprecated, and the coarse-grained Region scattering algorithm is enabled by default.
-> - Starting from BR v8.3.0, the snapshot restore task introduces available disk space checks for TiKV and TiFlash: at the beginning of the task, BR verifies whether TiKV and TiFlash have sufficient disk space based on the size of SST files to be restored; for TiKV v8.3.0 or later version, TiKV verifies whether it has sufficient disk space before downloading each SST file. If the space is insufficient according to any of these checks, the restore task fails with an error. You can skip the check at the beginning of the restore task by setting `--check-requirements=false`, but the disk space check before TiKV downloads each SST file cannot be skipped.
+> - 在 BR v7.5.0 及之前版本中，每个 TiKV 节点的快照恢复速度约为 100 MiB/s。
+> - 从 BR v7.6.0 开始，为了解决大规模 Region 场景下可能出现的恢复瓶颈问题，BR 支持通过粗粒度打散 Region 的算法加速恢复（实验特性）。可以通过指定命令行参数 `--granularity="coarse-grained"` 来启用此功能。
+> - 从 BR v8.0.0 开始，通过粗粒度打散 Region 算法进行快照恢复的功能正式 GA，并默认启用。通过采用粗粒度打散 Region 算法、批量创建库表、降低 SST 文件下载和 Ingest 操作之间的相互影响、加速表统计信息恢复等改进措施，快照恢复的速度有大幅提升。在实际案例中，快照恢复的 SST 文件下载速度最高提升约 10 倍，单个 TiKV 节点的数据恢复速度稳定在 1.2 GiB/s，端到端的恢复速度大约提升 1.5 到 3 倍，并且能够在 1 小时内完成对 100 TiB 数据的恢复。
+> - 从 BR v8.2.0 开始，命令行参数 `--granularity` 被废弃，粗粒度打散 Region 算法默认启用。
+> - 从 BR v8.3.0 开始，快照恢复增加了对 TiKV 和 TiFlash 可用磁盘空间的检查，包括在开始阶段会根据需要恢复的 SST 文件大小检查 TiKV 和 TiFlash 是否有足够的磁盘空间，以及在 TiKV（v8.3.0 或之后的版本）下载每个 SST 文件前会检查 TiKV 是否有足够的磁盘空间。如果任一阶段检测到可用空间不足，恢复任务会报错失败。你可以通过设置 `--check-requirements=false` 来选择跳过恢复任务开始阶段的检查，但 TiKV 在下载 SST 文件前的磁盘空间检查无法跳过。
 
-You can restore a snapshot backup by running the `tiup br restore full` command. Run `tiup br restore full --help` to see the help information:
+如果你需要恢复备份的快照数据，则可以使用 `tiup br restore full`。该命令的详细使用帮助可以通过执行 `tiup br restore full --help` 查看。
 
-The following example restores the [preceding backup snapshot](#back-up-cluster-snapshots) to a target cluster:
+将[上文备份的快照数据](#对集群进行快照备份)恢复到目标集群：
 
 ```shell
 tiup br restore full --pd "${PD_IP}:2379" \
 --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}"
 ```
 
-During restore, a progress bar is displayed in the terminal as shown below. When the progress bar advances to 100%, the restore task is completed and statistics such as total restore time, average restore speed, and total data size are displayed.
+在恢复快照备份数据过程中，终端会显示恢复进度条。在完成恢复后，会输出恢复耗时、速度、恢复数据大小等信息。其中：
+
+- `total-ranges`：恢复的文件总数量
+- `ranges-succeed`：恢复成功的文件数量
+- `ranges-failed`：恢复失败的文件数量
+- `merge-ranges`：合并数据范围的耗时
+- `split-region`：切分和打散 Region 的耗时
+- `restore-files`： TiKV 恢复 SST 文件的耗时
+- `write-CF-files`：恢复文件中含有 `write CF` 数据的 SST 文件数量
+- `default-CF-files`：恢复文件中含有 `default CF` 数据的 SST 文件数量
+- `split-keys`：生成的用于切分 Region 的 key 数量
 
 ```shell
-Full Restore <------------------------------------------------------------------------------> 100.00%
-*** ["Full Restore success summary"] *** [total-take=4.344617542s] [total-kv=5] [total-kv-size=327B] [average-speed=75.27B/s] [restore-data-size(after-compressed)=4.813kB] [Size=4813] [BackupTS=435844901803917314]
+Split&Scatter Region <--------------------------------------------------------------------> 100.00%
+Download&Ingest SST <---------------------------------------------------------------------> 100.00%
+Restore Pipeline <------------------------------------------------------------------------> 100.00%
+*** ["Full Restore success summary"] [total-ranges=20] [ranges-succeed=20] [ranges-failed=0] [merge-ranges=7.546971ms] [split-region=343.594072ms] [restore-files=1.57662s] [default-CF-files=6] [write-CF-files=14] [split-keys=9] [total-take=4.344617542s] [total-kv=5] [total-kv-size=327B] [average-speed=75.27B/s] [restore-data-size(after-compressed)=4.813kB] [Size=4813] [BackupTS=435844901803917314]
 ```
 
-### Restore a database or a table
+在数据恢复期间，目标表的 Table Mode 会自动设置为 `restore`，处于 `restore` 模式的表禁止用户执行任何读写操作。当数据恢复完成后，Table Mode 会自动切换为 `normal` 状态，用户可以正常读写该表，从而确保数据恢复期间的任务稳定性和数据一致性。
 
-BR supports restoring partial data of a specified database or table from backup data. This feature allows you to filter out unwanted data and back up only a specific database or table.
+### 恢复备份数据中指定库表的数据
 
-**Restore a database**
+br 命令行工具支持只恢复备份数据中指定库、表的部分数据，该功能用于在恢复过程中过滤不需要的数据。
 
-To restore a database to a cluster, run the `tiup br restore db` command. The following example restores the `test` database from the backup data to the target cluster:
+**恢复单个数据库的数据**
+
+要将备份数据中的某个数据库恢复到集群中，可以使用 `tiup br restore db` 命令。以下示例只恢复 `test` 库的数据：
 
 ```shell
 tiup br restore db \
@@ -98,11 +119,11 @@ tiup br restore db \
 --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}"
 ```
 
-In the preceding command, `--db` specifies the name of the database to be restored.
+以上命令中 `--db` 选项指定了需要恢复的数据库名。
 
-**Restore a table**
+**恢复单张表的数据**
 
-To restore a single table to a cluster, run the `tiup br restore table` command. The following example restores the `test.usertable` table from the backup data to the target cluster:
+要将备份数据中的某张数据表恢复到集群中，可以使用 `tiup br restore table` 命令。以下示例只恢复 `test.usertable` 表的数据：
 
 ```shell
 tiup br restore table --pd "${PD_IP}:2379" \
@@ -111,11 +132,11 @@ tiup br restore table --pd "${PD_IP}:2379" \
 --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}"
 ```
 
-In the preceding command, `--db` specifies the name of the database to be restored, and `--table` specifies the name of the table to be restored.
+以上命令中 `--db` 选项指定了需要恢复的数据库名，`--table` 选项指定了需要恢复的表名。
 
-**Restore multiple tables with table filter**
+**使用表库过滤功能恢复部分数据**
 
-To restore multiple tables with more complex filter rules, run the `tiup br restore full` command and specify the [table filters](/table-filter.md) with `--filter` or `-f`. The following example restores tables that match the `db*.tbl*` filter rule from the backup data to the target cluster:
+要通过复杂的过滤条件恢复多个表，可以使用 `tiup br restore full` 命令，并用 `--filter` 或 `-f` 指定[表库过滤](/table-filter.md)的条件。以下示例恢复符合 `db*.tbl*` 条件的表的数据：
 
 ```shell
 tiup br restore full \
@@ -124,13 +145,14 @@ tiup br restore full \
 --storage "s3://backup-101/snapshot-202209081330?access-key=${access-key}&secret-access-key=${secret-access-key}"
 ```
 
-### Restore tables in the `mysql` schema
+### 恢复 `mysql` 数据库下的表
 
-- Starting from BR v5.1.0, when you back up snapshots, BR automatically backs up the **system tables** in the `mysql` schema, but does not restore these system tables by default.
-- Starting from v6.2.0, BR lets you specify `--with-sys-table` to restore **data in some system tables**.
-- Starting from v7.6.0, BR enables `--with-sys-table` by default, which means that BR restores **data in some system tables** by default.
+- `br` v5.1.0 开始，快照备份时默认自动备份 **mysql schema 下的系统表数据**，但恢复数据时默认不恢复系统表数据。
+- `br` v6.2.0 开始，增加恢复参数 `--with-sys-table` 支持恢复数据的同时恢复**部分系统表相关数据**。
+- `br` v7.6.0 开始，恢复参数 `--with-sys-table` 默认开启，即默认支持恢复数据的同时恢复**部分系统表相关数据**。
+- `br` v8.5.5 开始，增加恢复参数 `--fast-load-sys-tables` 支持物理恢复系统表，该参数默认开启。通过 `RENAME TABLE` DDL 将 `__TiDB_BR_Temporary_mysql` 下的系统表和 `mysql` 库下的系统表进行原子交换。与通过 `REPLACE INTO` SQL 写入的逻辑恢复系统表方式不同，物理恢复系统表将会完全覆盖系统表中原有的数据。
 
-**BR can restore data in the following system tables:**
+**可恢复的部分系统表**：
 
 ```
 +----------------------------------+
@@ -146,11 +168,11 @@ tiup br restore full \
 +----------------------------------+
 ```
 
-**BR does not restore the following system tables:**
+**不能恢复以下系统表**：
 
-- Statistics tables (`mysql.stat_*`). But statistics can be restored. See [Back up statistics](/br/br-snapshot-manual.md#back-up-statistics).
-- System variable tables (`mysql.tidb` and `mysql.global_variables`)
-- [Other system tables](https://github.com/pingcap/tidb/blob/release-8.5/br/pkg/restore/snap_client/systable_restore.go#L31)
+- 统计信息表 (`mysql.stat_*`) (但可以恢复统计信息，详细参考[备份统计信息](/br/br-snapshot-manual.md#备份统计信息))
+- 系统变量表 (`mysql.tidb`、`mysql.global_variables`)
+- [其他系统表](https://github.com/pingcap/tidb/blob/release-8.5/br/pkg/restore/snap_client/systable_restore.go#L31)
 
 ```
 +-----------------------------------------------------+
@@ -173,56 +195,54 @@ tiup br restore full \
 +-----------------------------------------------------+
 ```
 
-When you restore data related to system privilege, note that before restoring data, BR checks whether the system tables in the target cluster are compatible with those in the backup data. "Compatible" means that all the following conditions are met:
+当恢复系统权限相关数据的时候，请注意：在恢复数据前 BR 会检查目标集群的系统表是否跟备份数据中的系统表兼容。这里的兼容是指满足以下所有条件：
 
-- The target cluster has the same system tables as the backup data.
-- The **number of columns** in the system privilege table of the target cluster is the same as that in the backup data. The column order is not important.
-- The columns in the system privilege table of the target cluster are compatible with that in the backup data. If the data type of the column is a type with a length (such as integer and string), the length in the target cluster must be >= the length in the backup data. If the data type of the column is an `ENUM` type, the number of `ENUM` values in the target cluster must be a superset of that in the backup data.
+- 目标集群需要存在备份中的系统权限表。
+- 目标集群系统权限表**列数**需要与备份数据中一致，列的顺序可以有差异。
+- 目标集群系统权限表的列需要与备份数据兼容。如果为带长度类型（包括整型、字符串等类型），前者长度需大于或等于后者，如果为 `ENUM` 类型，则应该为后者超集。
 
-## Performance and impact
+## 性能与影响
 
-### Performance and impact of snapshot backup
+### 快照备份的性能与影响
 
-The backup feature has some impact on cluster performance (transaction latency and QPS). However, you can mitigate the impact by adjusting the number of backup threads [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1) or by adding more clusters.
+TiDB 备份功能对集群性能（事务延迟和 QPS）有一定的影响，但是可以通过调整备份的线程数 [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1)，以及增加集群配置，来降低备份对集群性能的影响。
 
-To illustrate the impact of backup, this document lists the test conclusions of several snapshot backup tests:
+为了更加具体说明备份对集群的影响，下面列举了多次快照备份测试结论来说明影响的范围：
 
-- (5.3.0 and earlier) When the backup threads of BR on a TiKV node take up 75% of the total CPU of the node, the QPS is reduced by 35% of the original QPS.
-- (5.4.0 and later) When there are no more than `8` threads of BR on a TiKV node and the cluster's total CPU utilization does not exceed 80%, the impact of BR tasks on the cluster (write and read) is 20% at most.
-- (5.4.0 and later) When there are no more than `8` threads of BR on a TiKV node and the cluster's total CPU utilization does not exceed 75%, the impact of BR tasks on the cluster (write and read) is 10% at most.
-- (5.4.0 and later) When there are no more than `8` threads of BR on a TiKV node and the cluster's total CPU utilization does not exceed 60%, BR tasks have little impact on the cluster (write and read).
+- （使用 5.3 及之前版本）在默认配置下，单 TiKV 存储节点上备份线程数量是节点 CPU 总数量的 75% 时，QPS 会下降到备份之前的 35% 左右。
+- （使用 5.4 及以后版本）单 TiKV 存储节点上备份的线程数量不大于 `8`、集群总 CPU 利用率不超过 80% 时，备份任务对集群（无论读写负载）影响最大在 20% 左右。
+- （使用 5.4 及以后版本）单 TiKV 存储节点上备份的线程数量不大于 `8`、集群总 CPU 利用率不超过 75% 时，备份任务对集群（无论读写负载）影响最大在 10% 左右。
+- （使用 5.4 及以后版本）单 TiKV 存储节点上备份的线程数量不大于 `8`、集群总 CPU 利用率不超过 60% 时，备份任务对集群（无论读写负载）几乎没有影响。
 
-You can use the following methods to manually control the impact of backup tasks on cluster performance. However, these two methods also reduce the speed of backup tasks while reducing the impact of backup tasks on the cluster.
+你可以通过如下方案手动控制备份对集群性能带来的影响。但是，这两种方案在减少备份对集群的影响的同时，也会降低备份任务的速度。
 
-- Recommended method: Adjust the TiKV configuration parameter [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1), which controls the number of worker threads used by backup tasks. Because backup is a CPU-intensive operation, tuning this parameter allows you to control TiKV's CPU usage more precisely, enabling better resource isolation and predictability. In most scenarios, simply adjusting `num-threads` is sufficient to limit the impact of backup on the cluster. Internal testing shows that when the number of threads is set to `8` or fewer, and overall cluster CPU usage remains below 60%, the impact of backup on foreground workloads is negligible.
+- 优先推荐: 调节 TiKV 配置项 [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1)，该配置用于限制备份任务使用的工作线程数。由于备份过程属于 CPU 密集型操作，通过控制线程数可以更精确地限制备份对 TiKV 的 CPU 使用，从而实现更可控、更可预测的资源隔离。在绝大多数场景中，仅调整 `num-threads` 就足以控制备份对集群的影响。内部测试表明，当线程数小于或等于 8、且集群总 CPU 利用率小于 60% 时，备份对业务负载的影响可忽略不计。
 
-- Alternative method: If you have already set `backup.num-threads` to a small value (for example, `1`), but still want to further reduce the impact of backup on the cluster, consider using the `--ratelimit` parameter. This option limits the bandwidth used to write backup files to external storage, specified in MiB/s. Note that the actual rate limiting effect depends on the size of the compressed data. You can refer to the `backup data size (after compressed)` field in the logs for more insight. When `--ratelimit` is enabled, BR automatically sets `--concurrency` to `1` to reduce the number of concurrent requests.
+- 次选方案：如果你已将 `num-threads` 设置为较低值（如 `1`），但仍希望进一步降低备份对集群的影响，此时可以考虑使用 `--ratelimit` 参数。该参数限制的是备份文件写入外部存储的带宽，单位为 MiB/s。实际限速效果取决于压缩后的数据体积。详情请参考日志中的 `backup data size (after compressed)` 字段。启用后，BR 会自动将 `--concurrency` 调整为 `1`，以减少并发请求数量。
 
-> **Note:** 
+> **注意：** 
 >
-> Enabling `--ratelimit` will further reduce backup throughput. In most cases, if you are already performing backups during off-peak hours and have reduced `backup.num-threads` to 1 but still observe backup impact on foreground workloads, it typically indicates that the cluster is approaching its resource limits.
+> 开启 `--ratelimit` 会进一步降低备份速度。在大多数情况下，如果你在业务低峰期执行备份，并且已经将 `num-threads` 降为 `1`，但仍然担心备份影响业务，通常说明**集群资源已接近瓶颈**。此时，建议考虑以下替代方案：
 >
-> In such situations, you can consider the following alternatives:
->
-> - [Scale out a cluster](/tiup/tiup-cluster.md#scale-out-a-cluster) to increase available resources.
-> - Enable [`Log Backup`](/br/br-log-architecture.md) to offload backup pressure and minimize disruption to online workloads.
+> - [扩容 TiKV 节点](/tiup/tiup-cluster.md#扩容节点)以提升可用资源。
+> - 开启日志备份 [`Log Backup`](/br/br-log-architecture.md)，以降低对在线业务的干扰。
 
-The impact of backup on cluster performance can be reduced by limiting the backup threads number, but this affects the backup performance. The preceding tests show that the backup speed is proportional to the number of backup threads. When the number of threads is small, the backup speed is about 20 MiB/thread. For example, 5 backup threads on a single TiKV node can reach a backup speed of 100 MiB/s.
+通过限制备份的线程数量可以降低备份对集群性能的影响，但是这会影响到备份的性能，以上的多次备份测试结果显示，单 TiKV 存储节点上备份速度和备份线程数量呈正比。在线程数量较少的时候，备份速度约为 20 MiB/线程数。例如，单 TiKV 节点 5 个备份线程可达到 100 MiB/s 的备份速度。
 
-### Performance and impact of snapshot restore
+### 快照恢复的性能与影响
 
-- During data restore, TiDB tries to fully utilize the TiKV CPU, disk IO, and network bandwidth resources. Therefore, it is recommended to restore the backup data on an empty cluster to avoid affecting the running applications.
-- The speed of restoring backup data is much related with the cluster configuration, deployment, and running applications. In internal tests, the restore speed of a single TiKV node can reach 100 MiB/s. The performance and impact of snapshot restore are varied in different user scenarios and should be tested in actual environments.
-- BR provides a coarse-grained Region scattering algorithm to accelerate Region restore in large-scale Region scenarios. This algorithm ensures that each TiKV node receives stable and evenly distributed download tasks, thus fully utilizing the resources of each TiKV node and achieving a rapid parallel recovery. In several real-world cases, the snapshot restore speed of the cluster is improved by about 3 times in large-scale Region scenarios.
-- Starting from v8.0.0, the `br` command-line tool introduces the `--tikv-max-restore-concurrency` parameter to control the maximum number of files that BR downloads and ingests per TiKV node. By configuring this parameter, you can also control the maximum length of the job queue (the maximum length of the job queue = 32 \* the number of TiKV nodes \* `--tikv-max-restore-concurrency`), thereby controlling the memory consumption of the BR node.
+- TiDB 恢复的时候会尽可能打满 TiKV CPU、磁盘 IO、网络带宽等资源，所以推荐在空的集群上执行备份数据的恢复，避免对正在运行的业务产生影响。
+- 备份数据的恢复速度与集群配置、部署、运行的业务都有比较大的关系。在不同用户场景下，快照恢复的性能和影响应以实际测试结论为准。
+- BR 提供了粗粒度的 Region 打散算法，用于提升大规模 Region 场景下的 Region 恢复速度。在这个方式下每个 TiKV 节点会得到均匀稳定的下载任务，从而充分利用每个 TiKV 节点的所有资源实现并行快速恢复。在实际案例中，大规模 Region 场景下，集群快照恢复速度最高提升约 3 倍。
+- 从 v8.0.0 起，`br` 命令行工具新增 `--tikv-max-restore-concurrency` 参数，用于控制每个 TiKV 节点的最大 download 和 ingest 文件数量。此外，通过调整此参数，可以控制作业队列的最大长度（作业队列的最大长度 = 32 \* TiKV 节点数量 \* `--tikv-max-restore-concurrency`），进而控制 BR 节点的内存消耗。
 
-    In normal cases, `--tikv-max-restore-concurrency` is automatically adjusted based on the cluster configuration, so manual configuration is unnecessary. If the **TiKV-Details** > **Backup & Import** > **Import RPC count** monitoring metric in Grafana shows that the number of files BR downloads remains close to 0 for a long time while the number of files that BR ingests consistently reaches the upper limit, it indicates that ingesting file tasks pile up and the job queue has reached its maximum length. In this case, you can take the following measures to alleviate the task pilling-up issue:
+    通常情况下，`--tikv-max-restore-concurrency` 会根据集群配置自动调整，无需手动设置。如果通过 Grafana 中的 **TiKV-Details** > **Backup & Import** > **Import RPC count** 监控指标发现 download 文件数量长时间接近于 0，而 ingest 文件数量一直处于上限时，说明 ingest 文件任务存在堆积，并且作业队列已达到最大长度。此时，可以采取以下措施来缓解任务堆积问题：
 
-    - Set the `--ratelimit` parameter to limit the download speed, ensuring sufficient resources for ingesting file tasks. For example, if the disk throughput of any TiKV node is `x MiB/s` and the network bandwidth for downloading backup files exceeds `x/2 MiB/s`, you can set the parameter as `--ratelimit x/2`. If the disk throughput of any TiKV node is `x MiB/s` and the network bandwidth for downloading backup files is less than or equal to `x/2 MiB/s`, you can leave the parameter `--ratelimit` unset.
-    - Increase the `--tikv-max-restore-concurrency` to increase the maximum length of the job queue.
+    - 设置 `--ratelimit` 参数来限制下载速度，以确保 ingest 文件任务有足够的资源。例如，当任意 TiKV 节点的硬盘吞吐量为 `x MiB/s` 且下载备份文件的网络带宽大于 `x/2 MiB/s`，可以设置参数 `--ratelimit x/2`。如果任意 TiKV 节点的硬盘吞吐量为 `x MiB/s` 且下载备份文件的网络带宽小于或等于 `x/2 MiB/s`，可以不设置参数 `--ratelimit`。
+    - 调高 `--tikv-max-restore-concurrency` 来增加作业队列的最大长度。
 
-## See also
+## 探索更多
 
-* [TiDB Backup and Restore Use Cases](/br/backup-and-restore-use-cases.md)
-* [br Command-line Manual](/br/use-br-command-line-tool.md)
-* [TiDB Snapshot Backup and Restore Architecture](/br/br-snapshot-architecture.md)
+* [TiDB 集群备份与恢复实践示例](/br/backup-and-restore-use-cases.md)
+* [`br` 命令行手册](/br/use-br-command-line-tool.md)
+* [快照备份与恢复架构设计](/br/br-snapshot-architecture.md)

@@ -1,75 +1,67 @@
 ---
 title: tiup cluster scale-in
-summary: The `tiup cluster scale-in` command is used to scale in the cluster by taking specified nodes offline, removing them from the cluster, and deleting remaining files. Components like TiKV and TiFlash are handled asynchronously and require additional steps to check and clean up. The command also includes options for node specification, forceful removal, transfer timeout, and help information.
+summary: tiup cluster scale-in 命令用于集群缩容，包括下线 TiKV 和 TiFlash 组件，以及其他组件。特殊处理包括通过 API 执行移除操作，并清理相关数据文件。命令语法为 tiup cluster scale-in <cluster-name>，必须指定要缩容的节点。其他选项包括 --force 用于强制移除宕机节点，--transfer-timeout 设置最长等待时间，-h 输出帮助信息。输出为缩容日志。
 ---
 
 # tiup cluster scale-in
 
-The `tiup cluster scale-in` command is used to scale in the cluster, which takes the services of the specified nodes offline, removes the specified nodes from the cluster, and deletes the remaining files from those nodes.
+`tiup cluster scale-in` 命令用于集群缩容，缩容即下线服务，最终会将指定的节点从集群中移除，并删除遗留的相关文件。
 
-## Particular handling of components' offline process
+## 下线特殊处理
 
-Because the TiKV and TiFlash components are taken offline asynchronously (which requires TiUP to remove the node through API first) and the stopping process takes a long time (which requires TiUP to continuously check whether the node is successfully taken offline), the TiKV and TiFlash components are handled particularly as follows:
+由于 TiKV 和 TiFlash 组件的下线是异步的（需要先通过 API 执行移除操作）并且下线过程耗时较长（需要持续观察节点是否已经下线成功），所以对 TiKV 和 TiFlash 组件做了特殊处理：
 
-- For TiKV and TiFlash components:
+- 对 TiKV 和 TiFlash 组件的操作
+    - tiup-cluster 通过 API 将其下线后直接退出而不等待下线完成
+    - 执行 `tiup cluster display` 查看下线节点的状态，等待其状态变为 Tombstone
+    - 执行 `tiup cluster prune` 命令清理 Tombstone 节点，该命令会执行以下操作：
+        - 停止已经下线掉的节点的服务
+        - 清理已经下线掉的节点的相关数据文件
+        - 更新集群的拓扑，移除已经下线掉的节点
+- 对其他组件的操作
+    - 下线 PD 组件时，会通过 API 将指定节点从集群中删除掉（这个过程很快），然后停掉指定 PD 的服务并且清除该节点的相关数据文件
+    - 下线其他组件时，直接停止并且清除节点的相关数据文件
 
-    1. TiUP Cluster takes the node offline through API and directly exits without waiting for the process to be completed.
-    2. To check the status of the nodes being scaled in, you need to execute the `tiup cluster display` command and wait for the status to become `Tombstone`.
-    3. To clean up the nodes in the `Tombstone` status, you need to execute the `tiup cluster prune` command. The `tiup cluster prune` command performs the following operations:
-
-        - Stops the services of the nodes that have been taken offline.
-        - Cleans up the data files of the nodes that have been taken offline.
-        - Updates the cluster topology and removes the nodes that have been taken offline.
-
-For other components:
-
-- When taking the PD components offline, TiUP Cluster quickly deletes the specified nodes from the cluster through API, stops the service of the specified PD nodes, and then deletes the related data files from the nodes.
-- When taking other components down, TiUP Cluster directly stops the node services and deletes the related data files from the specified nodes.
-
-## Syntax
+## 语法
 
 ```shell
 tiup cluster scale-in <cluster-name> [flags]
 ```
 
-`<cluster-name>` is the name of the cluster to scale in. If you forget the cluster name, you can check it using the [`tiup cluster list`](/tiup/tiup-component-cluster-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可通过[集群列表](/tiup/tiup-component-cluster-list.md)查看。
 
-## Options
+## 选项
 
-### -N, --node
+### -N, --node（strings，无默认值，必须非空）
 
-- Specifies the nodes to take down. Multiple nodes are separated by commas.
-- Data type: `STRING`
-- There is no default value. This option is mandatory and the value must be not null.
+选择要缩容的节点，若缩容多个节点，以逗号分割。
 
 ### --force
 
-- Controls whether to forcibly remove the specified nodes from the cluster. Sometimes, the host of the node to take offline might be down, which makes it impossible to connect to the node via SSH for operations, so you can forcibly remove the node from the cluster using the `--force` option.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 在某些情况下，有可能被缩容的节点宿主机已经宕机，导致无法通过 SSH 连接到节点进行操作，这个时候可以通过 `--force` 选项强制将其从集群中移除。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-> **Warning:**
+> **警告：**
 >
-> When you use this option to forcibly remove TiKV or TiFlash nodes that are in service or are pending offline, these nodes will be deleted immediately without waiting for data to be migrated. This imposes a very high risk of data loss. If data loss occurs in the region where the metadata is located, the entire cluster will be unavailable and unrecoverable.
+> 使用该选项强制移除正在服务和下线中的 TiKV / TiFlash 节点时，这些节点会被直接删除，不等待数据调度完成，因此这个场景下，数据丢失风险非常大。不建议对未宕机的节点使用该选项。如果元数据所在的 Region 发生数据丢失，整个集群将不可用且无法恢复。
 
-### --transfer-timeout
+### --transfer-timeout（uint，默认 600）
 
-- When a PD or TiKV node is to be removed, the Region leader on the node will be transferred to another node first. Because the transferring process takes some time, you can set the maximum waiting time (in seconds) by configuring `--transfer-timeout`. After the timeout, the `tiup cluster scale-in` command skips waiting and starts the scaling-in directly.
-- Data type: `UINT`
-- The option is enabled by default with `600` seconds (the default value) passed in.
+在缩容 PD 或 TiKV 时，会先将被缩容节点的 leader 迁移到其他节点，迁移过程会需要一定时间，可以通过设置 `--transfer-timeout` 设置最长等待时间（单位为秒），超时之后会跳过等待直接缩容服务。
 
-> **Note:**
+> **注意：**
 >
-> If a PD or TiKV node is taken offline directly without waiting for the leader transfer to be completed, the service performance might jitter.
+> 若出现跳过等待直接缩容的情况，服务性能可能会出现抖动。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-Shows the logs of the scaling-in process.
+缩容日志
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

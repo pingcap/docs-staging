@@ -1,13 +1,13 @@
 ---
 title: ALTER INDEX
-summary: 关于 TiDB 数据库中 ALTER INDEX 的用法概述。
+summary: TiDB 数据库中 ALTER INDEX 的使用概况。
 ---
 
 # ALTER INDEX
 
-`ALTER INDEX` 语句用于修改索引的可见性为 `Visible` 或 `Invisible`。不可见索引由 DML 语句维护，但不会被查询优化器使用。在你想在永久删除索引之前进行双重确认的场景中，这非常有用。从 TiDB v8.0.0 开始，你可以通过修改系统变量 [`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-new-in-v800) 来让优化器选择不可见索引。
+`ALTER INDEX` 语句用于修改索引的可见性，可以将索引设置为 `Visible` 或者 `Invisible`。设置为 `Invisible` 的索引即不可见索引 (Invisible Index) 由 DML 语句维护，不会被查询优化器使用。从 TiDB v8.0.0 开始，你可以通过修改系统变量 [`tidb_opt_use_invisible_indexes`](/system-variables.md#tidb_opt_use_invisible_indexes-从-v800-版本开始引入)，允许优化器选择不可见索引。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 AlterTableStmt
@@ -19,7 +19,8 @@ AlterIndexSpec
 
 ## 示例
 
-你可以使用 `ALTER TABLE ... ALTER INDEX ...` 语句来修改索引的可见性。
+可以通过 `ALTER TABLE ... ALTER INDEX ...` 语句，修改索引的可见性：
+
 
 ```sql
 CREATE TABLE t1 (c1 INT, UNIQUE(c1));
@@ -29,6 +30,7 @@ ALTER TABLE t1 ALTER INDEX c1 INVISIBLE;
 ```sql
 Query OK, 0 rows affected (0.02 sec)
 ```
+
 
 ```sql
 SHOW CREATE TABLE t1;
@@ -47,7 +49,8 @@ SHOW CREATE TABLE t1;
 1 row in set (0.00 sec)
 ```
 
-优化器无法使用 `c1` 的 **invisible index**。
+优化器将无法使用 `c1` 这个**不可见的索引**：
+
 
 ```sql
 EXPLAIN SELECT c1 FROM t1 ORDER BY c1;
@@ -64,7 +67,8 @@ EXPLAIN SELECT c1 FROM t1 ORDER BY c1;
 3 rows in set (0.00 sec)
 ```
 
-相比之下，`c2` 是一个 **visible index**，可以被优化器使用。
+作为对比，c2 是**可见的索引**，优化器将可以使用索引：
+
 
 ```sql
 EXPLAIN SELECT c2 FROM t1 ORDER BY c2;
@@ -80,7 +84,8 @@ EXPLAIN SELECT c2 FROM t1 ORDER BY c2;
 2 rows in set (0.00 sec)
 ```
 
-即使你使用 `USE INDEX` SQL 提示强制使用索引，优化器仍然不能使用不可见索引；否则会返回错误。
+即使用 SQL Hint `USE INDEX` 强制使用索引，优化器也无法使用不可见索引，否则 SQL 语句会报错：
+
 
 ```sql
 SELECT * FROM t1 USE INDEX(c1);
@@ -90,9 +95,10 @@ SELECT * FROM t1 USE INDEX(c1);
 ERROR 1176 (42000): Key 'c1' doesn't exist in table 't1'
 ```
 
-> **Note:**
+> **注意：**
 >
-> "Invisible" 在这里仅意味着对优化器不可见。你仍然可以修改或删除不可见索引。
+> “不可见”是仅仅对优化器而言的，不可见索引仍然可以被修改或删除。
+
 
 ```sql
 ALTER TABLE t1 DROP INDEX c1;
@@ -104,10 +110,10 @@ Query OK, 0 rows affected (0.02 sec)
 
 ## MySQL 兼容性
 
-* TiDB 中的不可见索引是基于 MySQL 8.0 中的等效功能建模的。
-* 与 MySQL 类似，TiDB 不允许将 `PRIMARY KEY` 索引设为不可见。
+* TiDB 中的不可见索引是基于 MySQL 8.0 中的同等特性构建的。
+* 与 MySQL 类似，TiDB 不允许将主键索引设为不可见。
 
-## 相关链接
+## 另请参阅
 
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [CREATE INDEX](/sql-statements/sql-statement-create-index.md)

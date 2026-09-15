@@ -1,55 +1,56 @@
 ---
 title: TiDB 3.0.16 Release Notes
-summary: TiDB 3.0.16 was released on July 03, 2020. The release includes improvements such as support for 'is null' filter condition, handling of SQL timeout issues, and removal of sensitive information in slow query logs. Bug fixes include resolving data inconsistency issues, fixing panic issues, and addressing errors in JSON comparison and query results. TiKV and PD also received bug fixes for issues related to store heartbeats, peer removal, and error handling.
+summary: TiDB 3.0.16 发布，优化了 hash partition pruning 和 Region 设置，修复了多个 Bug，包括锁住的 primary key 造成的结果不一致问题和 JSON 数据中 int 和 float 类型比较的问题。TiKV 也进行了稳定性优化和 Bug 修复。PD 修复了查询 Region 报 404 错误的问题。
+aliases: ['/zh/tidb/dev/release-3.0.16/','/zh/tidb/v3.0/release-3.0.16','/docs-cn/dev/releases/release-3.0.16/','/zh/tidb/v5.4/release-3.0.16','/zh/tidb/v6.1/release-3.0.16','/zh/tidb/v6.5/release-3.0.16','/zh/tidb/v7.1/release-3.0.16','/zh/tidb/v7.5/release-3.0.16','/zh/tidb/v8.1/release-3.0.16']
 ---
 
 # TiDB 3.0.16 Release Notes
 
-Release date: July 03, 2020
+发版日期：2020 年 7 月 3 日
 
-TiDB version: 3.0.16
+TiDB 版本：3.0.16
 
-## Improvements
-
-+ TiDB
-
-    - Support the `is null` filter condition in hash partition pruning [#17308](https://github.com/pingcap/tidb/pull/17308)
-    - Assign different `Backoffer`s to each Region to avoid the SQL timeout issue when multiple Region requests fail at the same time [#17583](https://github.com/pingcap/tidb/pull/17583)
-    - Split separate Regions for the newly added partition [#17668](https://github.com/pingcap/tidb/pull/17668)
-    - Discard feedbacks generated from the `delete` or `update` statement [#17841](https://github.com/pingcap/tidb/pull/17841)
-    - Correct the usage of `json.Unmarshal` in `job.DecodeArgs` to be compatible with future Go versions [#17887](https://github.com/pingcap/tidb/pull/17887)
-    - Remove sensitive information in the slow query log and the statement summary table [#18128](https://github.com/pingcap/tidb/pull/18128)
-    - Match the MySQL behavior with `DateTime` delimiters [#17499](https://github.com/pingcap/tidb/pull/17499)
-    - Handle `%h` in date formats in the range that is consistent with MySQL [#17496](https://github.com/pingcap/tidb/pull/17496)
-
-+ TiKV
-
-    - Avoid sending store heartbeats to PD after snapshots are received [#8145](https://github.com/tikv/tikv/pull/8145)
-    - Improve the PD client log [#8091](https://github.com/tikv/tikv/pull/8091)
-
-## Bug Fixes
+## 优化
 
 + TiDB
 
-    - Fix the data inconsistency issue occurred because the lock of a written and deleted primary key in one transaction is resolved by another transaction [#18248](https://github.com/pingcap/tidb/pull/18248)
-    - Fix the `Got too many pings` gRPC error log in the PD server-side followers [#17944](https://github.com/pingcap/tidb/pull/17944)
-    - Fix the panic issue that might occur when the child of HashJoin returns the `TypeNull` column [#17935](https://github.com/pingcap/tidb/pull/17935)
-    - Fix the error message when access is denied [#17722](https://github.com/pingcap/tidb/pull/17722)
-    - Fix JSON comparison issue for the `int` and `float` types [#17715](https://github.com/pingcap/tidb/pull/17715)
-    - Update the failpoint which causes data race [#17710](https://github.com/pingcap/tidb/pull/17710)
-    - Fix the issue that the timeout pre-split Regions might not work when creating tables [#17617](https://github.com/pingcap/tidb/pull/17617)
-    - Fix the panic caused by ambiguous error messages after the sending failure [#17378](https://github.com/pingcap/tidb/pull/17378)
-    - Fix the issue that `FLASHBACK TABLE` might fail in some special cases [#17165](https://github.com/pingcap/tidb/pull/17165)
-    - Fix the issue of inaccurate range calculation results when statements only have string columns [#16658](https://github.com/pingcap/tidb/pull/16658)
-    - Fix the query error occurred when the `only_full_group_by` SQL mode is set [#16620](https://github.com/pingcap/tidb/pull/16620)
-    - Fix the issue that the field length of results returned from the `case when` function is inaccurate [#16562](https://github.com/pingcap/tidb/pull/16562)
-    - Fix the type inference for the decimal property in the `count` aggregate function [#17702](https://github.com/pingcap/tidb/pull/17702)
+    - 在 hash partition pruning 中支持 `is null` 过滤条件 [#17308](https://github.com/pingcap/tidb/pull/17308)
+    - 为每个 Region 设置单独的 `Backoffer` 避免多个 Region 同时失败引起等待时间过长 [#17583](https://github.com/pingcap/tidb/pull/17583)
+    - 添加新 partition 更新已有 partition 的分裂信息 [#17668](https://github.com/pingcap/tidb/pull/17668)
+    - 丢弃来自 `delete` / `update` 语句的 feedbacks [#17841](https://github.com/pingcap/tidb/pull/17841)
+    - 调整 `job.DecodeArgs` 中 `json.Unmarshal` 的使用以兼容新的 Go 版本 [#17887](https://github.com/pingcap/tidb/pull/17887)
+    - 移除 `slow log` 和 `statement summary` 中一些敏感信息 [#18128](https://github.com/pingcap/tidb/pull/18128)
+    - `Datetime` 解析的分隔符和 MySQL 兼容 [#17499](https://github.com/pingcap/tidb/pull/17499)
+    - 解析日期的 `%h` 时限定在 `1..12` 范围内 [#17496](https://github.com/pingcap/tidb/pull/17496)
 
 + TiKV
 
-    - Fix the potential wrong result read from ingested files [#8039](https://github.com/tikv/tikv/pull/8039)
-    - Fix the issue that a peer cannot be removed when its store is isolated during multiple merge processes [#8005](https://github.com/tikv/tikv/pull/8005)
+    - 避免在收到 snapshot 之后发送心跳给 PD 以提高稳定性 [#8145](https://github.com/tikv/tikv/pull/8145)
+    - 优化了 PD client 的日志 [#8091](https://github.com/tikv/tikv/pull/8091)
+
+## Bug 修复
+
++ TiDB
+
+    - 修复当锁住的 primary key 在当前事务被插入/删除时可能造成的结果不一致问题 [#18248](https://github.com/pingcap/tidb/pull/18248)
+    - 修复因字段含义不一致导致日志中出现大量 `Got too many pings` gRPC 错误的问题 [#17944](https://github.com/pingcap/tidb/pull/17944)
+    - 修复当 HashJoin 返回 `Null` 类型列可能造成的 panic 问题 [#17935](https://github.com/pingcap/tidb/pull/17935)
+    - 修复访问被拒绝时的错误信息 [#17722](https://github.com/pingcap/tidb/pull/17722)
+    - 修复 JSON 数据中 `int` 和 `float` 类型比较的问题 [#17715](https://github.com/pingcap/tidb/pull/17715)
+    - 修复 Failpoint 测试造成的 data race 问题 [#17710](https://github.com/pingcap/tidb/pull/17710)
+    - 修复 Region 预分裂超时在创建表时可能不生效的问题 [#17617](https://github.com/pingcap/tidb/pull/17617)
+    - 修复 `BatchClient` 中因为失败可能导致的主动 panic [#17378](https://github.com/pingcap/tidb/pull/17378)
+    - 修复 `FLASHBACK TABLE` 在某些情况下可能失败的问题 [#17165](https://github.com/pingcap/tidb/pull/17165)
+    - 修复只有 string 列时 range 范围计算可能不准确的问题 [#16658](https://github.com/pingcap/tidb/pull/16658)
+    - 修复 `only_full_group_by` 模式下的错误 [#16620](https://github.com/pingcap/tidb/pull/16620)
+    - 修复 `case when` 函数返回字段长度不准确的问题 [#16562](https://github.com/pingcap/tidb/pull/16562)
+    - 修复 `count` 聚合函数对 `decimal` 类型推断的问题 [#17702](https://github.com/pingcap/tidb/pull/17702)
+
++ TiKV
+
+    - 修复了潜在的 ingest file 导致的读取结果错误的问题 [#8039](https://github.com/tikv/tikv/pull/8039)
+    - 修复了多次 merge 过程中被隔离的节点上的副本无法被正确移除的问题 [#8005](https://github.com/tikv/tikv/pull/8005)
 
 + PD
 
-    - Fix the `404` error when querying Region keys in PD Control [#2577](https://github.com/pingcap/pd/pull/2577)
+    - 修复一些情况下使用 PD Control 查询 Region 报 `404` 错误的问题 [#2577](https://github.com/pingcap/pd/pull/2577)

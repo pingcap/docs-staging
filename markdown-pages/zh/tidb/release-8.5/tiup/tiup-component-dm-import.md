@@ -1,69 +1,59 @@
 ---
 title: tiup dm import
-summary: The `import` command in TiUP DM is used to upgrade DM clusters from v1.0 to v2.0 or later versions. It does not support importing DM Portal components from v1.0 clusters and requires stopping the original cluster before importing. The command only supports importing to DM v2.0.0-rc.2 and later versions and can be used to import a DM v1.0 cluster to a new DM v2.0 cluster. After importing, there is only one DM-master node in the cluster, and the deployment directories of some components might be different from those in the original cluster.
+summary: TiUP DM 提供了 `import` 命令，用于将 DM v1.0 集群导入到全新的 v2.0 集群。在导入前，请先停止原集群，并确认升级 TiUP DM 组件到最新版本。导入过程中会生成日志信息，不支持导入 v1.0 集群中的 DM Portal 组件。对于需要升级到 v2.0 的数据迁移任务，请不要执行 `stop-task`。具体语法和选项可以使用 `tiup dm import [flags]` 命令查看。
 ---
 
-# tiup dm import <span class="version-mark">Only for upgrading DM v1.0</span>
+# tiup dm import <span class="version-mark">仅适用于升级 DM v1.0</span>
 
 <Note>
-
-This command is used only for upgrading DM clusters from v1.0 to v2.0 or later versions.
-
+该命令仅适用于将 DM 集群从 v1.0 升级到 v2.0 或更高版本。
 </Note>
 
-In DM v1.0, the cluster is basically deployed using TiDB Ansible. TiUP DM provides the `import` command to import v1.0 clusters and redeploy the clusters in DM v2.0.
+在 DM 1.0 版本，集群基本是通过 TiDB Ansible 部署的，TiUP DM 提供了 `import` 命令导入 v1.0 的集群并重新部署 v2.0 的集群。
 
-> **Note:**
+> **注意：**
 >
-> - The command does not support importing DM Portal components from DM v1.0 clusters.
-> - Before importing the cluster, stop running the original cluster first.
-> - For data migration tasks that need to be upgraded to v2.0, do not execute `stop-task` on these tasks.
-> - The command only supports importing to DM v2.0.0-rc.2 and later versions.
-> - The `import` command is used to import a DM v1.0 cluster to a new DM v2.0 cluster. If you need to import data migration tasks to an existing v2.0 cluster, refer to [Manually Upgrade TiDB Data Migration from v1.0.x to v2.0+](/dm/manually-upgrade-dm-1.0-to-2.0.md)
-> - The deployment directories of some components might be different from those in the original cluster. You can check it with the `display` command.
-> - Before importing the cluster, run `tiup update --self && tiup update dm` to upgrade TiUP DM components to the latest version.
-> - After the cluster is imported, there is only one DM-master node in the cluster. You can refer to [the `scale out` command](/tiup/tiup-component-dm-scale-out.md) to scale out the DM-master node.
+> - 不支持导入 v1.0 集群中的 DM Portal 组件
+> - 导入前请先停止原集群
+> - 对于需要升级到 v2.0 的数据迁移任务，请不要执行 `stop-task`
+> - 仅支持导入到 v2.0.0-rc.2 或更高版本
+> - `import` 命令用于将 DM v1.0 集群导入到全新的 v2.0 集群。如果需要将数据迁移任务导入到已有的 v2.0 集群，请参考 [TiDB Data Migration 1.0.x 到 2.0.x+ 手动升级](/dm/manually-upgrade-dm-1.0-to-2.0.md)
+> - 部分组件生成的部署目录会跟原集群不一样，具体可以使用 `display` 命令查看
+> - 导入前运行 `tiup update --self && tiup update dm` 确认升级 TiUP DM 组件到最新版本
+> - 导入后集群中仅会有一个 DM-master 节点，可参考[扩容节点](/tiup/tiup-component-dm-scale-out.md)对 DM-master 进行扩容
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm import [flags]
 ```
 
-## Options
+## 选项
 
-### -v, --cluster-version
+### -v, --cluster-version（string，required）
 
-- Specifies the version number for redeploying. You must use a version later than v2.0.0-rc.2 (including v2.0.0-rc.2).
-- Data type: `STRING`
-- This option is **required** to execute the command.
+重新部署的版本号，必须指定 v2.0.0-rc.2 或更高版本。
 
-### -d, --dir
+### -d, --dir string（string，默认当前目录）
 
-- Specifies the directory of TiDB Ansible.
-- Data type: `STRING`
-- If this option is not specified in the command, the current directory is the default directory.
+指定 TiDB Ansible 所在目录。
 
-### --inventory
+### --inventory string（string，默认 "inventory.ini"）
 
-- Specifies the name of the Ansible inventory file.
-- Data type: `STRING`
-- If this option is not specified in the command, the default file name is `"inventory.ini"`.
+指定 Ansible inventory 文件的名字。
 
-### --rename
+### --rename（string，默认为空）
 
-- Renames the imported cluster.
-- Data type: `STRING`
-- If this option is not specified in the command, the default cluster name is the `cluster_name` specified in the inventory file.
+重命名导入的集群。默认集群名为 inventory 中指定的 `cluster_name`。
 
 ### -h, --help
 
-- Prints help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Outputs
+## 输出
 
-The log of the importing process.
+导入过程的日志信息。
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

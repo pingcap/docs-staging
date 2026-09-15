@@ -1,13 +1,14 @@
 ---
 title: SHOW MASTER STATUS
-summary: 关于在 TiDB 数据库中使用 SHOW MASTER STATUS 的概述。
+summary: TiDB 数据库中 SHOW MASTER STATUS 的使用概况。
 ---
 
 # SHOW MASTER STATUS
 
-`SHOW MASTER STATUS` 语句显示集群中的最新 TSO。
+`SHOW MASTER STATUS` 语句用于显示集群当前最新的 TSO 信息。
 
 ## 示例
+
 
 ```sql
 SHOW MASTER STATUS;
@@ -24,6 +25,6 @@ SHOW MASTER STATUS;
 
 ## MySQL 兼容性
 
-`SHOW MASTER STATUS` 的输出旨在与 MySQL 保持一致。然而，执行结果不同，MySQL 的结果是 binlog 位置相关信息，而 TiDB 的结果是最新的 TSO 信息。
+`SHOW MASTER STATUS` 语句与 MySQL 兼容，但是执行结果有差异，在 MySQL 中执行结果为 binlog 的位置信息，而在 TiDB 中为最新的 TSO 信息。
 
-在 TiDB 中，`SHOW BINARY LOG STATUS` 语句作为 `SHOW MASTER STATUS` 的别名被添加，已在 MySQL 8.2.0 及更新版本中被废弃。
+`SHOW BINARY LOG STATUS` 语句在 TiDB 中是 `SHOW MASTER STATUS` 的别名，但 `SHOW MASTER STATUS` 在 MySQL 8.2.0 及更高版本中已被废弃。

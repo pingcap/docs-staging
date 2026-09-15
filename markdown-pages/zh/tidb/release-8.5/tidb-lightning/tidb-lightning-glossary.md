@@ -1,13 +1,13 @@
 ---
-title: TiDB Lightning Glossary
-summary: List of special terms used in TiDB Lightning.
+title: TiDB Lightning 术语表
+summary: 了解 TiDB Lightning 相关的术语及定义。
 ---
 
-# TiDB Lightning Glossary
+# TiDB Lightning 术语表
 
-This page explains the special terms used in TiDB Lightning's logs, monitoring, configurations, and documentation.
+本术语表提供了 TiDB Lightning 相关的术语和定义，这些术语会出现在 TiDB Lightning 的日志、监控指标、配置和文档中。
 
-For TiDB-related terms and definitions, see [TiDB glossary](/glossary.md).
+关于 TiDB 相关的术语和定义，请参考 [TiDB 术语表](/glossary.md)。
 
 <!-- A -->
 
@@ -15,25 +15,25 @@ For TiDB-related terms and definitions, see [TiDB glossary](/glossary.md).
 
 ### Analyze
 
-An operation to rebuild the [statistics](/statistics.md) information of a TiDB table, which is running the [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md) statement.
+统计信息分析。指重建 TiDB 表中的统计信息，即运行 [`ANALYZE TABLE`](/sql-statements/sql-statement-analyze-table.md) 语句。
 
-Because TiDB Lightning imports data without going through TiDB, the statistics information is not automatically updated. Therefore, TiDB Lightning explicitly analyzes every table after importing. This step can be omitted by setting the `post-restore.analyze` configuration to `false`.
+因为 TiDB Lightning 物理导入模式直接导入数据到 TiKV，统计信息不会自动更新，所以 TiDB Lightning 在导入后显式地分析每个表。如果不需要该操作，可以将 `post-restore.analyze` 设置为 `false`。
 
 ### `AUTO_INCREMENT_ID`
 
-Every table has an associated `AUTO_INCREMENT_ID` counter to provide the default value of an auto-incrementing column. In TiDB, this counter is additionally used to assign row IDs.
+用于为自增列分配默认值的自增 ID 计数器。每张表都有一个相关联的 `AUTO_INCREMENT_ID` 计数器。在 TiDB 中，该计数器还用于分配行 ID。
 
-Because TiDB Lightning imports data without going through TiDB, the `AUTO_INCREMENT_ID` counter is not automatically updated. Therefore, TiDB Lightning explicitly alters `AUTO_INCREMENT_ID` to a valid value. This step is always performed, even if the table has no `AUTO_INCREMENT` columns.
+因为 TiDB Lightning 物理导入模式直接导入数据到 TiKV，`AUTO_INCREMENT_ID` 计数器不会自动更新，所以 TiDB Lightning 显式地将 `AUTO_INCREMENT_ID` 改为一个有效值。即使表中没有自增列，这步仍是会执行。
 
 <!-- B -->
 
 ## B
 
-### Back end
+### Backend
 
-Back end is the destination where TiDB Lightning sends the parsed result. Also spelled as "backend".
+也称作 Back end（后端），用于接受 TiDB Lightning 解析结果。
 
-See [TiDB Lightning architecture](/tidb-lightning/tidb-lightning-overview.md) for details.
+详情参阅 [TiDB Lightning Backends](/tidb-lightning/tidb-lightning-overview.md)。
 
 <!-- C -->
 
@@ -41,35 +41,39 @@ See [TiDB Lightning architecture](/tidb-lightning/tidb-lightning-overview.md) fo
 
 ### Checkpoint
 
-TiDB Lightning continuously saves its progress into a local file or a remote database while importing. This allows it to resume from an intermediate state should it crashes in the process. See the [Checkpoints](/tidb-lightning/tidb-lightning-checkpoints.md) section for details.
+断点。用于保证 TiDB Lightning 在导入数据时不断地将进度保存到本地文件或远程数据库中。这样即使进程崩溃，TiDB Lightning 也能从中间状态恢复。
+
+详情参见 [TiDB Lightning 断点续传](/tidb-lightning/tidb-lightning-checkpoints.md)。
 
 ### Checksum
 
-In TiDB Lightning, the checksum of a table is a set of 3 numbers calculated from the content of each KV pair in that table. These numbers are respectively:
+校验和。一种用于[验证导入数据正确性](/tidb-lightning/tidb-lightning-faq.md#如何校验导入的数据的正确性)的方法。
 
-* the number of KV pairs,
-* total length of all KV pairs, and
-* the bitwise-XOR of [CRC-64-ECMA](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) value each pair.
+在 TiDB Lightning 中，表的校验和是由 3 个数字组成的集合，由该表中每个键值对的内容计算得出。这些数字分别是：
 
-TiDB Lightning [validates the imported data](/tidb-lightning/tidb-lightning-faq.md#how-to-ensure-the-integrity-of-the-imported-data) by comparing the [local](/tidb-lightning/tidb-lightning-glossary.md#local-checksum) and [remote checksums](/tidb-lightning/tidb-lightning-glossary.md#remote-checksum) of every table. The program would stop if any pair does not match. You can skip this check by setting the `post-restore.checksum` configuration to `false`.
+* 键值对的数量
+* 所有键值对的总长度
+* 每个键值对 [CRC-64-ECMA](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) 按位异或的结果
 
-See also the [FAQs](/tidb-lightning/troubleshoot-tidb-lightning.md#checksum-failed-checksum-mismatched-remote-vs-local) for how to properly handle checksum mismatch.
+TiDB Lightning 通过比较每个表的[本地校验和](#local-checksum)和[远程校验和](#remote-checksum)来验证导入数据的正确性。如果有任一对校验和不匹配，导入进程就会停止。如果你需要跳过校验和检查，可以将 `post-restore.checksum` 设置为 `false`。
+
+遇到校验和不匹配的问题时，参考[常见问题](/tidb-lightning/troubleshoot-tidb-lightning.md#checksum-failed-checksum-mismatched-remote-vs-local)进行处理。
 
 ### Chunk
 
-A continuous range of source data, normally equivalent to a single file in the data source.
+一段连续的源数据，通常相当于数据源中的单个文件。
 
-When a file is too large, TiDB Lightning might split a file into multiple chunks.
+如果单个文件太大，TiDB Lightning 可以将单个文件拆分成多个文件块。
 
 ### Compaction
 
-An operation that merges multiple small SST files into one large SST file, and cleans up the deleted entries. TiKV automatically compacts data in background while TiDB Lightning is importing.
+压缩。指将多个小 SST 文件合并为一个大 SST 文件并清理已删除的条目。TiDB Lightning 导入数据时，TiKV 在后台会自动压缩数据。
 
-> **Note:**
+> **注意：**
 >
-> For legacy reasons, you can still configure TiDB Lightning to explicitly trigger a compaction every time a table is imported. However, this is not recommended and the corresponding settings are disabled by default.
-
-See [RocksDB's wiki page on Compaction](https://github.com/facebook/rocksdb/wiki/Compaction) for its technical details.
+> 出于遗留原因，你仍然可以将 TiDB Lightning 配置为在每次导入表时进行显式压缩，但是官方不推荐采用该操作，且该操作的相关设置默认是禁用的。
+>
+> 技术细节参阅 [RocksDB 关于压缩的说明](https://github.com/facebook/rocksdb/wiki/Compaction)。
 
 <!-- D -->
 
@@ -77,11 +81,11 @@ See [RocksDB's wiki page on Compaction](https://github.com/facebook/rocksdb/wiki
 
 ### Data engine
 
-An [engine](/tidb-lightning/tidb-lightning-glossary.md#engine) for sorting actual row data.
+数据引擎。用于对实际的行数据进行排序的[引擎](#engine)。
 
-When a table is very large, its data is placed into multiple data engines to improve task pipelining and save space of TiKV Importer. By default, a new data engine is opened for every 100 GB of SQL data, which can be configured through the `mydumper.batch-size` setting.
+当一个表数据很多的时候，表的数据会被放置在多个数据引擎中以改善任务流水线并节省 TiKV Importer 的空间。默认条件下，每 100 GB 的 SQL 数据会打开一个新的数据引擎（可通过 `mydumper.batch-size` 配置项进行更改）。
 
-TiDB Lightning processes multiple data engines concurrently. This is controlled by the `lightning.table-concurrency` setting.
+TiDB Lightning 同时处理多个数据引擎（可通过 `lightning.table-concurrency` 配置项进行更改）。
 
 <!-- E -->
 
@@ -89,13 +93,13 @@ TiDB Lightning processes multiple data engines concurrently. This is controlled 
 
 ### Engine
 
-In TiKV Importer, an engine is a RocksDB instance for sorting KV pairs.
+引擎。在 TiKV Importer 中，一个引擎就是一个用于排序键值对的 RocksDB 实例。
 
-TiDB Lightning transfers data to TiKV Importer through engines. It first opens an engine, sends KV pairs to it (with no particular order), and finally closes the engine. The engine sorts the received KV pairs after it is closed. These closed engines can then be further uploaded to the TiKV stores for ingestion.
+TiDB Lightning 通过引擎将数据传送到 TiKV Importer 中。TiDB Lightning 先打开一个引擎，向其发送未排序的键值对，然后关闭引擎。随后，引擎会对收到的键值对进行排序操作。这些关闭的引擎可以进一步上传至 TiKV store 中为 [Ingest](#ingest) 做准备。
 
-Engines use TiKV Importer's `import-dir` as temporary storage, which are sometimes referred to as "engine files".
+引擎使用 TiKV Importer 的 `import-dir` 作为临时存储，有时也会被称为引擎文件 (engine files)。
 
-See also [data engine](/tidb-lightning/tidb-lightning-glossary.md#data-engine) and [index engine](/tidb-lightning/tidb-lightning-glossary.md#index-engine).
+另见[数据引擎](#data-engine)和[索引引擎](#index-engine)。
 
 <!-- F -->
 
@@ -103,9 +107,9 @@ See also [data engine](/tidb-lightning/tidb-lightning-glossary.md#data-engine) a
 
 ### Filter
 
-A configuration list that specifies which tables to be imported or excluded.
+配置列表，用于指定需要导入或不允许导入的表。
 
-See [Table Filter](/table-filter.md) for details.
+详情见[表库过滤](/table-filter.md)。
 
 <!-- I -->
 
@@ -113,25 +117,25 @@ See [Table Filter](/table-filter.md) for details.
 
 ### Import mode
 
-A configuration that optimizes TiKV for writing at the cost of degraded read speed and space usage.
+导入模式。指通过降低读取速度和减少空间使用，来优化 TiKV 写入的配置模式。
 
-TiDB Lightning automatically switches to and off the import mode while running. However, if TiKV gets stuck in import mode, you can use `tidb-lightning-ctl` to [force revert](/tidb-lightning/troubleshoot-tidb-lightning.md#the-tidb-cluster-uses-lots-of-cpu-resources-and-runs-very-slowly-after-using-tidb-lightning) to [normal mode](/tidb-lightning/tidb-lightning-glossary.md#normal-mode).
+导入过程中，TiDB Lightning 自动在导入模式和[普通模式](#normal-mode)中来回切换。如果 TiKV 卡在导入模式，你可以使用 `tidb-lightning-ctl` [强制切换回普通模式](/tidb-lightning/troubleshoot-tidb-lightning.md#使用-tidb-lightning-后tidb-集群变慢cpu-占用高)。
 
 ### Index engine
 
-An [engine](/tidb-lightning/tidb-lightning-glossary.md#engine) for sorting indices.
+索引引擎。用于对索引进行排序的[引擎](#engine)。
 
-Regardless of number of indices, every table is associated with exactly one index engine.
+不管表中有多少索引，每张表都只对应**一个**索引引擎。
 
-TiDB Lightning processes multiple index engines concurrently. This is controlled by the `lightning.index-concurrency` setting. Since every table has exactly one index engine, this also configures the maximum number of tables to process at the same time.
+TiDB Lightning 可同时处理多个索引引擎（可通过 `lightning.index-concurrency` 配置项进行更改）。由于每张表正好对应一个索引引擎，`lightning.index-concurrency` 配置项也限定了可同时处理的表的最大数量。
 
 ### Ingest
 
-An operation which inserts the entire content of an [SST file](/tidb-lightning/tidb-lightning-glossary.md#sst-file) into the RocksDB (TiKV) store.
+指将 [SST 文件](#sst-file)的全部内容插入到 RocksDB（TiKV）store 中的操作。
 
-Ingestion is a very fast operation compared with inserting KV pairs one by one. This operation is the determinant factor for the performance of TiDB Lightning.
+与逐个插入键值对相比，Ingest 的效率非常高。因此，该操作直接决定了 TiDB Lightning 的性能。
 
-See [RocksDB's wiki page on Creating and Ingesting SST files](https://github.com/facebook/rocksdb/wiki/Creating-and-Ingesting-SST-files) for its technical details.
+技术细节参阅 [RocksDB 关于创建、Ingest SST 文件的 wiki 页面](https://github.com/facebook/rocksdb/wiki/Creating-and-Ingesting-SST-files)。
 
 <!-- K -->
 
@@ -139,11 +143,11 @@ See [RocksDB's wiki page on Creating and Ingesting SST files](https://github.com
 
 ### KV pair
 
-Abbreviation of "key-value pair".
+即 key-value pair（键值对）。
 
 ### KV encoder
 
-A routine which parses SQL or CSV rows to KV pairs. Multiple KV encoders run in parallel to speed up processing.
+用于将 SQL 或 CSV 行解析为键值对的例程。多个 KV encoder 会并行运行以加快处理速度。
 
 <!-- L -->
 
@@ -151,7 +155,7 @@ A routine which parses SQL or CSV rows to KV pairs. Multiple KV encoders run in 
 
 ### Local checksum
 
-The [checksum](/tidb-lightning/tidb-lightning-glossary.md#checksum) of a table calculated by TiDB Lightning itself before sending the KV pairs to TiKV Importer.
+本地校验和。在将键值对发送到 TiKV Importer 前，由 TiDB Lightning 计算的表的校验和。
 
 <!-- N -->
 
@@ -159,7 +163,7 @@ The [checksum](/tidb-lightning/tidb-lightning-glossary.md#checksum) of a table c
 
 ### Normal mode
 
-The mode where [import mode](/tidb-lightning/tidb-lightning-glossary.md#import-mode) is disabled.
+普通模式。未启用[导入模式](#import-mode)时的模式。
 
 <!-- P -->
 
@@ -167,7 +171,7 @@ The mode where [import mode](/tidb-lightning/tidb-lightning-glossary.md#import-m
 
 ### Post-processing
 
-The period of time after the entire data source is parsed and sent to TiKV Importer. TiDB Lightning is waiting for TiKV Importer to upload and [ingest](/tidb-lightning/tidb-lightning-glossary.md#ingest) the [SST files](/tidb-lightning/tidb-lightning-glossary.md#sst-file).
+指整个数据源被解析发送到 TiKV Importer 之后的一段时间。此时 TiDB Lightning 正在等待 TiKV Importer 上传、[Ingest](#ingest) [SST 文件](#sst-file)。
 
 <!-- R -->
 
@@ -175,7 +179,7 @@ The period of time after the entire data source is parsed and sent to TiKV Impor
 
 ### Remote checksum
 
-The [checksum](/tidb-lightning/tidb-lightning-glossary.md#checksum) of a table calculated by TiDB after it has been imported.
+远程校验和。指导入 TiDB 后所计算的表的[校验和](#checksum)。
 
 <!-- S -->
 
@@ -183,14 +187,14 @@ The [checksum](/tidb-lightning/tidb-lightning-glossary.md#checksum) of a table c
 
 ### Scattering
 
-An operation that randomly reassigns the leader and the peers of a [Region](/glossary.md#regionpeerraft-group). Scattering ensures that the imported data are distributed evenly among TiKV stores. This reduces stress on PD.
+指随机再分配 [Region](/glossary.md#regionpeerraft-group) 中 leader 和 peer 的操作。Scattering 确保导入的数据在 TiKV store 中均匀分布，这样可以降低 PD 调度的压力。
 
 ### Splitting
 
-An engine is typically very large (around 100 GB), which is not friendly to TiKV if treated as a single [region](/glossary.md#regionpeerraft-group). TiKV Importer splits an engine into multiple small [SST files](/tidb-lightning/tidb-lightning-glossary.md#sst-file) (configurable by TiKV Importer's `import.region-split-size` setting) before uploading.
+指 TiKV Importer 在上传之前会将单个引擎文件拆分为若干小 [SST 文件](#sst-file)的操作。这是因为引擎文件通常很大（约为 100 GB），在 TiKV 中不适合视为单一的 [Region](/glossary.md#regionpeerraft-group)。拆分的文件大小可通过 `import.region-split-size` 配置项更改。
 
 ### SST file
 
-SST is the abbreviation of "sorted string table". An SST file is RocksDB's (and thus TiKV's) native storage format of a collection of KV pairs.
+Sorted string table file（排序字符串表文件）。SST 文件是一种在 RocksDB 中（因而也是 TiKV 中）键值对集合在本地的存储形式。
 
-TiKV Importer produces SST files from a closed [engine](/tidb-lightning/tidb-lightning-glossary.md#engine). These SST files are uploaded and then [ingested](/tidb-lightning/tidb-lightning-glossary.md#ingest) into TiKV stores.
+TiKV Importer 从关闭的[引擎](#engine)中生成 SST 文件。这些 SST 文件接着被上传、[ingest](#ingest) 到 TiKV store 中。

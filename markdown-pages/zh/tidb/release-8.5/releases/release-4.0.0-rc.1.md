@@ -1,148 +1,149 @@
 ---
 title: TiDB 4.0 RC.1 Release Notes
-summary: TiDB 4.0 RC.1 was released on April 28, 2020. The release includes compatibility changes, important bug fixes, new features, and bug fixes for TiKV, TiDB, TiFlash, TiCDC, Backup & Restore (BR), and Placement Driver (PD). The bug fixes address issues such as data inconsistency, deadlock, and replication failure. New features include support for sending Coprocessor requests to TiFlash in batches and enabling the load-based split region operation. Additionally, TiFlash now supports pushing down the fromUnixTime and dateFormat functions.
+summary: TiDB 4.0 RC.1 发布说明：TiDB 4.0.0-rc.1 版本兼容性变化包括 TiKV 默认关闭 hibernate region，TiDB Binlog 增加对 Sequence DDL 的支持。重点修复了多个 Bug，包括 TiDB 事务内执行 INSERT ... ON DUPLICATE KEY UPDATE 语句插入多行重复数据可能出错的问题等。新增功能包括 TiDB 支持发送 batch coprocessor 请求给 TiFlash 等。Bug 修复包括 TiDB 系统表由于 unsigned 列定义导致无法正确显示负数的问题等。
+aliases: ['/zh/tidb/dev/release-4.0.0-rc.1/','/zh/tidb/v4.0/release-4.0.0-rc.1','/docs-cn/dev/releases/release-4.0.0-rc.1/','/docs-cn/dev/releases/4.0.0-rc.1/','/zh/tidb/v5.4/release-4.0.0-rc.1','/zh/tidb/v6.1/release-4.0.0-rc.1','/zh/tidb/v6.5/release-4.0.0-rc.1','/zh/tidb/v7.1/release-4.0.0-rc.1','/zh/tidb/v7.5/release-4.0.0-rc.1','/zh/tidb/v8.1/release-4.0.0-rc.1']
 ---
 
 # TiDB 4.0 RC.1 Release Notes
 
-Release date: April 28, 2020
+发版日期：2020 年 4 月 28 日
 
-TiDB version: 4.0.0-rc.1
+TiDB 版本：4.0.0-rc.1
 
-## Compatibility Changes
+## 兼容性变化
 
 + TiKV
 
-    - Disable the Hibernate Region feature by default [#7618](https://github.com/tikv/tikv/pull/7618)
+    - 默认关闭 hibernate region [#7618](https://github.com/tikv/tikv/pull/7618)
 
 + TiDB Binlog
 
-    - Support the sequence DDL operation in Drainer [#950](https://github.com/pingcap/tidb-binlog/pull/950)
+    - Drainer 增加对 Sequence DDL 的支持 [#950](https://github.com/pingcap/tidb-binlog/pull/950)
 
-## Important Bug Fixes
+## 重点修复的 Bug
 
 + TiDB
 
-    - Fix the issue that the `INSERT ... ON DUPLICATE UPDATE` statement might be incorrectly executed on multiple rows in an explicit transaction because `MemBuffer` is not checked [#16689](https://github.com/pingcap/tidb/pull/16689)
-    - Fix the data inconsistency when locking duplicated keys on multiple rows [#16769](https://github.com/pingcap/tidb/pull/16769)
-    - Fix the panic that occurs when recycling the non-superbatch idle connection between TiDB instances [#16303](https://github.com/pingcap/tidb/pull/16303)
+    - 修复由于未检查 `MemBuffer`，事务内执行 `INSERT ... ON DUPLICATE KEY UPDATE` 语句插入多行重复数据可能出错的问题 [#16689](https://github.com/pingcap/tidb/pull/16689)
+    - 修复 lock 多行重复 keys 时导致数据索引不一致的问题 [#16769](https://github.com/pingcap/tidb/pull/16769)
+    - 修复回收空闲 gRPC 连接导致 TiDB panic 的问题 [#16303](https://github.com/pingcap/tidb/pull/16303)
 
 + TiKV
 
-    - Fix the deadlock issue caused by the probe request from TiDB [#7540](https://github.com/tikv/tikv/pull/7540)
-    - Fix the issue that the minimum commit timestamp of a transaction might overflow which affects data correctness [#7638](https://github.com/tikv/tikv/pull/7638)
+    - 修复 TiDB 探活请求触发的死锁问题 [#7540](https://github.com/tikv/tikv/pull/7540)
+    - 修复事务的 min commit ts 可能溢出、影响数据正确性的问题 [#7642](https://github.com/tikv/tikv/pull/7642)
 
 + TiFlash
 
-    - Fix the data loss issue caused by the `rename table` operation when multiple data paths are configured
-    - Fix the issue that an error occurs when reading data from a merged Region
-    - Fix the issue that an error occurs when reading data from a Region that is in the abnormal state
-    - Modify the mapping of table names in TiFlash to correctly support `recover table`/`flashback table`
-    - Modify the storage path to fix the potential data loss issue that occurs when renaming the table
-    - Fix the potential panic of TiDB when Super Batch is enabled
-    - Modify the read mode in the online update scenario to improve the read performance
+    - 修正多数据路径配置下进行 rename table 会导致数据丢失的问题
+    - 修正当 Region 处于 merge 状态时读取产生的数据错误
+    - 修正当 Region 处于非 normal 状态时读取产生的数据错误
+    - 修正 TiFlash 中表名的映射方式以正确支持 `recover table`/`flashback table`
+    - 修正数据存储路径以解决 `rename table` 时潜在的数据丢失问题
+    - 修正 Super batch 开启后，有一定概率 TiDB panic 的问题
+    - 修正在线更新时的读模型以优化读性能
 
 + TiCDC
 
-    - Fix the replication failure that occurs because the schema internally maintained in TiCDC fails to correctly handle the timing issue of read and write operations [#438](https://github.com/pingcap/tiflow/pull/438) [#450](https://github.com/pingcap/tiflow/pull/450) [#478](https://github.com/pingcap/tiflow/pull/478) [#496](https://github.com/pingcap/tiflow/pull/496)
-    - Fix the bug that the TiKV client fails to correctly maintain the internal resources when encountering some TiKV anomalies [#499](https://github.com/pingcap/tiflow/pull/499) [#492](https://github.com/pingcap/tiflow/pull/492)
-    - Fix the bug that meta data is not correctly cleaned up and abnormally remains in the TiCDC nodes [#488](https://github.com/pingcap/tiflow/pull/488) [#504](https://github.com/pingcap/tiflow/pull/504)
-    - Fix the issue that the TiKV client fails to correctly handle the repeated sending of the prewrite event [#446](https://github.com/pingcap/tiflow/pull/446)
-    - Fix the issue that the TiKV client fails to correctly handle the redundant prewrite events received before the initialization [#448](https://github.com/pingcap/tiflow/pull/448)
+    - 修复 TiCDC 内部维护的 schema 信息对于读写操作时序问题没有正确处理导致同步失败问题 [#438](https://github.com/pingcap/tiflow/pull/438) [#450](https://github.com/pingcap/tiflow/pull/450) [#478](https://github.com/pingcap/tiflow/pull/478) [#496](https://github.com/pingcap/tiflow/pull/496)
+    - 修复 TiKV client 遇到部分 TiKV 异常没有正确维护内部资源的 bug [#499](https://github.com/pingcap/tiflow/pull/499) [#492](https://github.com/pingcap/tiflow/pull/492)
+    - 修复节点异常残留元数据信息没有正确清理的 bug [#488](https://github.com/pingcap/tiflow/pull/488) [#504](https://github.com/pingcap/tiflow/pull/504)
+    - 修复 TiKV client 没有正确处理 prewrite 重复发送的问题 [#446](https://github.com/pingcap/tiflow/pull/446)
+    - 修复 TiKV client 没有正确处理在初始化前接收到冗余 prewrite 的问题 [#448](https://github.com/pingcap/tiflow/pull/448)
 
 + Backup & Restore (BR)
 
-    - Fix the issue that checksum is still executed when checksum is disabled [#223](https://github.com/pingcap/br/pull/223)
-    - Fix the incremental replication failure when `auto-random` or `alter-pk` is enabled in TiDB [#230](https://github.com/pingcap/br/pull/230) [#231](https://github.com/pingcap/br/pull/231)
+    - 修复关闭 checksum 情况下，仍然执行 checksum 的问题 [#223](https://github.com/pingcap/br/pull/223)
+    - 修复 TiDB 开启 auto-random 或 alter-pk 时，增量备份失败的问题 [#230](https://github.com/pingcap/br/pull/230) [#231](https://github.com/pingcap/br/pull/231)
 
-## New Features
+## 新功能
 
 + TiDB
 
-    - Support sending Coprocessor requests to TiFlash in batches [#16226](https://github.com/pingcap/tidb/pull/16226)
-    - Enable the Coprocessor cache feature by default [#16710](https://github.com/pingcap/tidb/pull/16710)
-    - Parse only the registered sections of a statement in the special comment of the SQL statement [#16157](https://github.com/pingcap/tidb/pull/16157)
-    - Support using the `SHOW CONFIG` syntax to show the configurations of PD and TiKV instances [#16475](https://github.com/pingcap/tidb/pull/16475)
+    - 支持发送 `batch coprocessor` 请求给 TiFlash [#16226](https://github.com/pingcap/tidb/pull/16226)
+    - 默认打开 Coprocessor cache [#16710](https://github.com/pingcap/tidb/pull/16710)
+    - 在 SQL 语句的特殊注释中，只有被注册了语句片段才能被 parser 正常解析，否则将被忽略 [#16157](https://github.com/pingcap/tidb/pull/16157)
+    - 支持使用 `SHOW CONFIG` 语法显示 PD 和 TiKV 的配置 [#16475](https://github.com/pingcap/tidb/pull/16475)
 
 + TiKV
 
-    - Support using the user-owned KMS key for the server-side encryption when backing up data to S3 [#7630](https://github.com/tikv/tikv/pull/7630)
-    - Enable the load-based `split region` operation [#7623](https://github.com/tikv/tikv/pull/7623)
-    - Support validating common names [#7468](https://github.com/tikv/tikv/pull/7468)
-    - Add the file lock check to avoid starting multiple TiKV instances that are bound to the same address [#7447](https://github.com/tikv/tikv/pull/7447)
-    - Support AWS KMS in encryption at rest [#7465](https://github.com/tikv/tikv/pull/7465)
+    - 支持在备份到 S3 时使用用户提供的 KMS key 进行服务端加密 [#7630](https://github.com/tikv/tikv/pull/7630)
+    - 支持基于负载的 Region split [#7623](https://github.com/tikv/tikv/pull/7623)
+    - 支持 common name 验证 [#7468](https://github.com/tikv/tikv/pull/7468)
+    - 通过检查文件锁避免多个 TiKV 实例绑定相同的地址 [#7447](https://github.com/tikv/tikv/pull/7447)
+    - Encryption at rest 支持 AWS KMS [#7465](https://github.com/tikv/tikv/pull/7465)
 
 + Placement Driver (PD)
 
-    - Remove `config manager` to let other components control their component configurations [#2349](https://github.com/pingcap/pd/pull/2349)
+    - 移除 `config manager` 以使其它组件自行控制它们的配置 [#2349](https://github.com/pingcap/pd/pull/2349)
 
 + TiFlash
 
-    - Add the metrics report related to the read and write workloads of DeltaTree engine
-    - Cache the `handle` and `version` columns to reduce the disk I/O of a single read or write request
-    - Support pushing down the `fromUnixTime` and `dateFormat` functions
-    - Evaluate the global state according to the first disk and report this evaluation
-    - Add the graphics in Grafana related to the read and write workloads of DeltaTree engine
-    - Optimize the decimal data encoding in the `Chunk` codec
-    - Implement the gRPC API of Diagnostics (SQL diagnosis) to support querying system tables such as `INFORMATION_SCHEMA.CLUSTER_INFO`
+    - 添加 DeltaTree 引擎读写负载相关 metrics 上报
+    - 缓存 `handle` 列和 `version` 列减小单次读请求的磁盘 I/O
+    - 增加了 TiFlash 对于 `FromUnixTime` 和 `Date_format` 函数的支持
+    - 根据第一块盘估算全局状态并上报
+    - Grafana 添加 DeltaTree 引擎读写负载相关图表
+    - 优化 TiFlash chunk encode decimal 的数据
+    - 实现了 Diagnostics（SQL 诊断）的 gRPC API，以支持 `INFORMATION_SCHEMA.CLUSTER_INFO` 等系统表的查询
 
 + TiCDC
 
-    - Support sending messages in batches in the Kafka sink module [#426](https://github.com/pingcap/tiflow/pull/426)
-    - Support file sorting in the processor [#477](https://github.com/pingcap/tiflow/pull/477)
-    - Support automatic `resolve lock` [#459](https://github.com/pingcap/tiflow/pull/459)
-    - Add the feature that automatically updates the TiCDC service GC safe point to PD [#487](https://github.com/pingcap/tiflow/pull/487)
-    - Add the timezone setting for data replication [#498](https://github.com/pingcap/tiflow/pull/498)
+    - 在 Kafka sink 模块提供发送批量消息支持 [#426](https://github.com/pingcap/tiflow/pull/426)
+    - 支持在 processor 内使用文件排序 [#477](https://github.com/pingcap/tiflow/pull/477)
+    - 增加自动 resolve lock 的支持 [#459](https://github.com/pingcap/tiflow/pull/459)
+    - 增加自动向 PD 设置 TiCDC 服务级别 safepoint 的功能 [#487](https://github.com/pingcap/tiflow/pull/487)
+    - 增加数据同步时的时区配置 [#498](https://github.com/pingcap/tiflow/pull/498)
 
-+ Backup and Restore (BR)
++ Backup & Restore (BR)
 
-    - Support configuring S3/GCS in the storage URL [#246](https://github.com/pingcap/br/pull/246)
+    - 支持在存储的 URL 中配置 S3/GCS [#246](https://github.com/pingcap/br/pull/246)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-- Fix the issue that negative numbers cannot be correctly displayed in the system table because the columns are defined as unsigned [#16004](https://github.com/pingcap/tidb/pull/16004)
-- Add a warning when the `use_index_merge` hint contains the invalid index name [#15960](https://github.com/pingcap/tidb/pull/15960)
-- Forbid multiple instances of a TiDB server sharing the same temporary directory [#16026](https://github.com/pingcap/tidb/pull/16026)
-- Fix the panic that occurs during the execution of `explain for connection` when the plan cache is enabled [#16285](https://github.com/pingcap/tidb/pull/16285)
-- Fix the issue that the result of the `tidb_capture_plan_baselines` system variable is incorrectly displayed [#16048](https://github.com/pingcap/tidb/pull/16048)
-- Fix the issue that the `group by` clause in the `prepare` statement is incorrectly parsed [#16377](https://github.com/pingcap/tidb/pull/16377)
-- Fix the panic that might occur during the execution of the `analyze primary key` statement [#16081](https://github.com/pingcap/tidb/pull/16081)
-- Fix the issue that the TiFlash store information in the `cluster_info` system table is wrong [#16024](https://github.com/pingcap/tidb/pull/16024)
-- Fix the panic that might occur during the Index Merge process [#16360](https://github.com/pingcap/tidb/pull/16360)
-- Fix the issue that an incorrect result might occur when the Index Merge reader reads the generated columns [#16359](https://github.com/pingcap/tidb/pull/16359)
-- Fix the incorrect display of the default sequence value in the `show create table` statement [#16526](https://github.com/pingcap/tidb/pull/16526)
-- Fix the issue that the `not-null` error is returned because the sequence is used as the default values of the primary key [#16510](https://github.com/pingcap/tidb/pull/16510)
-- Fix the issue that no error is reported for a blocked SQL execution when TiKV continues to return the `StaleCommand` error [#16530](https://github.com/pingcap/tidb/pull/16530)
-- Fix the issue that an error is reported if you only specify `COLLATE` when creating a database; add the missing `COLLATE` part in the result of `SHOW CREATE DATABASE` [#16540](https://github.com/pingcap/tidb/pull/16540)
-- Fix the partition pruning failure when the plan cache is enabled [#16723](https://github.com/pingcap/tidb/pull/16723)
-- Fix the bug that `PointGet` returns wrong results when handling the overflow [#16755](https://github.com/pingcap/tidb/pull/16755)
-- Fix the issue that a wrong result is returned when querying the `slow_query` system table with equal time values [#16806](https://github.com/pingcap/tidb/pull/16806)
+    - 修复系统表由于 unsigned 列定义导致无法正确显示负数的问题 [#16004](https://github.com/pingcap/tidb/pull/16004)
+    - 当使用 `use_index_merge` hint 包含不存在的索引时添加警告 [#15960](https://github.com/pingcap/tidb/pull/15960)
+    - 禁止多个 TiDB server 共享同一个临时目录 [#16026](https://github.com/pingcap/tidb/pull/16026)
+    - 修复打开 plan cache 时，执行 `explain for connection` 语句 panic 的问题 [#16285](https://github.com/pingcap/tidb/pull/16285)
+    - 修复显示 `tidb_capture_plan_baselines` 系统变量不正确的问题 [#16048](https://github.com/pingcap/tidb/pull/16048)
+    - 修复 `prepare` 语句中的 `group by` 语句解析错误的问题 [#16377](https://github.com/pingcap/tidb/pull/16377)
+    - 修复 `analyze primary key` 可能 panic 的问题 [#16081](https://github.com/pingcap/tidb/pull/16081)
+    - 修复 `cluster_info` 系统表中 TiFlash 节点信息错误的问题 [#16024](https://github.com/pingcap/tidb/pull/16024)
+    - 修复 index merge 可能 panic 的问题 [#16360](https://github.com/pingcap/tidb/pull/16360)
+    - 修复 index merge 遇到 generated column 时导致结果错误的问题 [#16359](https://github.com/pingcap/tidb/pull/16359)
+    - 修复 `show create table` 语句显示 sequence 默认值错误的问题 [#16526](https://github.com/pingcap/tidb/pull/16526)
+    - 修复主键使用 sequence 作为默认值时出现 `not-null` 的错误的问题 [#16510](https://github.com/pingcap/tidb/pull/16510)
+    - 修复当 TiKV 持续返回 `StaleCommand` 期间执行 SQL 卡住不报错的问题 [#16530](https://github.com/pingcap/tidb/pull/16530)
+    - 修复 `CREATE DATABASE` 时仅指定 `COLLATE` 时会报错的问题，同时在 `SHOW CREATE DATABASE` 结果中添加缺失的 `COLLATE` 部分 [#16540](https://github.com/pingcap/tidb/pull/16540)
+    - 修复打开 plan-cache 时，分区裁剪失败的问题 [#16723](https://github.com/pingcap/tidb/pull/16723)
+    - 修复点查在 handle 溢出时返回错误结果的问题 [#16755](https://github.com/pingcap/tidb/pull/16755)
+    - 修复等值时间查询 `slow_query` 系统表返回错误结果的问题 [#16806](https://github.com/pingcap/tidb/pull/16806)
 
 + TiKV
 
-    - Address the OpenSSL security issue: CVE-2020-1967 [#7622](https://github.com/tikv/tikv/pull/7622)
-    - Avoid protecting rollback records written by `BatchRollback` to improve performance when many write conflicts exist in optimistic transactions [#7604](https://github.com/tikv/tikv/pull/7604)
-    - Fix the issue that the needless wake-up of transactions results in useless retry and performance reduction in heavy lock-race workloads [#7551](https://github.com/tikv/tikv/pull/7551)
-    - Fix the issue that the Region might be stuck in the multi-time merging [#7518](https://github.com/tikv/tikv/pull/7518)
-    - Fix the issue that the learner is not deleted when deleting the learner [#7518](https://github.com/tikv/tikv/pull/7518)
-    - Fix the issue that follower read might cause panic in raft-rs [#7408](https://github.com/tikv/tikv/pull/7408)
-    - Fix the bug that a SQL operation might fail because of the `group by constant` error [#7383](https://github.com/tikv/tikv/pull/7383)
-    - Fix the issue that an optimistic lock might block reads if the corresponding primary lock is a pessimistic lock [#7328](https://github.com/tikv/tikv/pull/7328)
+    - 解决 OpenSSL 的安全性问题：CVE-2020-1967 [#7622](https://github.com/tikv/tikv/pull/7622)
+    - 避免将 BatchRollback 产生的 rollback 记录标为保护的记录以改善冲突较多场景下的性能 [#7604](https://github.com/tikv/tikv/pull/7604)
+    - 修复锁竞争严重的场景下，不必要地唤醒事务导致多余的重试和性能下降的问题 [#7551](https://github.com/tikv/tikv/pull/7551)
+    - 修复多次 merge 时，Region 可能卡住的问题 [#7518](https://github.com/tikv/tikv/pull/7518)
+    - 修复删除 learner 时，learner 可能并未被删除的问题 [#7518](https://github.com/tikv/tikv/pull/7518)
+    - 修复 follower read 可能使 raft-rs panic 的问题 [#7408](https://github.com/tikv/tikv/pull/7408)
+    - 修复 SQL 可能因 "group by constant" 错误失败的问题 [#7383](https://github.com/tikv/tikv/pull/7383)
+    - 修复当一个乐观锁对应的 primary lock 是悲观锁时，该乐观锁可能阻塞读的问题 [#7328](https://github.com/tikv/tikv/pull/7328)
 
-+ PD
++ Placement Driver (PD)
 
-    - Fix the issue that some APIs might fail in the TLS validation [#2363](https://github.com/pingcap/pd/pull/2363)
-    - Fix the issue that the configuration API cannot accept a configuration item with a prefix [#2354](https://github.com/pingcap/pd/pull/2354)
-    - Fix the issue that the `500` error is returned when the scheduler is not found [#2328](https://github.com/pingcap/pd/pull/2328)
-    - Fix the issue that the `404` error is returned for the `scheduler config balance-hot-region-scheduler list` command [#2321](https://github.com/pingcap/pd/pull/2321)
+    - 修复部分 API TLS 认证失败的问题 [#2363](https://github.com/pingcap/pd/pull/2363)
+    - 修复 `config` API 不能识别带有前缀的配置项的问题 [#2354](https://github.com/pingcap/pd/pull/2354)
+    - 修复找不到 scheduler 时会返回 500 错误的问题 [#2328](https://github.com/pingcap/pd/pull/2328)
+    - 修复 `scheduler config balance-hot-region-scheduler list` 命令返回 404 错误的问题 [#2321](https://github.com/pingcap/pd/pull/2321)
 
 + TiFlash
 
-    - Disable the coarse-grained index optimization for the storage engine
-    - Fix the bug that an exception is thrown when resolving locks for Regions and some locks need to be skipped
-    - Fix the null pointer exception (NPE) when collecting the Coprocessor statistics
-    - Fix the check for Region meta to ensure that the process of Region Split/Region Merge is correct
-    - Fix the issue that the message size exceeds the limit for gRPC because the size of Coprocessor response is not estimated
-    - Fix the handling of the `AdminCmdType::Split` command in TiFlash
+    - 禁用存储引擎的粗糙索引优化
+    - 修正对 Region 进行 resolve lock 时遇到需要跳过的 lock 抛异常的问题
+    - 修正 Coprocessor 统计信息收集的 NPE
+    - 修正 Region meta 的检查以保证 Region Split/Region Merge 流程的正确性
+    - 修正对 Coprocessor response 大小未做估算导致的消息大小超过 gRPC 限制的问题
+    - 修正 TiFlash 对 `AdminCmdType::Split` 命令的处理

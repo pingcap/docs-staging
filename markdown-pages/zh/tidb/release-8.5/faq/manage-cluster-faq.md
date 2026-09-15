@@ -1,456 +1,417 @@
 ---
-title: TiDB Cluster Management FAQs
-summary: Learn about the FAQs related to TiDB cluster management.
+title: TiDB 集群管理常见问题
+summary: 介绍 TiDB 集群管理的常见问题、原因及解决方法。
 ---
 
-# TiDB Cluster Management FAQs
+# TiDB 集群管理常见问题
 
-This document summarizes the FAQs related to TiDB cluster management.
+本文介绍管理 TiDB 集群时的常见问题、原因及解决方法。
 
-## Daily management
+## 集群日常管理
 
-This section describes common problems you might encounter during daily cluster management, their causes, and solutions.
+本小节介绍集群日程管理中的常见问题、原因及解决方法。
 
-### How to log into TiDB?
+### TiDB 如何登录？
 
-You can log into TiDB like logging into MySQL. For example:
+和 MySQL 登录方式一样，可以按照下面例子进行登录。
 
-```bash
+
+```shell
 mysql -h 127.0.0.1 -uroot -P4000
 ```
 
-### How to modify the system variables in TiDB?
+### TiDB 如何修改数据库系统变量？
 
-Similar to MySQL, TiDB includes static and solid parameters. You can directly modify static parameters using `SET GLOBAL xxx = n`, but the new value of a parameter is only effective within the life cycle in this instance.
+和 MySQL 一样，TiDB 也分为静态参数和固态参数，静态参数可以直接通过 `SET GLOBAL xxx = n` 的方式进行修改，不过新参数值只限于该实例生命周期有效。
 
-### Where and what are the data directories in TiDB (TiKV)?
+### TiDB (TiKV) 有哪些数据目录？
 
-TiKV data is located in the [`--data-dir`](/command-line-flags-for-tikv-configuration.md#--data-dir), which include four directories of backup, db, raft, and snap, used to store backup, data, Raft data, and mirror data respectively.
+默认在 [`--data-dir`](/command-line-flags-for-tikv-configuration.md#--data-dir) 目录下，其中包括 backup、db、raft、snap 四个目录，分别存储备份、数据、raft 数据及镜像数据。
 
-### What are the system tables in TiDB?
+### TiDB 有哪些系统表？
 
-Similar to MySQL, TiDB includes system tables as well, used to store the information required by the server when it runs. See [TiDB system table](/mysql-schema/mysql-schema.md).
+和 MySQL 类似，TiDB 中也有系统表，用于存放数据库运行时所需信息，具体信息参考 [TiDB 系统表](/mysql-schema/mysql-schema-user.md)文档。
 
-### Where are the TiDB/PD/TiKV logs?
+### TiDB 各节点服务器下是否有日志文件，如何管理？
 
-By default, TiDB/PD/TiKV outputs standard error in the logs. If a log file is specified by `--log-file` during the startup, the log is output to the specified file and executes rotation daily.
+默认情况下各节点服务器会在日志中输出标准错误，如果启动的时候通过 `--log-file` 参数指定了日志文件，那么日志会输出到指定的文件中，并且按天做 rotation。
 
-### How to safely stop TiDB?
+### TiDB、TiKV、PD 节点的各类文件存放在哪里？
 
-- If a load balancer is running (recommended): Stop the load balancer and execute the SQL statement `SHUTDOWN`. Then TiDB waits for a period as specified by [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) until all sessions are terminated. Then TiDB stops running.
+如需快速了解 TiDB 节点、TiKV 节点、PD 节点的配置文件、数据文件及日志文件的相关介绍与其存放位置，建议观看下面的培训视频（时长 9 分钟）。
 
-- If no load balancer is running: Execute the `SHUTDOWN` statement. Then TiDB components are gracefully stopped.
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn/Lesson12_log.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson12.png"></video>
 
-### Can `kill` be executed in TiDB?
+### 如何规范停止 TiDB？
 
-- Kill DML statements:
+- 若使用了 load balancer（推荐）：先停止 load balancer，然后执行 `SHUTDOWN` 语句。此时 TiDB 会根据 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入) 设置值等待所有会话断开，然后停止运行。
 
-    First use `information_schema.cluster_processlist` to find TiDB instance address and session ID, and then run the kill command.
+- 若未使用 load balancer：执行 `SHUTDOWN` 语句，TiDB 组件会做 graceful shutdown。
 
-    TiDB v6.1.0 introduces the Global Kill feature (controlled by the `enable-global-kill` configuration, which is enabled by default). If Global Kill is enabled, just execute `kill session_id`.
+### TiDB 里面可以执行 kill 命令吗？
 
-    If the TiDB version is earlier than v6.1.0, or the Global Kill feature is not enabled, `kill session_id` does not take effect by default. To terminate a DML statement, you should connect the client directly to the TiDB instance that is executing the DML statement and then execute the `kill tidb session_id` statement. If the client connects to another TiDB instance or there is a proxy between the client and the TiDB cluster, the `kill tidb session_id` statement might be routed to another TiDB instance, which might incorrectly terminate another session. For details, see [`KILL`](/sql-statements/sql-statement-kill.md).
+- Kill DML 语句：
 
-- Kill DDL statements: First use `admin show ddl jobs` to find the ID of the DDL job you need to terminate, and then run `admin cancel ddl jobs 'job_id' [, 'job_id'] ...`. For more details, see the [`ADMIN` statement](/sql-statements/sql-statement-admin.md).
+    查询 `information_schema.cluster_processlist`，获取正在执行 DML 语句的 TiDB 实例地址和 session ID，然后执行 kill 命令。
 
-### Does TiDB support session timeout?
+    TiDB 从 v6.1.0 起新增 Global Kill 功能（由 [`enable-global-kill`](/tidb-configuration-file.md#enable-global-kill-从-v610-版本开始引入) 配置项控制，默认启用）。启用 Global Kill 功能时，直接执行 `kill session_id` 即可。
 
-TiDB currently supports the following timeouts: [`wait_timeout`](/system-variables.md#wait_timeout), [`interactive_timeout`](/system-variables.md#interactive_timeout), and [`tidb_idle_transaction_timeout`](/system-variables.md#tidb_idle_transaction_timeout-new-in-v760).
+    对于 TiDB v6.1.0 之前的版本，或未启用 Global Kill 功能时，`kill session_id` 默认不生效，客户端需要连接到正在执行 DML 语句的 TiDB 实例，然后执行 `kill tidb session_id` 才能 kill DML 语句。如果客户端连接到其他 TiDB 实例或者客户端和 TiDB 集群之间有代理，`kill tidb session_id` 可能会被路由到其他的 TiDB 实例，从而错误地终止其他会话。具体可以参考 [`KILL`](/sql-statements/sql-statement-kill.md)。
 
-### What is the TiDB version management strategy?
+- Kill DDL 语句：执行 `admin show ddl jobs`，查找需要 kill 的 DDL job ID，然后执行 `admin cancel ddl jobs 'job_id' [, 'job_id'] ...`。具体可以参考 [`ADMIN`](/sql-statements/sql-statement-admin.md)。
 
-For details about TiDB version management, see [TiDB versioning](/releases/versioning.md).
+### TiDB 是否支持会话超时？
 
-### How about the operating cost of deploying and maintaining a TiDB cluster?
+TiDB 目前支持 [`wait_timeout`](/system-variables.md#wait_timeout)、[`interactive_timeout`](/system-variables.md#interactive_timeout) 和 [`tidb_idle_transaction_timeout`](/system-variables.md#tidb_idle_transaction_timeout-从-v760-版本开始引入) 三种超时。
 
-TiDB provides a few features and [tools](/ecosystem-tool-user-guide.md), with which you can manage the clusters easily at a low cost:
+### TiDB 的版本管理策略是怎么样的？
 
-- For maintenance operations, [TiUP](/tiup/tiup-documentation-guide.md) works as the package manager, which simplifies the deployment, scaling, upgrade, and other maintenance tasks.
-- For monitoring, the [TiDB monitoring framework](/tidb-monitoring-framework.md) uses [Prometheus](https://prometheus.io/) to store the monitoring and performance metrics, and uses [Grafana](https://grafana.com/grafana/) to visualize these metrics. Dozens of built-in panels are available with hundreds of metrics.
-- For troubleshooting, the [TiDB Troubleshooting Map](/tidb-troubleshooting-map.md) summarizes common issues of the TiDB server and other components. You can use this map to diagnose and resolve issues when you encounter related problems.
+关于 TiDB 版本的管理策略，可以参考 [TiDB 版本规则](/releases/versioning.md)。
 
-### What's the difference between various TiDB master versions?
+### 部署和维护 TiDB 集群的运营成本如何？
 
-The TiDB community is highly active. The engineers have been keeping optimizing features and fixing bugs. Therefore, the TiDB version is updated quite fast. If you want to keep informed of the latest version, see [TiDB Release Timeline](/releases/release-timeline.md).
+TiDB 提供了一些特性和[工具](/ecosystem-tool-user-guide.md)，可以帮助你以低成本管理集群：
 
-It is recommended to deploy TiDB [using TiUP](/production-deployment-using-tiup.md) or [using TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable). TiDB has a unified management of the version number. You can view the version number using one of the following methods:
+- 在运维方面，[TiUP](/tiup/tiup-documentation-guide.md) 作为包管理器，简化了部署、扩缩容、升级和其他运维任务。
+- 在监控方面，[TiDB 监控框架](/tidb-monitoring-framework.md)使用 [Prometheus](https://prometheus.io/) 存储监控和性能指标，使用 [Grafana](https://grafana.com/grafana/) 可视化这些指标。Grafana 内置了数十个面板，覆盖了数百个指标。
+- 在故障诊断方面，[TiDB 集群问题导图](/tidb-troubleshooting-map.md)汇总了 TiDB 服务器和其他组件的常见问题。你可以使用这个导图来诊断和解决遇到的相关问题。
 
-- `select tidb_version()`
-- `tidb-server -V`
+### 分不清 TiDB master 版本之间的区别，应该怎么办？
 
-### Is there a graphical deployment tool for TiDB?
+TiDB 目前社区非常活跃，同时，我们还在不断的优化和修改 BUG，因此 TiDB 的版本更新周期比较快，会不定期有新版本发布，请关注我们的[版本发布时间线](/releases/release-timeline.md)。此外 TiDB 安装推荐[使用 TiUP 进行安装](/production-deployment-using-tiup.md)或[使用 TiDB Operator 进行安装](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable)。TiDB 的版本号目前实现了统一管理，你可以通过如下任意方式查看 TiDB 的版本号：
 
-Currently no.
+- 通过 `select tidb_version()` 进行查看
+- 通过执行 `tidb-server -V` 进行查看
 
-### How to scale out a TiDB cluster?
+### 如何扩容 TiDB 集群？
 
-You can scale out your TiDB cluster without interrupting the online services.
+可以在不影响线上服务的情况下，对 TiDB 集群进行扩容。
 
-- If your cluster is deployed using [TiUP](/production-deployment-using-tiup.md), refer to [Scale a TiDB Cluster Using TiUP](/scale-tidb-using-tiup.md).
-- If your cluster is deployed using [TiDB Operator](/tidb-operator-overview.md) on Kubernetes, refer to [Manually Scale TiDB on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable/scale-a-tidb-cluster).
+- 如果是使用 [TiUP](/production-deployment-using-tiup.md) 部署的集群，可以参考[使用 TiUP 扩容 TiDB 集群](/scale-tidb-using-tiup.md)。
+- 如果是使用 [TiDB Operator](/tidb-operator-overview.md) 在 Kubernetes 上部署的集群，可以参考[在 Kubernetes 中手动扩容 TiDB 集群](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/scale-a-tidb-cluster)。
 
-### How to scale TiDB horizontally?
+### TiDB 如何进行水平扩展？
 
-As your business grows, your database might face the following three bottlenecks:
+当您的业务不断增长时，数据库可能会面临三方面瓶颈，第一是存储空间，第二是计算资源，第三是读写容量，这时可以对 TiDB 集群做水平扩展。
 
-- Lack of storage resources which means that the disk space is not enough.
+- 如果是存储资源不够，可以通过添加 TiKV Server 节点来解决，新节点启动后，PD 会自动将其他节点的部分数据迁移过去，无需人工介入。
+- 如果是计算资源不够，可以查看 TiDB Server 和 TiKV Server 节点的 CPU 消耗情况，再考虑添加 TiDB Server 节点或者是 TiKV Server 节点来解决，如添加 TiDB Server 节点，将其添加到前端 Load Balancer 配置之中即可。
+- 如果是容量跟不上，一般可以考虑同时增加 TiDB Server 和 TiKV Server 节点。
 
-- Lack of computing resources such as high CPU occupancy.
+### Percolator 用了分布式锁，crash 的客户端会保持锁，会造成锁没有 release？
 
-- Not enough write and read capacity.
+详细可参考 [Percolator 和 TiDB 事务算法](https://pingkai.cn/tidbcommunity/blog/f537be2c)。
 
-You can scale TiDB as your business grows.
+### TiDB 为什么选用 gRPC 而不选用 Thrift，是因为 Google 在用吗？
 
-- If the disk space is not enough, you can increase the capacity simply by adding more TiKV nodes. When the new node is started, PD will migrate the data from other nodes to the new node automatically.
+不只是因为 Google 在用，有一些比较好的特性我们需要，比如流控、加密还有 Streaming。
 
-- If the computing resources are not enough, check the CPU consumption situation first before adding more TiDB nodes or TiKV nodes. When a TiDB node is added, you can configure it in the Load Balancer.
+### like(bindo.customers.name, jason%, 92) 这个92代表什么？
 
-- If the capacity is not enough, you can add both TiDB nodes and TiKV nodes.
+那个是转义字符，默认是 (ASCII 92)。
 
-### If Percolator uses distributed locks and the crash client keeps the lock, will the lock not be released?
+### 为什么 `information_schema.tables.data_length` 记录的大小和 TiKV 监控面板上的 store size 不一样？
 
-For more details, see [Percolator and TiDB Transaction Algorithm](https://pingcap.com/blog-cn/percolator-and-txn/) in Chinese.
+这是因为两者计算的角度不一样。`information_schema.tables.data_length` 是通过统计信息（平均每行的大小）得到的估算值。TiKV 监控面板上的 store size 是单个 TiKV 实例的数据文件（RocksDB 的 SST 文件）的大小总和。由于多版本和 TiKV 会压缩数据，所以两者显示的大小不一样。
 
-### Why does TiDB use gRPC instead of Thrift? Is it because Google uses it?
+### 为什么事务没有使用异步提交或一阶段提交？
 
-Not really. We need some good features of gRPC, such as flow control, encryption and streaming.
+TiDB 只在事务写入不超过 256 个键值对，以及所有键值对里键的总大小不超过 4 KB 时，才会使用异步提交或一阶段提交特性。否则，即使通过系统变量开启了[异步提交](/system-variables.md#tidb_enable_async_commit-从-v50-版本开始引入)和[一阶段提交](/system-variables.md#tidb_enable_1pc-从-v50-版本开始引入)，TiDB 也不会使用这些特性。这是因为对于写入量大的事务，异步提交不能明显提升执行性能。
 
-### What does the 92 indicate in `like(bindo.customers.name, jason%, 92)`?
+## PD 管理
 
-The 92 indicates the escape character, which is ASCII 92 by default.
+本小节介绍 PD 管理中的常见问题、原因及解决方法。
 
-### Why does the data length shown by `information_schema.tables.data_length` differ from the store size on the TiKV monitoring panel?
+### 访问 PD 报错：TiKV cluster is not bootstrapped
 
-Two reasons:
+PD 的大部分 API 需要在初始化 TiKV 集群以后才能使用，如果在部署新集群的时候只启动了 PD，还没有启动 TiKV，这时候访问 PD 就会报这个错误。遇到这个错误应该先把要部署的 TiKV 启动起来，TiKV 会自动完成初始化工作，然后就可以正常访问 PD。
 
-- The two results are calculated in different ways. `information_schema.tables.data_length` is an estimated value by calculating the averaged length of each row, while the store size on the TiKV monitoring panel sums up the length of the data files (the SST files of RocksDB) in a single TiKV instance.
-- `information_schema.tables.data_length` is a logical value, while the store size is a physical value. The redundant data generated by multiple versions of the transaction is not included in the logical value, while the redundant data is compressed by TiKV in the physical value.
+### PD 启动报错：etcd cluster ID mismatch
 
-### Why does the transaction not use the Async Commit or the one-phase commit feature?
+PD 启动参数中的 `--initial-cluster` 包含了某个不属于该集群的成员。遇到这个错误时请检查各个成员的所属集群，剔除错误的成员后即可正常启动。
 
-TiDB uses the Async Commit or one-phase commit features only when no more than 256 key-value pairs are written in the transaction and the total size of keys is no more than 4 KB. Otherwise, even you have enabled the [Async Commit](/system-variables.md#tidb_enable_async_commit-new-in-v50) feature and the [one-phase commit](/system-variables.md#tidb_enable_1pc-new-in-v50) feature using the system variables, TiDB will not use these features. This is because, for transactions with a large amount of data to write, using Async Commit cannot greatly improve the performance.
+### PD 开启静态加密报错：`[PD:encryption:ErrEncryptionNewMasterKey]fail to get encryption key from file /root/path/file%!(EXTRA string=open /root/path/file: permission denied)`
 
-## PD management
+静态加密不支持将密钥文件存放在 `root` 目录或其子目录下，即使增加读取权限也会报相同的错误。遇到这个报错时，可以将密钥文件存放在非 `root` 目录的路径下。
 
-This section describes common problems you may encounter during PD management, their causes, and solutions.
+### PD 能容忍的时间同步误差是多少？
 
-### The `TiKV cluster is not bootstrapped` message is displayed when I access PD
+理论上，时间同步误差越小越好。PD 可容忍任意时长的误差，但是，时间同步误差越大意味着 PD 分配的时间戳与真实的物理时间相差越大，这个差距会影响读历史版本等功能。
 
-Most of the APIs of PD are available only when the TiKV cluster is initialized. This message is displayed if PD is accessed when PD is started while TiKV is not started when a new cluster is deployed. If this message is displayed, start the TiKV cluster. When TiKV is initialized, PD is accessible.
+### Client 连接是如何寻找 PD 的？
 
-### The `etcd cluster ID mismatch` message is displayed when starting PD
+Client 连接只能通过 TiDB 访问集群，TiDB 负责连接 PD 与 TiKV，PD 与 TiKV 对 Client 透明。当 TiDB 连接任意一台 PD 的时候，PD 会告知 TiDB 当前的 leader 是谁，如果此台 PD 不是 leader，TiDB 将会重新连接至 leader PD。
 
-This is because the `--initial-cluster` in the PD startup parameter contains a member that doesn't belong to this cluster. To solve this problem, check the corresponding cluster of each member, remove the wrong member, and then restart PD.
+### TiKV 节点 (Store) 各状态 (Up, Disconnect, Offline, Down, Tombstone) 之间的关系是什么？
 
-### The `[PD:encryption:ErrEncryptionNewMasterKey]fail to get encryption key from file /root/path/file%!(EXTRA string=open /root/path/file: permission denied)` message is displayed when enabling encryption at rest for PD
- 
-Encryption at rest does not support storing the key file in the `root` directory or its subdirectories. Even if you grant read permissions, the same error occurs. To resolve this issue, store the key file in a location outside the `root` directory.
+使用 `pd-ctl` 可以查看 TiKV 节点的状态信息。如需查看各个状态之间的关系，请参考 [TiKV Store 状态之间的关系](/tidb-scheduling.md#信息收集)。
 
-### What's the maximum tolerance for time synchronization error of PD?
+### PD 参数中 leader-schedule-limit 和 region-schedule-limit 调度有什么区别？
 
-PD can tolerate any synchronization error, but a larger error value means a larger gap between the timestamp allocated by the PD and the physical time, which will affect functions such as read of historical versions.
+- leader-schedule-limit 调度是用来均衡不同 TiKV 的 leader 数，影响处理查询的负载。
+- region-schedule-limit 调度是均衡不同 TiKV 的副本数，影响不同节点的数据量。
 
-### How does the client connection find PD?
+### 每个 region 的 replica 数量可配置吗？调整的方法是？
 
-The client connection can only access the cluster through TiDB. TiDB connects PD and TiKV. PD and TiKV are transparent to the client. When TiDB connects to any PD, the PD tells TiDB who is the current leader. If this PD is not the leader, TiDB reconnects to the leader PD.
+可以，目前只能调整全局的 replica 数量。首次启动时 PD 会读配置文件 (conf/pd.yml)，使用其中的 max-replicas 配置，之后修改需要使用 pd-ctl 配置命令 `config set max-replicas $num`，配置后可通过 `config show all` 来查看已生效的配置。调整的时候，不会影响业务，会在后台添加，注意总 TiKV 实例数总是要大于等于设置的副本数，例如 3 副本需要至少 3 个 TiKV。增加副本数量之前需要预估额外的存储需求。pd-ctl 的详细用法可参考 [PD Control 使用说明](/pd-control.md)。
 
-### What is the relationship between each status (Up, Disconnect, Offline, Down, Tombstone) of a TiKV store?
+### 缺少命令行集群管理工具，整个集群的健康度当前是否正常，不好确认？
 
-For the relationship between each status, refer to [Relationship between each status of a TiKV store](/tidb-scheduling.md#information-collection).
+可以通过 pd-ctl 等工具来判断集群大概的状态，详细的集群状态还是需要通过监控来确认。
 
-You can use PD Control to check the status information of a TiKV store.
+### 集群下线节点后，怎么删除老集群节点监控信息？
 
-### What is the difference between the `leader-schedule-limit` and `region-schedule-limit` scheduling parameters in PD?
+下线节点一般指 TiKV 节点通过 pd-ctl 或者监控判断节点是否下线完成。节点下线完成后，手动停止下线节点上相关的服务。从 Prometheus 配置文件中删除对应节点的 node_exporter 信息。
 
-- The `leader-schedule-limit` scheduling parameter is used to balance the Leader number of different TiKV servers, affecting the load of query processing.
-- The `region-schedule-limit` scheduling parameter is used to balance the replica number of different TiKV servers, affecting the data amount of different nodes.
+## TiDB server 管理
 
-### Is the number of replicas in each region configurable? If yes, how to configure it?
+本小节介绍 TiDB server 管理中的常见问题、原因及解决方法。
 
-Yes. Currently, you can only update the global number of replicas. When started for the first time, PD reads the configuration file (conf/pd.yml) and uses the max-replicas configuration in it. If you want to update the number later, use the pd-ctl configuration command `config set max-replicas $num` and view the enabled configuration using `config show all`. The updating does not affect the applications and is configured in the background.
+### TiDB 的 lease 参数应该如何设置？
 
-Make sure that the total number of TiKV instances is always greater than or equal to the number of replicas you set. For example, 3 replicas need 3 TiKV instances at least. Additional storage requirements need to be estimated before increasing the number of replicas. For more information about pd-ctl, see [PD Control User Guide](/pd-control.md).
+启动 TiDB Server 时，需要通过命令行参数设置 lease 参数 (`--lease=60`)，其值会影响 DDL 的速度（只会影响当前执行 DDL 的 session，其他的 session 不会受影响）。在测试阶段，lease 的值可以设为 1s，加快测试进度；在生产环境下，我们推荐这个值设为分钟级（一般可以设为 60），这样可以保证 DDL 操作的安全。
 
-### How to check the health status of the whole cluster when lacking command line cluster management tools?
+### DDL 在正常情况下的耗时是多少？
 
-You can determine the general status of the cluster using the pd-ctl tool. For detailed cluster status, you need to use the monitor to determine.
+一般情况下处理一个 DDL 操作（之前没有其他 DDL 操作在处理）的耗时基本可以分如下为三种：
 
-### How to delete the monitoring data of a cluster node that is offline?
+- add index 操作，且此操作对应表数据行数比较少，耗时约为 3s。
+- add index 操作，且此操作对应表数据行数比较多，耗时具体由表中数据行数和当时 QPS 情况定（add index 操作优先级比一般 SQL 低）。
+- 其他 DDL 操作耗时约为 1s。
 
-The offline node usually indicates the TiKV node. You can determine whether the offline process is finished by the pd-ctl or the monitor. After the node is offline, perform the following steps:
+此外，如果接收 DDL 请求的 TiDB 和 DDL owner 所处的 TiDB 是一台，那么上面列举的第一和第三种可能的耗时应该在几十到几百毫秒。
 
-1. Manually stop the relevant services on the offline node.
-2. Delete the `node_exporter` data of the corresponding node from the Prometheus configuration file.
+### 为什么有的时候执行 DDL 会很慢？
 
-## TiDB server management
+可能原因如下：
 
-This section describes common problems you may encounter during TiDB server management, their causes, and solutions.
+- 多个 DDL 语句一起执行的时候，后面的几个 DDL 语句会比较慢。原因是当前 TiDB 集群中 DDL 操作是串行执行的。
+- 在正常集群启动后，第一个 DDL 操作的执行时间可能会比较久，一般在 30s 左右，这个原因是刚启动时 TiDB 在竞选处理 DDL 的 leader。
+- 由于停 TiDB 时不能与 PD 正常通信（包括停电情况）或者用 `kill -9` 指令停 TiDB 导致 TiDB 没有及时从 PD 清理注册数据，那么会影响 TiDB 启动后 10min 内的 DDL 语句处理时间。这段时间内运行 DDL 语句时，每个 DDL 状态变化都需要等待 2 * lease（默认 lease = 45s）。
+- 当集群中某个 TiDB 与 PD 之间发生通信问题，即 TiDB 不能从 PD 及时获取或更新版本信息，那么这时候 DDL 操作的每个状态处理需要等待 2 * lease。
 
-### How to set the `lease` parameter in TiDB?
+### TiDB 可以使用 S3 作为后端存储吗？
 
-The lease parameter (`--lease=60`) is set from the command line when starting a TiDB server. The value of the lease parameter impacts the Database Schema Changes (DDL) speed of the current session. In the testing environments, you can set the value to 1s for to speed up the testing cycle. But in the production environments, it is recommended to set the value to minutes (for example, 60) to ensure the DDL safety.
+不可以，目前 TiDB 只支持分布式存储引擎和 GolevelDB/RocksDB/BoltDB 引擎。
 
-### What is the processing time of a DDL operation?
+### Information_schema 能否支持更多真实信息？
 
-The processing time is different for different scenarios. Generally, you can consider the following three scenarios:
+Information_schema 库里面的表主要是为了兼容 MySQL 而存在，有些第三方软件会查询里面的信息。在目前 TiDB 的实现中，里面大部分只是一些空表。后续随着 TiDB 的升级，会提供更多的参数信息。当前 TiDB 支持的 Information\_schema 请参考 [TiDB 系统数据库说明文档](/information-schema/information-schema.md)。
 
-1. The `Add Index` operation with a relatively small number of rows in the corresponding data table: about 3s
-2. The `Add Index` operation with a relatively large number of rows in the corresponding data table: the processing time depends on the specific number of rows and the QPS at that time (the `Add Index` operation has a lower priority than ordinary SQL operations)
-3. Other DDL operations: about 1s
+### TiDB Backoff type 主要原因？
 
-If the TiDB server instance that receives the DDL request is the same TiDB server instance that the DDL owner is in, the first and third scenarios above may cost only dozens to hundreds of milliseconds.
+TiDB-server 与 TiKV-server 随时进行通信，在进行大量数据操作过程中，会出现 `Server is busy` 或者 `backoff.maxsleep 20000ms` 的日志提示信息，这是由于 TiKV-server 在处理过程中系统比较忙而出现的提示信息，通常这时候可以通过系统资源监控到 TiKV 主机系统资源使用率比较高的情况出现。如果这种情况出现，可以根据资源使用情况进行相应的扩容操作。
 
-### Why it is very slow to run DDL statements sometimes?
+### TiDB TiClient type 主要原因？
 
-Possible reasons:
+TiClient Region Error 该指标描述的是在 TiDB-server 作为客户端通过 KV 接口访问 TiKV-server 进行数据操作过程中，TiDB-server 操作 TiKV-server 中的 Region 数据出现的错误类型与 metric 指标，错误类型包括 not_leader、stale_epoch。出现这些错误的情况是当 TiDB-server 根据自己的缓存信息去操作 Region leader 数据的时候，Region leader 发生了迁移或者 TiKV 当前的 Region 信息与 TiDB 缓存的路由信息不一致而出现的错误提示。一般这种情况下，TiDB-server 都会自动重新从 PD 获取最新的路由数据，重做之前的操作。
 
-- If you run multiple DDL statements together, the last few DDL statements might run slowly. This is because the DDL statements are executed serially in the TiDB cluster.
-- After you start the cluster successfully, the first DDL operation may take a longer time to run, usually around 30s. This is because the TiDB cluster is electing the leader that processes DDL statements.
-- The processing time of DDL statements in the first ten minutes after starting TiDB would be much longer than the normal case if you meet the following conditions: 1) TiDB cannot communicate with PD as usual when you are stopping TiDB (including the case of power failure); 2) TiDB fails to clean up the registration data from PD in time because TiDB is stopped by the `kill -9` command. If you run DDL statements during this period, for the state change of each DDL, you need to wait for 2 * lease (lease = 45s).
-- If a communication issue occurs between a TiDB server and a PD server in the cluster, the TiDB server cannot get or update the version information from the PD server in time. In this case, you need to wait for 2 * lease for the state processing of each DDL.
+### TiDB 同时支持的最大并发连接数？
 
-### Can I use S3 as the backend storage engine in TiDB?
+默认情况下，每个 TiDB 服务器的最大连接数没有限制。如有需要，可以在 `config.toml` 文件中设置 `instance.max_connections`（或者系统变量 `max_connections`）来限制最大连接数。如果并发量过大导致响应时间增加，建议通过添加 TiDB 节点进行扩容。
 
-No. Currently, TiDB only supports the distributed storage engine and the Goleveldb/RocksDB/BoltDB engine.
+### 如何查看某张表创建的时间？
 
-### Can the `Information_schema` support more real information?
+information_schema 库中的 tables 表里的 create_time 即为表的真实创建时间。
 
-As part of MySQL compatibility, TiDB supports a number of `INFORMATION_SCHEMA` tables. Many of these tables also have a corresponding SHOW command. For more information, see [Information Schema](/information-schema/information-schema.md).
+### TiDB 的日志中 EXPENSIVE_QUERY 是什么意思？
 
-### What's the explanation of the TiDB Backoff type scenario?
+TiDB 在执行 SQL 时，预估出来每个 operator 处理了超过 10000 条数据就认为这条 query 是 expensive query。可以通过修改 tidb-server 配置参数来对这个门限值进行调整，调整后需要重新启动 tidb-server。
 
-In the communication process between the TiDB server and the TiKV server, the `Server is busy` or `backoff.maxsleep 20000ms` log message is displayed when processing a large volume of data. This is because the system is busy while the TiKV server processes data. At this time, usually you can view that the TiKV host resources usage rate is high. If this occurs, you can increase the server capacity according to the resources usage.
+### 如何预估 TiDB 中一张表的大小？
 
-### What is the main reason of TiDB TiClient type?
+要预估 TiDB 中一张表的大小，你可以参考使用以下查询语句：
 
-The TiClient Region Error indicator describes the error types and metrics that appear when the TiDB server as a client accesses the TiKV server through the KV interface to perform data operations. The error types include `not_leader` and `stale_epoch`. These errors occur when the TiDB server manipulates the Region leader data according to its own cache information, the Region leader has migrated, or the current TiKV Region information and the routing information of the TiDB cache are inconsistent. Generally, in this case, the TiDB server will automatically retrieve the latest routing data from PD and redo the previous operation.
-
-### What's the maximum number of concurrent connections that TiDB supports?
-
-By default, there is no limit on the maximum number of connections per TiDB server. If needed, you can limit the maximum number of connections by setting `instance.max_connections` in the `config.toml` file, or changing the value of the system variable [`max_connections`](/system-variables.md#max_connections). If too large concurrency leads to an increase of response time, it is recommended to increase the capacity by adding TiDB nodes.
-
-### How to view the creation time of a table?
-
-The `create_time` of tables in the `information_schema` is the creation time.
-
-### What is the meaning of `EXPENSIVE_QUERY` in the TiDB log?
-
-When TiDB is executing a SQL statement, the query will be `EXPENSIVE_QUERY` if each operator is estimated to process over 10,000 rows. You can modify the `tidb-server` configuration parameter to adjust the threshold and then restart the `tidb-server`.
-
-### How do I estimate the size of a table in TiDB?
-
-To estimate the size of a table in TiDB, you can use the following query statement.
 
 ```sql
 SELECT
-  db_name,
-  table_name,
-  ROUND(SUM(total_size / cnt), 2) Approximate_Size,
-  ROUND(
-    SUM(
-      total_size / cnt / (
-        SELECT
-          ROUND(AVG(value), 2)
-        FROM
-          METRICS_SCHEMA.store_size_amplification
-        WHERE
-          value > 0
-      )
-    ),
-    2
-  ) Disk_Size
+    db_name,
+    table_name,
+    ROUND(SUM(total_size / cnt), 2) Approximate_Size,
+    ROUND(SUM(total_size / cnt / (SELECT
+                    ROUND(AVG(value), 2)
+                FROM
+                    METRICS_SCHEMA.store_size_amplification
+                WHERE
+                    value > 0)),
+            2) Disk_Size
 FROM
-  (
-    SELECT
-      db_name,
-      table_name,
-      region_id,
-      SUM(Approximate_Size) total_size,
-      COUNT(*) cnt
+    (SELECT
+        db_name,
+            table_name,
+            region_id,
+            SUM(Approximate_Size) total_size,
+            COUNT(*) cnt
     FROM
-      information_schema.TIKV_REGION_STATUS
+        information_schema.TIKV_REGION_STATUS
     WHERE
-      db_name = @dbname
-      AND table_name IN (@table_name)
-    GROUP BY
-      db_name,
-      table_name,
-      region_id
-  ) tabinfo
-GROUP BY
-  db_name,
-  table_name;
+        db_name = @dbname
+            AND table_name IN (@table_name)
+    GROUP BY db_name , table_name , region_id) tabinfo
+GROUP BY db_name , table_name;
 ```
 
-When using the above statement, you need to fill in and replace the following fields in the statement as appropriate.
+在使用以上语句时，你需要根据实际情况填写并替换掉语句里的以下字段：
 
-- `@dbname`: the name of the database.
-- `@table_name`: the name of the target table.
+- `@dbname`：数据库名称。
+- `@table_name`：目标表的名称。
 
-In addition, in the above statement:
+此外，以上语句中：
 
-- `store_size_amplification` indicates the average of the cluster compression ratio. In addition to using `SELECT * FROM METRICS_SCHEMA.store_size_amplification;` to query this information, you can also check the **Size amplification** metric for each node on the **Grafana Monitoring PD - statistics balance** panel. The average of the cluster compression ratio is the average of the Size amplification for all nodes.
-- `Approximate_Size` indicates the size of the table in a replica before compression. Note that this is an approximate value, not an accurate one.
-- `Disk_Size` indicates the size of the table after compression. This is an approximate value and can be calculated according to `Approximate_Size` and `store_size_amplification`.
+- `store_size_amplification` 表示集群压缩比的平均值。除了使用 `SELECT * FROM METRICS_SCHEMA.store_size_amplification;` 语句进行查询以外，你还可以查看 Grafana 监控 **PD - statistics balance** 面板下各节点的 `Size amplification` 指标来获取该信息，集群压缩比的平均值即为所有节点的 `Size amplification` 平均值。
+- `Approximate_Size` 表示压缩前表的单副本大小，该值为估算值，并非准确值。
+- `Disk_Size` 表示压缩后表的大小，可根据 `Approximate_Size` 和 `store_size_amplification` 得出估算值。
 
-## TiKV server management
+## TiKV 管理
 
-This section describes common problems you might encounter during TiKV server management, their causes, and solutions.
+本小节介绍 TiKV 管理中的常见问题、原因及解决方法。
 
-### How to specify the location of data for compliance or multi-tenant applications?
+### 如何为合规性或多租户应用程序指定数据位置？
 
-You can use [Placement Rules](/placement-rules-in-sql.md) to specify the location of data for compliance or multi-tenant applications.
+可以使用[放置规则 (Placement Rules)](/placement-rules-in-sql.md) 为合规性或多租户应用程序指定数据位置。
 
-Placement Rules in SQL is designed to control the attributes of any continuous data range, such as the number of replicas, the Raft role, the placement location, and the key ranges in which the rules take effect.
+Placement Rules in SQL 用于控制任何连续数据范围的属性，例如副本数量、Raft 角色、放置位置以及规则生效的键范围。
 
-### What is the recommended number of replicas in the TiKV cluster? Is it better to keep the minimum number for high availability?
+### TiKV 集群副本建议配置数量是多少，是不是最小高可用配置（3个）最好？
 
-3 replicas for each Region is sufficient for a testing environment. However, you should never operate a TiKV cluster with under 3 nodes in a production scenario. Depending on infrastructure, workload, and resiliency needs, you may wish to increase this number. It is worth noting that the higher the copy, the lower the performance, but the higher the security.
+如果是测试环境 3 副本足够；在生产环境中，不可让集群副本数低于 3，需根据架构特点、业务系统及恢复能力的需求，适当增加副本数。值得注意的是，副本升高，性能会有下降，但是安全性更高。
 
-### The `cluster ID mismatch` message is displayed when starting TiKV
+### TiKV 启动报错：cluster ID mismatch
 
-This is because the cluster ID stored in local TiKV is different from the cluster ID specified by PD. When a new PD cluster is deployed, PD generates random cluster IDs. TiKV gets the cluster ID from PD and stores the cluster ID locally when it is initialized. The next time when TiKV is started, it checks the local cluster ID with the cluster ID in PD. If the cluster IDs don't match, the `cluster ID mismatch` message is displayed and TiKV exits.
+TiKV 本地存储的 cluster ID 和指定的 PD 的 cluster ID 不一致。在部署新的 PD 集群的时候，PD 会随机生成一个 cluster ID，TiKV 第一次初始化的时候会从 PD 获取 cluster ID 存储在本地，下次启动的时候会检查本地的 cluster ID 与 PD 的 cluster ID 是否一致，如果不一致则会报错并退出。出现这个错误一个常见的原因是，用户原先部署了一个集群，后来把 PD 的数据删除了并且重新部署了新的 PD，但是 TiKV 还是使用旧的数据重启连到新的 PD 上，就会报这个错误。
 
-If you previously deploy a PD cluster, but then you remove the PD data and deploy a new PD cluster, this error occurs because TiKV uses the old data to connect to the new PD cluster.
+### TiKV 启动报错：duplicated store address
 
-### The `duplicated store address` message is displayed when starting TiKV
+启动参数中的地址已经被其他的 TiKV 注册在 PD 集群中了。造成该错误的常见情况：TiKV `--data-dir` 指定的路径下没有数据文件夹（删除或移动后没有更新 --data-dir），用之前参数重新启动该 TiKV。请尝试用 pd-ctl 的 [store delete](https://github.com/pingcap/pd/tree/55db505e8f35e8ab4e00efd202beb27a8ecc40fb/tools/pd-ctl#store-delete--label--weight-store_id----jqquery-string) 功能，删除之前的 store，然后重新启动 TiKV 即可。
 
-This is because the address in the startup parameter has been registered in the PD cluster by other TiKVs. Common conditions that cause this error: There is no data folder in the path specified by TiKV `--data-dir` (no update --data-dir after deleting or moving), restart the TiKV with the previous parameters.Please try [store delete](https://github.com/pingcap/pd/tree/55db505e8f35e8ab4e00efd202beb27a8ecc40fb/tools/pd-ctl#store-delete--label--weight-store_id----jqquery-string) function of pd-ctl, delete the previous store, and then restart TiKV.
+### TiKV master 和 slave 用的是一样的压缩算法，为什么效果不一样？
 
-### TiKV primary node and secondary node use the same compression algorithm, why the results are different?
+目前来看 master 有些文件的压缩率会高一些，这个取决于底层数据的分布和 RocksDB 的实现，数据大小偶尔有些波动是正常的，底层存储引擎会根据需要调整数据。
 
-Currently, some files of TiKV primary node have a higher compression rate, which depends on the underlying data distribution and RocksDB implementation. It is normal that the data size fluctuates occasionally. The underlying storage engine adjusts data as needed.
+### TiKV block cache 有哪些特性？
 
-### What are the features of TiKV block cache?
+TiKV 使用了 RocksDB 的 Column Family (CF) 特性，KV 数据最终存储在默认 RocksDB 内部的 default、write、lock 3 个 CF 内。
 
-TiKV implements the Column Family (CF) feature of RocksDB. By default, the KV data is eventually stored in the 3 CFs (default, write and lock) within RocksDB.
+- default CF 存储的是真正的数据，与其对应的参数位于 `[rocksdb.defaultcf]` 项中。
+- write CF 存储的是数据的版本信息 (MVCC)、索引、小表相关的数据，相关的参数位于 `[rocksdb.writecf]` 项中。
+- lock CF 存储的是锁信息，系统使用默认参数。
+- Raft RocksDB 实例存储 Raft log。default CF 主要存储的是 Raft log，与其对应的参数位于 `[raftdb.defaultcf]` 项中。
+- 所有 CF 共享一个 Block-cache，用于缓存数据块，加速 RocksDB 的读取速度。Block-cache 的大小通过参数 `block-cache-size` 控制，`block-cache-size` 越大，能够缓存的热点数据越多，对读取操作越有利，同时占用的系统内存也会越多。
+- 每个 CF 有各自的 Write-buffer，大小通过 `write-buffer-size` 控制。
 
-- The default CF stores real data and the corresponding parameter is in `[rocksdb.defaultcf]`.
-- The write CF stores the data version information (MVCC) and index-related data, and the corresponding parameter is in `[rocksdb.writecf]`.
-- The lock CF stores the lock information and the system uses the default parameter.
-- The Raft RocksDB instance stores Raft logs. The default CF mainly stores Raft logs and the corresponding parameter is in `[raftdb.defaultcf]`.
-- All CFs have a shared block-cache to cache data blocks and improve RocksDB read speed. The size of block-cache is controlled by the `block-cache-size` parameter. A larger value of the parameter means more hot data can be cached and is more favorable to read operation. At the same time, it consumes more system memory.
-- Each CF has an individual write-buffer and the size is controlled by the `write-buffer-size` parameter.
+### TiKV channel full 是什么原因？
 
-### Why is the TiKV channel full?
+- Raftstore 线程太忙，或者因 I/O 而卡住。可以看一下 Raftstore 的 CPU 使用情况。
+- TiKV 过忙（CPU、磁盘 I/O 等），请求处理不过来。
 
-- The Raftstore thread is too slow or blocked by I/O. You can view the CPU usage status of Raftstore.
-- TiKV is too busy (such as CPU and disk I/O) and cannot manage to handle it.
+### TiKV 频繁切换 Region leader 是什么原因？
 
-### Why does TiKV frequently switch Region leader?
+- 网络问题导致节点间通信卡了，查看 Report failures 监控。
+- 原主 Leader 的节点卡了，导致没有及时给 Follower 发送消息。
+- Raftstore 线程卡了。
 
-- Network problem results in the communication stuck among nodes. You can check Report failures monitoring.
-- The node of the original main Leader is stuck, resulting in failure to reach out to the Follower in time.
-- Raftstore thread stuck.
+### 如果一个节点挂了会影响服务吗？影响会持续多久？
 
-### If a node is down, will the service be affected? If yes, how long?
+TiDB 使用 Raft 在多个副本之间做数据同步（默认为每个 Region 3 个副本）。当一份备份出现问题时，其他的副本能保证数据的安全。根据 Raft 协议，当某个节点挂掉导致该节点里的 Leader 失效时，在最大 2 * lease time（leasetime 是 10 秒）时间后，通过 Raft 协议会很快将一个另外一个节点里的 Follower 选为新的 Region Leader 来提供服务。
 
-TiKV uses Raft to replicate data among multiple replicas (by default 3 replicas for each Region). If one replica goes wrong, the other replicas can guarantee data safety. Based on the Raft protocol, if a single leader fails as the node goes down, a follower in another node is soon elected as the Region leader after a maximum of 2 * lease time (lease time is 10 seconds).
+### TiKV 在分别在哪些场景下占用大量 IO、内存、CPU（超过参数配置的多倍）？
 
-### What are the TiKV scenarios that take up high I/O, memory, CPU, and exceed the parameter configuration?
+在大量写入、读取的场景中会占用大量的磁盘 IO、内存、CPU。在执行很复杂的查询，比如会产生很大中间结果集的情况下，会消耗很多的内存和 CPU 资源。
 
-Writing or reading a large volume of data in TiKV takes up high I/O, memory and CPU. Executing very complex queries costs a lot of memory and CPU resources, such as the scenario that generates large intermediate result sets.
+### TiKV 是否可以使用 SAS/SATA 盘或者进行 SSD/SAS 混合部署？
 
-### Does TiKV support SAS/SATA disks or mixed deployment of SSD/SAS disks?
+不可以使用。TiDB 在进行 OLTP 场景中，数据访问和操作需要高 IO 磁盘的支持。TiDB 作为强一致的分布式数据库，存在一定的写放大，如副本复制、存储底层 Compaction，因此，TiDB 部署的最佳实践中推荐用户使用 NVMe SSD 磁盘作为数据存储磁盘。另外，TiKV 与 PD 不能混合部署。
 
-No. For OLTP scenarios, TiDB requires high I/O disks for data access and operation. As a distributed database with strong consistency, TiDB has some write amplification such as replica replication and bottom layer storage compaction. Therefore, it is recommended to use NVMe SSD as the storage disks in TiDB best practices. Mixed deployment of TiKV and PD is not supported.
+### 数据表 Key 的 Range 范围划分是在数据接入之前就已经划分好了吗？
 
-### Is the Range of the Key data table divided before data access?
+不是的，这个和 MySQL 分表规则不一样，需要提前设置好，TiKV 是根据 Region 的大小动态分裂的。
 
-No. It differs from the table splitting rules of MySQL. In TiKV, the table Range is dynamically split based on the size of Region.
+### Region 是如何进行分裂的？
 
-### How does Region split?
+Region 不是前期划分好的，但确实有 Region 分裂机制。当 Region 的大小超过参数 `region-max-size` 或 `region-max-keys` 的值时，就会触发分裂，分裂后的信息会汇报给 PD。
 
-Region is not divided in advance, but it follows a Region split mechanism. When the Region size exceeds the value of the `region-max-size` or `region-max-keys` parameters, split is triggered. After the split, the information is reported to PD.
+### TiKV 是否有类似 MySQL 的 `innodb_flush_log_trx_commit` 参数，来保证提交数据不丢失？
 
-### Does TiKV have the `innodb_flush_log_trx_commit` parameter like MySQL, to guarantee the security of data?
+TiKV 没有类似的参数，但是 TiKV 上的每次提交都会强制落盘到 Raft 日志 (TiKV 使用 [Raft Engine](/glossary.md#raft-engine) 存储 Raft 日志，在提交时会强制刷盘)。如果 TiKV 发生 crash，KV 的数据将会根据 Raft 日志自动恢复。
 
-TiKV does not have a similar parameter, but each commit on TiKV is forced to be flushed to Raft logs (TiKV uses [Raft Engine](/glossary.md#raft-engine) to store Raft logs and forces a flush when committing). If TiKV crashes, the KV data will be recovered automatically according to the Raft logs.
+### 对 WAL 存储有什么推荐的硬件配置，例如 SSD，RAID 级别，RAID 卡 cache 策略，NUMA 设置，文件系统选择，操作系统的 IO 调度策略等？
 
-### What is the recommended server configuration for WAL storage, such as SSD, RAID level, cache strategy of RAID card, NUMA configuration, file system, I/O scheduling strategy of the operating system?
+WAL 属于顺序写，目前我们并没有单独对他进行配置，建议 SSD。RAID 如果允许的话，最好是 RAID 10，RAID 卡 cache、操作系统 I/O 调度目前没有针对性的最佳实践，Linux 7 以上默认配置即可。NUMA 没有特别建议，NUMA 内存分配策略可以尝试使用 `interleave = all`，文件系统建议 ext4。
 
-WAL belongs to ordered writing, and currently, we do not apply a unique configuration to it. Recommended configuration is as follows:
+### 是否可以利用 TiKV 的 Raft + 多副本达到完全的数据可靠？
 
-- SSD
-- RAID 10 preferred
-- Cache strategy of RAID card and I/O scheduling strategy of the operating system: currently no specific best practices; you can use the default configuration in Linux 7 or later
-- NUMA: no specific suggestion; for memory allocation strategy, you can use `interleave = all`
-- File system: ext4
+通过使用 [Raft 一致性算法](https://raft.github.io/)，数据在各 TiKV 节点间复制为多副本，以确保某个节点挂掉时数据的安全性。只有当数据已写入超过 50% 的副本时，应用才返回 ACK（三副本中的两副本）。
 
-### Can Raft + multiple replicas in the TiKV architecture achieve absolute data safety?
+理论上两个节点也可能同时发生故障，因此从 v5.0 版本开始，写入 TiKV 的数据会默认落盘，即每次提交都会强制落盘到 Raft 日志。如果 TiKV 发生 crash，KV 的数据将会根据 Raft 日志自动恢复。
 
-Data is redundantly replicated between TiKV nodes using the [Raft Consensus Algorithm](https://raft.github.io/) to ensure recoverability should a node failure occur. Only when the data has been written into more than 50% of the replicas will the application return ACK (two out of three nodes).
+此外，也可以考虑在 Raft group 中使用五个副本而非三个。这将允许两个副本同时发生故障，而仍然能保证数据安全性。
 
-Because theoretically two nodes might crash, data written to TiKV is spilled to disk by default starting from v5.0, which means each commit is forced to be flushed to Raft logs. If TiKV crashes, the KV data will be recovered automatically according to the Raft logs.
+### 使用 Raft 协议，数据写入会有多次网络的 roundtrip，实际写入延迟如何？
 
-In addition, you might consider using five replicas instead of three in your Raft group. This approach would allow for the failure of two replicas, while still providing data safety.
+理论上，和单机数据库相比，数据写入会多四个网络延迟。
 
-### Since TiKV uses the Raft protocol, multiple network roundtrips occur during data writing. What is the actual write delay?
+### 有没有类似 MySQL 的 InnoDB Memcached plugin，可以直接使用 KV 接口，可以不需要独立的 Cache？
 
-Theoretically, TiDB has a write delay of 4 more network roundtrips than standalone databases.
+TiKV 支持单独进行接口调用，理论上也可以起个实例做为 Cache，但 TiDB 最大的价值是分布式关系型数据库，我们原则上不对 TiKV 单独进行支持。
 
-### Does TiDB have an InnoDB memcached plugin like MySQL which can directly use the KV interface and does not need the independent cache?
+### Coprocessor 组件的主要作用？
 
-TiKV supports calling the interface separately. Theoretically, you can take an instance as the cache. Because TiDB is a distributed relational database, we do not support TiKV separately.
+- 减少 TiDB 与 TiKV 之间的数据传输。
+- 计算下推，充分利用 TiKV 的分布式计算资源。
 
-### What is the Coprocessor component used for?
+### IO error: No space left on device While appending to file
 
-- Reduce the data transmission between TiDB and TiKV
-- Make full use of the distributed computing resources of TiKV to execute computing pushdown.
+这是磁盘空间不足导致的，需要加节点或者扩大磁盘空间。
 
-### The error message `IO error: No space left on device While appending to file` is displayed
+### 为什么 TiKV 容易出现 OOM？
 
-This is because the disk space is not enough. You need to add nodes or enlarge the disk space.
+TiKV 的内存占用主要来自于 RocksDB 的 block-cache，默认为系统总内存的 40%。当 TiKV 容易出现 OOM 时，检查 `block-cache-size` 配置是否过高。还需要注意，当单机部署了多个 TiKV 实例时，需要显式地配置该参数，以防止多个实例占用过多系统内存导致 OOM。
 
-### Why does the OOM (Out of Memory) error occur frequently in TiKV?
+### TiDB 数据和 RawKV 数据可存储于同一个 TiKV 集群里吗？
 
-The memory usage of TiKV mainly comes from the block-cache of RocksDB, which is 40% of the system memory size by default. When the OOM error occurs frequently in TiKV, you should check whether the value of `block-cache-size` is set too high. In addition, when multiple TiKV instances are deployed on a single machine, you need to explicitly configure the parameter to prevent multiple instances from using too much system memory that results in the OOM error.
+这取决于你使用的 TiDB 版本以及是否启用了 TiKV API V2 （即 [`storage.api-version = 2`](/tikv-configuration-file.md#api-version-从-v610-版本开始引入)）。
 
-### Can both TiDB data and RawKV data be stored in the same TiKV cluster?
+- 如果你使用的是 v6.1.0 或之后版本的 TiDB，并且启用了 TiKV API V2，那么 TiDB 数据和 RawKV 数据可以共存于同一个 TiKV 集群。
+- 否则，不可以将 TiDB 数据和 RawKV 数据存储于同一个 TiKV 集群中，因为 TiDB 数据（或使用事务 API 创建的数据）的 key 的格式与使用 RawKV API 创建的数据（或来自其他基于 RawKV 的服务生成的数据）不兼容。
 
-It depends on your TiDB version and whether TiKV API V2 is enabled ([`storage.api-version = 2`](/tikv-configuration-file.md#api-version-new-in-v610)). 
+## TiDB 测试
 
-- If your TiDB version is v6.1.0 or later and TiKV API V2 is enabled, TiDB data and RawKV data can be stored in the same TiKV cluster. 
-- Otherwise, the answer is no because the key format of TiDB data (or data created using the transactional API) is incompatible with data created using the RawKV API (or data from other RawKV-based services).
+本小节介绍 TiDB 测试中的常见问题、原因及解决方法。
 
-## TiDB testing
+### 如何对 TiDB 进行 Sysbench 基准测试？
 
-This section describes common problems you might encounter during TiDB testing, their causes, and solutions.
+参考[如何用 Sysbench 测试 TiDB](/benchmark/benchmark-tidb-using-sysbench.md)。
 
-### How to conduct a Sysbench benchmark test for TiDB?
+### TiDB Sysbench 基准测试结果如何？
 
-See [How to Test TiDB Using Sysbench](/benchmark/benchmark-tidb-using-sysbench.md).
+很多用户在接触 TiDB 时都习惯做一个基准测试，或者将 TiDB 与 MySQL 进行对比测试。官方也曾进行过类似的测试，发现尽管不同的测试数据之间存在一定的偏差，但整体结论和方向大致一致。由于 TiDB 和 MySQL 在架构上的差异非常大，许多方面都很难找到完全对等的基准点。
 
-### What is the performance test result for TiDB using Sysbench?
+因此，无需纠结于这类基准测试，可以更多关注 TiDB 在使用场景上的区别。
 
-At the beginning, many users tend to do a benchmark test or a comparison test between TiDB and MySQL. We have also done similar tests and find the test results are consistent at large, although the test data has some bias. Because the architecture of TiDB differs greatly from MySQL, it is hard to find an entirely equivalent benchmark across many aspects.
+如需了解 TiDB v8.5 的性能表现，可以参考 TiDB Cloud Dedicated 集群的[性能测试报告](https://docs.pingcap.com/tidbcloud/v8.5-performance-highlights)（英文版）。
 
-Therefore, there is no need to overly focus on these benchmark tests. Instead, it is recommended to pay more attention to the difference of scenarios using TiDB.
+### TiDB 集群容量 QPS 与节点数之间关系如何，和 MySQL 对比如何？
 
-To learn about the performance of TiDB v8.5.0, you can refer to the [performance test reports](https://docs.pingcap.com/tidbcloud/v8.5-performance-highlights) of the TiDB Cloud Dedicated cluster.
+- 在 10 节点内，TiDB 写入能力 (Insert TPS) 和节点数量基本成 40% 线性递增，MySQL 由于是单节点写入，所以不具备写入扩展能力。
+- MySQL 读扩容可以通过添加从库进行扩展，但写流量无法扩展，只能通过分库分表，而分库分表有很多问题，具体参考[方案虽好，成本先行：数据库 Sharding+Proxy 实践解析](http://dbaplus.cn/news-11-1854-1.html)。
+- TiDB 不管是读流量、还是写流量都可以通过添加节点快速方便的进行扩展。
 
-### What's the relationship between the TiDB cluster capacity (QPS) and the number of nodes? How does TiDB compare to MySQL?
+### 我们的 DBA 测试过 MySQL 性能，单台 TiDB 的性能没有 MySQL 性能那么好？
 
-- Within 10 nodes, the relationship between TiDB write capacity (Insert TPS) and the number of nodes is roughly 40% linear increase. Because MySQL uses single-node write, its write capacity cannot be scaled.
-- In MySQL, the read capacity can be increased by adding secondary database, but the write capacity cannot be increased except using sharding, which has many problems.
-- In TiDB, both the read and write capacity can be easily increased by adding more nodes.
+TiDB 设计的目标就是针对 MySQL 单台容量限制而被迫做的分库分表的场景，或者需要强一致性和完整分布式事务的场景。它的优势是通过尽量下推到存储节点进行并行计算。对于小表（比如千万级以下），不适合 TiDB，因为数据量少，Region 有限，发挥不了并行的优势。其中最极端的例子就是计数器表，几行记录高频更新，这几行在 TiDB 里，会变成存储引擎上的几个 KV，然后只落在一个 Region 里，而这个 Region 只落在一个节点上。加上后台强一致性复制的开销，TiDB 引擎到 TiKV 引擎的开销，最后表现出来的就是没有单个 MySQL 好。
 
-### The performance test of MySQL and TiDB by our DBA shows that the performance of a standalone TiDB is not as good as MySQL
+## TiDB 备份恢复
 
-TiDB is designed for scenarios where sharding is used because the capacity of a MySQL standalone is limited, and where strong consistency and complete distributed transactions are required. One of the advantages of TiDB is pushing down computing to the storage nodes to execute concurrent computing.
+本小节介绍 TiDB 备份恢复中的常见问题、原因及解决方法。
 
-TiDB is not suitable for tables of small size (such as below ten million level), because its strength in concurrency cannot be shown with a small size of data and limited Regions. A typical example is the counter table, in which records of a few lines are updated high frequently. In TiDB, these lines become several Key-Value pairs in the storage engine, and then settle into a Region located on a single node. The overhead of background replication to guarantee strong consistency and operations from TiDB to TiKV leads to a poorer performance than a MySQL standalone.
+### TiDB 主要备份方式？
 
-## Backup and restoration
+目前，数据量大时（大于 1 TB）推荐使用 [Backup & Restore (BR)](/br/backup-and-restore-overview.md) 进行备份。其他场景推荐使用 [Dumpling](/dumpling-overview.md) 进行备份。
 
-This section describes common problems you may encounter during backup and restoration, their causes, and solutions.
+尽管 TiDB 也支持使用 MySQL 官方工具 `mysqldump` 进行数据备份和恢复，但其性能低于 [Dumpling](/dumpling-overview.md)，并且 `mysqldump` 备份和恢复大量数据的耗费更长。
 
-### How to back up data in TiDB?
+其他备份恢复相关问题，可以参考[备份与恢复常见问题](/faq/backup-and-restore-faq.md)。
 
-Currently, for the backup of a large volume of data (more than 1 TB), the preferred method is using [Backup & Restore (BR)](/br/backup-and-restore-overview.md). Otherwise, the recommended tool is [Dumpling](/dumpling-overview.md). Although the official MySQL tool `mysqldump` is also supported in TiDB to back up and restore data, its performance is no better than BR and it needs much more time to back up and restore large volumes of data.
+### 备份和恢复的速度如何？
 
-For more FAQs about BR, see [BR FAQs](/faq/backup-and-restore-faq.md).
-
-### How is the speed of backup and restore?
-
-When [BR](/br/backup-and-restore-overview.md) is used to perform backup and restore tasks, the backup is processed at about 40 MB/s per TiKV instance, and restore is processed at about 100 MB/s per TiKV instance.
+使用 [BR](/br/backup-and-restore-overview.md) 进行备份和恢复时，备份速度大约为每个 TiKV 实例 40 MB/s，恢复速度大约为每个 TiKV 实例 100 MB/s。

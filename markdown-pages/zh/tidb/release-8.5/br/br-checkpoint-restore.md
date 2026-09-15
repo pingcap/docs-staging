@@ -1,88 +1,174 @@
 ---
-title: Checkpoint Restore
-summary: TiDB v7.1.0 introduces checkpoint restore, allowing interrupted snapshot and log restores to continue without starting from scratch. It records restored shards and table IDs, enabling retries to use the progress point close to the interruption. However, it relies on the GC mechanism and may require some data to be restored again. It's important to avoid modifying cluster data during the restore to ensure accuracy.
+title: 断点恢复
+summary: 了解断点恢复功能，包括它的使用场景、实现原理以及使用方法。
 ---
 
-# Checkpoint Restore
+# 断点恢复
 
-Snapshot restore or log restore might be interrupted due to recoverable errors, such as disk exhaustion and node crash. Before TiDB v7.1.0, the recovery progress before the interruption would be invalidated even after the error is addressed, and you need to start the restore from scratch. For large clusters, this incurs considerable extra cost.
+快照恢复或日志恢复会因为一些可恢复性错误导致提前结束，例如硬盘空间占满、节点宕机等等一些突发情况。在 TiDB v7.1.0 之前，在错误被处理之后，之前恢复的进度会作废，你需要重新进行恢复。对大规模集群来说，会造成大量额外成本。
 
-Starting from TiDB v7.1.0, Backup & Restore (BR) introduces the checkpoint restore feature, which enables you to continue an interrupted restore. This feature can retain most recovery progress of the interrupted restore.
+为了尽可能继续上一次的恢复，从 TiDB v7.1.0 起，备份恢复特性引入了断点恢复的功能。该功能可以在意外中断后保留上一次恢复的大部分进度。
 
-## Application scenarios
+## 使用场景
 
-If your TiDB cluster is large and cannot afford to restore again after a failure, you can use the checkpoint restore feature. The br command-line tool (hereinafter referred to as `br`) periodically records the shards that have been restored. In this way, the next restore retry can use a recovery progress point close to the abnormal exit.
+如果你的 TiDB 集群规模很大，无法接受恢复失败后需要重新恢复的情况，那么，你可以使用断点恢复功能重试恢复。br 工具会定期记录已恢复的分片，使得在下一次重试恢复时回到离上一次退出时较近的进度。
 
-## Implementation principles
+## 实现原理
 
-The implementation of checkpoint restore is divided into two parts: snapshot restore and log restore. For more information, see [Implementation details](#implementation-details).
+断点恢复的实现原理分为快照恢复和日志恢复两部分。具体实现细节请参考[实现细节：将断点数据存储在下游集群](#实现细节将断点数据存储在下游集群)和[实现细节：将断点数据存储在外部存储](#实现细节将断点数据存储在外部存储)。
 
-### Snapshot restore
+### 快照恢复
 
-The implementation of snapshot restore is similar to [snapshot backup](/br/br-checkpoint-backup.md#implementation-details). `br` restores all SST files within a key range (Region) in batches. After completing a restore, `br` records this range and the table ID of the restored cluster table. The checkpoint restore feature periodically uploads the new restore information to external storage so that the key ranges that have been restored can be persisted.
+快照恢复的实现原理与[快照备份](/br/br-checkpoint-backup.md#实现原理)类似，br 工具会批量恢复一段键范围 (Region) 内的所有的 SST 文件。恢复完成后，br 工具记录下这段范围以及该范围对应的恢复集群的表 ID。断点恢复功能会定期将这些新增的相关恢复信息上传至外部存储中，从而持久化存储该恢复任务已完成的键范围。
 
-When `br` retries a restore, it reads the key ranges that have been restored from external storage, and matches them with the corresponding table ID. During the restore, `br` skips any key ranges that overlap with those recorded in the checkpoint restore, and that have the same table ID.
+在重试恢复时，br 工具会从外部存储读取已经恢复的键范围，并匹配相关的表 ID。在恢复过程中，会跳过与断点恢复记录的键范围重叠且对应表 ID 相同的范围。
 
-If you delete tables before `br` retries the restore, the table ID of the newly created table during the retry will be different from the previously recorded table ID in the checkpoint restore. In this case, `br` bypasses the previous checkpoint restore information and restores the table again. This means that the same table with a new ID disregards the old ID's checkpoint restore information and records the new checkpoint restore information corresponding to the new ID.
+如果在重试恢复前，你删除了某些表，那么重试恢复时新创建的表的 ID 会与之前记录在断点恢复的表 ID 不同，从而绕过使用之前的断点恢复信息，重新恢复该表，也就是说，新的 ID 的同个表可以不使用旧的 ID 的断点恢复信息，而是重新记录新 ID 对应的断点恢复信息。
 
-Due to the use of the MVCC (Multi-Version Concurrency Control) mechanism, data with specified timestamps can be written unordered and repeatedly.
+由于数据采用了 MVCC（多版本并发控制）机制，带有固定 TS 的数据可以被无序且重复写入。
 
-When restoring database or table DDLs using snapshot restore, the `ifExists` parameter is added. For existing databases or tables that are already considered created, `br` automatically skips the restore.
+快照恢复在恢复库表 DDL 时添加了 `ifExists` 参数。对于已经存在的库表（视为已经创建完毕），br 工具会自动跳过恢复。
 
-### Log restore
+### 日志恢复
 
-Log restore is the process of restoring data metadata backed up by TiKV nodes (meta-kv) in the order of timestamps. The checkpoint restore first establishes a one-to-one ID mapping relationship between the backup cluster and the restored cluster based on the meta-kv data. This ensures that the ID of meta-kv remains consistent across different restore retries, enabling meta-kv to be restored again.
+日志恢复需要按照时间顺序恢复 TiKV 节点备份下来的数据元信息 (meta-kv)。断点恢复首先会根据 meta-kv 数据为备份集群和恢复集群建立一一对应的 ID 映射关系，以确保在不同重试恢复过程中 meta-kv 的 ID 保持一致。这样，meta-kv 就具备了重新恢复的能力。
 
-Unlike snapshot backup files, the range of log backup files might overlap. Thus, the key range cannot be used directly as recovery progress metadata. Additionally, there might be a large number of log backup files. However, each log backup file has a fixed position in the log backup metadata. This means that a unique position in the log backup metadata can be assigned to each log backup file as recovery progress metadata.
+与快照备份文件不同，日志备份文件的范围可能会重叠，因此无法直接使用键范围作为恢复进度的元信息。同时，日志备份文件数量可能非常多。不过，每个日志备份文件在日志备份元信息中的位置是固定的，因此可以为每个日志备份文件指定一个日志备份元信息中唯一的位置作为恢复进度的元信息。
 
-The log backup metadata contains an array of file metadata. Each file metadata in the array represents a file composed of multiple log backup files. The file metadata records the offset and size of a log backup file in the concatenated file. Therefore, `br` can use the triple `(log backup metadata name, file metadata array offset, log backup file array offset)` to uniquely identify a log backup file.
+日志备份元信息中包含一个存放文件元信息的数组。数组中的每个文件元信息代表一个由多个日志备份文件拼接而成的文件。文件元信息记录了这些日志备份文件在拼接文件中的偏移和大小。因此，br 工具可以使用三元组 `(日志备份元信息名，文件元信息数组偏移，日志备份文件数组偏移)` 来唯一标识一个日志备份文件。
 
-## Usage limitations
+## 使用限制
 
-Checkpoint restore relies on the GC mechanism and cannot record all data that has been restored. The following sections provide the details.
+断点恢复功能依赖于 GC 机制，且无法记录所有已恢复的数据，具体描述如下。
 
-### GC will be paused
+### GC 会被停止
 
-During a log restore, the order of the restored data is unordered, which means that the deletion record of a key might be restored before its write record. If GC is triggered at this time, all data of the key will be deleted and then GC cannot process subsequent write records of the key. To avoid this situation, `br` pauses GC during log restore. If `br` exits halfway, GC remains paused.
+在日志恢复过程中，日志数据恢复的顺序是无序的，因此可能会出现一个 key 的删除记录优先于该 key 的写入记录恢复的情况。如果此时触发 GC，该 key 的所有数据会被删除，导致该 key 后续恢复的写入记录无法被 GC 处理。为了避免这种情况，br 命令行工具会在日志恢复过程中暂停 GC。当 br 工具中途退出后，GC 将仍然保持暂停状态。
 
-After the log restore is completed, GC is restarted automatically without manual startup. However, if you decide not to continue the restore, you can manually enable GC as follows:
+日志恢复完成后会重新启动 GC，不需要手动启动。但如果你不想再继续恢复时，请手动开启 GC，开启方法如下：
 
-The principle of `br` pausing GC is to execute `SET config tikv gc.ratio-threshold = -1.0` to set `gc.ratio-threshold` to a negative number, thus pausing GC. You can manually enable GC by modifying the value of [`gc.ratio-threshold`](/tikv-configuration-file.md#ratio-threshold). For example, to reset to its default value, you can execute `SET config tikv gc.ratio-threshold = 1.1`.
+br 工具暂停 GC 的原理是通过执行 `SET config tikv gc.ratio-threshold = -1.0`，将 [`gc.ratio-threshold`](/tikv-configuration-file.md#ratio-threshold) 的值设置成负数来暂停 GC。你可以通过修改 `gc.ratio-threshold` 的值手动开启 GC，例如执行 `SET config tikv gc.ratio-threshold = 1.1` 将参数重置为默认值。
 
-### Some data needs to be restored again
+### 部分数据需要重新恢复
 
-When `br` retries a restore, some data that has been restored might need to be restored again, including the data being restored and the data not recorded by the checkpoint.
+在重试恢复时，部分已恢复的数据可能需要重新恢复，包括正在恢复的数据和还未被断点记录的数据。
 
-- If the interruption is caused by an error, `br` persists the meta information of the data restored before exit. In this case, only the data being restored needs to be restored again in the next retry.
+- 由错误引起的退出，br 工具会在退出前将已恢复的数据元信息持久化到外部存储中，因此只有正在恢复的数据需要在下一次重试中重新恢复。
 
-- If the `br` process is interrupted by the system, `br` cannot persist the meta information of the data restored to the external storage. Since `br` persists the meta information every 30 seconds, data restored in the last 30 seconds before interruption cannot be persisted and needs to be restored again in the next retry.
+- 如果 br 工具进程被系统中断，那么 br 将无法把已恢复的数据元信息持久化到外部存储中。br 工具持久化已恢复的数据元信息的周期为 30 秒，因此大约最近 30 秒内的已完成恢复的数据无法持久化到外部存储，在下次重试时需要重新恢复。
 
-### Avoid modifying cluster data during the restore
+### 不要在恢复期间修改集群数据
 
-After a restore failure, avoid writing, deleting, or creating tables in the cluster. This is because the backup data might contain DDL operations for renaming tables. If you modify the cluster data, the checkpoint restore cannot decide whether the deleted or existing table are resulted from external operations, which affects the accuracy of the next restore retry.
+在恢复失败后，请避免向集群写入或删除数据、删除或创建表。由于备份数据中可能包含重命名表的 DDL 操作，断点恢复无法确认被删除的表或已存在的表是否是外部操作引起的，这会影响下次重试恢复的准确性。
 
-### Cross-major-version checkpoint recovery is not recommended
+> **警告：**
+>
+> 从 v8.5.5 开始，如果在恢复期间删除正在恢复的表，之后再从 checkpoint 重试恢复，可能会遇到以下问题（详见 [#68709](https://github.com/pingcap/tidb/issues/68709))：
+>
+> - 恢复因 checksum 校验失败而终止。
+> - 恢复完成一段时间后，已恢复的数据丢失。
+> 
+> 如果确定要放弃当前的恢复结果，请先根据恢复类型执行以下操作之一，然后再 `DROP` 已经恢复的表：
+> 
+> - 对于 `restore point`，请执行 [`br abort`](/br/br-pitr-manual.md#中止恢复操作)。
+> - 对于 `restore full`，请手动删除下游集群中的 checkpoint 数据库。checkpoint 数据库的名称格式为 `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint_<restoreID>`，其中的 `<restoreID>` 可以在 `mysql.tidb_restore_registry` 中找到。
 
-Cross-major-version checkpoint recovery is not recommended. For clusters where `br` recovery fails using the Long-Term Support (LTS) versions prior to v8.5.0, recovery cannot be continued with v8.5.0 or later LTS versions, and vice versa.
+### 不建议跨大版本重新恢复
 
-## Implementation details
+不建议进行跨大版本的断点恢复操作。对于使用 v8.5.0 之前长期支持 (Long-Term Support, LTS) 版本 br 恢复失败的集群，无法通过 v8.5.0 或更新的 LTS 版本 br 继续恢复，反之亦然。
 
-Checkpoint restore operations are divided into two parts: snapshot restore and PITR restore.
+## 实现细节：将断点数据存储在下游集群
 
-### Snapshot restore
+> **注意：**
+>
+> 从 v8.5.5 开始，默认将断点数据存储在下游集群。你可以通过参数 `--checkpoint-storage` 来指定断点数据存储的外部存储。
 
-During the initial restore, `br` creates a `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` database in the target cluster. This database records checkpoint data, the upstream cluster ID, and the BackupTS of the backup data.
+断点恢复的具体操作细节分为快照恢复和 PITR 恢复两部分。
 
-If the restore fails, you can retry it using the same command, and `br` will automatically read the checkpoint information from the `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` database and resume from the last restore point.
+### 快照恢复
 
-If the restore fails and you try to restore backup data with different checkpoint information to the same cluster, `br` reports an error. It indicates that the current upstream cluster ID or BackupTS is different from the checkpoint record. If the restore cluster has been cleaned, you can manually delete the `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` database and retry with a different backup.
+在第一次执行恢复时，br 工具会在恢复集群中创建 `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` 数据库，用于记录断点数据，以及这次恢复的上游集群 ID 和备份的 BackupTS。
 
-### PITR restore
+如果恢复执行失败，你可以使用相同的命令再次执行恢复，br 工具自动从 `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` 数据库中读取断点信息，并从上次中断的位置继续恢复。
 
-[PITR (Point-in-time recovery)](/br/br-pitr-guide.md) consists of snapshot restore and log restore phases.
+当恢复执行失败后，如果你尝试将与断点记录不同的备份数据恢复到同一集群，br 工具会报错，并提示上游集群 ID 或 BackupTS 与断点记录不同。如果恢复集群已被清理，你可以手动删除 `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` 数据库，然后使用其他备份重试。
 
-During the initial restore, `br` first enters the snapshot restore phase. This phase follows the same process as the preceding [snapshot restore](#snapshot-restore-1): BR records the checkpoint data, the upstream cluster ID, and BackupTS of the backup data (that is, the start time point `start-ts` of log restore) in the `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` database. If restore fails during this phase, you cannot adjust the `start-ts` of log restore when resuming checkpoint restore.
+### PITR 恢复
 
-When entering the log restore phase during the initial restore, `br` creates a `__TiDB_BR_Temporary_Log_Restore_Checkpoint` database in the target cluster. This database records checkpoint data, the upstream cluster ID, and the restore time range (`start-ts` and `restored-ts`). If restore fails during this phase, you need to specify the same `start-ts` and `restored-ts` as recorded in the checkpoint database when retrying. Otherwise, `br` will report an error and prompt that the current specified restore time range or upstream cluster ID is different from the checkpoint record. If the restore cluster has been cleaned, you can manually delete the `__TiDB_BR_Temporary_Log_Restore_Checkpoint` database and retry with a different backup.
+[PITR (Point-in-time recovery)](/br/br-pitr-guide.md) 恢复分为快照恢复和日志恢复两个阶段。
 
-Before entering the log restore phase during the initial restore, `br` constructs a mapping of upstream and downstream cluster database and table IDs at the `restored-ts` time point. This mapping is persisted in the system table `mysql.tidb_pitr_id_map` to prevent duplicate allocation of database and table IDs. Deleting data from `mysql.tidb_pitr_id_map` might lead to inconsistent PITR restore data.
+在第一次执行恢复时，br 工具首先进入快照恢复阶段。断点数据、备份数据的上游集群的 ID、备份数据的 BackupTS（即日志恢复的起始时间点 `start-ts`）和 PITR 恢复的 `restored-ts` 会被记录到 `__TiDB_BR_Temporary_Snapshot_Restore_Checkpoint` 数据库中。如果在此阶段恢复失败，尝试继续断点恢复时无法再调整日志恢复的起始时间点 `start-ts` 和 `restored-ts`。
+
+在第一次执行恢复并且进入日志恢复阶段时，br 工具会在恢复集群中创建 `__TiDB_BR_Temporary_Log_Restore_Checkpoint` 数据库，用于记录断点数据，以及这次恢复的上游集群 ID 和恢复的时间范围 `start-ts` 与 `restored-ts`。如果在此阶段恢复失败，重新执行恢复命令时，你需要指定与断点记录相同的 `start-ts` 和 `restored-ts` 参数，否则 br 工具会报错，并提示上游集群 ID 或恢复的时间范围与断点记录不同。如果恢复集群已被清理，你可以手动删除 `__TiDB_BR_Temporary_Log_Restore_Checkpoint` 数据库，然后使用其他备份重试。
+
+注意在第一次执行恢复并且进入日志恢复阶段前，br 工具会构造出在 `restored-ts` 时间点的上下游集群库表 ID 映射关系，并将其持久化到系统表 `mysql.tidb_pitr_id_map` 中，以避免库表 ID 被重复分配。**如果随意删除 `mysql.tidb_pitr_id_map` 中的数据，可能会导致 PITR 恢复数据不一致。**
+
+> **注意：**
+>
+> 为了兼容旧版本集群，从 v8.5.5 开始，当恢复集群不存在系统表 `mysql.tidb_pitr_id_map` 时，`pitr_id_map` 数据会写到日志备份目录下，文件名为 `pitr_id_maps/pitr_id_map.cluster_id:{downstream-cluster-ID}.restored_ts:{restored-ts}`。
+
+## 实现细节：将断点数据存储在外部存储
+
+> **注意：**
+>
+> 从 v8.5.5 开始，默认将断点数据存储在下游集群。你可以通过参数 `--checkpoint-storage` 来指定断点数据存储的外部存储。例如：
+>
+> ```shell
+> ./br restore full -s "s3://backup-bucket/backup-prefix" --checkpoint-storage "s3://temp-bucket/checkpoints"
+> ```
+
+在外部存储中，断点数据的目录结构如下：
+
+- 主路径 `restore-{downstream-cluster-ID}` 中的下游集群 ID `{downstream-cluster-ID}` 用于区分不同的恢复集群
+- 路径 `restore-{downstream-cluster-ID}/log` 存储日志恢复阶段的日志文件断点数据
+- 路径 `restore-{downstream-cluster-ID}/sst` 存储日志恢复阶段中未被日志备份覆盖的 SST 文件的断点数据
+- 路径 `restore-{downstream-cluster-ID}/snapshot` 存储快照恢复阶段的断点数据
+
+```
+.
+`-- restore-{downstream-cluster-ID}
+    |-- log
+    |   |-- checkpoint.meta
+    |   |-- data
+    |   |   |-- {uuid}.cpt
+    |   |   |-- {uuid}.cpt
+    |   |   `-- {uuid}.cpt
+    |   |-- ingest_index.meta
+    |   `-- progress.meta
+    |-- snapshot
+    |   |-- checkpoint.meta
+    |   |-- checksum
+    |   |   |-- {uuid}.cpt
+    |   |   |-- {uuid}.cpt
+    |   |   `-- {uuid}.cpt
+    |   `-- data
+    |       |-- {uuid}.cpt
+    |       |-- {uuid}.cpt
+    |       `-- {uuid}.cpt
+    `-- sst
+        `-- checkpoint.meta
+```
+
+断点恢复的具体操作细节分为快照恢复和 PITR 恢复两部分。
+
+### 快照恢复
+
+在第一次执行恢复时，br 工具会在恢复集群中创建路径 `restore-{downstream-cluster-ID}/snapshot`，用于记录断点数据，以及这次恢复的上游集群 ID 和备份的 BackupTS。
+
+如果恢复执行失败，你可以使用相同的命令再次执行恢复，br 工具会从指定的存储断点数据的外部存储中读取断点信息，并从上次中断的位置继续恢复。
+
+当恢复执行失败后，如果你尝试将与断点记录不同的备份数据恢复到同一集群，br 工具会报错，并提示上游集群 ID 或 BackupTS 与断点记录不同。如果恢复集群已被清理，你可以手动删除存储在外部存储的断点数据或更换指定的断点数据存储路径，然后使用其他备份重试。
+
+### PITR 恢复
+
+[PITR (Point-in-time recovery)](/br/br-pitr-guide.md) 恢复分为快照恢复和日志恢复两个阶段。
+
+在第一次执行恢复时，br 工具首先进入快照恢复阶段。断点数据，以及备份数据的上游集群的 ID、备份数据的 BackupTS（即日志恢复的起始时间点 `start-ts`）和 PITR 恢复的 `restored-ts` 会被记录到路径 `restore-{downstream-cluster-ID}/snapshot` 中。如果在此阶段恢复失败，尝试继续断点恢复时无法再调整日志恢复的起始时间点 `start-ts` 和 `restored-ts`。
+
+在第一次执行恢复并且进入日志恢复阶段时，br 工具会在恢复集群中创建路径 `restore-{downstream-cluster-ID}/log`，用于记录断点数据，以及这次恢复的上游集群 ID 和恢复的时间范围 `start-ts` 与 `restored-ts`。如果在此阶段恢复失败，重新执行恢复命令时，你需要指定与断点记录相同的 `start-ts` 和 `restored-ts` 参数，否则 br 工具会报错，并提示上游集群 ID 或恢复的时间范围与断点记录不同。如果恢复集群已被清理，你可以手动删除 存储在外部存储的断点数据或更换指定的断点数据存储路径，然后使用其他备份重试。
+
+注意在第一次执行恢复并且进入日志恢复阶段前，br 工具会构造出在 `restored-ts` 时间点的上下游集群库表 ID 映射关系，并将其持久化到存放断点数据的外部存储中（文件名为 `pitr_id_maps/pitr_id_map.cluster_id:{downstream-cluster-ID}.restored_ts:{restored-ts}`），以避免库表 ID 被重复分配。**如果随意删除 `pitr_id_maps` 目录中的文件，可能会导致 PITR 恢复数据不一致。**
+
+> **注意：**
+>
+> 为了兼容旧版本集群，从 v8.5.5 开始，当恢复集群不存在系统表 `mysql.tidb_pitr_id_map` 且未指定参数 `--checkpoint-storage` 时，`pitr_id_map` 数据会写到日志备份目录下，文件名为 `pitr_id_maps/pitr_id_map.cluster_id:{downstream-cluster-ID}.restored_ts:{restored-ts}`。

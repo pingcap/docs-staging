@@ -1,13 +1,13 @@
 ---
-title: DROP DATABASE | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 DROP DATABASE 的用法概述。
+title: DROP DATABASE
+summary: TiDB 数据库中 DROP DATABASE 的使用概况。
 ---
 
 # DROP DATABASE
 
-`DROP DATABASE` 语句会永久删除指定的数据库架构，以及在其中创建的所有表和视图。与被删除数据库相关联的用户权限不会受到影响。
+`DROP DATABASE` 语句用于永久删除指定的数据库，以及删除所有在 schema 中创建的表和视图。与被删数据库相关联的用户权限不受影响。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 DropDatabaseStmt ::=
@@ -18,8 +18,12 @@ IfExists ::= ( 'IF' 'EXISTS' )?
 
 ## 示例
 
+
 ```sql
-mysql> SHOW DATABASES;
+SHOW DATABASES;
+```
+
+```
 +--------------------+
 | Database           |
 +--------------------+
@@ -29,11 +33,23 @@ mysql> SHOW DATABASES;
 | test               |
 +--------------------+
 4 rows in set (0.00 sec)
+```
 
-mysql> DROP DATABASE test;
+
+```sql
+DROP DATABASE test;
+```
+
+```
 Query OK, 0 rows affected (0.25 sec)
+```
 
-mysql> SHOW DATABASES;
+
+```sql
+SHOW DATABASES;
+```
+
+```
 +--------------------+
 | Database           |
 +--------------------+
@@ -46,9 +62,9 @@ mysql> SHOW DATABASES;
 
 ## MySQL 兼容性
 
-TiDB 中的 `DROP DATABASE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`DROP DATABASE` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [CREATE DATABASE](/sql-statements/sql-statement-create-database.md)
 * [ALTER DATABASE](/sql-statements/sql-statement-alter-database.md)

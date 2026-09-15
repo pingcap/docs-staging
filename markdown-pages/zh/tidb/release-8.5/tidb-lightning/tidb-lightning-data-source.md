@@ -1,58 +1,56 @@
 ---
-title: TiDB Lightning Data Sources
-summary: Learn all the data sources supported by TiDB Lightning.
+title: TiDB Lightning 数据源
+summary: 了解 TiDB Lightning 支持的各类型数据源。
 ---
 
-# TiDB Lightning Data Sources
+# TiDB Lightning 数据源
 
-TiDB Lightning supports importing data from multiple data sources to TiDB clusters, including CSV, SQL, and Parquet files.
+TiDB Lightning 支持从多种类型的文件导入数据到 TiDB 集群，包括 CSV、SQL、Parquet 文件。
 
-To specify the data source for TiDB Lightning, use the following configuration:
+你可以通过以下配置为 TiDB Lightning 指定数据文件所在位置。
 
 ```toml
 [mydumper]
-# Local source data directory or the URI of the external storage such as S3. For more information about the URI of the external storage, see https://docs.pingcap.com/tidb/dev/backup-and-restore-storages#uri-format.
+# 本地源数据目录或 S3 等外部存储 URI。关于外部存储 URI 详情可参考 https://docs.pingcap.com/zh/tidb/dev/backup-and-restore-storages#uri-格式。
 data-source-dir = "/data/my_database"
 ```
 
-When TiDB Lightning is running, it looks for all files that match the pattern of `data-source-dir`.
+TiDB Lightning 运行时将查找 `data-source-dir` 中所有符合命令规则的文件。
 
-| File | Type | Pattern |
-| --------- | -------- | ------- |
-| Schema file | Contains the `CREATE TABLE` DDL statement | `${db_name}.${table_name}-schema.sql` |
-| Schema file | Contains the `CREATE DATABASE` DDL statement| `${db_name}-schema-create.sql` |
-| Data file | If the data file contains data for a whole table, the file is imported into a table named `${db_name}.${table_name}` | <code>\${db_name}.\${table_name}.\${csv\|sql\|parquet}</code> |
-| Data file | If the data for a table is split into multiple data files, each data file must be suffixed with a number in its filename | <code>\${db_name}.\${table_name}.001.\${csv\|sql\|parquet}</code> |
-| Compressed file | If the file contains a compression suffix, such as `gzip`, `snappy`, or `zstd`, TiDB Lightning will decompress the file before importing it. Note that the Snappy compressed file must be in the [official Snappy format](https://github.com/google/snappy). Other variants of Snappy compression are not supported. | <code>\${db_name}.\${table_name}.\${csv\|sql\|parquet}.{compress}</code> |
+| 文件类型 | 分类 | 命名规则 |
+|:--|:--|:---|
+|Schema 文件|包含 DDL 语句 `CREATE TABLE` 的文件|`${db_name}.${table_name}-schema.sql`|
+|Schema 文件|包含 `CREATE DATABASE` DDL 语句的文件|`${db_name}-schema-create.sql`|
+|数据文件|包含整张表的数据文件，该文件会被导入 `${db_name}.${table_name}` 表 | <code>\${db_name}.\${table_name}.\${csv\|sql\|parquet}</code>|
+|数据文件| 如果一个表分布于多个数据文件，这些文件命名需加上文件编号的后缀 | <code>\${db_name}.\${table_name}.001.\${csv\|sql\|parquet}</code> |
+|压缩文件| 上述所有类型文件如带压缩文件名后缀，如 `gzip`、`snappy` 或 `zstd`，TiDB Lightning 会流式解压后进行导入。注意 Snappy 压缩文件必须遵循[官方 Snappy 格式](https://github.com/google/snappy)。不支持其他非官方压缩格式。 | <code>\${db_name}.\${table_name}.\${csv\|sql\|parquet}.{compress}</code> |
 
-TiDB Lightning processes data in parallel as much as possible. Because files must be read in sequence, the data processing concurrency is at the file level (controlled by `region-concurrency`). Therefore, when the imported file is large, the import performance is poor. It is recommended to limit the size of the imported file to no greater than 256 MiB to achieve the best performance.
+TiDB Lightning 尽量并行处理数据，由于文件必须顺序读取，所以数据处理协程是文件级别的并发（通过 `region-concurrency` 配置控制）。因此导入大文件时性能比较差。通常建议单个文件尺寸为 256MiB，以获得最好的性能。
 
-## Rename databases and tables
+## 表库重命名
 
-TiDB Lightning follows filename patterns to import data to the corresponding database and table. If the database or table names change, you can either rename the files and then import them, or use regular expressions to replace the names online.
+TiDB Lightning 运行时会按照数据文件的命名规则将数据导入到相应的数据库和表。如果数据库名或表名发生了变化，你可以先重命名文件，然后再导入，或者使用正则表达式在线替换对象名称。
 
-### Rename files in batch
+### 批量重命名文件
 
-If you are using Red Hat Linux or a distribution based on Red Hat Linux, you can use the `rename` command to batch rename files in the `data-source-dir` directory. 
-
-For example:
+如果你使用的是 Red Hat Linux 或基于 Red Hat 的 Linux 发行版，可以使用 `rename` 命令对 `data-source-dir` 目录下的文件进行批量重命名。例如：
 
 ```shell
 rename srcdb. tgtdb. *.sql
 ```
 
-After you modify the database name, it is recommended that you delete the `${db_name}-schema-create.sql` file that contains the `CREATE DATABASE` DDL statement from the `data-source-dir` directory. If you want to modify the table name as well, you also need to modify the table name in the `${db_name}.${table_name}-schema.sql` file that contains the `CREATE TABLE` DDL statement.
+修改了文件中的数据库名后，建议删除 `data-source-dir` 目录下包含 `CREATE DATABASE` DDL 语句的 `${db_name}-schema-create.sql` 文件。如果修改的是表名，还需要修改包含 `CREATE TABLE` DDL 语句的 `${db_name}.${table_name}-schema.sql` 文件中的表名。
 
-### Use regular expressions to replace names online
+### 使用正则表达式在线替换名称
 
-To use regular expressions to replace names online, you can use the `pattern` configuration within `[[mydumper.files]]` to match filenames, and replace `schema` and `table` with your desired names. For more information, see [Match customized files](#match-customized-files).
+要使用正则表达式在线替换名称，你需要在 `[[mydumper.files]]` 配置中使用 `pattern` 匹配文件名，将 `schema` 和 `table` 换成目标名。具体配置请参考[自定义文件匹配](#自定义文件匹配)。
 
-The following is an example of using regular expressions to replace names online. In this example:
+下面是使用正则表达式在线替换名称的示例。其中：
 
-- The match rule for the data file `pattern` is `^({schema_regrex})\.({table_regrex})\.({file_serial_regrex})\.(csv|parquet|sql)`.
-- Specify `schema` as `'$1'`, which means that the value of the first regular expression `schema_regrex` remains unchanged. Or specify `schema` as a string, such as `'tgtdb'`, which means a fixed target database name.
-- Specify `table` as `'$2'`, which means that the value of the second regular expression `table_regrex` remains unchanged. Or specify `table` as a string, such as `'t1'`, which means a fixed target table name.
-- Specify `type` as `'$3'`, which means the data file type. You can specify `type` as either `"table-schema"` (representing the `schema.sql` file) or `"schema-schema"` (representing the `schema-create.sql` file).
+- 数据文件 `pattern` 的匹配规则是 `'^({schema_regrex})\.({table_regrex})\.({file_serial_regrex})\.(csv|parquet|sql)'`。
+- `schema` 可以指定为 `'$1'`，代表第一个正则表达式 `schema_regrex` 取值不变；`schema` 也可以指定为一个字符串，如 `'tgtdb'`，代表固定的目标数据库名。
+- `table` 可以指定为 `'$2'`，代表第二个正则表达式 `table_regrex` 取值不变；`table` 也可以指定为一个字符串，如 `'t1'`，代表固定的目标表名。
+- `type` 可以指定为 `'$3'`，代表数据文件类型；`type` 可以指定为 `"table-schema"`（代表 `schema.sql` 文件） 或 `"schema-schema"`（代表 `schema-create.sql` 文件）。
 
 ```toml
 [mydumper]
@@ -73,7 +71,7 @@ table = '$2'
 type = '$3'
 ```
 
-If you are using `gzip` to back up data files, you need to configure the compression format accordingly. The matching rule of the data file `pattern` is `'^({schema_regrex})\.({table_regrex})\.({file_serial_regrex})\.(csv|parquet|sql)\.(gz)'`. You can specify `compression` as `'$4'` to represent the compressed file format. For example:
+如果是使用 `gzip` 方式备份的数据文件，需要对应地配置压缩格式。数据文件 `pattern` 的匹配规则是 `'^({schema_regrex})\.({table_regrex})\.({file_serial_regrex})\.(csv|parquet|sql)\.(gz)'`。`compression` 可以指定为 `'$4'` 代表是压缩文件格式。示例如下：
 
 ```toml
 [mydumper]
@@ -99,182 +97,179 @@ compression = '$4'
 
 ## CSV
 
-### Schema
+### 表结构
 
-CSV files are schema-less. To import CSV files into TiDB, you must provide a table schema. You can provide schema by either of the following methods:
+CSV 文件是没有表结构的。要导入 TiDB，就必须为其提供表结构。可以通过以下任一方法实现：
 
-* Create files named `${db_name}.${table_name}-schema.sql` and `${db_name}-schema-create.sql` that contain DDL statements.
-* Manually create the table schema in TiDB.
+* 创建包含 DDL 语句的 `${db_name}.${table_name}-schema.sql` 和 `${db_name}-schema-create.sql`。
+* 在 TiDB 中手动创建。
 
-### Configuration
+### 配置
 
-You can configure the CSV format in the `[mydumper.csv]` section in the `tidb-lightning.toml` file. Most settings have a corresponding option in the [`LOAD DATA`](https://dev.mysql.com/doc/refman/8.0/en/load-data.html) statement of MySQL.
+CSV 格式可在 `tidb-lightning.toml` 文件中 `[mydumper.csv]` 下配置。大部分设置项在 MySQL 的 [`LOAD DATA`](https://dev.mysql.com/doc/refman/8.0/en/load-data.html) 语句中都有对应的选项。
 
 ```toml
 [mydumper.csv]
-# The field separator. Can be one or multiple characters. The default is ','.
-# If the data might contain commas, it is recommended to use '|+|' or other uncommon
-# character combinations as a separator.
+# 字段分隔符，支持一个或多个字符，默认值为 ','。如果数据中可能有逗号，建议源文件导出时分隔符使用非常见组合字符例如'|+|'。
 separator = ','
-# Quoting delimiter. Empty value means no quoting.
+# 引用定界符，设置为空表示字符串未加引号。
 delimiter = '"'
-# Line terminator. Can be one or multiple characters. Empty value (default) means
-# both "\n" (LF) and "\r\n" (CRLF) are line terminators.
-terminator = ''
-# Whether the CSV file contains a header.
-# If `header` is true, the first line is skipped and mapped
-# to the table columns.
+# 行尾定界字符，支持一个或多个字符。设置为空（默认值）表示 "\n"（换行）和 "\r\n" （回车+换行），均表示行尾。
+terminator = ""
+# CSV 文件是否包含表头。
+# 如果为 true，首行将会被跳过，且基于首行映射目标表的列。
 header = true
-# Whether the CSV file contains any NULL value.
-# If `not-null` is true, all columns from CSV cannot be parsed as NULL.
+# CSV 是否包含 NULL。
+# 如果为 true，CSV 文件的任何列都不能解析为 NULL。
 not-null = false
-# When `not-null` is false (that is, CSV can contain NULL),
-# fields equal to this value will be treated as NULL.
+# 如果 `not-null` 为 false（即 CSV 可以包含 NULL），
+# 为以下值的字段将会被解析为 NULL。
 null = '\N'
-# Whether to parse backslash as escape character.
+# 是否解析字段内的反斜线转义符。
 backslash-escape = true
-# Whether to treat `separator` as the line terminator and trim all trailing separators.
+# 是否将 `separator` 字段当作终止符，并移除尾部所有分隔符。
 trim-last-separator = false
 ```
 
-If the input of a string field such as `separator`, `delimiter`, or `terminator` involves special characters, you can use a backslash to escape the special characters. The escape sequence must be a *double-quoted* string (`"…"`). For example, `separator = "\u001f"` means using the ASCII character `0X1F` as the separator.
+对于诸如 `separator`，`delimiter` 和 `terminator` 等取值为字符串的配置项，如果需要设置的字符串中包含特殊字符，可以通过使用反斜杠 `\` 转义的方式进行输入，输入的转义序列必须被包含在一对*双引号* `"` 之间。例如，设置 `separator = "\u001f"` 表示使用 ASCII 字符 0X1F 作为字符串定界符。
 
-You can use *single-quoted* strings (`'…'`) to suppress backslash escaping. For example, `terminator = '\n'` means using the two-character string, a backslash (`\`) followed by the letter `n`, as the terminator, rather than the LF `\n`.
+你也可以使用*单引号*字符串 `'...'` 禁止对字符进行转义。
 
-For more details, see the [TOML v1.0.0 specification](https://toml.io/en/v1.0.0#string).
+另外，设置 `separator = '\n'` 表示使用两个字符 `\` + `n` 作为字符串定界符，而不是转义后的换行符 `\n`。
+
+更多详细的内容请参考 [TOML v1.0.0 标准](https://toml.io/cn/v1.0.0#%E5%AD%97%E7%AC%A6%E4%B8%B2)。
 
 #### `separator`
 
-- Defines the field separator.
-- Can be one or multiple characters, but must not be empty.
-- Common values:
+- 指定字段分隔符。
+- 可以为一个或多个字符，不能为空。
+- 常用值：
 
-    * `','` for CSV (comma-separated values).
-    * `"\t"` for TSV (tab-separated values).
-    * `"\u0001"` to use the ASCII character `0x01`.
+    * CSV 用 `','`
+    * TSV 用 `"\t"`
+    * "\u0001" 表示使用 ASCII 字符 0x01
 
-- Corresponds to the `FIELDS TERMINATED BY` option in the LOAD DATA statement.
+- 对应 LOAD DATA 语句中的 `FIELDS TERMINATED BY` 项。
 
 #### `delimiter`
 
-- Defines the delimiter used for quoting.
-- If `delimiter` is empty, all fields are unquoted.
-- Common values:
+- 指定引用定界符。
+- 如果 `delimiter` 为空，所有字段都会被取消引用。
+- 常用值：
 
-    * `'"'` quotes fields with double-quote. The same as [RFC 4180](https://tools.ietf.org/html/rfc4180).
-    * `''` disables quoting.
+    * `'"'` 使用双引号引用字段，和 [RFC 4180](https://tools.ietf.org/html/rfc4180) 一致。
+    * `''` 不引用
 
-- Corresponds to the `FIELDS ENCLOSED BY` option in the `LOAD DATA` statement.
+- 对应 LOAD DATA 语句中的 `FIELDS ENCLOSED BY` 项。
 
 #### `terminator`
 
-- Defines the line terminator.
-- If `terminator` is empty, both `"\n"` (Line Feed) and `"\r\n"` (Carriage Return + Line Feed) are used as the line terminator.
-- Corresponds to the `LINES TERMINATED BY` option in the `LOAD DATA` statement.
+- 指定行尾定界符。
+- 如果 `terminator` 为空，则 "\\n"（换行）和 "\\r\\n" （回车+换行）均表示行尾。
+- 对应 LOAD DATA 语句中的 `LINES TERMINATED BY` 项。
 
 #### `header`
 
-- Whether *all* CSV files contain a header row.
-- If `header` is `true`, the first row is used as the *column names*. If `header` is `false`, the first row is treated as an ordinary data row.
+- 是否*所有* CSV 文件都包含表头行。
+- 如为 true，第一行会被用作*列名*。如为 false，第一行并无特殊性，按普通的数据行处理。
 
-#### `not-null` and `null`
+#### `not-null` 和 `null`
 
-- The `not-null` setting controls whether all fields are non-nullable.
-- If `not-null` is `false`, the string specified by `null` is transformed to the SQL NULL instead of a specific value.
-- Quoting does not affect whether a field is null.
+- `not-null` 决定是否所有字段不能为空。
+- 如果 `not-null` 为 false，设定了 `null` 的字符串会被转换为 SQL NULL 而非具体数值。
+- 引用不影响字段是否为空。
 
-    For example, in the following CSV file:
+    例如有如下 CSV 文件：
 
     ```csv
     A,B,C
     \N,"\N",
     ```
 
-    In the default settings (`not-null = false; null = '\N'`), the columns `A` and `B` are both converted to NULL after being imported to TiDB. The column `C` is an empty string `''` but not NULL.
+    在默认设置（`not-null = false; null = '\N'`）下，列 `A` and `B` 导入 TiDB 后都将会转换为 NULL。列 `C` 是空字符串 `''`，但并不会解析为 NULL。
 
 #### `backslash-escape`
 
-- Whether to parse backslash inside fields as escape characters.
-- If `backslash-escape` is true, the following sequences are recognized and converted:
+- 是否解析字段内的反斜线转义符。
+- 如果 `backslash-escape` 为 true，下列转义符会被识别并转换。
 
-    | Sequence | Converted to             |
+    | 转义符   | 转换为            |
     |----------|--------------------------|
-    | `\0`     | Null character (`U+0000`)  |
-    | `\b`     | Backspace (`U+0008`)       |
-    | `\n`     | Line feed (`U+000A`)       |
-    | `\r`     | Carriage return (`U+000D`) |
-    | `\t`     | Tab (`U+0009`)             |
-    | `\Z`     | Windows EOF (`U+001A`)     |
+    | `\0`     | 空字符 (U+0000)  |
+    | `\b`     | 退格 (U+0008)       |
+    | `\n`     | 换行 (U+000A)       |
+    | `\r`     | 回车 (U+000D) |
+    | `\t`     | 制表符 (U+0009)             |
+    | `\Z`     | Windows EOF (U+001A)     |
 
-    In all other cases (for example, `\"`), the backslash is stripped, leaving the next character (`"`) in the field. The character left has no special roles (for example, delimiters) and is just an ordinary character.
+    其他情况下（如 `\"`）反斜线会被移除，仅在字段中保留其后面的字符（`"`），这种情况下，保留的字符仅作为普通字符，特殊功能（如界定符）都会失效。
 
-- Quoting does not affect whether backslash is parsed as an escape character.
+- 引用不会影响反斜线转义符的解析与否。
 
-- Corresponds to the `FIELDS ESCAPED BY '\'` option in the `LOAD DATA` statement.
+- 对应 LOAD DATA 语句中的 `FIELDS ESCAPED BY '\'` 项。
 
 #### `trim-last-separator`
 
-- Whether to treat `separator` as the line terminator and trim all trailing separators.
+- 是否将 `separator` 字段当作终止符，并移除尾部所有分隔符。
 
-    For example, in the following CSV file:
+    例如有如下 CSV 文件：
 
     ```csv
     A,,B,,
     ```
 
-    - When `trim-last-separator = false`, this is interpreted as a row of 5 fields `('A', '', 'B', '', '')`.
-    - When `trim-last-separator = true`, this is interpreted as a row of 3 fields `('A', '', 'B')`.
+- 当 `trim-last-separator = false`，该文件会被解析为包含 5 个字段的行 `('A', '', 'B', '', '')`。
+- 当 `trim-last-separator = true`，该文件会被解析为包含 3 个字段的行 `('A', '', 'B')`。
+- 此配置项已被弃用，建议使用兼容性更好的 `terminator`。
 
-- This option is deprecated. Use the `terminator` option instead.
-
-    If your existing configuration is:
+    如果有如下旧的配置：
 
     ```toml
     separator = ','
     trim-last-separator = true
     ```
 
-    It is recommended to change the configuration to:
+    建议修改为：
 
     ```toml
     separator = ','
-    terminator = ",\n" # Use ",\n" or ",'\r\n" according to your actual file.
+    terminator = ",\n" # 请根据文件实际使用的换行符指定为 ",\n" 或 ",\r\n"
     ```
 
-#### Non-configurable options
+#### 不可配置项
 
-TiDB Lightning does not support every option supported by the `LOAD DATA` statement. For example:
+TiDB Lightning 并不完全支持 `LOAD DATA` 语句中的所有配置项。例如：
 
-* There cannot be line prefixes (`LINES STARTING BY`).
-* The header cannot be skipped (`IGNORE n LINES`) and must be valid column names.
+* 不可使用行前缀 (`LINES STARTING BY`)。
+* 不可跳过表头 (`IGNORE n LINES`)。如有表头，必须是有效的列名。
 
-### Strict format
+### 启用严格格式
 
-TiDB Lightning works best when the input files have a uniform size of around 256 MiB. When the input is a single huge CSV file, TiDB Lightning can only process the file in one thread, which slows down the import speed.
+导入文件的大小统一约为 256 MB 时，TiDB Lightning 可达到最佳工作状态。如果导入单个 CSV 大文件，TiDB Lightning 只能使用一个线程来处理，这会降低导入速度。
 
-This can be fixed by splitting the CSV into multiple files first. For the generic CSV format, there is no way to quickly identify where a row starts or ends without reading the whole file. Therefore, TiDB Lightning by default does *not* automatically split a CSV file. However, if you are certain that the CSV input adheres to certain restrictions, you can enable the `strict-format` setting to allow TiDB Lightning to split the file into multiple 256 MiB-sized chunks for parallel processing.
+要解决此问题，可先将 CSV 文件分割为多个文件。对于通用格式的 CSV 文件，在没有读取整个文件的情况下无法快速确定行的开始和结束位置。因此，默认情况下 TiDB Lightning 不会自动分割 CSV 文件。但如果你确定待导入的 CSV 文件符合特定的限制要求，则可以启用 `strict-format` 设置。启用后，TiDB Lightning 会将单个 CSV 大文件分割为单个大小为 256 MB 的多个文件块进行并行处理。
 
 ```toml
 [mydumper]
 strict-format = true
 ```
 
-In a strict CSV file, every field occupies only a single line. In other words, one of the following must be true:
+严格格式的 CSV 文件中，每个字段仅占一行，即必须满足以下条件之一：
 
-* Delimiter is empty.
-* Every field does not contain the terminator itself. In the default configuration, this means every field does not contain CR (`\r`) or LF (`\n`).
+* delimiter 为空；
+* 每个字段不包含 `terminator` 对应的字符串。在默认配置下，对应每个字段不包含 CR (`\r`）或 LF（`\n`）。
 
-If a CSV file is not strict, but `strict-format` is wrongly set to `true`, a field spanning multiple lines may be cut in half into two chunks, causing parse failure, or even quietly importing corrupted data.
+如果 CSV 文件不是严格格式但 `strict-format` 被误设为 `true`，跨多行的单个完整字段会被分割成两部分，导致解析失败，甚至不报错地导入已损坏的数据。
 
-### Common configuration examples
+### 常见配置示例
 
 #### CSV
 
-The default setting is already tuned for CSV following RFC 4180.
+默认设置已按照 RFC 4180 调整。
 
 ```toml
 [mydumper.csv]
-separator = ',' # If the data might contain a comma (','), it is recommended to use '|+|' or other uncommon character combinations as the separator.
+separator = ',' # 如果数据中可能有逗号，建议源文件导出时分隔符使用非常见组合字符例如'|+|'
 delimiter = '"'
 header = true
 not-null = false
@@ -282,7 +277,7 @@ null = '\N'
 backslash-escape = true
 ```
 
-Example content:
+示例内容：
 
 ```
 ID,Region,Count
@@ -304,7 +299,7 @@ null = 'NULL'
 backslash-escape = false
 ```
 
-Example content:
+示例内容：
 
 ```
 ID    Region    Count
@@ -326,7 +321,7 @@ not-null = true
 backslash-escape = false
 ```
 
-Example content:
+示例内容：
 
 ```
 1|East|32|
@@ -337,111 +332,111 @@ Example content:
 
 ## SQL
 
-When TiDB Lightning processes a SQL file, because TiDB Lightning cannot quickly split a single SQL file, it cannot improve the import speed of a single file by increasing concurrency. Therefore, when you import data from SQL files, avoid a single huge SQL file. TiDB Lightning works best when the input files have a uniform size of around 256 MiB.
+TiDB Lightning 在处理 SQL 文件时，由于无法对单个文件进行快速分割，因此无法通过增加并发提高单个文件的导入速度。鉴于此，导出数据为 SQL 文件时应尽量避免单个 SQL 文件过大，通常单文件在 256MiB 左右可以达到最佳性能。
 
 ## Parquet
 
-TiDB Lightning currently only supports Parquet files generated by Amazon Aurora, Apache Hive, and Snowflake. To identify the file structure in S3, use the following configuration to match all data files:
+TiDB Lightning 目前仅支持由 Amazon Aurora、Hive 或 Snowflake 导出快照生成的 Parquet 文件。要识别其在 S3 的文件组织形式，需要使用如下配置匹配到所有的数据文件：
 
 ```
 [[mydumper.files]]
-# The expression needed for parsing Amazon Aurora parquet files
+# 解析 AWS Aurora parquet 文件所需的表达式
 pattern = '(?i)^(?:[^/]*/)*([a-z0-9\-_]+).([a-z0-9\-_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$'
 schema = '$1'
 table = '$2'
 type = '$3'
 ```
 
-Note that this configuration only shows how to match the parquet files exported by Aurora snapshot. You need to export and process the schema file separately.
+注意，此处仅说明 Aurora snapshot 导出的 parquet 文件如何匹配。Schema 文件需要单独导出及处理。
 
-For more information on `mydumper.files`, refer to [Match customized file](#match-customized-files).
+关于 `mydumper.files`，请参考[自定义文件匹配](/tidb-lightning/tidb-lightning-data-source.md#自定义文件匹配)。
 
-## Compressed files
+## 压缩文件
 
-TiDB Lightning currently supports compressed files exported by Dumpling or compressed files that follow the naming rules. Currently, TiDB Lightning supports the following compression algorithms: `gzip`, `snappy`, and `zstd`. When the file name follows the naming rules, TiDB Lightning automatically identifies the compression algorithm and imports the file after streaming decompression, without additional configuration.
+TiDB Lightning 目前支持由 Dumpling 导出的压缩文件或满足符合上文命名规则的压缩文件，目前支持 `gzip`、`snappy`、`zstd` 压缩算法的压缩文件。在文件名符合命名规则时，TiDB Lightning 会自动识别压缩算法在流式解压后导入，无需额外配置。
 
-> **Note:**
+> **注意**
 >
-> - Because TiDB Lightning cannot concurrently decompress a single large compressed file, the size of the compressed file affects the import speed. It is recommended that a source file is no greater than 256 MiB after decompression.
-> - TiDB Lightning only imports individually compressed data files and does not support importing a single compressed file with multiple data files included.
-> - TiDB Lightning does not support `parquet` files compressed through another compression tool, such as `db.table.parquet.snappy`. If you want to compress `parquet` files, you can configure the compression format for the `parquet` file writer.
-> - TiDB Lightning v6.4.0 and later versions only support the following compressed data files: `gzip`, `snappy`, and `zstd`. Other types of files cause errors. If an unsupported compressed file exists in the directory where the source data file is stored, this will cause the task to report an error. You can move those unsupported files out of the import data directory to avoid such errors.
-> - The Snappy compressed file must be in the [official Snappy format](https://github.com/google/snappy). Other variants of Snappy compression are not supported.
+> - 由于 TiDB Lightning 无法对单个大压缩文件进行并发解压，因此压缩文件的大小会直接影响导入速度。建议压缩数据文件解压后的源文件大小不超过 256 MiB。
+> - TiDB Lightning 仅支持导入各自独立压缩的数据文件，不支持导入多个数据文件组成的单个压缩文件集合包。
+> - TiDB Lightning 不支持二次压缩的 `parquet` 文件，例如 `db.table.parquet.snappy`。如需压缩 `parquet` 文件，你可以配置 `parquet` 文件数据存储的压缩格式。
+> - TiDB v6.4.0 及之后版本的 TiDB Lightning 支持后缀为压缩算法 `gzip`、`snappy`、`zstd` 的数据文件。其他后缀名会报错。你可以将不支持的文件移出导入数据目录来避免此类错误。
+> Snappy 压缩文件必须遵循[官方 Snappy 格式](https://github.com/google/snappy)。不支持其他非官方压缩格式。
 
-## Match customized files
+## 自定义文件匹配
 
-TiDB Lightning only recognizes data files that follow the naming pattern. In some cases, your data file might not follow the naming pattern, and thus data import is completed in a short time without importing any file.
+TiDB Lightning 仅识别符合命名要求的数据文件，但在某些情况下已提供的数据文件并不符合要求，因此可能出现 TiDB Lightning 在极短的时间结束，处理文件数量为 0 的情况。
 
-To resolve this issue, you can use `[[mydumper.files]]` to match data files in your customized expression.
+为了解决此类问题，TiDB Lightning 提供了 `[[mydumper.files]]` 配置用于通过自定义表达式匹配数据文件。
 
-Take the Aurora snapshot exported to S3 as an example. The complete path of the Parquet file is `S3://some-bucket/some-subdir/some-database/some-database.some-table/part-00000-c5a881bb-58ff-4ee6-1111-b41ecff340a3-c000.gz.parquet`.
+以 AWS Aurora 导出至 S3 的快照文件为例，Parquet 文件的完整路径为：`S3://some-bucket/some-subdir/some-database/some-database.some-table/part-00000-c5a881bb-58ff-4ee6-1111-b41ecff340a3-c000.gz.parquet`。
 
-Usually, `data-source-dir` is set to `S3://some-bucket/some-subdir/some-database/` to import the `some-database` database.
+通常 `data-source-dir` 会被配置为`S3://some-bucket/some-subdir/some-database/` 以导入 `some-database` 库。
 
-Based on the preceding Parquet file path, you can write a regular expression like `(?i)^(?:[^/]*/)*([a-z0-9\-_]+).([a-z0-9\-_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$` to match the files. In the match group, `index=1` is `some-database`, `index=2` is `some-table`, and `index=3` is `parquet`.
+根据上述 Parquet 文件的路径，你可以编写正则表达式 `(?i)^(?:[^/]*/)*([a-z0-9\-_]+).([a-z0-9\-_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$`，得到的 match group 中 index=1 的内容为 `some-database`，index=2 的内容为 `some-table`，index=3 的内容为 `parquet`。
 
-You can write the configuration file according to the regular expression and the corresponding index so that TiDB Lightning can recognize the data files that do not follow the default naming convention. For example:
+根据上述正则表达式及相应的 index 编写配置文件，TiDB Lightning 即可识别非默认命名规则的文件，最终实际配置如下：
 
-```toml
+```
 [[mydumper.files]]
-# The expression needed for parsing the Amazon Aurora parquet file
+# 解析 AWS Aurora parquet 文件所需的表达式
 pattern = '(?i)^(?:[^/]*/)*([a-z0-9\-_]+).([a-z0-9\-_]+)/(?:[^/]*/)*(?:[a-z0-9\-_.]+\.(parquet))$'
 schema = '$1'
 table = '$2'
 type = '$3'
 ```
 
-- **schema**: The name of the target database. The value can be:
-    - The group index obtained by using a regular expression, such as `$1`.
-    - The name of the database that you want to import, such as `db1`. All matched files are imported into `db1`.
-- **table**: The name of the target table. The value can be:
-    - The group index obtained by using a regular expression, such as `$2`.
-    - The name of the table that you want to import, such as `table1`. All matched files are imported into `table1`.
-- **type**: The file type. Supports `sql`, `parquet`, and `csv`. The value can be:
-    - The group index obtained by using a regular expression, such as `$3`.
-- **key**: The file number, such as `001` in `${db_name}.${table_name}.001.csv`.
-    - The group index obtained by using a regular expression, such as `$4`.
+- **schema**：目标库名称，值可以为：
+    - 正则表达式匹配到的 group 序号，例如 “$1”。
+    - 直接填写期望导入的库名，例如 “db1”。所有匹配到的文件均会导入 “db1”。
+- **table**：目标表名称，值可以为：
+    - 正则表达式匹配到的 group 序号，例如 “$2”。
+    - 直接填写期望导入的表名，例如 “table1”。所有匹配到的文件均会导入 “table1”。
+- **type**：文件类型，支持`sql`，`parquet`，`csv`，值可以为：
+    - 正则表达式匹配到的 group 序号，例如 “$3”。
+- **key**：文件的序号，即前文所述`${db_name}.${table_name}.001.csv`中的`001`。
+    - 正则表达式匹配到的 group 序号，例如 “$4”。
 
-## Import data from Amazon S3
+## 从 Amazon S3 导入数据
 
-The following examples show how to import data from Amazon S3 using TiDB Lightning. For more parameter configurations, see [URI Formats of External Storage Services](/external-storage-uri.md).
+如下为从 Amazon S3 导入数据的示例，更多配置参数描述，可参考[外部存储服务的 URI 格式](/external-storage-uri.md)。
 
-+ Use the locally configured permissions to access S3 data:
+* 使用本地已设置的权限访问 S3：
 
     ```bash
     tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
         -d 's3://my-bucket/sql-backup'
     ```
 
-+ Use the path-style request to access S3 data:
+* 使用路径类型的请求模式：
 
     ```bash
     tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
         -d 's3://my-bucket/sql-backup?force-path-style=true&endpoint=http://10.154.10.132:8088'
     ```
 
-+ Use a specific AWS IAM role ARN to access S3 data:
+* 使用 AWS IAM 角色的 ARN 来访问 S3 数据：
 
     ```bash
     tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
         -d 's3://my-bucket/test-data?role-arn=arn:aws:iam::888888888888:role/my-role'
     ```
 
-* Use access keys of an AWS IAM user to access S3 data:
+* 使用 AWS IAM 用户密钥来访问 S3 数据：
 
     ```bash
     tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
         -d 's3://my-bucket/test-data?access_key={my_access_key}&secret_access_key={my_secret_access_key}'
     ```
 
-* Use the combination of AWS IAM role access keys and session tokens to access S3 data:
+* 使用 AWS IAM 角色的密钥以及会话令牌来访问 S3 数据：
 
     ```bash
     tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
         -d 's3://my-bucket/test-data?access_key={my_access_key}&secret_access_key={my_secret_access_key}&session-token={my_session_token}'
     ```
 
-## More resources
+## 更多
 
-- [Export to CSV files Using Dumpling](/dumpling-overview.md#export-to-csv-files)
+- [使用 Dumpling 导出到 CSV 文件](/dumpling-overview.md#导出为-csv-文件)
 - [`LOAD DATA`](https://dev.mysql.com/doc/refman/8.0/en/load-data.html)

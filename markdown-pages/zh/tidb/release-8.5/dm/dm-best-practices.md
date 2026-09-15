@@ -1,234 +1,235 @@
 ---
-title: TiDB Data Migration (DM) Best Practices
-summary: Learn about best practices when you use TiDB Data Migration (DM) to migrate data.
+title: DM 数据迁移最佳实践
+summary: 了解使用 TiDB Data Migration (DM) 进行数据迁移的一些最佳实践。
 ---
 
-# TiDB Data Migration (DM) Best Practices
+# DM 数据迁移最佳实践
 
-[TiDB Data Migration (DM)](https://github.com/pingcap/tiflow/tree/release-8.5/dm) is a data migration tool developed by PingCAP. It supports full and incremental data migration from MySQL-compatible databases such as MySQL, Percona MySQL, MariaDB, Amazon RDS for MySQL, and Amazon Aurora into TiDB.
+[TiDB Data Migration (DM)](https://github.com/pingcap/tiflow/tree/release-8.5/dm) 是由 PingCAP 开发维护的数据迁移同步工具，主要支持的源数据库类型为各类遵循 MySQL 协议标准的关系型数据库，如 MySQL、Percona MySQL、MariaDB、Amazon RDS for MySQL、Amazon Aurora 等。
 
-You can use DM in the following scenarios:
+DM 的使用场景主要有：
 
-- Perform full and incremental data migration from a single MySQL-compatible database instance to TiDB
-- Migrate and merge MySQL shards of small datasets (less than 1 TiB) to TiDB
-- In the data hub scenario, such as the middle platform of business data, and real-time aggregation of business data, use DM as the middleware for data migration
+- 从兼容 MySQL 的单一实例中全量和增量迁移数据到 TiDB
+- 将小数据量（小于 1 TB）分库分表 MySQL 合并迁移数据到 TiDB
+- 在业务数据中台、业务数据实时汇聚等数据中枢场景中，作为数据同步中间件来使用
 
-This document introduces how to use DM in an elegant and efficient way, and how to avoid common mistakes when using DM.
+本文档介绍了如何优雅高效地使用 DM，以及如何规避使用 DM 的常见误区。
 
-## Performance limitations
+## 性能边界定位
 
-| Performance item  | Limitation |
-| ----------------- | :--------: |
-|  Max work nodes              |  1000           |
-|  Max task number             |  600            |
-|  Max QPS                     |  30k QPS/worker |
-|  Max Binlog throughput       |  20 MB/s/worker |
-|  Table number limit per task |  Unlimited      |
+DM 的性能参数如下表所示。
 
-- DM supports managing 1000 work nodes simultaneously, and the maximum number of tasks is 600. To ensure the high availability of work nodes, you should reserve some work nodes as standby nodes. The recommended number of standby nodes is 20% to 50% of the number of the work nodes that have running migration tasks.
-- A single work node can theoretically support replication QPS of up to 30K QPS/worker. It varies for different schemas and workloads. The ability to handle upstream binlogs is up to 20 MB/s/worker.
-- If you want to use DM as a data replication middleware for long-term use, you need to carefully design the deployment architecture of DM components. For more information, see [Deploy DM-master and DM-worker](#deploy-dm-master-and-dm-worker)
+| 参数 | 限制 |
+| -------- | :------: |
+|  最大同步节点（Work Nodes ） |  1000  |
+|  最大同步任务数量         |  600  |
+|  最大同步 QPS            |  30k QPS/worker |
+|  最大 Binlog 吞吐量      |  20 MB/s/worker |
+|  每个 Task 处理的表数量   | 无限制 |
 
-## Before data migration
+- DM 支持同时管理 1000 个同步节点（Work Node），最大同步任务数量为 600 个。为了保证同步节点的高可用，应预留一部分同步节点作为备用节点。建议预留的节点数量为已开启同步任务的同步节点数量的 20% ~ 50%。
+- 单机部署 Work Node 数量。在服务器配置较好情况下，要保证每个 Work Node 至少有 2 核 CPU 加 4G 内存的可用工作资源，并且应为主机预留 10% ~ 20% 的系统资源。
+- 单个同步节点（Work Node），理论最大同步 QPS 为 30K QPS/worker（不同 Schema 和 workload 会有所差异），处理上游 Binlog 的能力最高为 20 MB/s/worker。
+- 如果将 DM 作为需要长期使用的数据同步中间件，需要注意 DM 组件的部署架构。请参见 [DM-master 与 DM-worker 部署实践](#dm-master-与-dm-worker-部署实践)。
 
-Before data migration, the design of the overall solution is critical. The following sections describe best practices and scenarios from the business perspective and the implementation perspective.
+## 数据迁移前
 
-### Best practices for the business side
+在所有数据迁移之前，整体方案的设计是至关重要的。下面我们分别从业务侧要点及实施侧要点两个方面讲一下相关的实践经验和适用场景。
 
-To distribute the workload evenly on multiple nodes, the design for the distributed database is different from traditional databases. The solution needs to ensure both low migration cost and logic correctness after migration. The following sections describe best practices before data migration.
+### 业务侧要点
 
-#### Business impact of AUTO_INCREMENT in schema design
+为了让压力可以平均分配到多个节点上，在 Schema 设计上，分布式数据库与传统数据库差别很大，既要保证较低的业务迁移成本，又要保证迁移后应用逻辑的正确性。下面就从几个方面来看业务迁移前的最佳实践。
 
-`AUTO_INCREMENT` in TiDB is compatible with `AUTO_INCREMENT` in MySQL. However, as a distributed database, TiDB usually has multiple computing nodes (entries for the client end). When the application data is written, the workload is evenly distributed. This leads to the result that when there is an `AUTO_INCREMENT` column in the table, the auto-increment IDs of the column might be inconsecutive. For more details, see [AUTO_INCREMENT](/auto-increment.md#implementation-principles).
+#### Schema 的设计中 AUTO_INCREMENT 对业务的影响
 
-If your business has a strong dependence on auto-increment IDs, consider using the [MySQL-compatible `AUTO_INCREMENT` mode](/auto-increment.md#mysql-compatibility-mode) or the [`SEQUENCE` function](/sql-statements/sql-statement-create-sequence.md#sequence-function).
+TiDB 的 `AUTO_INCREMENT` 与 MySQL 的 `AUTO_INCREMENT` 整体上看是相互兼容的。但因为 TiDB 作为分布式数据库，一般会有多个计算节点（client 端入口），应用数据写入时会将负载均分开，这就导致在有 `AUTO_INCREMENT` 列的表上，可能出现不连续的自增 ID。详细原理参考 [`AUTO_INCREMENT`](/auto-increment.md#实现原理)。
 
-#### Usage of clustered indexes
+如果业务对自增 ID 有强依赖，可以考虑使用[兼容 MySQL 的自增列模式](/auto-increment.md#兼容-mysql-的自增列模式)或 [`SEQUENCE` 函数](/sql-statements/sql-statement-create-sequence.md#sequence-函数)。
 
-When you create a table, you can declare that the primary key is either a clustered index or a non-clustered index. The following sections describe the pros and cons of each choice.
+#### 是否使用聚簇索引
 
-- Clustered indexes
+TiDB 在建表时可以声明为主键创建聚簇索引或非聚簇索引。下面介绍各方案的优势和劣势。
 
-    [Clustered indexes](/clustered-indexes.md) use the primary key as the handle ID (row ID) for data storage. Querying using the primary key can avoid table lookup, which effectively improves the query performance. However, if the table is write-intensive and the primary key uses [`AUTO_INCREMENT`](/auto-increment.md), it is very likely to cause [write hotspot problems](/best-practices/high-concurrency-best-practices.md#highly-concurrent-write-intensive-scenario), resulting in a mediocre performance of the cluster and the performance bottleneck of a single storage node.
+- 聚簇索引
 
-- Non-clustered indexes + `shard row id bit`
+    [聚簇索引](/clustered-indexes.md#聚簇索引)使用主键作为数据存储的 handle ID（行 ID），在使用主键查询时可以减少一次回表的操作，有效提升查询效能。但如果表有大量数据写入且主键使用 [AUTO_INCREMENT](/auto-increment.md#实现原理)，非常容易造成数据存储的[写入热点问题](/best-practices/high-concurrency-best-practices.md#高并发批量插入场景)，导致集群整体效能不能充分利用，出现单存储节点的性能瓶颈问题。
 
-    Using non-clustered indexes and `shard row id bit`, you can avoid the write hotspot problem when using `AUTO_INCREMENT`. However, table lookup in this scenario can affect the query performance when querying using the primary key.
+- 非聚簇索引 + `shard row id bit`
 
-- Clustered indexes + external distributed ID generators
+    使用非聚簇索引，再配合表提示 `shard row id bit`，可以在继续使用 AUTO_INCREMENT 的情况下有效避免数据写入热点的产生。但是由于多了一次回表操作，此时使用主键查询数据，查询性能将有所影响。
 
-    If you want to use clustered indexes and keep the IDs consecutive, consider using external distributed ID generators, such as the Snowflake algorithm and Leaf. The application program generates sequence IDs, which can guarantee that the IDs are consecutive to a certain extent. It also retains the benefits of using clustered indexes. But you need to customize the applications.
+- 聚簇索引 + 外部分布式发号器
 
-- Clustered indexes + `AUTO_RANDOM`
+    如果想使用聚簇索引，但还希望 ID 是单调递增的，那么可以考虑使用外部分布式发号器，如雪花算法 (Snowflake)、Leaf 等，来解决问题。由应用程序产生序列 ID，可以一定程度上保证 ID 的单调递增性，同时也保留了使用聚簇索引带来的收益。但相关应用程序需要进行改造。
 
-    This solution can retain the benefits of using clustered indexes and avoid the write hotspot problem. It requires less effort for customization. You can modify the schema attribute when you switch to use TiDB as the write database. In subsequent queries, if you have to use the ID column to sort data, you can use the [`AUTO_RANDOM`](/auto-random.md) ID column and left shift 6 bits (1 sign bit + 5 shard bits) to ensure the order of the query data. For example:
+- 聚簇索引 + AUTO_RANDOM
+
+    此方案是目前分布式数据库既能避免出现写入热点问题，又能保留聚簇索引带来的查询收益的方案。整体改造也相对轻量，可以在业务切换使用 TiDB 作为写库时，修改 Schema 属性来达到目的。如果在后续查询时一定要利用 ID 列进行排序，可以使用 [AUTO_RANDOM](/auto-random.md) ID 列左移 6 位（符号位 1 位 + 分片位 5 位）来保证查询数据的顺序性。示例：
 
     ```sql
     CREATE TABLE t (a bigint PRIMARY KEY AUTO_RANDOM, b varchar(255));
-    Select a, a<<6 ,b from t order by a <<6 desc
+    Select  a, a<<6 ,b from t order by a <<6 asc
     ```
 
-The following table summarizes the pros and cons of each solution.
+下表汇总了不同使用场景的推荐方案和优劣势。
 
-| Scenario | Recommended solution | Pros | Cons |
+| 场景 | 推荐方案 | 优势 | 劣势 |
 | :--- | :--- | :--- | :--- |
-| <li>TiDB will act as the primary and write-intensive database. </li><li>The business logic strongly relies on the continuity of the primary key IDs.</li> | Create tables with non-clustered indexes and set `SHARD_ROW_ID_BIT`. Use `SEQUENCE` as the primary key column.  | It can avoid data write hotspots and ensure the continuity and monotonic increment of business data. | <li>The throughput capacity of data write is decreased to ensure data write continuity. </li><li>The performance of primary key queries is decreased.</li> |
-| <li>TiDB will act as the primary and write-intensive database. </li><li>The business logic strongly relies on the increment of the primary key IDs.</li>  | Create tables with non-clustered indexes and set `SHARD_ROW_ID_BIT`. Use an application ID generator to generate the primary key IDs. | It can avoid data write hotspots, guarantee the performance of data write, and guarantee the increment of business data, but cannot guarantee continuity. | <li>You need to customize the application. </li><li>External ID generators strongly rely on the clock accuracy and might introduce failures.</li> |
-| <li>TiDB will act as the primary and write-intensive database. </li><li>The business logic does not rely on the continuity of the primary key IDs.</li> | Create tables with clustered indexes and set `AUTO_RANDOM` for the primary key column. | <li>It can avoid data write hotspots and has excellent query performance of primary keys. </li><li>You can smoothly switch from `AUTO_INCREMENT` to `AUTO_RANDOM`.</li> | <li>The primary key IDs are random. </li><li>The write throughput ability is limited. </li><li>It is recommended to sort the business data by using the insert time column. </li><li>If you have to use the primary key ID to sort data, you can left shift 5 bits to query, which can guarantee the increment of the data.</li> |
-| TiDB will act as a read-only database. | Create tables with non-clustered indexes and set `SHARD_ROW_ID_BIT`. Keep the primary key column consistent with the data source. | <li>It can avoid data write hotspots. </li><li>It requires less customization cost. </li>| The query performance of primary keys is impacted. |
+|  TiDB 未来作为主库使用，并会有大量数据写入。业务逻辑强依赖主键 ID 的连续性。  |  将表建立为非聚簇索引，并设置 SHARD_ROW_ID_BIT。使用 SEQUENCE 作为主键列。   |  可以有效避免数据写入热点，保证业务数据的连续性和单调递增。 | 数据写入的吞吐能力会下降（为保证数据写入连续性）；主键查询性能有所下降。 |
+|   TiDB 未来作为主库使用，并会有大量数据写入。业务逻辑强依赖主键 ID 的递增特性。  |  将表建立为非聚簇索引，并设置 SHARD_ROW_ID_BIT；使用应用程序发号器来定义主键 ID。 |   可以有效避免数据写入热点；可以保证数据写入性能；可以有效保证业务数据是趋势性递增，但不能保证数据连续性。   |  对原有代码有一定的改造成本；外部发号器对时钟准确性有强依赖，引入新的故障风险点。 |
+|  TiDB 未来作为主库使用，并会有大量数据写入。业务逻辑不依赖主键 ID 的连续性。   |  将表建立为聚簇索引表；主键列设置为 AUTO_RANDOM 属性。   |  可以有效避免数据写入热点；有非常有限的写入吞吐能力；主键查询性能优异；可以平滑将 AUTO_INCREMENT 属性切换为 AUTO_RANDOM 属性。    | 主键 ID 是完全随机的，业务数据排序建议使用插入时间列来完成。如果一定要使用主键 ID 排序，可以用 ID 左移 5 的方式查询，此方式查询的数据可以保证趋势递增的特性。  |
+|  TiDB 未来作为只读的数据中台使用。  |  将表建立为非聚簇索引，并设置 SHARD_ROW_ID_BIT；使主键列维持与源数据库类型一致即可。  |  可以有效避免数据写入热点；改造成本低。   | 主键查询性能有所下降。  |
 
-### Key points for MySQL shards
+### 分库分表要点
 
-#### Splitting and merging
+#### 分与合
 
-It is recommended that you use DM to [migrate and merge MySQL shards of small datasets to TiDB](/migrate-small-mysql-shards-to-tidb.md).
+DM 支持[将上游分库分表的数据合并到下游 TiDB 中的同一个表](/migrate-small-mysql-shards-to-tidb.md)，这也是 TiDB 推荐的一种方式。
 
-Besides data merging, another typical scenario is data archiving. Data is constantly being written. As time goes by, large amounts of data gradually change from hot data to warm or even cold data. Fortunately, in TiDB, you can set different [placement rules](/configure-placement-rules.md) for data. The minimum granularity of the rules is [a partition](/partitioned-table.md).
+除了数据合并场景外，另一个典型场景为 **数据归档**场景。在此场景中，数据不断写入，随着时间流逝，大量的数据从热数据逐渐转变为温冷数据。在 TiDB 中，你可以通过 [Placement Rules](/configure-placement-rules.md) 放置规则来按照一定规则对数据设置不同的放置规则，而最小粒度即为[分区表 (Partition)](/partitioned-table.md)。
 
-Therefore, it is recommended that for write-intensive scenarios, you need to evaluate from the beginning whether you need to archive data and store hot and cold data on different media separately. If you need to archive data, you can set the partitioning rules before migration (TiDB does not support Table Rebuild operations yet). It saves you from the need to recreate tables and import data in future.
+所以建议在遇到有大规模数据写入的场景，一开始就规划好未来是否需要归档或者有冷热数据分别存储在不同介质的需要。如果有，那么在迁移前请设置好分区表规则（目前 TiDB 还不支持 Table Rebuild 操作）。避免因为初期考虑不周，导致后期需要重新建表及重新导入数据。
 
-#### The pessimistic mode and the optimistic mode
+#### 悲观 DDL 锁与乐观 DDL 锁
 
-DM uses the pessimistic mode by default. In scenarios of migrating and merging MySQL shards, changes in upstream shard schemas can block DML writing to downstream databases. You need to wait until all the schemas are changed and have the same structure, and then continue the migration from the breakpoint.
+DM 默认会使用悲观 DDL 锁模式。在分库分表迁移与同步场景中，上游相关分表发生 Schema 变更后，会阻断后续的 DML 向下游 TiDB 写入。此时需要等待上游各分表的 Schema 都变更完毕并自动确认所有分表的结构一致后，从同步阻断记录点继续数据同步。
 
-- If the upstream schema changes take a long time, it might cause the upstream Binlog to be cleaned up. You can enable the relay log to avoid this problem. For more information, see [Use the relay log](#use-the-relay-log).
+- 如果上游 Schema 变更时间较长，可能导致上游 Binlog 被清理，此问题可以通过开启 DM 的 Relay log 功能来避免。
 
-- If you do not want to block data write due to upstream schema changes, consider using the optimistic mode. In this case, DM will not block the data migration even when it spots changes in the upstream shard schemas, but will continue to migrate the data. However, if DM spots incompatible formats in upstream and downstream, the migration task will stop. You need to resolve this issue manually.
+- 如果不希望因为上游 Schema 变更阻塞数据写入，可以考虑使用乐观 DDL 锁模式。此时 DM 在发现上游分表 Schema 变更时也不会阻断数据同步，而是会持续同步数据。但如果同步期间 DM 发现上下游数据格式不兼容，将停止同步任务。此时需要人工介入处理。
 
-The following table summarizes the pros and cons of optimistic mode and pessimistic modes.
+下表汇总了乐观 DDL 锁和悲观 DDL 锁的优劣势。
 
-| Scenario | Pros | Cons |
+| 场景 | 优势 | 劣势 |
 | :--- | :--- | :--- |
-| Pessimistic mode (Default) | It can ensure that the data migrated to the downstream will not go wrong.  | If there are a large number of shards, the migration task will be blocked for a long time, or even stop if the upstream binlogs have been cleaned up. You can enable the relay log to avoid this problem. For more information, see [Use the relay log](#use-the-relay-log). |
-| Optimistic mode| Upstream schema changes will not cause data migration latency.  | In this mode, ensure that schema changes are compatible (check whether the incremental column has a default value). It is possible that the inconsistent data can be overlooked. For more information, see [Merge and Migrate Data from Sharded Tables in Optimistic Mode](/dm/feature-shard-merge-optimistic.md#restrictions).|
+| 悲观 DDL 锁（默认）   | 最大程度保证数据同步任务的可靠性    |  如果分表较多，将长时间阻断数据同步任务。并有可能因为上游的 Binlog 已被清理而导致同步中断。可以通过开启 DM-worker 的 Relay log 来避免问题。详情请参考 [Relay log 的使用](#relay-log-的使用) .|
+| 乐观 DDL 锁   | 数据同步任务基本不会出现相关阻塞延迟    | 此模式下需要保证 Schema 变更的兼容性（增加列是否具有默认值）。如果考虑不周，可能出现未被发现的上下游数据不一致问题。更多限制，请参考[乐观模式下分库分表合并迁移](/dm/feature-shard-merge-optimistic.md#使用限制)。  |
 
-### Other restrictions and impact
+### 其他限制与影响
 
-#### Data types in upstream and downstream
+#### 上下游的数据类型
 
-TiDB supports most MySQL data types. However, some special types are not supported yet (such as `SPATIAL`). For the compatibility of data types, see [Data Types](/data-type-overview.md).
+这里主要需要考虑上下游的数据类型问题。TiDB 目前支持绝大部分 MySQL 的数据类型。但一些特殊类型尚不支持（如空间类型）。关于数据类型的兼容性，请参考[数据类型概述](/data-type-overview.md)。
 
-#### Character sets and collations
+#### 字符集与排序规则
 
-Since TiDB v6.0.0, the new framework for collations is used by default. In earlier versions, if you want TiDB to support utf8_general_ci, utf8mb4_general_ci, utf8_unicode_ci, utf8mb4_unicode_ci, gbk_chinese_ci and gbk_bin, you need to explicitly declare it when creating the cluster by setting the value of `new_collations_enabled_on_first_bootstrap` to `true`. For more information, see [New framework for collations](/character-set-and-collation.md#new-framework-for-collations).
+自 TiDB v6.0.0 以后，默认使用新排序规则。如果需要 TiDB 支持 utf8_general_ci、utf8mb4_general_ci、utf8_unicode_ci、utf8mb4_unicode_ci、gbk_chinese_ci 和 gbk_bin 这几种排序规则，需要在集群创建时声明，将 `new_collations_enabled_on_first_bootstrap` 的值设为 `true`。更详细信息请参考[字符集和排序规则](/character-set-and-collation.md#新框架下的排序规则支持)。
 
-The default character set in TiDB is utf8mb4. It is recommended that you use utf8mb4 for the upstream and downstream databases and applications. If the upstream database has explicitly specified a character set or collation, you need to check whether TiDB supports it.
+TiDB 默认使用的字符集为 utf8mb4。建议同步上下游及应用统一使用 utf8mb4。如果上游有显式指定的字符集或者排序规则，需要确认 TiDB 是否支持。
 
-Since TiDB v6.0.0, GBK is supported. For more information, see the following documents:
+从 v6.0.0 起，TiDB 支持 GBK 字符集。有关字符集的限制详见：
 
-- [Character Set and Collation](/character-set-and-collation.md)
-- [GBK compatibility](/character-set-gbk.md#mysql-compatibility)
+- [字符集和排序规则](/character-set-and-collation.md)
+- [GBK 兼容情况](/character-set-gbk.md#与-mysql-的兼容性)
 
-### Best practices for deployment
+### 实施侧要点
 
-#### Deploy DM-master and DM-worker
+#### DM-master 与 DM-worker 部署实践
 
-DM consists of DM-master and DM-worker nodes.
+DM 整体架构分为 DM-master 与 DM-worker。
 
-- DM-master manages the metadata of migration tasks and schedules DM-worker nodes. It is the core of the whole DM platform. Therefore, you can deploy DM-master as clusters to ensure high availability of the DM platform.
+- DM-master 主要负责同步任务的元数据管理，以及 DM-worker 的中心调度，是整个 DM 平台的核心。所以 DM-master 可以部署为集群模式，以保证 DM 同步平台的可用性。
+- DM-worker 负责执行上下游同步任务，是无状态节点。最多可以部署 1000 个节点。在需要将 DM 作为数据同步平台的场景，可以预留一部分空闲的 DM-worker，以保证同步任务的高可用。
 
-- DM-worker executes upstream and downstream migration tasks. A DM-worker node is stateless. You can deploy at most 1000 DM-worker nodes. When using DM, it is recommended that you reserve some idle DM-workers to ensure high availability.
+#### 同步任务规划
 
-#### Plan the migration tasks
+分库分表场景。在分库分表迁移场景，根据上游分库分表的种类进行同步任务的拆分，如 `usertable_1~50` 和 `Logtable_1~50` 是两类分表，那么就应该分别建 2 个 Task 任务进行同步。这样做的好处是可有效简化同步任务模板的复杂度，并有效控制数据同步中断的影响范围。
 
-When migrating and merging MySQL shards, you can split a migration task according to the types of shards in the upstream. For example, if `usertable_1~50` and `Logtable_1~50` are two types of shards, you can create two migration tasks. It can simplify the migration task template and effectively control the impact of interruption in data migration.
+大规模数据迁移同步场景。可以参考以下思路进行 Task 任务拆分：
 
-For migration of large datasets, you can refer to the following suggestions to split the migration task:
+- 如果上游需要同步多个数据库，可以按照不同数据库拆分 Task。
 
-- If you need to migrate multiple databases in the upstream, you can split the migration task according to the number of databases.
+- 根据上游写入压力拆分任务。即把上游 DML 操作频繁的表，拆分到单独的 Task 任务中，将其他没有频繁 DML 操作的表使用另一个 Task 任务进行同步。此方式可在一定程度上加速同步任务的推进能力。尤其是在上游有大量 Log 写入某张表，但业务关注的是其他表时，此方法可以有效解决此类问题。
 
-- Split the task according to the write pressure in the upstream, that is, split the tables with frequent DML operations in the upstream to a separate migration task. Use another migration task to migrate the tables without frequent DML operations. This method can speed up the migration progress, especially when there are a large number of logs written to a table in the upstream. But if this table that contains a large number of logs does not affect the whole business, this method still works well.
+请注意，拆分同步任务后只能保证数据同步的最终一致性，实时一致性因各种原因可能出现较大偏差。
 
-Note that splitting the migration task can only guarantee the final consistency of data. Real-time consistency may deviate significantly due to various reasons.
+下表给出了在不同的数据迁移与同步场景下部署 DM-master 与 DM-worker 的推荐方案。
 
-The following table describes the recommended deployment plans for DM-master and DM-worker in different scenarios.
-
-| Scenario | DM-master deployment | DM-worker deployment |
+| 场景 |  DM-master 部署 | DM-worker 部署 |
 | :--- | :--- | :--- |
-| <li>Small dataset (less than 1 TiB)</li><li>One-time data migration</li> | Deploy 1 DM-master node | Deploy 1~N DM-worker nodes according to the number of upstream data sources. Generally, 1 DM-worker node is recommended. |
-| <li>Large dataset (more than 1 TiB) and migrating and merging MySQL shards</li><li>One-time data migration</li> | It is recommended to deploy 3 DM-master nodes to ensure the availability of the DM cluster during long-time data migration. | Deploy DM-worker nodes according to the number of data sources or migration tasks. Besides working DM-worker nodes, it is recommended to deploy 1~3 idle DM-worker nodes. |
-| Long-term data replication | It is necessary to deploy 3 DM-master nodes. If you deploy DM-master nodes on the cloud, try to deploy them in different availability zones (AZ). | Deploy DM-worker nodes according to the number of data sources or migration tasks. It is necessary to deploy 1.5~2 times the number of DM-worker nodes that are actually needed. |
+| 小规模数据 （1 TB 以下），一次性数据迁移场景  |  部署 1 个 DM-master 节点   | 根据上游数据源数量，部署 1 ~ N 个 DM-worker 节点。一般情况下 1 个 DM-worker 节点。   |
+| 大规模数据 （1 TB 以上）及分库分表，一次性数据迁移场景  | 推荐部署 3 个 DM-master 节点，来保证在长时间数据迁移时 DM 集群的可用性   | 根据数据源数量或同步任务数量部署 DM-Worker 节点。推荐多部署 1~3 个空闲 DM-Worker 节点。   |
+|  长期数据同步迁移场景  | 务必部署 3 个 DM-master 节点。如在云上部署，尽量将 DM-master 部署在不同的可用区（AZ）    |   根据数据源数量或同步任务数量部署 DM-worker 节点。务必部署实际需要 DM-worker 节点数量的 1.5 ~ 2 倍的 DM-worker 节点数量。 |
 
-#### Choose and configure the upstream data source
+#### 上游数据源选择与设置
 
-DM backs up the full data of the entire database when performing full data migration, and uses the parallel logical backup method. During backing up MySQL, it adds a global read lock [`FLUSH TABLES WITH READ LOCK`](https://dev.mysql.com/doc/refman/8.0/en/flush.html#flush-tables-with-read-lock). DML and DDL operations of the upstream database will be blocked for a short time. Therefore, it is strongly recommended to use a backup database in upstream to perform the full data backup, and enable the GTID function of the data source (`enable-gtid: true`). In this way, you can avoid the impact from the upstream, and switch to the master node in the upstream to reduce the latency during the incremental migration. For the instructions of switching the upstream MySQL data source, see [Switch DM-worker Connection between Upstream MySQL Instances](/dm/usage-scenario-master-slave-switch.md#switch-dm-worker-connection-via-virtual-ip).
+DM 支持存量数据迁移，但在做全量迁移时会对整库进行全量数据备份。DM 采用的备份方式为并行逻辑备份，备份 MySQL 期间会加上全局只读锁 [`FLUSH TABLES WITH READ LOCK`](https://dev.mysql.com/doc/refman/8.0/en/flush.html#flush-tables-with-read-lock)。此时会短暂地阻塞上游数据库的 DML 和 DDL 操作。所以强烈建议使用上游的备库来进行全量备份，并同时在数据源开启 GTID 的功能 (`enable-gtid: true`)。这样既可避免存量迁移时对上游业务的影响，也可以在增量同步期间再切换到上游主库节点降低数据同步的延迟。切换上游 MySQL 数据源的方法，请参考[切换 DM-worker 与上游 MySQL 实例的连接](/dm/usage-scenario-master-slave-switch.md#切换-dm-worker-与上游-mysql-实例的连接)。
 
-Note the following:
+下面是一些特殊场景下的注意事项：
 
-- You can only perform full data backup on the master node of the upstream database.
+- 只能在上游主库进行全量备份
 
-    In this scenario, you can set the `consistency` parameter to `none` in the configuration file, `mydumpers.global.extra-args: "--consistency none"`, to avoid adding a global read lock to the master node. But this might affect the data consistency of the full backup, which may lead to inconsistent data between the upstream and downstream.
+    在该场景中，可以在同步任务配置中设置一致性参数为 none，`mydumpers.global.extra-args: "--consistency none"` 避免给主库加全局只读锁，但有可能破坏全量备份的数据一致性，导致最终上下游数据不一致。
 
-- Use backup snapshots to perform full data migration (only applicable to the migration of MySQL RDS and Aurora RDS on AWS)
+- 利用备份快照解决存量迁移（只适用 AWS 上 MySQL RDS 和 Aurora RDS 的迁移）
 
-    If the database to be migrated is AWS MySQL RDS or Aurora RDS, you can use RDS snapshots to directly migrate the backup data in Amazon S3 to TiDB to ensure data consistency. For more information, see [Migrate Data from Amazon Aurora to TiDB](/migrate-aurora-to-tidb.md).
+    如果要迁移的数据库正好为 AWS MySQL RDS 或者 Aurora RDS，可以利用 RDS Snapshot 备份将 Amazon S3 中的备份数据直接迁移到 TiDB，以此保证存量数据迁移的一致性。整个操作流程以及后续增量同步方法，请参考[从 Amazon Aurora 迁移数据到 TiDB](/migrate-aurora-to-tidb.md#从-amazon-aurora-迁移数据到-tidb)。
 
-### Details of configurations
+### 配置细节详解
 
-#### Capitalization
+#### 大小写
 
-TiDB schema names are case-insensitive by default, that is, `lower_case_table_names:2`. But most upstream MySQL databases use Linux systems that are case-sensitive by default. In this case, you need to set `case-sensitive` to `true` in the DM task configuration file to ensure that the schema can be correctly migrated from the upstream.
+TiDB 默认情况下对 Schema name 大小写不敏感，即 `lower_case_table_names:2`。但上游 MySQL 大多为 Linux 系统，默认对大小写敏感。此时需要注意，在 DM 数据同步任务设置时将 `case-sensitive` 设置为 `true`，保证可以正确同步上游的 Schema。
 
-In a special case, for example, if there is a database in the upstream that has both uppercase tables such as `Table` and lowercase tables such as `table`, then an error occurs when creating the schema:
+特殊情况下，比如上游一个数据库中，既有大写表如 `Table`，又有小写表如 `table`，那么 Schema 创建时将报错:
 
 `ERROR 1050 (42S01): Table '{tablename}' already exists`
 
-#### Filter rules
+#### 过滤规则
 
-You can configure the filter rules as soon as you start configuring the data source. For more information, see [Data Migration Task Configuration Guide](/dm/dm-task-configuration-guide.md). The benefits of configuring the filter rules are:
+在配置数据源时即可配置过滤规则。配置方法请参考[数据迁移任务配置向导](/dm/dm-task-configuration-guide.md)。
 
-- Reduce the number of Binlog events that the downstream needs to process, thereby improving migration efficiency.
-- Reduce unnecessary relay log storage, thereby saving disk space.
+配置过滤规则的好处有：
 
-> **Note:**
+- 可以减少下游处理 Binglog Event 的数量，提升同步效能
+- 可以减少不必要的 Relay log 的落盘，节约磁盘空间
+
+> **注意：**
 >
-> When you migrate and merge MySQL shards, if you have configured filter rules in the data source, you must make sure that the rules match between the data source and the migration task. If they do not match, it may cause the issue that the migration task cannot receive incremental data for a long time.
+> 在分库分表场景中，如果你在数据源配置了过滤规则，请确保数据源与同步任务中设置的过滤规则相匹配。如果不匹配，将会导致同步任务长期接收不到增量数据。
 
-#### Use the relay log
+#### Relay Log 的使用
 
-In the MySQL master/standby mechanism, the standby node saves a copy of relay logs to ensure the reliability and efficiency of asynchronous replication. DM also supports saving a copy of relay logs on DM-worker. You can configure information such as the storage location and expiration time. This feature applies to the following scenarios:
+MySQL 的主从复制在 Secondary 端会保存一份 Relay log，以此保证异步复制的可靠性与效能。DM 也支持在 DM-worker 侧保存一份 Relay log，并可设置存储位置、过期清理时间等信息。此功能适用于以下场景：
 
-- During full and incremental data migration, if the amount of full data is large, the entire process takes more time than the time for the upstream binlogs to be archived. It causes the incremental replication task to fail to start normally. If you enable the relay log, DM-worker will start receiving relay logs when the full migration is started. This avoids the failure of the incremental task.
+- 在进行全量 + 增量数据迁移时，因为全量迁移数据量较大，整个过程耗费时间超过了上游 Binlog 归档的时间，导致增量同步任务不能正常启动，如果开启 Relay Log 在全量同步启动同时，DM-worker 即会开始接收 Relay log，避免增量任务启动失败。
+- 在使用 DM 进行长期数据同步的场景中，有时因为各种原因导致同步任务长时间阻塞，此时开启了 Relay log 功能，可以有效应对同步任务阻塞而导致的上游 Binglog 被回收问题。
 
-- When you use DM to perform long-time data replication, sometimes the migration task is blocked for a long time due to various reasons. If you enable the relay log, you can effectively deal with the problem of upstream binlogs being recycled due to the blocking of the migration task.
+在使用 Relay Log 功能时也会有一定的限制。DM 支持高可用，当某个 DM-worker 出现故障，会尝试将空闲的 DM-worker 实例提升为工作实例，如果此时上游 Binlog 没有包含必要的同步日志，将可能出现同步中断情况。此时需要人工干预，尽快将 Relay log 复制到新的 DM-worker 节点上来，并修改相应的 Relay meta 文件。具体方法请参考[故障处理](/dm/dm-error-handling.md#relay-处理单元报错-event-from--in--diff-from-passed-in-event--或迁移任务中断并包含-get-binlog-error-error-1236-hy000binlog-checksum-mismatch-data-may-be-corrupted-等-binlog-获取或解析失败错误)。
 
-There are some restrictions on using the relay log. DM supports high availability. When a DM-worker fails, it will try to promote an idle DM-worker instance to a working instance. If the upstream binlogs do not contain the necessary migration logs, it may cause interruption. You need to intervene manually to copy the relay log to the new DM-worker node as soon as possible, and modify the corresponding relay meta file. For details, see [Troubleshooting](/dm/dm-error-handling.md#the-relay-unit-throws-error-event-from--in--diff-from-passed-in-event--or-a-migration-task-is-interrupted-with-failing-to-get-or-parse-binlog-errors-like-get-binlog-error-error-1236-hy000-and-binlog-checksum-mismatch-data-may-be-corrupted-returned).
+#### 上游使用在线变更工具 pt-osc/gh-ost
 
-#### Use PT-osc/GH-ost in upstream
+在日常运维 MySQL 时，想要在线变更表结构，一般会使用 pt-osc/gh-ost 这类工具，以此保证 DDL 变更对线上业务的影响最小。但整个过程会被如实地记录到 MySQL Binlog 中，如果全部同步到下游 TiDB，将产生大量的写放大，既不高效也不经济。DM 在设置 Task 任务时候可以设置支持三方数据同步工具 pt-osc 或 gh-ost，配置后将不再同步大量冗余数据，并且能保证数据同步的一致性。具体设置方式请参考[迁移使用 gh-ost/pt-osc 的源数据库](/dm/feature-online-ddl.md)。
 
-In daily MySQL operation and maintenance, usually you use tools such as PT-osc/GH-ost to change the schema online to minimize impact on the business. However, the whole process will be logged to MySQL Binlog. Migrating such data to TiDB downstream will result in a lot of unnecessary write operations, which is neither efficient nor economical.
+## 数据迁移中
 
-To resolve this issue, DM supports third-party data tools such as PT-osc and GH-ost when you configure the migration task. When you use such tools, DM does not migrate redundant data and ensure data consistency. For details, see [Migrate from Databases that Use GH-ost/PT-osc](/dm/feature-online-ddl.md).
+在这个环节基本上遇到的问题都是 Troubleshooting 类的问题，在这里给大家列举一些场景的问题及处理方式。
 
-## Best practices during migration
+### 上游与下游 Schema 不一致
 
-This section introduces how to troubleshoot problems you might encounter during migration.
-
-### Inconsistent schemas in upstream and downstream
-
-Common errors include:
+常见报错信息：
 
 - `messages: Column count doesn't match value count: 3 (columns) vs 2 (values)`
 - `Schema/Column doesn't match`
 
-Usually such issues are caused by changed or added indexes in the downstream TiDB, or there are more columns in the downstream. When such errors occur, check whether the upstream and downstream schemas are inconsistent.
+此类问题主要原因是下游 TiDB 中增加或修改了索引，或者下游比上游更多列。当出现此类的同步报错信息时，请检查是否是上下游 Schema 不一致导致的同步中断。
 
-To resolve such issues, update the schema information cached in DM to be consistent with the downstream TiDB schema. For details, see [Manage Table Schemas of Tables to be Migrated](/dm/dm-manage-schema.md).
+要解决此类问题，只需将 DM 中缓存的 Schema 信息更新成与下游 TiDB Schema 一致即可。具体方法参考[管理迁移表的表结构](/dm/dm-manage-schema.md)。
 
-If the downstream has more columns, see [Migrate Data to a Downstream TiDB Table with More Columns](/migrate-with-more-columns-downstream.md).
+如果是下游比上游多列的场景，请参考[下游存在更多列的迁移场景](/migrate-with-more-columns-downstream.md)。
 
-### Interrupted migration task due to failed DDL
+### 处理因为 DDL 中断的数据同步任务
 
-DM supports skipping or replacing DDL statements that cause a migration task to interrupt. For details, see [Handle Failed DDL Statements](/dm/handle-failed-ddl-statements.md#usage-examples).
+DM 支持跳过或者替换导致同步任务中断的 DDL 语句。并且针对是否为分库分表合并场景有对应不同的操作，具体请参考[处理出错的 DDL 语句](/dm/handle-failed-ddl-statements.md#使用示例)。
 
-## Data validation after data migration
+## 数据迁移后的数据校验
 
-It is recommended that you validate the consistency of data after data migration. TiDB provides [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) to help you complete the data validation.
+在完成数据迁移后，建议对新旧数据进行数据一致性校验。TiDB 提供了相应的同步工具 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 来帮助你完成数据校验工作。
 
-Now sync-diff-inspector can automatically manage the table list to be checked for data consistency through DM tasks. Compared with the previous manual configuration, it is more efficient. For details, see [Data Check in the DM Replication Scenario](/sync-diff-inspector/dm-diff.md).
+通过管理 DM 中的同步任务，sync-diff-inspector 可以自动管理需要进行数据一致性检查的 Table 列表，相较之前的手动配置更加的高效。具体参考[基于 DM 同步场景下的数据校验](/sync-diff-inspector/dm-diff.md)。
 
-Since DM v6.2.0, DM supports continuous data validation for incremental replication. For details, see [Continuous Data Validation in DM](/dm/dm-continuous-data-validation.md).
+自 DM v6.2.0 版本开始，DM 支持在增量同步的同时进行数据校验。具体参考 [DM 增量数据校验](/dm/dm-continuous-data-validation.md)。
 
-## Long-term data replication
+## 数据长期同步
 
-If you use DM to perform a long-term data replication task, it is necessary to back up the metadata. On the one hand, it ensures the ability to rebuild the migration cluster. On the other hand, it can implement the version control of the migration task. For details, see [Export and Import Data Sources and Task Configuration of Clusters](/dm/dm-export-import-config.md).
+如果将 DM 作为持续的数据同步平台，建议一定要做好必要的元信息备份。一方面是保证同步集群故障重建的能力，另一方面可以实现同步任务的版本控制。具体实现方式参考[导出和导入集群的数据源和任务配置](/dm/dm-export-import-config.md)。

@@ -1,52 +1,52 @@
 ---
-title: TiFlash Disaggregated Storage and Compute Architecture and S3 Support
-summary: Learn about TiFlash disaggregated storage and compute architecture and S3 Support.
+title: TiFlash 存算分离架构与 S3 支持
+summary: 了解 TiFlash 存算分离架构与 S3 支持。
 ---
 
-# TiFlash Disaggregated Storage and Compute Architecture and S3 Support
+# TiFlash 存算分离架构与 S3 支持
 
-By default, TiFlash is deployed using the coupled storage and compute architecture, in which each TiFlash node acts as both storage and compute node. Starting from TiDB v7.0.0, TiFlash supports the disaggregated storage and compute architecture and allows to store data in Amazon S3 or S3-compatible object storage (such as MinIO).
+TiFlash 默认使用存算一体的架构进行部署，即 TiFlash 节点既是存储节点，也是计算节点。从 TiDB v7.0.0 开始，TiFlash 支持存算分离架构，并将数据存储在 Amazon S3 或兼容 S3 API 的对象存储中（比如 MinIO）。
 
-## Architecture overview
+## 架构介绍
 
-![TiFlash Write and Compute Separation Architecture](https://docs-download.pingcap.com/media/images/docs/tiflash/tiflash-s3.png)
+![TiFlash Write and Compute Separation Architect](https://docs-download.pingcap.com/media/images/docs-cn/tiflash/tiflash-s3.png)
 
-In the disaggregated storage and compute architecture, different functionalities of the TiFlash process are divided and allocated to two types of nodes: the Write Node and the Compute Node. These two types of nodes can be deployed separately and scaled independently, which means that you can decide the number of Write Nodes and Compute Nodes to be deployed as needed.
+如图，在存算分离架构中，TiFlash 原有进程的不同部分的功能，被拆分到两种不同的节点中，分别是 Write Node 和 Compute Node。这两种节点可以分别部署，各自扩展，即你可以选择部署任意数量的 Write Node 或者 Compute Node。
 
 - TiFlash Write Node
 
-    The Write Node receives Raft logs data from TiKV, converts the data into the columnar format, and periodically packages and uploads all the updated data within a certain period to S3. In addition, the Write Node manages the data on S3, such as continuously organizing data to improve query performance and deleting useless data.
+    负责接收 TiKV 的 Raft logs 数据，将数据转换成列存格式，并每隔一小段时间将这段时间的所有数据更新打包上传到 S3 中。此外，Write Node 也负责管理 S3 上的数据，比如不断整理数据使之具有更好的查询性能，以及删除无用的数据等。
 
-    The Write Node uses local disks (usually NVMe SSDs) to cache the latest written data to avoid excessive use of memory.
+    Write Node 利用本地磁盘（通常是 NVMe SSD）来缓存最新写入的数据，从而避免过多使用内存。
 
 - TiFlash Compute Node
 
-    The Compute Node executes query requests sent from a TiDB node. It first accesses a Write Node to obtain data snapshots, and then reads the latest data (that is, the data not been uploaded to S3 yet) from the Write Node and most of the remaining data from S3.
+    负责执行从 TiDB 节点发过来的查询请求。它首先访问 Write Node 以获取数据的快照 (data snapshots)，然后分别从 Write Node 读取最新的数据（即尚未上传到 S3 的数据），从 S3 读取剩下的大部分数据。
 
-    The Compute Node uses local disks (usually NVMe SSDs) as a cache for data files to avoid repeatedly reading the same data from remote locations (Write Nodes or S3) and improve query performance.
+    Compute Node 利用本地磁盘（通常是 NVMe SSD）来作为数据文件的缓存，从而避免相同的数据反复从远端（Write Node 或者 S3）读取，以提高查询性能。
 
-    The Compute Node is stateless and its scaling speed is at a second level. You can use this feature to reduce costs as follows:
+    Compute Node 是无状态节点，它拥有秒级的扩容和缩容速度。你可以利用这个特性降低成本：
 
-    - When the query workload is low, reduce the number of Compute Nodes to save costs. When there are no queries, you can even stop all Compute Nodes.
-    - When the query workload increases, quickly increase the number of Compute Nodes to ensure query performance.
+    - 在查询负载较低时，减少 Compute Node 的数量，从而节省成本。在没有查询时，甚至可以停掉所有 Compute Node。
+    - 在查询负载变高时，快速增加 Compute Node 的数量，保证查询性能。
 
-## Scenarios
+## 使用场景
 
-TiFlash disaggregated storage and compute architecture is suitable for cost-effective data analysis services. Because storage and compute resources can be scaled separately as needed in this architecture, you can get significant benefits in the following scenarios:
+TiFlash 存算分离架构适用于高性价比的数据分析服务的场景。在这个架构下，存储和计算资源可以单独按需扩展。在这些场景将会有较大收益：
 
-- The amount of data is large, but only a small amount of data is frequently queried. Most of the data is cold data and rarely queried. At this time, the frequently queried data is usually cached on the local SSD of the Compute Node to provide fast query performance, while most of the other cold data is stored in low-cost S3 or other object storage to save storage costs.
+- 数据量虽然很大，但是只有少量数据被频繁查询；其他大部分数据属于冷数据，很少被查询。此时经常被查询的数据通常已被缓存在 Compute Node 的本地 SSD 上，可以提供较快查询性能；而其他大部分冷数据则存储在成本较低的 S3 或者其他对象存储上，从而节省存储成本。
 
-- The demand for compute resources has obvious peaks and valleys. For example, intensive reconciliation queries are usually performed at night, which demands high compute resources. In this case, you can consider temporarily adding more Compute Nodes at night. While at other times, you only need fewer Compute Nodes to complete regular query tasks.
+- 计算资源需求有明显的波峰和波谷。比如重型的对账查询通常放在晚上执行，此时对计算资源要求较高，可以考虑临时扩展 Compute Node；其他时间可以用较少的 Compute Node 完成查询任务。
 
-## Prerequisites
+## 准备条件
 
-1. Prepare an Amazon S3 bucket for storing the TiFlash data.
+1. 准备一个 S3 的 bucket，用于存储 TiFlash 数据。
 
-    You can also use an existing bucket, but you need to reserve dedicated key prefixes for each TiDB cluster. For more information about S3 buckets, see [AWS documentation](https://docs.aws.amazon.com/en_us/AmazonS3/latest/userguide/creating-buckets-s3.html).
+    你也可以使用已有的 bucket，但需要为每个 TiDB 集群预留专门的 key 前缀。关于 S3 bucket 的更多信息，请参考 [AWS 文档](https://docs.aws.amazon.com/zh_cn/AmazonS3/latest/userguide/creating-buckets-s3.html)。
 
-    You can also use other S3-compatible object storage, such as [MinIO](https://min.io/).
+    也可以使用兼容 S3 的其他对象存储，比如 [MinIO](https://min.io/)。
 
-    TiFlash needs to use the following S3 APIs for accessing data. Make sure that TiFlash nodes in your TiDB cluster have the necessary permissions for these APIs.
+    TiFlash 将使用以下 S3 API 接口进行数据读写，需要确保部署 TiFlash 的节点有这些接口的权限：
 
     - PutObject
     - GetObject
@@ -56,88 +56,88 @@ TiFlash disaggregated storage and compute architecture is suitable for cost-effe
     - GetObjectTagging
     - PutBucketLifecycle
 
-2. Make sure that your TiDB cluster has no TiFlash nodes deployed using the coupled storage and compute architecture. If any, set the TiFlash replica count of all tables to `0` and then remove all TiFlash nodes. For example:
+2. 确保 TiDB 集群中没有任何存算一体架构的 TiFlash 节点。如果有，则需要将所有表的 TiFlash 副本数设置为 0，然后缩容掉所有 TiFlash 节点。比如：
 
     ```sql
-    SELECT * FROM INFORMATION_SCHEMA.TIFLASH_REPLICA; # Query all tables with TiFlash replicas
-    ALTER TABLE table_name SET TIFLASH REPLICA 0;     # Set the TiFlash replica count of all tables to `0`
+    SELECT * FROM INFORMATION_SCHEMA.TIFLASH_REPLICA; # 查询所有带有 TiFlash 副本的表
+    ALTER TABLE table_name SET TIFLASH REPLICA 0;     # 将所有表的 TiFlash 副本数设置为 0
     ```
 
     ```shell
-    tiup cluster scale-in mycluster -N 'node0,node1...' # Remove all TiFlash nodes
-    tiup cluster display mycluster                     # Wait for all TiFlash nodes to enter the Tombstone state
-    tiup cluster prune mycluster                       # Remove all TiFlash nodes in the Tombstone state
+    tiup cluster scale-in mycluster -N 'node0,node1...' # 缩容掉所有 TiFlash 节点
+    tiup cluster display mycluster                     # 等待所有 TiFlash 节点进入 Tombstone 状态
+    tiup cluster prune mycluster                       # 移除所有处于 Tombstone 状态的 TiFlash 节点
     ```
 
-## Usage
+## 使用方式
 
-By default, TiUP deploys TiFlash in the coupled storage and computation architecture. If you need to deploy TiFlash in the disaggregated storage and compute architecture, take the following steps for manual configuration:
+默认情况下，TiUP 会将 TiFlash 部署为存算一体架构。如需将 TiFlash 部署为存算分离架构，请参考以下步骤手动进行配置：
 
-1. Prepare a TiFlash topology configuration file, such as `scale-out.topo.yaml`, with the following configuration:
+1. 准备 TiFlash 的拓扑配置文件，比如 scale-out.topo.yaml，配置内容如下：
 
     ```yaml
     tiflash_servers:
-      # In the TiFlash topology configuration file, the `storage.s3` configuration indicates that the disaggregated storage and compute architecture is used for deployment.
-      # If `flash.disaggregated_mode: tiflash_compute` is configured for a node, it is a Compute Node.
-      # If `flash.disaggregated_mode: tiflash_write` is configured for a node, it is a Write Node.
+      # TiFlash 的拓扑配置中存在 storage.s3 配置，说明部署时使用存算分离架构
+      # 配置了 flash.disaggregated_mode: tiflash_compute，则节点类型是 Compute Node；
+      # 配置了 flash.disaggregated_mode: tiflash_write，则节点类型是 Write Node
 
-      # 172.31.8.1~2 are TiFlash Write Nodes
+      # 172.31.8.1~2 是 TiFlash Write Node
       - host: 172.31.8.1
         config:
-          flash.disaggregated_mode: tiflash_write               # This is a Write Node
-          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 endpoint address
-          storage.s3.bucket: mybucket                           # TiFlash stores all data in this bucket
-          storage.s3.root: /cluster1_data                       # Root directory where data is stored in the S3 bucket
-          storage.s3.access_key_id: {ACCESS_KEY_ID}             # Access S3 with ACCESS_KEY_ID
-          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # Access S3 with SECRET_ACCESS_KEY
-          storage.main.dir: ["/data1/tiflash/data"]             # Local data directory of the Write Node. Configure it in the same way as the directory configuration of the coupled storage and compute architecture
+          flash.disaggregated_mode: tiflash_write               # 这是一个 Write Node
+          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 的 endpoint 地址
+          storage.s3.bucket: mybucket                           # TiFlash 的所有数据存储在这个 bucket 中
+          storage.s3.root: /cluster1_data                       # S3 bucket 中存储数据的根目录
+          storage.s3.access_key_id: {ACCESS_KEY_ID}             # 访问 S3 的 ACCESS_KEY_ID
+          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # 访问 S3 的 SECRET_ACCESS_KEY
+          storage.main.dir: ["/data1/tiflash/data"]             # Write Node 的本地数据目录，和存算一体的配置方式相同
       - host: 172.31.8.2
         config:
-          flash.disaggregated_mode: tiflash_write               # This is a Write Node
-          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 endpoint address
-          storage.s3.bucket: mybucket                           # TiFlash stores all data in this bucket
-          storage.s3.root: /cluster1_data                       # Root directory where data is stored in the S3 bucket
-          storage.s3.access_key_id: {ACCESS_KEY_ID}             # Access S3 with ACCESS_KEY_ID
-          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # Access S3 with SECRET_ACCESS_KEY
-          storage.main.dir: ["/data1/tiflash/data"]             # Local data directory of the Write Node. Configure it in the same way as the directory configuration of the coupled storage and compute architecture
+          flash.disaggregated_mode: tiflash_write               # 这是一个 Write Node
+          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 的 endpoint 地址
+          storage.s3.bucket: mybucket                           # TiFlash 的所有数据存储在这个 bucket 中
+          storage.s3.root: /cluster1_data                       # S3 bucket 中存储数据的根目录
+          storage.s3.access_key_id: {ACCESS_KEY_ID}             # 访问 S3 的 ACCESS_KEY_ID
+          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # 访问 S3 的 SECRET_ACCESS_KEY
+          storage.main.dir: ["/data1/tiflash/data"]             # Write Node 的本地数据目录，和存算一体的配置方式相同
 
-      # 172.31.9.1~2 are TiFlash Compute Nodes
+      # 172.31.9.1~2 是 TiFlash Compute Node
       - host: 172.31.9.1
         config:
-          flash.disaggregated_mode: tiflash_compute             # This is a Compute Node
-          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 endpoint address
-          storage.s3.bucket: mybucket                           # TiFlash stores all data in this bucket
-          storage.s3.root: /cluster1_data                       # Root directory where data is stored in the S3 bucket
-          storage.s3.access_key_id: {ACCESS_KEY_ID}             # Access S3 with ACCESS_KEY_ID
-          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # Access S3 with SECRET_ACCESS_KEY
-          storage.main.dir: ["/data1/tiflash/data"]             # Local data directory of the Compute Node. Configure it in the same way as the directory configuration of the coupled storage and compute architecture
-          storage.remote.cache.dir: /data1/tiflash/cache        # Local data cache directory of the Compute Node
+          flash.disaggregated_mode: tiflash_compute             # 这是一个 Compute Node
+          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 的 endpoint 地址
+          storage.s3.bucket: mybucket                           # TiFlash 的所有数据存储在这个 bucket 中
+          storage.s3.root: /cluster1_data                       # S3 bucket 中存储数据的根目录
+          storage.s3.access_key_id: {ACCESS_KEY_ID}             # 访问 S3 的 ACCESS_KEY_ID
+          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # 访问 S3 的 SECRET_ACCESS_KEY
+          storage.main.dir: ["/data1/tiflash/data"]             # Compute Node 的本地数据目录，和存算一体的配置方式相同
+          storage.remote.cache.dir: /data1/tiflash/cache        # Compute Node 的本地数据缓存目录
           storage.remote.cache.capacity: 858993459200           # 800 GiB
       - host: 172.31.9.2
         config:
-          flash.disaggregated_mode: tiflash_compute             # This is a Compute Node
-          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 endpoint address
-          storage.s3.bucket: mybucket                           # TiFlash stores all data in this bucket
-          storage.s3.root: /cluster1_data                       # Root directory where data is stored in the S3 bucket
-          storage.s3.access_key_id: {ACCESS_KEY_ID}             # Access S3 with ACCESS_KEY_ID
-          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # Access S3 with SECRET_ACCESS_KEY
-          storage.main.dir: ["/data1/tiflash/data"]             # Local data directory of the Compute Node. Configure it in the same way as the directory configuration of the coupled storage and compute architecture
-          storage.remote.cache.dir: /data1/tiflash/cache        # Local data cache directory of the Compute Node
+          flash.disaggregated_mode: tiflash_compute             # 这是一个 Compute Node
+          storage.s3.endpoint: http://s3.{region}.amazonaws.com # S3 的 endpoint 地址
+          storage.s3.bucket: mybucket                           # TiFlash 的所有数据存储在这个 bucket 中
+          storage.s3.root: /cluster1_data                       # S3 bucket 中存储数据的根目录
+          storage.s3.access_key_id: {ACCESS_KEY_ID}             # 访问 S3 的 ACCESS_KEY_ID
+          storage.s3.secret_access_key: {SECRET_ACCESS_KEY}     # 访问 S3 的 SECRET_ACCESS_KEY
+          storage.main.dir: ["/data1/tiflash/data"]             # Compute Node 的本地数据目录，和存算一体的配置方式相同
+          storage.remote.cache.dir: /data1/tiflash/cache        # Compute Node 的本地数据缓存目录
           storage.remote.cache.capacity: 858993459200           # 800 GiB
     ```
 
-    * Note that the above `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` are directly written in the configuration file. You can also choose to configure them separately using environment variables. If both ways are configured, the environment variables have higher priority.
+    * 注意以上 `ACCESS_KEY_ID` 和 `SECRET_ACCESS_KEY` 是直接写在配置文件中的。你也可以选择使用环境变量的方式单独配置。如果两种方式都配置了，环境变量的优先级高于配置文件。
 
-        To configure `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` through environment variables, switch to the user environment that starts the TiFlash process (usually `tidb`) on all machines where TiFlash processes are deployed, and then modify `~/.bash_profile` to add the following configurations:
+        如需通过环境变量配置，请在所有部署了 TiFlash 进程的机器上，切换到启动 TiFlash 进程的用户环境（通常是 `tidb`），然后修改 `~/.bash_profile`，增加这些配置：
 
         ```shell
         export S3_ACCESS_KEY_ID={ACCESS_KEY_ID}
         export S3_SECRET_ACCESS_KEY={SECRET_ACCESS_KEY}
         ```
 
-    * `storage.s3.endpoint` supports connecting to S3 using the `http` or `https` mode, and you can set the mode by directly modifying the URL. For example, `https://s3.{region}.amazonaws.com`.
+    * `storage.s3.endpoint` 支持使用 `http` 模式和 `https` 模式连接 S3，可以直接通过修改 URL 来选择。比如 `https://s3.{region}.amazonaws.com`。
 
-2. Add TiFlash nodes and reset the number of TiFlash replicas:
+2. 执行扩容 TiFlash 节点，并重新设置 TiFlash 副本数：
 
     ```shell
     tiup cluster scale-out mycluster ./scale-out.topo.yaml
@@ -147,32 +147,32 @@ By default, TiUP deploys TiFlash in the coupled storage and computation architec
     ALTER TABLE table_name SET TIFLASH REPLICA 1;
     ```
 
-3. Modify the TiDB configuration to query TiFlash using the disaggregated storage and compute architecture.
+3. 修改 TiDB 配置，用存算分离的方式查询 TiFlash。
 
-    1. Open the TiDB configuration file in edit mode:
+    1. 以编辑模式打开 TiDB 配置文件：
 
           ```shell
           tiup cluster edit-config mycluster
           ```
 
-    2. Add the following configuration items to the TiDB configuration file:
+    2. 在 TiDB 配置文件中添加以下配置项：
 
         ```shell
         server_configs:
         tidb:
-        disaggregated-tiflash: true   # Query TiFlash using the disaggregated storage and compute architecture
+        disaggregated-tiflash: true   # 使用存算分离的方式查询 TiFlash
         ```
 
-    3. Restart TiDB:
+    3. 重启 TiDB:
 
         ```shell
         tiup cluster reload mycluster -R tidb
         ```
 
-## Restrictions
+## 使用限制
 
-- TiFlash does not support in-place switching between the **disaggregated storage and compute architecture** and the **coupled storage and compute architecture**. Before switching to the disaggregated architecture, you must remove all existing TiFlash nodes deployed using the coupled architecture.
-- After the migration from one architecture to another, all TiFlash data needs to be replicated again.
-- Only TiFlash nodes with the same architecture are allowed in the same TiDB cluster. Two architectures cannot coexist in one cluster.
-- The disaggregated storage and compute architecture only supports object storage using the S3 API, while the coupled storage and compute architecture only supports local storage.
-- When using S3 storage, TiFlash nodes cannot obtain the keys of files not on their own nodes, so the [Encryption at Rest](/encryption-at-rest.md) feature cannot be used.
+- TiFlash 不支持在存算一体架构和存算分离架构之间原地切换。在切换到存算分离架构前，需要将原有存算一体架构的 TiFlash 节点全部删除。
+- 从一种架构迁移到另外一种架构后，需要重新同步所有 TiFlash 的数据。
+- 同一个 TiDB 集群只允许存在相同架构的 TiFlash 节点，不允许两种架构同时存在。
+- 存算分离架构只支持使用 S3 API 的对象存储，存算一体架构只支持本地存储。
+- 使用 S3 存储的情况下，TiFlash 节点无法获取非本节点文件的密钥，因此无法启用[静态加密](/encryption-at-rest.md)功能。

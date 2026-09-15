@@ -1,15 +1,15 @@
 ---
 title: Metrics Schema
-summary: Learn the `METRICS_SCHEMA` schema.
+summary: 了解 TiDB `METRICS SCHEMA` 系统数据库。
 ---
 
 # Metrics Schema
 
-The `METRICS_SCHEMA` is a set of views on top of TiDB metrics that are stored in Prometheus. The source of the PromQL (Prometheus Query Language) for each of the tables is available in [`INFORMATION_SCHEMA.METRICS_TABLES`](/information-schema/information-schema-metrics-tables.md).
+`METRICS_SCHEMA` 是基于 Prometheus 中 TiDB 监控指标的一组视图。每个表的 PromQL（Prometheus 查询语言）的源均可在 [`INFORMATION_SCHEMA.METRICS_TABLES`](/information-schema/information-schema-metrics-tables.md) 表中找到。
 
 
 ```sql
-USE metrics_schema;
+use metrics_schema;
 SELECT * FROM uptime;
 SELECT * FROM information_schema.metrics_tables WHERE table_name='uptime'\G
 ```
@@ -28,7 +28,6 @@ SELECT * FROM information_schema.metrics_tables WHERE table_name='uptime'\G
 | 2020-07-06 15:27:26.203000 | 127.0.0.1:9090  | prometheus | 183.72300004959106 |
 +----------------------------+-----------------+------------+--------------------+
 8 rows in set (0.00 sec)
-
 *************************** 1. row ***************************
 TABLE_NAME: uptime
     PROMQL: (time() - process_start_time_seconds{$LABEL_CONDITIONS})
@@ -40,7 +39,7 @@ TABLE_NAME: uptime
 
 
 ```sql
-SHOW TABLES;
+show tables;
 ```
 
 ```sql
@@ -91,17 +90,17 @@ SHOW TABLES;
 626 rows in set (0.00 sec)
 ```
 
-The `METRICS_SCHEMA` is used as a data source for monitoring-related summary tables such as ([`metrics_summary`](/information-schema/information-schema-metrics-summary.md), [`metrics_summary_by_label`](/information-schema/information-schema-metrics-summary.md) and [`inspection_summary`](/information-schema/information-schema-inspection-summary.md).
+`METRICS_SCHEMA` 是监控相关的 summary 表的数据源，例如 [`metrics_summary`](/information-schema/information-schema-metrics-summary.md)、[`metrics_summary_by_label`](/information-schema/information-schema-metrics-summary.md) 和 [`inspection_summary`](/information-schema/information-schema-inspection-summary.md)。
 
-## Additional Examples
+## 更多例子
 
-Taking the `tidb_query_duration` monitoring table in `metrics_schema` as an example, this section illustrates how to use this monitoring table and how it works. The working principles of other monitoring tables are similar to `tidb_query_duration`.
+下面以 `metrics_schema` 中的 `tidb_query_duration` 监控表为例，介绍监控表相关的使用和原理，其他的监控表原理均类似。
 
-Query the information related to the `tidb_query_duration` table on `information_schema.metrics_tables`:
+查询 `information_schema.metrics_tables` 中关于 `tidb_query_duration` 表相关的信息如下：
 
 
 ```sql
-SELECT * FROM information_schema.metrics_tables WHERE table_name='tidb_query_duration';
+select * from information_schema.metrics_tables where table_name='tidb_query_duration';
 ```
 
 ```sql
@@ -112,19 +111,17 @@ SELECT * FROM information_schema.metrics_tables WHERE table_name='tidb_query_dur
 +---------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------+----------+----------------------------------------------+
 ```
 
-Field description:
+* `TABLE_NAME`：对应于 `metrics_schema` 中的表名，这里表名是 `tidb_query_duration`。
+* `PROMQL`：监控表的原理是将 SQL 映射成 `PromQL` 后向 Prometheus 请求数据，并将 Prometheus 返回的结果转换成 SQL 查询结果。该字段是 `PromQL` 的表达式模板，查询监控表数据时使用查询条件改写模板中的变量，生成最终的查询表达式。
+* `LABELS`：监控项定义的 label，`tidb_query_duration` 有两个 label，分别是 `instance` 和 `sql_type`。
+* `QUANTILE`：百分位。直方图类型的监控数据会指定一个默认百分位。如果值为 `0`，表示该监控表对应的监控不是直方图。`tidb_query_duration` 默认查询 0.9，也就是 P90 的监控值。
+* `COMMENT`：对这个监控表的解释。可以看出 `tidb_query_duration` 表是用来查询 TiDB query 执行的百分位时间，如 P999/P99/P90 的查询耗时，单位是秒。
 
-* `TABLE_NAME`: Corresponds to the table name in `metrics_schema` . In this example, the table name is `tidb_query_duration`.
-* `PROMQL`: The working principle of the monitoring table is to first map SQL statements to `PromQL`, then to request data from Prometheus, and to convert Prometheus results into SQL query results. This field is the expression template of `PromQL`. When you query the data of the monitoring table, the query conditions are used to rewrite the variables in this template to generate the final query expression.
-* `LABELS`: The label for the monitoring item. `tidb_query_duration` has two labels: `instance` and `sql_type`.
-* `QUANTILE`: The percentile. For monitoring data of the histogram type, a default percentile is specified. If the value of this field is `0`, it means that the monitoring item corresponding to the monitoring table is not a histogram.
-* `COMMENT`: Explanations for the monitoring table. You can see that the `tidb_query_duration` table is used to query the percentile time of the TiDB query execution, such as the query time of P999/P99/P90. The unit is second.
-
-To query the schema of the `tidb_query_duration` table, execute the following statement:
+再来看 `tidb_query_duration` 的表结构：
 
 
 ```sql
-SHOW CREATE TABLE metrics_schema.tidb_query_duration;
+show create table metrics_schema.tidb_query_duration;
 ```
 
 ```sql
@@ -141,16 +138,16 @@ SHOW CREATE TABLE metrics_schema.tidb_query_duration;
 +---------------------+--------------------------------------------------------------------------------------------------------------------+
 ```
 
-* `time`: The time of the monitoring item.
-* `instance` and `sql_type`: The labels of the `tidb_query_duration` monitoring item. `instance` means the monitoring address. `sql_type` means the type of the executed SQL statement.
-* `quantile`: The percentile. The monitoring item of the histogram type has this column, which indicates the percentile time of the query. For example, `quantile = 0.9` means to query the time of P90.
-* `value`: The value of the monitoring item.
+* `time`：监控项的时间。
+* `instance` 和 `sql_type`：`tidb_query_duration` 监控项的 label。`instance` 表示监控的地址，`sql_type` 表示执行 SQL 的类似。
+* `quantile`，百分位，直方图类型的监控都会有该列，表示查询的百分位时间，如 `quantile=0.9` 就是查询 P90 的时间。
+* `value`：监控项的值。
 
-The following statement queries the P99 time within the range of [`2020-03-25 23:40:00`, `2020-03-25 23:42:00`].
+下面是查询时间 [`2020-03-25 23:40:00`, `2020-03-25 23:42:00`] 范围内的 P99 的 TiDB Query 耗时：
 
 
 ```sql
-SELECT * FROM metrics_schema.tidb_query_duration WHERE value is not null AND time>='2020-03-25 23:40:00' AND time <= '2020-03-25 23:42:00' AND quantile=0.99;
+select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
 ```
 
 ```sql
@@ -169,16 +166,16 @@ SELECT * FROM metrics_schema.tidb_query_duration WHERE value is not null AND tim
 +---------------------+-------------------+----------+----------+----------------+
 ```
 
-The first row of the query result above means that at the time of 2020-03-25 23:40:00, on the TiDB instance `172.16.5.40:10089`, the P99 execution time of the `Insert` type statement is 0.509929485256 seconds. The meanings of other rows are similar. Other values of the `sql_type` column are described as follows:
+以上查询结果的第一行意思是，在 `2020-03-25 23:40:00` 时，在 TiDB 实例 `172.16.5.40:10089` 上，`Insert` 类型的语句的 P99 执行时间是 0.509929485256 秒。其他各行的含义类似，`sql_type` 列的其他值含义如下：
 
-* `Select`: The `select` type statement is executed.
-* `internal`: The internal SQL statement of TiDB, which is used to update the statistical information and get the global variables.
+* `Select`：表示执行的 `select` 类型的语句。
+* `internal`：表示 TiDB 的内部 SQL 语句，一般是统计信息更新，获取全局变量相关的内部语句。
 
-To view the execution plan of the statement above, execute the following statement:
+进一步再查看上面语句的执行计划如下：
 
 
 ```sql
-DESC SELECT * FROM metrics_schema.tidb_query_duration WHERE value is not null AND time>='2020-03-25 23:40:00' AND time <= '2020-03-25 23:42:00' AND quantile=0.99;
+desc select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
 ```
 
 ```sql
@@ -190,68 +187,68 @@ DESC SELECT * FROM metrics_schema.tidb_query_duration WHERE value is not null AN
 +------------------+----------+------+---------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-From the result above, you can see that `PromQL`, `start_time`, `end_time`, and `step` are in the execution plan. During the execution process, TiDB calls the `query_range` HTTP API of Prometheus to query the monitoring data.
+可以发现执行计划中有一个 `PromQL`，以及查询监控的 `start_time` 和 `end_time`，还有 `step` 值，在实际执行时，TiDB 会调用 Prometheus 的 `query_range` HTTP API 接口来查询监控数据。
 
-You might find that in the range of [`2020-03-25 23:40:00`, `2020-03-25 23:42:00`], each label only has three time values. In the execution plan, the value of `step` is 1 minute, which means that the interval of these values is 1 minute. `step` is determined by the following two session variables:
+从以上结果可知，在 `[2020-03-25 23:40:00, 2020-03-25 23:42:00]` 时间范围内，每个 label 只有三个时间的值，间隔时间是 1 分钟，即执行计划中的 `step` 值。该间隔时间由以下两个 session 变量决定：
 
-* `tidb_metric_query_step`: The query resolution step width. To get the `query_range` data from Prometheus, you need to specify `start_time`, `end_time`, and `step`. `step` uses the value of this variable.
-* `tidb_metric_query_range_duration`: When the monitoring data is queried, the value of the `$ RANGE_DURATION` field in `PROMQL` is replaced with the value of this variable. The default value is 60 seconds.
+* `tidb_metric_query_step`：查询的分辨率步长。从 Prometheus 的 `query_range` 接口查询数据时需要指定 `start_time`，`end_time` 和 `step`，其中 `step` 会使用该变量的值。
+* `tidb_metric_query_range_duration`：查询监控时，会将 `PROMQL` 中的 `$RANGE_DURATION` 替换成该变量的值，默认值是 60 秒。
 
-To view the values of monitoring items with different granularities, you can modify the two session variables above before querying the monitoring table. For example:
+如果想要查看不同时间粒度的监控项的值，用户可以修改上面两个 session 变量后查询监控表，示例如下：
 
-1. Modify the values of the two session variables and set the time granularity to 30 seconds.
+首先修改两个 session 变量的值，将时间粒度设置为 30 秒。
 
-    > **Note:**
-    >
-    > The minimum granularity supported by Prometheus is 30 seconds.
+> **注意：**
+>
+> Prometheus 支持查询的最小粒度为 30 秒。
 
-    
-    ```sql
-    set @@tidb_metric_query_step=30;
-    set @@tidb_metric_query_range_duration=30;
-    ```
 
-2. Query the `tidb_query_duration` monitoring item as follows. From the result, you can see that within the 3-minute time range, each label has 6 time values, and the interval between each value is 30 seconds.
+```sql
+set @@tidb_metric_query_step=30;
+set @@tidb_metric_query_range_duration=30;
+```
 
-    
-    ```sql
-    select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
-    ```
+再查询 `tidb_query_duration` 监控如下，可以发现在三分钟时间范围内，每个 label 有六个时间的值，每个值时间间隔是 30 秒。
 
-    ```sql
-    +---------------------+-------------------+----------+----------+-----------------+
-    | time                | instance          | sql_type | quantile | value           |
-    +---------------------+-------------------+----------+----------+-----------------+
-    | 2020-03-25 23:40:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.483285651924  |
-    | 2020-03-25 23:40:30 | 172.16.5.40:10089 | Insert   | 0.99     | 0.484151462113  |
-    | 2020-03-25 23:41:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.504576        |
-    | 2020-03-25 23:41:30 | 172.16.5.40:10089 | Insert   | 0.99     | 0.493577384561  |
-    | 2020-03-25 23:42:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.49482474311   |
-    | 2020-03-25 23:40:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.189253402185  |
-    | 2020-03-25 23:40:30 | 172.16.5.40:10089 | Select   | 0.99     | 0.184224951851  |
-    | 2020-03-25 23:41:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.151673410553  |
-    | 2020-03-25 23:41:30 | 172.16.5.40:10089 | Select   | 0.99     | 0.127953838989  |
-    | 2020-03-25 23:42:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.127455434547  |
-    | 2020-03-25 23:40:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0624          |
-    | 2020-03-25 23:40:30 | 172.16.5.40:10089 | internal | 0.99     | 0.12416         |
-    | 2020-03-25 23:41:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0304          |
-    | 2020-03-25 23:41:30 | 172.16.5.40:10089 | internal | 0.99     | 0.06272         |
-    | 2020-03-25 23:42:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0629333333333 |
-    +---------------------+-------------------+----------+----------+-----------------+
-    ```
 
-3. View the execution plan. From the result, you can also see that the values of `PromQL` and `step` in the execution plan have been changed to 30 seconds.
+```sql
+select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
+```
 
-    
-    ```sql
-    desc select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
-    ```
+```sql
++---------------------+-------------------+----------+----------+-----------------+
+| time                | instance          | sql_type | quantile | value           |
++---------------------+-------------------+----------+----------+-----------------+
+| 2020-03-25 23:40:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.483285651924  |
+| 2020-03-25 23:40:30 | 172.16.5.40:10089 | Insert   | 0.99     | 0.484151462113  |
+| 2020-03-25 23:41:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.504576        |
+| 2020-03-25 23:41:30 | 172.16.5.40:10089 | Insert   | 0.99     | 0.493577384561  |
+| 2020-03-25 23:42:00 | 172.16.5.40:10089 | Insert   | 0.99     | 0.49482474311   |
+| 2020-03-25 23:40:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.189253402185  |
+| 2020-03-25 23:40:30 | 172.16.5.40:10089 | Select   | 0.99     | 0.184224951851  |
+| 2020-03-25 23:41:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.151673410553  |
+| 2020-03-25 23:41:30 | 172.16.5.40:10089 | Select   | 0.99     | 0.127953838989  |
+| 2020-03-25 23:42:00 | 172.16.5.40:10089 | Select   | 0.99     | 0.127455434547  |
+| 2020-03-25 23:40:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0624          |
+| 2020-03-25 23:40:30 | 172.16.5.40:10089 | internal | 0.99     | 0.12416         |
+| 2020-03-25 23:41:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0304          |
+| 2020-03-25 23:41:30 | 172.16.5.40:10089 | internal | 0.99     | 0.06272         |
+| 2020-03-25 23:42:00 | 172.16.5.40:10089 | internal | 0.99     | 0.0629333333333 |
++---------------------+-------------------+----------+----------+-----------------+
+```
 
-    ```sql
-    +------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | id               | estRows  | task | access object             | operator info                                                                                                                                                                                         |
-    +------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    | Selection_5      | 8000.00  | root |                           | not(isnull(Column#5))                                                                                                                                                                                 |
-    | └─MemTableScan_6 | 10000.00 | root | table:tidb_query_duration | PromQL:histogram_quantile(0.99, sum(rate(tidb_server_handle_query_duration_seconds_bucket{}[30s])) by (le,sql_type,instance)), start_time:2020-03-25 23:40:00, end_time:2020-03-25 23:42:00, step:30s |
-    +------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    ```
+最后查看执行计划，也会发现执行计划中的 `PromQL` 以及 `step` 的值都已经变成了 30 秒。
+
+
+```sql
+desc select * from metrics_schema.tidb_query_duration where value is not null and time>='2020-03-25 23:40:00' and time <= '2020-03-25 23:42:00' and quantile=0.99;
+```
+
+```sql
++------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| id               | estRows  | task | access object             | operator info                                                                                                                                                                                         |
++------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Selection_5      | 8000.00  | root |                           | not(isnull(Column#5))                                                                                                                                                                                 |
+| └─MemTableScan_6 | 10000.00 | root | table:tidb_query_duration | PromQL:histogram_quantile(0.99, sum(rate(tidb_server_handle_query_duration_seconds_bucket{}[30s])) by (le,sql_type,instance)), start_time:2020-03-25 23:40:00, end_time:2020-03-25 23:42:00, step:30s |
++------------------+----------+------+---------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+```

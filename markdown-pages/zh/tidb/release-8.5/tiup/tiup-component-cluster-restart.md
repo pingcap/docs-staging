@@ -1,54 +1,50 @@
 ---
 title: tiup cluster restart
-summary: The `tiup cluster restart` command is used to restart services in a specified cluster. During the restart, the services are unavailable. You can specify nodes or roles to be restarted using the `-N, --node` and `-R, --role` options. The output is the log of the service restart process.
+summary: tiup cluster restart 命令用于重启指定集群的所有或部分服务。重启过程中会有一段时间服务不可用。语法为 tiup cluster restart <cluster-name> [flags]。选项包括 -N, --node（strings，默认为 []，表示所有节点），-R, --role（strings，默认为 []，表示所有角色），-h, --help。输出为重启服务的日志。
 ---
 
 # tiup cluster restart
 
-The command `tiup cluster restart` is used to restart all or some of the services of the specified cluster.
+命令 `tiup cluster restart` 用于重启指定集群的所有或部分服务。
 
-> **Note:**
->
-> During the restart process, the related services are unavailable for a period of time.
+> **注意：**
+> 
+> 重启过程中会有一段时间服务不可用。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster restart <cluster-name> [flags]
 ```
 
-`<cluster-name>`: the name of the cluster to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-cluster-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可通过[集群列表](/tiup/tiup-component-cluster-list.md)查看。
 
-## Options
+## 选项
 
-### -N, --node
+### -N, --node（strings，默认为 []，表示所有节点）
 
-- Specifies the nodes to be restarted. The value of this option is a comma-separated list of node IDs. You can get the node IDs from the first column of the [cluster status table](/tiup/tiup-component-cluster-display.md) returned by the `tiup cluster display` command.
-- Data type: `STRING`
-- If this option is not specified, TiUP restarts all nodes by default.
+指定要重启的节点，不指定则表示所有节点。该选项的值为以逗号分割的节点 ID 列表，节点 ID 为[集群状态](/tiup/tiup-component-cluster-display.md)表格的第一列。
 
-> **Note:**
->
-> If the option `-R, --role` is specified at the same time, TiUP restarts service nodes that match both the requirements of `-N, --node` and `-R, --role`.
+> **注意：**
+> 
+> 若同时指定了 `-R, --role`，那么将重启它们的交集中的服务。
 
-### -R, --role
+### -R, --role（strings，默认为 []，表示所有角色）
 
-- Specified the roles of nodes to be restarted. The value of this option is a comma-separated list of the roles of the nodes. You can get the roles of the nodes from the second column of the [cluster status table](/tiup/tiup-component-cluster-display.md) returned by the `tiup cluster display` command.
-- Data type: `STRING`
-- If this option is not specified, TiUP restarts nodes of all roles by default.
+指定要重启的角色，不指定则表示所有角色。该选项的值为以逗号分割的节点角色列表，角色为[集群状态](/tiup/tiup-component-cluster-display.md)表格的第二列。
 
-> **Note:**
->
-> If the option `-N, --node` is specified at the same time, TiUP restarts service nodes that match both the requirements of `-N, --node` and `-R, --role`.
+> **注意：**
+> 
+> 若同时指定了 `-N, --node`，那么将重启它们的交集中的服务。
 
 ### -h, --help
 
-- Prints help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Outputs
+## 输出
 
-The log of the service restart process.
+重启服务的日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

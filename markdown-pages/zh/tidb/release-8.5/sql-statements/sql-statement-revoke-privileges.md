@@ -1,15 +1,15 @@
 ---
-title: REVOKE <privileges> | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 REVOKE <privileges> 的用法概述。
+title: REVOKE <privileges>
+summary: TiDB 数据库中 REVOKE <privileges> 的使用概况。
 ---
 
 # `REVOKE <privileges>`
 
-此语句用于从现有用户中撤销权限。执行此语句需要拥有 `GRANT OPTION` 权限以及所有你要撤销的权限。
+`REVOKE <privileges>` 语句用于删除已有用户的权限。执行 `REVOKE <privileges>` 语句需要拥有分配的权限，并且拥有 `GRANT OPTION` 权限。
 
-从 v8.5.6 开始，TiDB 支持与 MySQL 兼容的列级权限管理机制。你可以在 `REVOKE` 中指定列名列表，例如 `REVOKE SELECT(col2) ON test.tbl FROM 'user'@'host';`。更多信息，请参见[列级权限管理](/column-privilege-management.md)。
+从 v8.5.6 版本开始，TiDB 支持兼容 MySQL 的列级权限管理机制，你可以在 `REVOKE` 中指定列名列表，例如，`REVOKE SELECT(col2) ON test.tbl FROM 'user'@'host';`。更多信息参见[列级权限管理](/column-privilege-management.md)。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 RevokeStmt ::=
@@ -60,14 +60,30 @@ UserSpecList ::=
 
 ## 示例
 
+
 ```sql
-mysql> CREATE USER 'newuser' IDENTIFIED BY 'mypassword';
+CREATE USER 'newuser' IDENTIFIED BY 'mypassword';
+```
+
+```
 Query OK, 1 row affected (0.02 sec)
+```
 
-mysql> GRANT ALL ON test.* TO 'newuser';
+
+```sql
+GRANT ALL ON test.* TO 'newuser';
+```
+
+```
 Query OK, 0 rows affected (0.03 sec)
+```
 
-mysql> SHOW GRANTS FOR 'newuser';
+
+```sql
+SHOW GRANTS FOR 'newuser';
+```
+
+```
 +-------------------------------------------------+
 | Grants for newuser@%                            |
 +-------------------------------------------------+
@@ -75,36 +91,55 @@ mysql> SHOW GRANTS FOR 'newuser';
 | GRANT ALL PRIVILEGES ON test.* TO 'newuser'@'%' |
 +-------------------------------------------------+
 2 rows in set (0.00 sec)
+```
 
-mysql> REVOKE ALL ON test.* FROM 'newuser';
+
+```sql
+REVOKE ALL ON test.* FROM 'newuser';
+```
+
+```
 Query OK, 0 rows affected (0.03 sec)
+```
 
-mysql> SHOW GRANTS FOR 'newuser';
+
+```sql
+SHOW GRANTS FOR 'newuser';
+```
+
+```
 +-------------------------------------+
 | Grants for newuser@%                |
 +-------------------------------------+
 | GRANT USAGE ON *.* TO 'newuser'@'%' |
 +-------------------------------------+
 1 row in set (0.00 sec)
+```
 
-mysql> DROP USER 'newuser';
+
+```sql
+DROP USER 'newuser';
+```
+
+```
 Query OK, 0 rows affected (0.14 sec)
+```
 
-mysql> SHOW GRANTS FOR 'newuser';
+
+```sql
+SHOW GRANTS FOR 'newuser';
+```
+
+```
 ERROR 1141 (42000): There is no such grant defined for user 'newuser' on host '%'
 ```
 
 ## MySQL 兼容性
 
-* 在 TiDB 中，成功执行 `REVOKE <privileges>` 语句后，执行结果会立即在当前连接生效。而 [在 MySQL 中，对于某些权限，执行结果只在后续连接中生效](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)。详情请参见 [TiDB #39356](https://github.com/pingcap/tidb/issues/39356)。
+`REVOKE <privileges>` 语句执行成功后，在 TiDB 中语句执行的结果会在当前连接立即生效，而 [MySQL 中部分权限的结果需要等到之后的连接才生效](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)。见 [TiDB #39356](https://github.com/pingcap/tidb/issues/39356)。
 
-## 相关链接
+## 另请参阅
 
 * [`GRANT <privileges>`](/sql-statements/sql-statement-grant-privileges.md)
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
-
-<CustomContent platform="tidb">
-
 * [Privilege Management](/privilege-management.md)
-
-</CustomContent>

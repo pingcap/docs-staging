@@ -1,100 +1,100 @@
 ---
-title: Usage Overview of TiDB Backup and Restore
-summary: TiDB Backup and Restore provides best practices for choosing backup methods, managing backup data, and deploying the tool. It recommends using both full and log backups, storing data in recommended storage systems, and setting backup retention periods. The tool can be deployed using the command-line tool, SQL statements, or TiDB Operator on Kubernetes. For detailed usage, refer to the provided documentation.
+title: TiDB 备份与恢复功能使用概述
+summary: 了解如何部署和使用 TiDB 集群的备份与恢复。
 ---
 
-# Usage Overview of TiDB Backup and Restore
+# TiDB 备份与恢复功能使用概述
 
-This document describes best practices of using TiDB backup and restore features, including how to choose a backup method, how to manage backup data, and how to install and deploy the backup and restore tool.
+本文介绍使用 TiDB 备份与恢复功能的最佳实践，包括如何选择备份方案、如何管理备份数据，以及如何安装和部署备份恢复工具。
 
-## Recommended practices
+## 使用概览
 
-Before using TiDB backup and restore features, it is recommended that you understand the recommended backup and restore solutions.
+深入 TiDB 备份和恢复功能使用之前，建议先了解推荐的集群备份和恢复方案。
 
-### How to back up data?
+### 如何备份数据？
 
-**TiDB provides two types of backup. Which one should I use?** Full backup contains the full data of a cluster at a certain point in time. Log backup contains the data changes written to TiDB. It is recommended to use both types of backup at the same time:
+**TiDB 支持两种类型的备份，应该使用哪种备份？** 全量备份包含集群某个时间点的全量数据，日志备份包含业务写入在 TiDB 产生的数据变更记录。推荐这两种备份方式一起使用：
 
-- **[Start log backup](/br/br-pitr-guide.md#start-log-backup)**: Run the `tiup br log start` command to start the log backup task. After that, the task keeps running on all TiKV nodes and backs up TiDB data changes to the specified storage in small batches regularly.
-- **Perform [snapshot (full) backup](/br/br-snapshot-guide.md#back-up-cluster-snapshots) regularly**: Run the `tiup br backup full` command to back up the snapshot of the cluster to the specified storage. For example, back up the cluster snapshot at 0:00 AM every day.
+- **开启[日志备份](/br/br-pitr-guide.md#开启日志备份)**：运行 `tiup br log start` 命令来启动日志备份任务，任务会在每个 TiKV 节点上持续运行，以小批量的形式定期将 TiDB 变更数据备份到指定存储中。
+- **定期执行[快照（全量）备份](/br/br-snapshot-guide.md#对集群进行快照备份)**：运行 `tiup br backup full` 命令来备份集群快照到备份存储，例如在每天零点进行集群快照备份。
 
-### How to manage backup data?
+### 如何管理备份数据？
 
-BR provides only basic backup and restore features, and does not support backup management. Therefore, you need to decide how to manage backup data on your own, which might involve the following questions?
+BR 只提供备份和恢复的基础功能，尚不支持备份管理的功能，因此你需要自行规划备份数据的管理事项，可能包含以下的问题：
 
-* Which backup storage system should I choose?
-* In which directory should I place the backup data during a backup task?
-* In what way should I organize the directory of the full backup data and log backup data?
-* How to handle the historical backup data in the storage system?
+* 选择哪种备份存储系统？
+* 数据备份的时候，备份数据应该放在什么目录下？
+* 全量备份和日志备份的数据目录如何组织？
+* 如何处理存储系统中历史备份数据？
 
-The following sections will answer these questions one by one.
+下面是处理这些问题的推荐方式：
 
-**Choose a backup storage system**
+**选择备份存储**
 
-It is recommended that you store backup data to Amazon S3, Google Cloud Storage (GCS), or Azure Blob Storage. Using these systems, you do not need to worry about the backup capacity and bandwidth allocation.
+Amazon S3、Google Cloud Storage (GCS)、Azure Blob Storage 是推荐的存储系统选择，使用这些系统，你无需担心备份容量、备份带宽规划等。
 
-If the TiDB cluster is deployed in a self-built data center, the following practices are recommended:
+如果 TiDB 集群部署在自建机房中，则推荐以下方式：
 
-* Build [MinIO](https://docs.min.io/docs/minio-quickstart-guide.html) as the backup storage system, and use the S3 protocol to back up data to MinIO.
-* Mount Network File System (NFS, such as NAS) disks to br command-line tool and all TiKV instances, and use the POSIX file system interface to write backup data to the corresponding NFS directory.
+* 搭建 [MinIO](https://docs.min.io/docs/minio-quickstart-guide.html) 作为备份存储系统，使用 S3 协议将数据备份到 MinIO 中。
+* 挂载 NFS（如 NAS）盘到 br 工具和所有的 TiKV 实例，使用 POSIX file system 接口将备份数据写入对应的 NFS 目录中。
 
-> **Note:**
+> **注意：**
 >
-> If you do not choose NFS or a storage system that supports Amazon S3, GCS, or Azure Blob Storage protocols, the data backed up is generated at each TiKV node. **Note that this is not the recommended way to use BR**, because collecting the backup data might result in data redundancy and operation and maintenance problems.
+> 如果没有挂载 NFS 到 br 工具或 TiKV 节点，或者使用了支持 S3、GCS 或 Azure Blob Storage 协议的远端存储，那么 br 工具备份的数据会在各个 TiKV 节点生成。**注意这不是推荐的 br 工具使用方式**，因为备份数据会分散在各个节点的本地文件系统中，聚集这些备份数据可能会造成数据冗余和运维上的麻烦，而且在不聚集这些数据便直接恢复的时候会遇到 `SST file not found` 报错。
 
-**Organize the backup data directory**
+**组织备份数据目录**
 
-* Store the snapshot backup and log backup in the same directory for unified management, for example, `backup-${cluster-id}`.
-* Store each snapshot backup in a directory with the backup date included, for example, `backup-${cluster-id}/fullbackup-202209081330`.
-* Store the log backup in a fixed directory, for example, `backup-${cluster-id}/logbackup`. The log backup program creates subdirectories under the `logbackup` directory every day to distinguish the data backed up each day.
+* 全量备份和日志备份保存在相同的目录下，方便统一管理，例如 `backup-${cluster-id}`。
+* 每个全量备份保存到命名带有备份日期的目录下，例如 `backup-${cluster-id}/fullbackup-202209081330`。
+* 日志备份数据保存在一个固定目录下，例如 `backup-${cluster-id}/logbackup`。日志备份程序会在 logbackup 目录中每天切分出来一个新的子目录来区分每天的日志备份数据。
 
-**Handle historical backup data**
+**处理历史备份数据**
 
-Assume that you need to set the life cycle for each backup data, for example, 7 days. Such a life cycle is called **backup retention period**, which will also be mentioned in backup tutorials.
+假设你设置了**备份保留期**，即保存固定时间的备份数据，比如 7 天。请注意**备份保留期**的概念，后面使用教程中也会多次遇到。
 
-* To perform PITR, you need to restore the full backup before the restore point, and the log backup between the full backup and the restore point. Therefore, **It is recommended to only delete the log backup before the full snapshot**. For log backups that exceed the backup retention period, you can use `tiup br log truncate` command to delete the backup before the specified time point.
-* For backup data that exceeds the retention period, you can delete or archive the backup directory.
+* 进行 PITR 不仅需要恢复时间点之前的全量备份，还需要全量备份和恢复时间点之间的日志备份，因此，对于超过备份保留期的日志备份，应执行 `tiup br log truncate` 命令删除指定时间点之前的备份。**建议只清理全量快照之前的日志备份**。
+* 对于超过备份保留期的全量备份，建议直接删除或者归档全量备份的目录。
 
-### How to restore data?
+### 如何恢复数据？
 
-- To restore only full backup data, you can use `tiup br restore` to perform a full restore of the specified backup.
-- If you have started log backup and regularly performed a full backup, you can run the `tiup br restore point` command to restore data to any time point within the backup retention period.
+- 如果你只有全量备份数据，或者想恢复某个确定的全量备份，那么可以使用 `tiup br restore` 恢复指定的全量备份。
+- 如果你按照以上推荐的的方式进行备份，那么你可以使用 `tiup br restore point` 恢复到备份保留期内任意时间点。
 
-## Deploy and use BR
+## 部署和使用 BR
 
-To deploy BR, ensure that the following requirements are met:
+使用备份恢复功能的部署要求如下：
 
-- BR, TiKV nodes, and the backup storage system provide network bandwidth that is greater than the backup speed. If the target cluster is particularly large, the threshold of backup and restore speed is limited by the bandwidth of the backup network.
-- The backup storage system provides sufficient read and write performance (IOPS). Otherwise, they might become a performance bottleneck during backup or restore.
-- TiKV nodes have at least two additional CPU cores and high performance disks for backups. Otherwise, the backup might have an impact on the services running on the cluster.
-- BR runs on a node with more than 8 cores and 16 GiB memory.
+- BR、TiKV 节点和备份存储系统需要提供大于备份速度的的网络带宽。当集群特别大的时候，备份和恢复速度上限受限于备份网络的带宽。
+- 备份存储系统还需要提供足够的写入/读取性能 (IOPS)，否则它有可能成为备份恢复时的性能瓶颈。
+- TiKV 节点需要为备份准备至少额外的两个 CPU core 和高性能的磁盘，否则备份将对集群上运行的业务产生影响。
+- 推荐 br 工具运行在 8 核+/16 GB+ 的节点上。
 
-You can use backup and restore features in several ways, such as via the command-line tool, by running SQL commands, and using TiDB Operator. The following sections describe these three methods in detail.
+目前支持以下几种方式来使用 BR。
 
-### Use br command-line tool (recommended)
+### 通过命令行工具（推荐）
 
-TiDB supports backup and restore using br command-line tool.
+TiDB 支持使用 br 工具进行备份恢复。
 
-* You can run the `tiup install br` command to [install br command-line tool using TiUP online](/migration-tools.md#install-tools-using-tiup).
-* For details about how to use `br` commands to back up and restore data, refer to the following documents:
+* 安装方法可以[使用 TiUP 在线安装](/migration-tools.md#使用-tiup-快速安装)：`tiup install br`。
+* 了解如何使用 `br` 命令行工具进行备份与恢复，请参阅：
 
-    * [TiDB Snapshot Backup and Restore Guide](/br/br-snapshot-guide.md)
-    * [TiDB Log Backup and PITR Guide](/br/br-pitr-guide.md)
-    * [TiDB Backup and Restore Use Cases](/br/backup-and-restore-use-cases.md)
+    * [TiDB 快照备份与恢复功能使用](/br/br-snapshot-guide.md)
+    * [TiDB 日志备份与 PITR 功能使用](/br/br-pitr-guide.md)
+    * [TiDB 集群备份与恢复实践示例](/br/backup-and-restore-use-cases.md)
 
-### Use SQL statements
+### 通过 SQL 语句
 
-TiDB supports full backup and restore using SQL statements:
+TiDB 支持使用 SQL 语句进行全量快照备份和恢复：
 
-- [`BACKUP`](/sql-statements/sql-statement-backup.md): backs up full snapshot data.
-- [`RESTORE`](/sql-statements/sql-statement-restore.md): restores snapshot backup data.
-- [`SHOW BACKUPS|RESTORES`](/sql-statements/sql-statement-show-backups.md): views the backup and restore progress.
+- [`BACKUP`](/sql-statements/sql-statement-backup.md) 进行全量快照数据备份。
+- [`RESTORE`](/sql-statements/sql-statement-restore.md) 进行快照备份恢复。
+- [`SHOW BACKUPS|RESTORES`](/sql-statements/sql-statement-show-backups.md) 查看备份恢复的进度。
 
-### Use TiDB Operator on Kubernetes
+### 在 Kubernetes 环境下通过 TiDB Operator
 
-On Kubernetes, you can use TiDB Operator to back up TiDB cluster data to Amazon S3, GCS, or Azure Blob Storage, and restore data from the backup data in such systems. For details, see [Back Up and Restore Data Using TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable/backup-restore-overview).
+在 Kubernetes 环境下，支持通过 TiDB Operator 支持以 S3、GCS、Azure blob storage 作为备份存储，并从这些存储系统中恢复备份数据。使用文档请参阅[使用 TiDB Operator 进行备份恢复](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/backup-restore-overview)。
 
-## See also
+## 探索更多
 
-- [TiDB Backup and Restore Overview](/br/backup-and-restore-overview.md)
-- [TiDB Backup and Restore Architecture](/br/backup-and-restore-design.md)
+- [TiDB 备份与恢复概述](/br/backup-and-restore-overview.md)
+- [TiDB 备份与恢复功能架构](/br/backup-and-restore-design.md)

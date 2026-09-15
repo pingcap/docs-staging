@@ -1,15 +1,15 @@
 ---
-title: JSON Functions That Create JSON Values
-summary: 了解用于创建 JSON 值的 JSON 函数。
+title: 创建 JSON 值的 JSON 函数
+summary: 了解创建 JSON 值的 JSON 函数。
 ---
 
-# 用于创建 JSON 值的 JSON 函数
+# 创建 JSON 值的 JSON 函数
 
-TiDB 支持 MySQL 8.0 中所有 [用于创建 JSON 值的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-creation-functions.html)。
+TiDB 支持使用 MySQL 8.0 中提供的所有[用于创建 JSON 值的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-creation-functions.html)。
 
 ## `JSON_ARRAY()`
 
-`JSON_ARRAY([val[, val] ...])` 函数会对一个（可能为空的）值列表进行求值，并返回一个包含这些值的 JSON 数组。
+`JSON_ARRAY([val[, val] ...])` 函数接受一个值列表（可能为空）作为参数，并返回一个包含这些值的 JSON 数组。
 
 ```sql
 SELECT JSON_ARRAY(1,2,3,4,5), JSON_ARRAY("foo", "bar");
@@ -26,7 +26,7 @@ SELECT JSON_ARRAY(1,2,3,4,5), JSON_ARRAY("foo", "bar");
 
 ## `JSON_OBJECT()`
 
-`JSON_OBJECT([key, val[, key, val] ...])` 函数会对一个（可能为空的）键值对列表进行求值，并返回一个包含这些键值对的 JSON 对象。
+`JSON_OBJECT([key,val[,key,val]...])` 函数接受一个键值对列表（可能为空）作为参数，并返回一个包含这些键值对的 JSON 对象。
 
 ```sql
 SELECT JSON_OBJECT("database", "TiDB", "distributed", TRUE);
@@ -43,7 +43,7 @@ SELECT JSON_OBJECT("database", "TiDB", "distributed", TRUE);
 
 ## `JSON_QUOTE()`
 
-`JSON_QUOTE(str)` 函数会将一个字符串作为带引号的 JSON 值返回。
+`JSON_QUOTE(str)` 函数将字符串返回为带引号的 JSON 值。
 
 ```sql
 SELECT JSON_QUOTE('The name is "O\'Neil"');
@@ -58,7 +58,7 @@ SELECT JSON_QUOTE('The name is "O\'Neil"');
 1 row in set (0.00 sec)
 ```
 
-## 参见
+## 另请参阅
 
-- [JSON Functions Overview](/functions-and-operators/json-functions.md)
-- [JSON Data Type](/data-type-json.md)
+- [JSON 函数](/functions-and-operators/json-functions.md)
+- [JSON 数据类型](/data-type-json.md)

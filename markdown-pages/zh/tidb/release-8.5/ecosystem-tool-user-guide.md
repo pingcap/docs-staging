@@ -1,137 +1,131 @@
 ---
-title: TiDB Tools Overview
-summary: Learn the tools and applicable scenarios.
+title: TiDB 工具功能概览
+summary: TiDB 提供了丰富的工具，包括部署运维工具 TiUP 和 TiDB Operator，数据管理工具如 TiDB Data Migration（DM）、Dumpling、TiDB Lightning、Backup & Restore（BR）、TiCDC、sync-diff-inspector。这些工具可用于部署、数据迁移、备份恢复、数据校验等多种操作，满足不同需求。
 ---
 
-# TiDB Tools Overview
+# TiDB 工具功能概览
 
-TiDB provides a rich set of tools to help you deploy and maintain TiDB, manage data (such as data migration, backup & restore, and data comparison), and run Spark SQL on TiKV. You can select the applicable tools according to your needs.
+TiDB 提供了丰富的工具，可以帮助你进行部署运维、数据管理（例如，数据迁移、备份恢复、数据校验）、在 TiKV 上运行 Spark SQL。请根据需要选择适用的工具。
 
-## Deployment and operation Tools
+## 部署运维工具
 
-TiDB provides TiUP and TiDB Operator to meet your deployment and operation needs in different system environments.
+TiDB 提供了 TiUP 和 TiDB Operator 部署运维工具，满足你在不同系统环境下的部署运维需求。
 
-### Deploy and operate TiDB on physical or virtual machines - TiUP
+### 在物理机或虚拟机上部署运维 TiDB
 
-[TiUP](/tiup/tiup-overview.md) is a TiDB package manager on physical or virtual machines. TiUP can manage multiple TiDB components such as TiDB, PD, and TiKV. To start any component in the TiDB ecosystem, you just need to execute a single line of TiUP command.
+#### TiUP
 
-TiUP provides [TiUP cluster](https://github.com/pingcap/tiup/tree/master/components/cluster), a cluster management component written in Golang. By using TiUP cluster, you can easily perform daily database operations, including deploying, starting, stopping, destroying, scaling, and upgrading a TiDB cluster, and manage TiDB cluster parameters.
+[TiUP](/tiup/tiup-overview.md) 是在物理机或虚拟机上的 TiDB 包管理器，管理着 TiDB 的众多的组件，如 TiDB、PD、TiKV 等。当你想要运行 TiDB 生态中任何组件时，只需要执行一行 TiUP 命令即可。
 
-The following are the basics of TiUP:
+[TiUP cluster](https://github.com/pingcap/tiup/tree/master/components/cluster) 是 TiUP 提供的使用 Golang 编写的集群管理组件，通过 TiUP cluster 组件就可以进行日常的运维工作，包括部署、启动、关闭、销毁、弹性扩缩容、升级 TiDB 集群，以及管理 TiDB 集群参数。
 
-- [Terminology and Concepts](/tiup/tiup-terminology-and-concepts.md)
-- [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md)
-- [Manage TiUP Components with TiUP Commands](/tiup/tiup-component-management.md)
-- Applicable TiDB versions: v4.0 and later versions
+基本信息：
 
-### Deploy and operate TiDB on Kubernetes - TiDB Operator
+- [术语及核心概念](/tiup/tiup-terminology-and-concepts.md)
+- [使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)
+- [TiUP 组件管理](/tiup/tiup-component-management.md)
+- 适用 TiDB 版本：v4.0 及以上
 
-[TiDB Operator](https://github.com/pingcap/tidb-operator) is an automatic operation system for managing TiDB clusters on Kubernetes. It provides full life-cycle management for TiDB including deployment, upgrades, scaling, backup, and configuration changes. With TiDB Operator, TiDB can run seamlessly in the Kubernetes clusters deployed on a public or private cloud.
+### 在 Kubernetes 上部署运维 TiDB - TiDB Operator
 
-The following are the basics of TiDB Operator:
+[TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable) 是 Kubernetes 上的 TiDB 集群自动运维系统，提供包括部署、升级、扩缩容、备份恢复、配置变更的 TiDB 全生命周期管理。借助 TiDB Operator，TiDB 可以无缝运行在公有云或自托管的 Kubernetes 集群上。
 
-- [TiDB Operator Architecture](https://docs.pingcap.com/tidb-in-kubernetes/stable/architecture)
-- [Get Started with TiDB Operator on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable/get-started/)
-- Applicable TiDB versions: v2.1 and later versions
+基本信息：
 
-## Data management tools
+- [TiDB Operator 架构](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/architecture)
+- [在 Kubernetes 上部署运维 TiDB 快速上手](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/get-started/)
+- 适用 TiDB 版本：v2.1 及以上
 
- TiDB provides multiple data management tools, such as import and export, backup and restore, incremental data replication, and data validation.
+## 数据管理工具
 
-### Data migration - TiDB Data Migration (DM)
+ TiDB 提供了丰富的数据管理工具，例如数据迁移、导入导出、备份恢复、增量同步、数据校验等。
 
-[TiDB Data Migration](/dm/dm-overview.md) (DM) is a tool that supports full data migration and incremental data replication from MySQL/MariaDB to TiDB.
+### 数据迁入 - TiDB Data Migration (DM)
 
-The following are the basics of DM:
+[TiDB Data Migration (DM)](/dm/dm-overview.md) 是将 MySQL/MariaDB 数据迁移到 TiDB 的工具，支持全量数据的迁移和增量数据的复制。
 
-- Source: MySQL/MariaDB
-- Target: TiDB clusters
-- Supported TiDB versions: all versions
-- Kubernetes support: use [TiDB Operator](https://github.com/pingcap/tidb-operator) to deploy TiDB DM on Kubernetes.
+基本信息：
 
-If the data volume is less than 1 TB, it is recommended to migrate data from MySQL/MariaDB to TiDB directly using DM. The migration process includes full data migration and incremental data replication.
+- TiDB DM 的输入：MySQL/MariaDB
+- TiDB DM 的输出：TiDB 集群
+- 适用 TiDB 版本：所有版本
+- Kubernetes 支持：使用 [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/deploy-tidb-dm) 在 Kubernetes 上部署 TiDB DM。
 
-If the data volume is greater than 1 TB , take the following steps:
+如果数据量在 TB 级别以下，推荐直接使用 TiDB DM 迁移 MySQL/MariaDB 数据到 TiDB（迁移的过程包括全量数据的导出导入和增量数据的复制）。
 
-1. Use [Dumpling](/dumpling-overview.md) to export the full data from MySQL/MariaDB.
-2. Use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import the data exported in Step 1 to the TiDB cluster.
-3. Use TiDB DM to replicate the incremental data from MySQL/MariaDB to TiDB.
+如果数据量在 TB 级别，推荐的迁移步骤如下：
 
-> **Note:**
+1. 使用 [Dumpling](/dumpling-overview.md) 导出 MySQL/MariaDB 全量数据。
+2. 使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 将全量导出数据导入 TiDB 集群。
+3. 使用 TiDB DM 复制 MySQL/MariaDB 增量数据到 TiDB。
+
+> **注意：**
 >
-> The Syncer tool is no longer maintained. For scenarios related to Syncer, it is recommended that you use DM to perform incremental replication.
+> - 原 Syncer 工具已停止维护，不再推荐使用，相关场景请使用 TiDB DM 的增量复制模式进行替代。
 
-### Full data export - Dumpling
+### 全量导出 - Dumpling
 
-[Dumpling](/dumpling-overview.md) supports logical full data export from MySQL or TiDB.
+[Dumpling](/dumpling-overview.md) 是一个用于从 MySQL/TiDB 进行全量逻辑导出的工具。
 
-The following are the basics of Dumpling:
+基本信息：
 
-- Source: MySQL/TiDB clusters
-- Output: SQL/CSV files
-- Supported TiDB versions: all versions
-- Kubernetes support: No
+- Dumpling 的输入：MySQL/TiDB 集群
+- Dumpling 的输出：SQL/CSV 文件
+- 适用 TiDB 版本：所有版本
+- Kubernetes 支持：尚未支持
 
-> **Note:**
+> **注意：**
 >
-> PingCAP previously maintained a fork of the [mydumper project](https://github.com/maxbube/mydumper) with enhancements specific to TiDB. Starting from v7.5.0, [Mydumper](https://docs-archive.pingcap.com/tidb/v4.0/mydumper-overview/) is deprecated and most of its features have been replaced by [Dumpling](/dumpling-overview.md). It is strongly recommended that you use Dumpling instead of mydumper.
+> PingCAP 之前维护的 Mydumper 工具 fork 自 [mydumper project](https://github.com/maxbube/mydumper)，针对 TiDB 的特性进行了优化。从 v7.5.0 开始，[Mydumper](https://docs-archive.pingcap.com/tidb/v4.0/mydumper-overview) 废弃，其绝大部分功能已经被 [Dumpling](/dumpling-overview.md) 取代，强烈建议切换到 Dumpling。
 
-### Full data import - TiDB Lightning
+### 全量导入 - TiDB Lightning
 
-[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) supports full data import of a large dataset into a TiDB cluster.
+[TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 是一个用于将全量数据导入到 TiDB 集群的工具。
 
-TiDB Lightning supports the following modes:
+使用 TiDB Lightning 导入数据到 TiDB 时，有以下模式：
 
-- `Physical Import Mode`: TiDB Lightning parses data into ordered key-value pairs and directly imports them into TiKV. This mode is usually for importing a large amount of data (at the TB level) to a new cluster. During the import, the cluster cannot provide services.
-- `Logical Import Mode`: This mode uses TiDB/MySQL as the backend, which is slower than the `Physical Import Mode` but can be performed online. It also supports importing data to MySQL.
+- [物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)：TiDB Lightning 将数据解析为有序的键值对，并直接将其导入 TiKV。这种模式一般用于导入大量的数据（TB 级别）到新集群，但在数据导入过程中集群无法提供正常的服务。
+- [逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)：以 TiDB/MySQL 作为后端，这种模式相比物理导入模式，导入速度较慢，但是可以在线导入，同时也支持将数据导入到 MySQL。
 
-The following are the basics of TiDB Lightning:
+基本信息：
 
-- Data source:
-    - The output files of Dumpling
-    - Other compatible CSV files
-    - Parquet files exported from Amazon Aurora, Apache Hive, or Snowflake
-- Supported TiDB versions: v2.1 and later versions
-- Kubernetes support: Yes. See [Quickly restore data into a TiDB cluster on Kubernetes using TiDB Lightning](https://docs.pingcap.com/tidb-in-kubernetes/stable/restore-data-using-tidb-lightning) for details.
+- TiDB Lightning 的输入：
+    - Dumpling 输出文件
+    - 其他格式兼容的 CSV 文件
+    - 从 Aurora、Hive 或 Snowflake 导出的 Parquet 文件
+- 适用 TiDB 版本：v2.1 及以上
+- Kubernetes 支持：[使用 TiDB Lightning 快速恢复 Kubernetes 上的 TiDB 集群数据](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/restore-data-using-tidb-lightning)
 
-> **Note:**
+> **注意：**
 >
-> The Loader tool is no longer maintained. For scenarios related to Loader, it is recommended that you use `Logical Import Mode` instead.
+> 原 Loader 工具已停止维护，不再推荐使用。相关场景请使用 TiDB Lightning 的 `tidb` 模式进行替代。
 
-### Backup and restore - Backup & Restore (BR)
+### 备份和恢复 - Backup & Restore
 
-[Backup & Restore](/br/backup-and-restore-overview.md) (BR) is a command-line tool for distributed backup and restore of the TiDB cluster data. BR can effectively back up and restore TiDB clusters of huge data volume.
+[Backup & Restore (BR)](/br/backup-and-restore-overview.md) 是一个对 TiDB 进行分布式备份和恢复的工具，可以高效地对大数据量的 TiDB 集群进行数据备份和恢复。
 
-The following are the basics of BR:
+基本信息：
 
-- Input and output data source
+- [备份输出和恢复输入的文件类型](/br/backup-and-restore-design.md)
+- 适用 TiDB 版本：v4.0 及以上
+- Kubernetes 支持：[使用 BR 工具备份 TiDB 集群数据到兼容 S3 的存储](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/backup-to-aws-s3-using-br)，[使用 BR 工具恢复 S3 兼容存储上的备份数据](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/restore-from-aws-s3-using-br)
 
-    - Snapshot backup and restore: [SST + `backupmeta` file](/br/br-snapshot-architecture.md#backup-files)
-    - Log backup and PITR: [Log backup files](/br/br-log-architecture.md#log-backup-files)
+### TiDB 增量数据同步 - TiCDC
 
-- Supported TiDB versions: v4.0 and later versions
-- Kubernetes support: Yes. See [Back up Data to S3-Compatible Storage Using BR](https://docs.pingcap.com/tidb-in-kubernetes/stable/backup-to-aws-s3-using-br) and [Restore Data from S3-Compatible Storage Using BR](https://docs.pingcap.com/tidb-in-kubernetes/stable/restore-from-aws-s3-using-br) for details.
+[TiCDC](/ticdc/ticdc-overview.md) 是一款通过拉取 TiKV 变更日志实现的 TiDB 增量数据同步工具，具有将数据还原到与上游任意 TSO 一致状态的能力，同时提供开放数据协议 (TiCDC Open Protocol)，支持其他系统订阅数据变更。
 
-### Incremental data replication - TiCDC
+基本信息：
 
-[TiCDC](/ticdc/ticdc-overview.md) is a tool used for replicating incremental data of TiDB by pulling change logs from TiKV. It can restore data to a state consistent with any TSO in upstream. TiCDC also provides the TiCDC Open Protocol to support other systems to subscribe to data changes.
+- TiCDC 的输入：TiDB 集群
+- TiCDC 的输出：TiDB 集群、MySQL、Kafka、Confluent
+- 适用 TiDB 版本：v4.0.6 及以上
 
-The following are the basics of TiCDC:
+### 数据校验 - sync-diff-inspector
 
-- Source: TiDB clusters
-- Target: TiDB clusters, MySQL, Kafka, and Confluent
-- Supported TiDB versions: v4.0.6 and later versions
+[sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 是一个用于校验 MySQL/TiDB 中两份数据是否一致的工具。该工具还提供了修复数据的功能，可用于修复少量不一致的数据。
 
-### sync-diff-inspector
+基本信息：
 
-[sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) is a tool that compares data stored in the MySQL or TiDB databases. In addition, you can also use sync-diff-inspector to repair data in the scenario where a small amount of data is inconsistent.
-
-The following are the basics of sync-diff-inspector:
-
-- Source: MySQL/TiDB clusters
-- Target: MySQL/TiDB clusters
-- Supported TiDB versions: all versions
-
-## OLAP Query tool - TiSpark
-
-[TiSpark](/tispark-overview.md) is a product developed by PingCAP to address the complexity of OLAP queries. It combines strengths of Spark, and the features of distributed TiKV clusters and TiDB to provide a one-stop Hybrid Transactional and Analytical Processing (HTAP) solution.
+- sync-diff-inspector 的输入：TiDB、MySQL
+- sync-diff-inspector 的输出：TiDB、MySQL
+- 适用 TiDB 版本：所有版本

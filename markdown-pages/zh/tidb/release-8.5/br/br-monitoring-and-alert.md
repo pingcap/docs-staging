@@ -1,78 +1,76 @@
 ---
-title: Monitoring and Alert for Backup and Restore
-summary: This document describes monitoring and alert for backup and restore, including log backup monitoring, configuration, Grafana configuration, monitoring metrics, and log backup alerts. It covers the recommended alert items and their configurations for PITR.
+title: 备份恢复监控告警
+summary: 了解备份恢复的监控告警。
 ---
 
-# Monitoring and Alert for Backup and Restore
+# 备份恢复监控告警
 
-This document describes the monitoring and alert of the backup and restore feature, including how to deploy monitoring components, monitoring metrics, and common alerts.
+本文介绍备份恢复的监控和告警，包括如何部署监控、监控指标及常用告警项。
 
-## Snapshot backup and restore monitoring
+## 日志备份监控
 
-To view the snapshot backup and restore metrics, go to the [**TiKV-Details** > **Backup & Import** dashboard](/grafana-tikv-dashboard.md#backup--import) in Grafana.
+日志备份支持功能使用 [Prometheus](https://prometheus.io/) 采集监控指标，目前所有的监控指标都内置在 TiKV 中。
 
-## Log backup monitoring
+### 部署监控
 
-Log backup supports using [Prometheus](https://prometheus.io/) to collect monitoring metrics. Currently all monitoring metrics are built into TiKV.
+- 通过 TiUP 部署的集群，Prometheus 会自动采集相关的监控指标。
 
-### Monitoring configuration
+- 手动部署的集群，需要参考 [TiDB 集群监控部署](/deploy-monitoring-services.md)，在 Prometheus 配置文件的 `scrape_configs` 中加入 TiKV 相关的 job。
 
-- For clusters deployed using TiUP, Prometheus automatically collects monitoring metrics.
-- For clusters deployed manually, follow the instructions in [TiDB Cluster Monitoring Deployment](/deploy-monitoring-services.md) to add TiKV-related jobs to the `scrape_configs` section of the Prometheus configuration file.
+### 配置 Grafana
 
-### Grafana configuration
+- 通过 TiUP 部署的集群，[Grafana](https://grafana.com/) 中内置了 Backup log 的面板。
 
-- For clusters deployed using TiUP, the [Grafana](https://grafana.com/) dashboard contains the point-in-time recovery (PITR) panel. The **Backup Log** panel in the TiKV-Details dashboard is the PITR panel.
-- For clusters deployed manually, refer to [Import a Grafana dashboard](/deploy-monitoring-services.md#step-2-import-a-grafana-dashboard) and upload the [tikv_details](https://github.com/tikv/tikv/blob/release-8.5/metrics/grafana/tikv_details.json) JSON file to Grafana. Then find the **Backup Log** panel in the TiKV-Details dashboard.
+- 手动部署的集群，需要参考[导入 Grafana 面板](/deploy-monitoring-services.md#第-2-步导入-grafana-面板)，将 [tikv_details.json](https://github.com/tikv/tikv/blob/release-8.5/metrics/grafana/tikv_details.json) 文件上传到 Grafana 中。之后在 TiKV-Details Dashboard 中找到 Backup Log 面板即可。
 
-### Monitoring metrics
+### 监控指标
 
-| Metrics                                                | Type    |  Description                                                                                                                                                 |
-|-------------------------------------------------------|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **tikv_log_backup_internal_actor_acting_duration_sec** | Histogram | The duration of handling all internal messages and events. <br/>`message :: TaskType`                                                                                                            |
-| **tikv_log_backup_initial_scan_reason**               | Counter   | Statistics of the reasons why initial scan is triggered. The main reason is leader transfer or Region version change. <br/> `reason :: {"leader-changed", "region-changed", "retry"}`                                           |
-| **tikv_log_backup_event_handle_duration_sec**         | Histogram | The duration of handling KV events. Compared with `tikv_log_backup_on_event_duration_seconds`, this metric also includes the duration of internal conversion. <br/>`stage :: {"to_stream_event", "save_to_temp_file"}` |
-| **tikv_log_backup_handle_kv_batch**                   | Histogram |  Region-level statistics of the sizes of KV pair batches sent by Raftstore.                                                                                                    |
-| **tikv_log_backup_initial_scan_disk_read**            | Counter   | The size of data read from the disk during initial scan. In Linux, this information is from procfs, which is the size of data actually read from the block device. The configuration item `initial-scan-rate-limit` applies to this metric.                                   |
-| **tikv_log_backup_incremental_scan_bytes**            | Histogram | The size of KV pairs actually generated during initial scan. Because of compression and read amplification, this value might be different from that of `tikv_log_backup_initial_scan_disk_read`.                                                                  |
-| **tikv_log_backup_skip_kv_count**                     | Counter   |  The number of Raft events being skipped during the log backup because they are not helpful to the backup.                                                                                                                   |
-| **tikv_log_backup_errors**                            | Counter   | The errors that can be retried or ignored during the log backup. <br/>`type :: ErrorType`                                                                                                       |
-| **tikv_log_backup_fatal_errors**                      | Counter   | The errors that cannot be retried or ignored during the log backup. When an error of this type occurs, the log backup is paused. <br/>`type :: ErrorType`                                                                                   |
-| **tikv_log_backup_heap_memory**                       | Gauge     |  The memory occupied by events that are unconsumed and found by initial scan during log backup.                                                                                                                         |
-| **tikv_log_backup_on_event_duration_seconds**         | Histogram |  The duration of storing KV events to temporary files. <br/>`stage :: {"write_to_tempfile", "syscall_write"}`                                                                        |
-| **tikv_log_backup_store_checkpoint_ts**               | Gauge     | The store-level checkpoint TS, which is deprecated. It is close to the GC safepoint registered by the current store. <br/>`task :: string`                                                                    |
-| **tidb_log_backup_last_checkpoint** | Gauge | The global checkpoint TS. It is a time point till which log data has been backed up. <br/>`task :: string` |
-| **tikv_log_backup_flush_duration_sec**                | Histogram |  The duration of moving local temporary files to the external storage. <br/>`stage :: {"generate_metadata", "save_files", "clear_temp_files"}`                                                                |
-| **tikv_log_backup_flush_file_size**                   | Histogram |  Statistics of the sizes of files generated during the backup.                                                                                                                                          |
-| **tikv_log_backup_initial_scan_duration_sec**         | Histogram | The statistics of the overall duration of initial scan.                                                                                                                                           |
-| **tikv_log_backup_skip_retry_observe**                | Counter   | Statistics of the errors that can be ignored during log backup, or the reasons why retry is skipped.  <br/>`reason :: {"region-absent", "not-leader", "stale-command"}`                                                   |
-| **tikv_log_backup_initial_scan_operations**           | Counter   | Statistics of RocksDB-related operations during initial scan. <br/>`cf :: {"default", "write", "lock"}, op :: RocksDBOP`                                                                       |
-| **tikv_log_backup_enabled**                           | Counter   |  Whether to enable log backup. If the value is greater than `0`, log backup is enabled.                                                                                                                                |
-| **tikv_log_backup_observed_region**                   | Gauge     | The number of Regions being listened to.                                                                                                                                        |
-| **tikv_log_backup_task_status**                       | Gauge     | The status of the log backup task. `0` means running. `1` means paused. `2` means error.  <br/>`task :: string`                                                                                                |
-| **tikv_log_backup_pending_initial_scan**              | Gauge     | Statistics of pending initial scans. <br/>`stage :: {"queuing", "executing"}`                                                                                                     |
+| 指标                                                    | 类型        | 说明                                                                                                                                              |
+|-------------------------------------------------------|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| **tikv_log_backup_internal_actor_acting_duration_sec** | Histogram | 处理内部各种消息事件的耗时。<br/>`message :: TaskType`                                                                                                        |
+| **tikv_log_backup_initial_scan_reason**               | Counter   | 触发增量扫的原因统计。主要是 Leader 迁移或者 Region Version 变更。<br/> `reason :: {"leader-changed", "region-changed", "retry"}`                                    |
+| **tikv_log_backup_event_handle_duration_sec**         | Histogram | 处理 KV Event 的耗时。和 `tikv_log_backup_on_event_duration_seconds` 相比，这个指标还包含了一些内部转化消耗的时间。  <br/>`stage :: {"to_stream_event", "save_to_temp_file"}` |
+| **tikv_log_backup_handle_kv_batch**                   | Histogram | 由 RaftStore 发送的 KV 对的 Batch 大小统计，统计数据为 Region 级别。                                                                                               |
+| **tikv_log_backup_initial_scan_disk_read**            | Counter   | 增量扫期间，从硬盘读取的数据量的大小。在 Linux 系统下，这个信息来自于 procfs，是实际从 block device 读取的数据量的大小；配置项 `initial-scan-rate-limit` 也是施加于这个数值上。                             |
+| **tikv_log_backup_incremental_scan_bytes**            | Histogram | 增量扫期间，实际产生的 KV 对的大小。因为压缩和读放大的缘故，这个数值和 `tikv_log_backup_initial_scan_disk_read` 不一定相同。                                                           |
+| **tikv_log_backup_skip_kv_count**                     | Counter   | 日志备份期间，因为对备份没有帮助而被跳过的 Raft Event 数量。                                                                                                            |
+| **tikv_log_backup_errors**                            | Counter   | 日志备份期间，遇到的可以重试或可以忽略的错误。 <br/>`type :: ErrorType`                                                                                                |
+| **tikv_log_backup_fatal_errors**                      | Counter   | 日志备份期间，遇到的不可重试或不可忽略的错误。当该类错误出现的时候，日志备份任务会被暂停。 <br/>`type :: ErrorType`                                                                          |
+| **tikv_log_backup_heap_memory**                       | Gauge     | 日志备份期间，增量扫发现的、尚未被消费的事件占用的内存。                                                                                                                    |
+| **tikv_log_backup_on_event_duration_seconds**         | Histogram | 将 KV Event 保存到临时文件各个阶段的耗时。 <br/>`stage :: {"write_to_tempfile", "syscall_write"}`                                                               |
+| **tikv_log_backup_store_checkpoint_ts**               | Gauge     | Store 级别的 Checkpoint TS，已经弃用。其含义更加接近于 Store 当前注册的 GC Safepoint。 <br/>`task :: string`                                                           |
+| **tidb_log_backup_last_checkpoint**                   | Gauge     | 全局 Checkpoint TS，表示日志备份功能中已经备份的时间点。 <br/>`task :: string`                                                                                    |
+| **tikv_log_backup_flush_duration_sec**                | Histogram | 将本地临时文件移动到外部存储的耗时。<br/>`stage :: {"generate_metadata", "save_files", "clear_temp_files"}`                                                       |
+| **tikv_log_backup_flush_file_size**                   | Histogram | 备份产生的文件的大小统计。                                                                                                                                   |
+| **tikv_log_backup_initial_scan_duration_sec**         | Histogram | 增量扫的整体耗时统计。                                                                                                                                     |
+| **tikv_log_backup_skip_retry_observe**                | Counter   | 在日志备份过程中，遇到的可忽略错误的统计，即放弃 retry 的原因。 <br/>`reason :: {"region-absent", "not-leader", "stale-command"}`                                           |
+| **tikv_log_backup_initial_scan_operations**           | Counter   | 增量扫过程中，RocksDB 相关的操作统计。<br/>`cf :: {"default", "write", "lock"}, op :: RocksDBOP`                                                              |
+| **tikv_log_backup_enabled**                           | Counter   | 日志备份功能是否开启，若值大于 0，表示开启                                                                                                                          |
+| **tikv_log_backup_observed_region**                   | Gauge     | 被监听的 Region 数量                                                                                                                                  |
+| **tikv_log_backup_task_status**                       | Gauge     | 日志备份任务状态，0-Running 1-Paused 2-Error <br/>`task :: string`                                                                                       |
+| **tikv_log_backup_pending_initial_scan**              | Gauge     | 尚未执行的增量扫的统计。<br/>`stage :: {"queuing", "executing"}`                                                                                            |
 
-### Log backup alerts
+### 日志备份告警
 
-#### Alert configuration
+#### 配置告警
 
-Currently, PITR does not have built-in alert items. This section introduces how to configure alert items in PITR and recommends some items.
+目前 Point-in-time recovery (PITR) 还未内置告警项，本节介绍如何在 PITR 中配置告警项，以及推荐的告警项规则。
 
-To configure alert items in PITR, follow these steps:
+告警规则配置可以参考下面的步骤：
 
-1. Create a configuration file (for example, `pitr.rules.yml`) for the alert rules on the node where Prometheus is located. In the file, fill in the alert rules according to the [Prometheus documentation](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/), the following recommended alert items, and the configuration sample.
-2. In the `rule_files` field of the Prometheus configuration file, add the path of the alert rule file.
-3. Send `SIGHUP` signal to the Prometheus process (`kill -HUP pid`) or send an HTTP `POST` request to `http://prometheus-addr/-/reload` (before you send the HTTP request, add the `--web.enable-lifecycle` parameter when starting Prometheus).
+1. 在 Prometheus 所在节点上创建告警规则的配置文件（例如 `pitr.rules.yml`），参考 [Prometheus 文档](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)和下列推荐的告警项及配置样例填写告警规则。
+2. 在 Prometheus 配置文件中的 `rule_files` 字段填入告警规则文件的路径。
+3. 通过向 Prometheus 进程发送 `SIGHUP` 信号（`kill -HUP pid`）或向 `http://prometheus-addr/-/reload` 发送 HTTP `POST` 请求（使用 HTTP 请求方式前需要在启动 Prometheus 时指定 `--web.enable-lifecycle` 参数）。
 
-The recommended alert items are as follows:
+以下为推荐的告警项配置：
 
 #### LogBackupRunningRPOMoreThan10m
 
-- Alert item: `max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 60 > 10 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 0`
-- Alert level: warning
-- Description: The log data is not persisted to the storage for more than 10 minutes. This alert item is a reminder. In most cases, it does not affect log backup.
+- 表达式：`max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 60 > 10 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 0`
+- 告警级别：warning
+- 说明：日志数据超过 10 分钟未持久化到存储中，该配置项主要用于提醒，大部分情况下，不会影响日志备份。
 
-A configuration sample of this alert item is as follows:
+Prometheus 中的配置样例如下：
 
 ```yaml
 groups:
@@ -89,30 +87,30 @@ groups:
 
 #### LogBackupRunningRPOMoreThan30m
 
-- Alert item: `max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 60 > 30 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 0`
-- Alert level: critical
-- Description: The log data is not persisted to the storage for more than 30 minutes. This alert often indicates anomalies. You can check the TiKV logs to find the cause.
+- 表达式：`max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 60 > 30 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 0`
+- 告警级别：critical
+- 说明：日志数据超过 30 分钟未持久化到存储中，出现该告警表示极有可能出现异常，可以查看 TiKV 日志定位原因。
 
 #### LogBackupPausingMoreThan2h
 
-- Alert item: `max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 3600 > 2 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 1`
-- Alert level: warning
-- Description: The log backup task is paused for more than 2 hours. This alert item is a reminder and you are expected to run `br log resume` as soon as possible.
+- 表达式：`max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 3600 > 2 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 1`
+- 告警级别：warning
+- 说明：日志备份任务处于暂停状态超过 2 小时，该告警主要用于提醒，建议尽早执行 `br log resume` 恢复任务。
 
 #### LogBackupPausingMoreThan12h
 
-- Alert item: `max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 3600 > 12 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 1`
-- Alert level: critical
-- Description: The log backup task is paused for more than 12 hours. You are expected to run `br log resume` as soon as possible to resume the task. Log tasks paused for too long have the risk of data loss.
+- 表达式：`max(time() - tidb_log_backup_last_checkpoint / 262144000) by (task) / 3600 > 12 and max(tidb_log_backup_last_checkpoint) by (task) > 0 and max(tikv_log_backup_task_status) by (task) == 1`
+- 告警级别：critical
+- 说明：日志备份任务处于暂停状态超过 12 小时，应尽快执行 `br log resume` 恢复任务。任务处于暂停状态时间过长会有数据丢失的风险。
 
 #### LogBackupFailed
 
-- Alert item: `max(tikv_log_backup_task_status) by (task) == 2 and max(tidb_log_backup_last_checkpoint) by (task) > 0`
-- Alert level: critical
-- Description: The log backup task fails. You need to run `br log status` to see the failure reason. If necessary, you need to further check the TiKV logs.
+- 表达式：`max(tikv_log_backup_task_status) by (task) == 2 and max(tidb_log_backup_last_checkpoint) by (task) > 0`
+- 告警级别：critical
+- 说明：日志备份任务进入失败状态，需要执行 `br log status` 查看失败原因，如有必要还需进一步查看 TiKV 日志。
 
 #### LogBackupGCSafePointExceedsCheckpoint
 
-- Alert item: `min(tidb_log_backup_last_checkpoint) by (instance) - max(tikv_gcworker_autogc_safe_point) by (instance) < 0`
-- Alert level: critical
-- Description: Some data has been garbage-collected before the backup. This means that some data has been lost and is very likely to affect your services.
+- 表达式：`min(tidb_log_backup_last_checkpoint) by (instance) - max(tikv_gcworker_autogc_safe_point) by (instance) < 0`
+- 告警级别：critical
+- 说明：部分数据在备份前被 GC，此时已有部分数据丢失，极有可能对业务产生影响。

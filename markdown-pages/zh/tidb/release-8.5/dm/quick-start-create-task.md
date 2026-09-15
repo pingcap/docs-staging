@@ -1,33 +1,28 @@
 ---
-title: Create a Data Migration Task
-summary: Learn how to create a migration task after the DM cluster is deployed.
+title: 创建 TiDB Data Migration 数据迁移任务
+summary: 了解在部署 DM 集群后，如何快速创建数据迁移任务。
 ---
 
-# Create a Data Migration Task
+# 创建 TiDB Data Migration 数据迁移任务
 
-This document describes how to create a simple data migration task after the DM cluster is successfully deployed.
+本文档介绍在 TiDB Data Migration (DM) 集群部署成功后，如何快速创建简单的数据迁移任务。
 
-## Sample scenario
+## 使用样例
 
-Suppose that you create a data migration task based on this sample scenario:
+在本地部署两个开启 binlog 的 MySQL 实例和一个 TiDB 实例；使用 DM 集群的一个 DM-master 来管理集群和数据迁移任务。各个节点的信息如下：
 
-- Deploy two MySQL instances with binlog enabled and one TiDB instance locally
-- Use a DM-master of the DM cluster to manage the cluster and data migration tasks.
-
-The information of each node is as follows.
-
-| Instance   | Server Address  | Port  |
+| 实例        | 服务器地址   | 端口   |
 | :---------- | :----------- | :--- |
 | MySQL1     | 127.0.0.1 | 3306 |
 | MySQL2     | 127.0.0.1 | 3307 |
 | TiDB       | 127.0.0.1 | 4000 |
 | DM-master  | 127.0.0.1 | 8261 |
 
-Based on this scenario, the following sections describe how to create a data migration task.
+下面以此为例，说明如何创建数据迁移任务。
 
-### Start upstream MySQL
+### 运行上游 MySQL
 
-Prepare 2 runnable MySQL instances. You can also use Docker to quickly start MySQL. The commands are as follows:
+准备 2 个可运行的 MySQL 实例，也可以使用 Docker 快速启动 MySQL，示例命令如下：
 
 
 ```bash
@@ -35,9 +30,9 @@ docker run --rm --name mysql-3306 -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=tru
 docker run --rm --name mysql-3307 -p 3307:3307 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql:5.7.22 --log-bin=mysql-bin --port=3307 --bind-address=0.0.0.0 --binlog-format=ROW --server-id=1 --gtid_mode=ON --enforce-gtid-consistency=true > mysql.3307.log 2>&1 &
 ```
 
-### Prepare data
+### 准备数据
 
-- Write example data into mysql-3306:
+- 向 mysql-3306 写入示例数据。
 
     
     ```sql
@@ -50,7 +45,7 @@ docker run --rm --name mysql-3307 -p 3307:3307 -e MYSQL_ALLOW_EMPTY_PASSWORD=tru
     insert into t2 (id, uid, name) values (3,20001, 'José Arcadio Buendía'), (4,20002, 'Úrsula Iguarán'), (5,20003, 'José Arcadio');
     ```
 
-- Write example data into mysql-3307:
+- 向 mysql-3307 写入示例数据。
 
     
     ```sql
@@ -63,38 +58,38 @@ docker run --rm --name mysql-3307 -p 3307:3307 -e MYSQL_ALLOW_EMPTY_PASSWORD=tru
     insert into t3 (id, uid, name, info) values (7, 30001, 'Aureliano José', '{}'), (8, 30002, 'Santa Sofía de la Piedad', '{}'), (9, 30003, '17 Aurelianos', NULL);
     ```
 
-### Start downstream TiDB
+### 运行下游 TiDB
 
-To run a TiDB server, use the following command:
+使用以下命令运行一个 TiDB server：
 
 
 ```bash
-wget https://download.pingcap.org/tidb-community-server-8.5.8-linux-amd64.tar.gz
+wget https://download.pingcap.com/tidb-community-server-v8.5.8-linux-amd64.tar.gz
 tar -xzvf tidb-latest-linux-amd64.tar.gz
 mv tidb-latest-linux-amd64/bin/tidb-server ./
-./tidb-server
+./tidb-server -P 4000 --store mocktikv --log-file "./tidb.log" &
 ```
 
-> **Warning:**
+> **警告：**
 >
-> The deployment method of TiDB in this document **do not apply** to production or development environments.
+> 本文档中 TiDB 的部署方法并**不适用**于生产或开发环境。
 
-## Configure the MySQL data source
+## 配置 MySQL 数据源
 
-Before starting a data migration task, you need to configure the MySQL data source.
+运行数据迁移任务前，需要对 source 进行配置，也就是 MySQL 的相关设置。
 
-### Encrypt the password
+### 对密码进行加密
 
-> **Note:**
+> **注意：**
 >
-> + You can skip this step if the database does not have a password.
-> + You can use the plaintext password to configure the source information in DM v1.0.6 and later versions.
+> + 如果数据库没有设置密码，则可以跳过该步骤。
+> + DM v1.0.6 及其以后版本可以使用明文密码配置 source 信息。
 
-For safety reasons, it is recommended to configure and use encrypted passwords. You can use dmctl to encrypt the MySQL/TiDB password. Suppose the password is "123456":
+为了安全，可配置及使用加密后的密码。使用 dmctl 对 MySQL/TiDB 的密码进行加密，以密码为 "123456" 为例：
 
-> **Note:**
+> **注意：**
 >
-> Starting from v8.0.0, you must configure [`secret-key-path`](/dm/dm-master-configuration-file.md) for DM-master before using the `dmctl encrypt` command.
+> 从 v8.0.0 开始，DM-master 必须配置 [`secret-key-path`](/dm/dm-master-configuration-file.md) 后才可使用 `dmctl encrypt` 命令。
 
 
 ```bash
@@ -105,18 +100,20 @@ For safety reasons, it is recommended to configure and use encrypted passwords. 
 fCxfQ9XKCezSzuCD0Wf5dUD+LsKegSg=
 ```
 
-Save this encrypted value, and use it for creating a MySQL data source in the following steps.
+记录该加密后的密码，用于下面新建 MySQL 数据源。
 
-### Edit the source configuration file
+### 编写 source 配置文件
 
-Write the following configurations to `conf/source1.yaml`.
+把以下配置文件内容写入到 `conf/source1.yaml` 中。
+
+MySQL1 的配置文件：
 
 ```yaml
 # MySQL1 Configuration.
 
 source-id: "mysql-replica-01"
 
-# Indicates whether GTID is enabled
+# 是否开启 GTID
 enable-gtid: true
 
 from:
@@ -126,99 +123,104 @@ from:
   port: 3306
 ```
 
-In MySQL2 data source, copy the above configurations to `conf/source2.yaml`. You need to change `name` to `mysql-replica-02` and change `password` and `port` to appropriate values.
+对于 MySQL2 数据源，将以上内容复制到文件 `conf/source2.yaml` 中，将 `conf/source2.yaml` 配置文件中的 `name` 修改为 `mysql-replica-02`，并将 `password` 和 `port` 改为相应的值。
 
-### Create a source
+### 创建 source
 
-To load the data source configurations of MySQL1 into the DM cluster using dmctl, run the following command in the terminal:
+在终端中执行下面的命令，使用 dmctl 将 MySQL1 的数据源配置加载到 DM 集群中：
 
 
 ```bash
 ./dmctl --master-addr=127.0.0.1:8261 operate-source create conf/source1.yaml
 ```
 
-For MySQL2, replace the configuration file in the above command with that of MySQL2.
+对于 MySQL2，将上面命令中的配置文件替换成 MySQL2 对应的配置文件。
 
-## Create a data migration task
+## 创建数据迁移任务
 
-After importing [prepared data](#prepare-data), there are several sharded tables on both MySQL1 and MySQL2 instances. These tables have identical structure and the same prefix "t" in the table names; the databases where these tables are located are all prefixed with "sharding"; and there is no conflict between the primary keys or the unique keys (in each sharded table, the primary keys or the unique keys are different from those of other tables).
+在导入[准备数据](#准备数据)后，MySQL1 和 MySQL2 实例中有若干个分表，这些分表的结构相同，所在库的名称都以 "sharding" 开头，表名称都以 "t" 开头，并且主键或唯一键不存在冲突（即每张分表的主键或唯一键各不相同）。现在需要把这些分表迁移到 TiDB 中的 `db_target.t_target` 表中。
 
-Now, suppose that you need to migrate these sharded tables to the `db_target.t_target` table in TiDB. The steps are as follows.
+首先创建任务的配置文件：
 
-1. Create the configuration file of the task:
 
-    
-    ```yaml
-    ---
-    name: test
-    task-mode: all
-    shard-mode: "pessimistic"
-    target-database:
-      host: "127.0.0.1"
-      port: 4000
-      user: "root"
-      password: "" # It is recommended to use password encrypted with dmctl if the password is not empty.
+```yaml
+---
+name: test
+task-mode: all
+shard-mode: "pessimistic"
 
-    mysql-instances:
-      - source-id: "mysql-replica-01"
-        block-allow-list:  "instance"  # This configuration applies to DM versions higher than v2.0.0-beta.2. Use black-white-list otherwise.
-        route-rules: ["sharding-route-rules-table", "sharding-route-rules-schema"]
-        mydumper-thread: 4
-        loader-thread: 16
-        syncer-thread: 16
-      - source-id: "mysql-replica-02"
-        block-allow-list:  "instance"  # This configuration applies to DM versions higher than v2.0.0-beta.2. Use black-white-list otherwise.
-        route-rules: ["sharding-route-rules-table", "sharding-route-rules-schema"]
-        mydumper-thread: 4
-        loader-thread: 16
-        syncer-thread: 16
-    block-allow-list:  # This configuration applies to DM versions higher than v2.0.0-beta.2. Use black-white-list otherwise.
-      instance:
-        do-dbs: ["~^sharding[\\d]+"]
-        do-tables:
-        - db-name: "~^sharding[\\d]+"
-          tbl-name: "~^t[\\d]+"
-    routes:
-      sharding-route-rules-table:
-        schema-pattern: sharding*
-        table-pattern: t*
-        target-schema: db_target
-        target-table: t_target
-      sharding-route-rules-schema:
-        schema-pattern: sharding*
-        target-schema: db_target
-    ```
+target-database:
+  host: "127.0.0.1"
+  port: 4000
+  user: "root"
+  password: "" # 如果密码不为空，则推荐使用经过 dmctl 加密的密文
 
-2. To create a task using dmctl, write the above configurations to the `conf/task.yaml` file:
+mysql-instances:
+  - source-id: "mysql-replica-01"
+    block-allow-list:  "instance"   # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+    route-rules: ["sharding-route-rules-table", "sharding-route-rules-schema"]
+    mydumper-thread: 4
+    loader-thread: 16
+    syncer-thread: 16
 
-    
-    ```bash
-    ./dmctl --master-addr 127.0.0.1:8261 start-task conf/task.yaml
-    ```
+  - source-id: "mysql-replica-02"
+    block-allow-list:  "instance"  # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+    route-rules: ["sharding-route-rules-table", "sharding-route-rules-schema"]
+    mydumper-thread: 4
+    loader-thread: 16
+    syncer-thread: 16
 
-    ```
-    {
-        "result": true,
-        "msg": "",
-        "sources": [
-            {
-                "result": true,
-                "msg": "",
-                "source": "mysql-replica-01",
-                "worker": "worker1"
-            },
-            {
-                "result": true,
-                "msg": "",
-                "source": "mysql-replica-02",
-                "worker": "worker2"
-            }
-        ]
-    }
-    ```
+block-allow-list:                  # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+  instance:
+    do-dbs: ["~^sharding[\\d]+"]
+    do-tables:
+    -  db-name: "~^sharding[\\d]+"
+       tbl-name: "~^t[\\d]+"
 
-Now, you have successfully created a task to migrate the sharded tables from the MySQL1 and MySQL2 instances to TiDB.
+routes:
+  sharding-route-rules-table:
+    schema-pattern: sharding*
+    table-pattern: t*
+    target-schema: db_target
+    target-table: t_target
 
-## Verify data
+  sharding-route-rules-schema:
+    schema-pattern: sharding*
+    target-schema: db_target
+```
 
-You can modify data in the upstream MySQL sharded tables. Then use [sync-diff-inspector](/sync-diff-inspector/shard-diff.md) to check whether the upstream and downstream data are consistent. Consistent data means that the migration task works well, which also indicates that the cluster works well.
+将以上配置内容写入到 `conf/task.yaml` 文件中，使用 dmctl 创建任务：
+
+
+```bash
+./dmctl --master-addr 127.0.0.1:8261 start-task conf/task.yaml
+```
+
+结果如下：
+
+```
+{
+    "result": true,
+    "msg": "",
+    "sources": [
+        {
+            "result": true,
+            "msg": "",
+            "source": "mysql-replica-01",
+            "worker": "worker1"
+        },
+        {
+            "result": true,
+            "msg": "",
+            "source": "mysql-replica-02",
+            "worker": "worker2"
+        }
+    ]
+}
+```
+
+这样就成功创建了一个将 MySQL1 和 MySQL2 实例中的分表数据迁移到 TiDB 的任务。
+
+## 数据校验
+
+修改上游 MySQL 分表中的数据，然后使用 [sync-diff-inspector](/sync-diff-inspector/shard-diff.md) 校验上下游数据是否一致，如果一致则说明迁移任务运行正常。

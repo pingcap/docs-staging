@@ -1,36 +1,38 @@
 ---
-title: TiCDC Glossary
-summary: Learn the terms about TiCDC and their definitions.
+title: TiCDC 术语表
+summary: 了解 TiCDC 相关的术语及定义。
 ---
 
-# TiCDC Glossary
+# TiCDC 术语表
 
-This glossary provides TiCDC-related terms and definitions. These terms appear in TiCDC logs, monitoring metrics, configurations, and documents.
+本术语表提供 TiCDC 相关的术语和定义，这些术语会出现在 TiCDC 的日志、监控指标、配置和文档中。
 
-For TiDB-related terms and definitions, see [TiDB glossary](/glossary.md).
+关于 TiDB 相关的术语和定义，请参考 [TiDB 术语表](/glossary.md)。
+
+## B
+
+### 变更数据
+
+从上游 TiDB 集群写入 TiCDC 的数据，包括 DML 操作引发的数据变更和 DDL 操作引发的表结构变更。
 
 ## C
 
 ### Capture
 
-A single TiCDC instance on which the replication task of the cluster runs. Multiple captures form a TiCDC cluster.
-
-### Changed data
-
-The data to be written to TiCDC from the upstream TiDB cluster, including the DML-caused data changes and the DDL-caused table schema changes.
+单个 TiCDC 实例。多个 Capture 组成一个 TiCDC 集群，Capture 上运行集群中的同步任务。
 
 ### Changefeed
 
-An incremental replication task in TiCDC, which outputs the data change logs of several tables in a TiDB cluster to the designated downstream.
+TiCDC 中的单个同步任务。同步任务将一个 TiDB 集群中数张表的变更数据输出到一个指定的下游中。
 
 ## O
 
 ### Owner
 
-A [capture](#capture) of a special role that manages the TiCDC cluster and schedules replication tasks of the cluster. An owner is elected by captures and there is at most one owner at any time.
+一个特殊角色的 [Capture](#capture)，负责管理 TiCDC 集群和调度 TiCDC 集群中的同步任务。该角色由 Capture 选举产生，在任意时刻最多只存在一个。
 
 ## P
 
 ### Processor
 
-TiCDC replication tasks allocate data tables on TiCDC instances, and the processor refers to the replication processing unit of these tables. Processor tasks include pulling, sorting, restoring, and distributing changed data.
+TiCDC 同步任务会在 TiCDC 实例上分配数据表，Processor 指这些数据表的同步处理单元。处理任务包括变更数据的拉取、排序、还原和分发。

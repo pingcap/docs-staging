@@ -1,119 +1,121 @@
 ---
 title: TiDB 5.2.2 Release Notes
-summary: TiDB 5.2.2 was released on October 29, 2021. The release includes various improvements and bug fixes for TiDB, TiKV, PD, TiCDC, TiFlash, and TiDB Binlog. Improvements include showing affected SQL statements in debug logs, support for showing backup and restore data size, and more. Bug fixes address issues such as plan-cache detection, wrong partition pruning, and various other issues related to query functions, client connections, and data replication.
+summary: TiDB 5.2.2 发布日期为 2021 年 10 月 29 日。此版本包含了对 TiDB、TiKV、PD 和 Tools 的多项提升改进和 bug 修复。其中 TiDB 修复了多项问题，如 `plan cache` 无法感知 `unsigned` 标志变化、分区功能出现 `out of range` 时 `partition pruning` 出错等。TiKV 修复了因 Congest 错误而导致的 CDC 频繁增加 scan 重试的问题等。PD 修复了因超过副本配置数量而导致错误删除带有数据且处于 pending 状态的副本的问题等。TiFlash 修复了在部分平台上由于缺失 `nsl` 库而无法启动的问题。Tools 中的 TiCDC 也进行了多项修复，如当上游 TiDB 实例意外退出时，TiCDC 同步任务推进可能停滞的问题等。
+aliases: ['/zh/tidb/dev/release-5.2.2/','/zh/tidb/v5.2/release-5.2.2','/zh/tidb/v5.4/release-5.2.2','/zh/tidb/v6.1/release-5.2.2','/zh/tidb/v6.5/release-5.2.2','/zh/tidb/v7.1/release-5.2.2','/zh/tidb/v7.5/release-5.2.2','/zh/tidb/v8.1/release-5.2.2']
 ---
 
 # TiDB 5.2.2 Release Notes
 
-Release Date: October 29, 2021
+发版日期：2021 年 10 月 29 日
 
-TiDB version: 5.2.2
+TiDB 版本：5.2.2
 
-## Improvements
+## 提升改进
 
 + TiDB
 
-    - Show the affected SQL statements in the debug log when the coprocessor encounters a lock, which is helpful in diagnosing problems [#27718](https://github.com/pingcap/tidb/issues/27718)
-    - Support showing the size of the backup and restore data when backing up and restoring data in the SQL logical layer [#27247](https://github.com/pingcap/tidb/issues/27247)
+    - 当 coprocessor 遇到锁时，在调试日志中显示受影响的 SQL 语句帮助诊断问题 [#27718](https://github.com/pingcap/tidb/issues/27718)
+    - 在 SQL 逻辑层备份和恢复数据时，支持显示备份和恢复数据的大小 [#27247](https://github.com/pingcap/tidb/issues/27247)
 
 + TiKV
 
-    - Simplify the algorithm of L0 flow control [#10879](https://github.com/tikv/tikv/issues/10879)
-    - Improve the error log report in the raft client module [#10983](https://github.com/tikv/tikv/pull/10983)
-    - Improve logging threads to avoid them becoming a performance bottleneck [#10841](https://github.com/tikv/tikv/issues/10841)
-    - Add more statistics types of write queries [#10507](https://github.com/tikv/tikv/issues/10507)
+    - 简化 L0 层流控算法 [#10879](https://github.com/tikv/tikv/issues/10879)
+    - 优化 raft client 错误日志的收集 [#10983](https://github.com/tikv/tikv/pull/10983)
+    - 优化日志线程以避免其成为性能瓶颈 [#10841](https://github.com/tikv/tikv/issues/10841)
+    - 添加更多的写入查询统计类型 [#10507](https://github.com/tikv/tikv/issues/10507)
 
 + PD
 
-    - Add more types of write queries to QPS dimensions in the hotspot scheduler [#3869](https://github.com/tikv/pd/issues/3869)
-    - Support dynamically adjusting the retry limit of the balance region scheduler to improve the performance of the scheduler [#3744](https://github.com/tikv/pd/issues/3744)
-    - Update TiDB Dashboard to v2021.10.08.1 [#4070](https://github.com/tikv/pd/pull/4070)
-    - Support that the evict leader scheduler can schedule regions with unhealthy peers [#4093](https://github.com/tikv/pd/issues/4093)
-    - Speed up the exit process of schedulers [#4146](https://github.com/tikv/pd/issues/4146)
+    - 热点调度器的 QPS 维度支持更多的写请求类型 [#3869](https://github.com/tikv/pd/issues/3869)
+    - 通过动态调整 Balance Region 调度器的重试上限，优化该调度器的性能 [#3744](https://github.com/tikv/pd/issues/3744)
+    - 将 TiDB Dashboard 升级至 v2021.10.08.1 [#4070](https://github.com/tikv/pd/pull/4070)
+    - 允许 Evict Leader 调度器调度拥有不健康副本的 Region [#4093](https://github.com/tikv/pd/issues/4093)
+    - 优化调度器退出的速度 [#4146](https://github.com/tikv/pd/issues/4146)
 
 + Tools
 
     + TiCDC
 
-        - Reduce the default value of the Kafka sink configuration item `MaxMessageBytes` from 64 MB to 1 MB to fix the issue that large messages are rejected by the Kafka Broker [#3104](https://github.com/pingcap/tiflow/pull/3104)
-        - Reduce memory usage in the relpication pipeline [#2553](https://github.com/pingcap/tiflow/issues/2553) [#3037](https://github.com/pingcap/tiflow/pull/3037) [#2726](https://github.com/pingcap/tiflow/pull/2726)
-        - Optimize monitoring items and alert rules to improve observability of synchronous links, memory GC, and stock data scanning processes [#2735](https://github.com/pingcap/tiflow/pull/2735) [#1606](https://github.com/pingcap/tiflow/issues/1606) [#3000](https://github.com/pingcap/tiflow/pull/3000) [#2985](https://github.com/pingcap/tiflow/issues/2985) [#2156](https://github.com/pingcap/tiflow/issues/2156)
-        - When the sync task status is normal, no more historical error messages are displayed to avoid misleading users [#2242](https://github.com/pingcap/tiflow/issues/2242)
+        - 通过修改 Kafka sink 配置项 `MaxMessageBytes` 的默认值，由 64 MB 减小为 1 MB，以修复消息过大会被 Kafka Broker 拒收的问题 [#3104](https://github.com/pingcap/tiflow/pull/3104)
+        - 减少同步链路中的内存占用 [#2553](https://github.com/pingcap/tiflow/issues/2553) [#3037](https://github.com/pingcap/tiflow/pull/3037) [#2726](https://github.com/pingcap/tiflow/pull/2726)
+        - 优化监控项和告警规则，提升了同步链路、内存 GC、存量数据扫描过程的可观测性 [#2735](https://github.com/pingcap/tiflow/pull/2735) [#1606](https://github.com/pingcap/tiflow/issues/1606) [#3000](https://github.com/pingcap/tiflow/pull/3000) [#2985](https://github.com/pingcap/tiflow/issues/2985) [#2156](https://github.com/pingcap/tiflow/issues/2156)
+        - 当同步任务状态正常时，不再显示历史错误信息，避免误导用户 [#2242](https://github.com/pingcap/tiflow/issues/2242)
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue that plan-cache cannot detect changes of unsigned flags [#28254](https://github.com/pingcap/tidb/issues/28254)
-    - Fix the wrong partition pruning when the partition function is out of range [#28233](https://github.com/pingcap/tidb/issues/28233)
-    - Fix the issue that planner might cache invalid plans for `join` in some cases [#28087](https://github.com/pingcap/tidb/issues/28087)
-    - Fix wrong index hash join when hash column type is enum [#27893](https://github.com/pingcap/tidb/issues/27893)
-    - Fix a batch client bug that recycling idle connection might block sending requests in some rare cases [#27688](https://github.com/pingcap/tidb/pull/27688)
-    - Fix the TiDB Lightning panic issue when it fails to perform checksum on a target cluster [#27686](https://github.com/pingcap/tidb/pull/27686)
-    - Fix wrong results of the `date_add` and `date_sub` functions in some cases [#27232](https://github.com/pingcap/tidb/issues/27232)
-    - Fix wrong results of the `hour` function in vectorized expression [#28643](https://github.com/pingcap/tidb/issues/28643)
-    - Fix the authenticating issue when connecting to MySQL 5.1 or an older client version  [#27855](https://github.com/pingcap/tidb/issues/27855)
-    - Fix the issue that auto analyze might be triggered out of the specified time when a new index is added [#28698](https://github.com/pingcap/tidb/issues/28698)
-    - Fix a bug that setting any session variable invalidates `tidb_snapshot` [#28683](https://github.com/pingcap/tidb/pull/28683)
-    - Fix a bug that BR is not working for clusters with many missing-peer regions [#27534](https://github.com/pingcap/tidb/issues/27534)
-    - Fix the unexpected error like `tidb_cast to Int32 is not supported` when the unsupported `cast` is pushed down to TiFlash [#23907](https://github.com/pingcap/tidb/issues/23907)
-    - Fix the issue that `DECIMAL overflow` is missing in the `%s value is out of range in '%s'`error message  [#27964](https://github.com/pingcap/tidb/issues/27964)
-    - Fix a bug that the availability detection of MPP node does not work in some corner cases [#3118](https://github.com/pingcap/tics/issues/3118)
-    - Fix the `DATA RACE` issue when assigning `MPP task ID` [#27952](https://github.com/pingcap/tidb/issues/27952)
-    - Fix the `INDEX OUT OF RANGE` error for a MPP query after deleting an empty `dual table`. [#28250](https://github.com/pingcap/tidb/issues/28250)
-    - Fix the issue of false positive error log `invalid cop task execution summaries length` for MPP queries [#1791](https://github.com/pingcap/tics/issues/1791)
-    - Fix the issue of error log `cannot found column in Schema column` for MPP queries [#28149](https://github.com/pingcap/tidb/pull/28149)
-    - Fix the issue that TiDB might panic when TiFlash is shutting down [#28096](https://github.com/pingcap/tidb/issues/28096)
-    - Remove the support for insecure 3DES (Triple Data Encryption Algorithm) based TLS cipher suites [#27859](https://github.com/pingcap/tidb/pull/27859)
-    - Fix the issue that Lightning connects to offline TiKV nodes during pre-check and causes import failures [#27826](https://github.com/pingcap/tidb/pull/27826)
-    - Fix the issue that pre-check cost too much time when importing many files to tables [#27605](https://github.com/pingcap/tidb/issues/27605)
-    - Fix the issue that rewriting expressions makes `between` infer wrong collation [#27146](https://github.com/pingcap/tidb/issues/27146)
-    - Fix the issue that `group_concat` function did not consider the collation [#27429](https://github.com/pingcap/tidb/issues/27429)
-    - Fix the result wrong that occurs when the argument of the `extract` function is a negative duration [#27236](https://github.com/pingcap/tidb/issues/27236)
-    - Fix the issue that creating partition fails if `NO_UNSIGNED_SUBTRACTION` is set [#26765](https://github.com/pingcap/tidb/issues/26765)
-    - Avoid expressions with side effects in column pruning and aggregation pushdown [#27106](https://github.com/pingcap/tidb/issues/27106)
-    - Remove useless gRPC logs [#24190](https://github.com/pingcap/tidb/issues/24190)
-    - Limit the valid decimal length to fix precision-related issues [#3091](https://github.com/pingcap/tics/issues/3091)
-    - Fix the issue of a wrong way to check for overflow in `plus` expression [#26977](https://github.com/pingcap/tidb/issues/26977)
-    - Fix the issue of `data too long` error when dumping statistics from the table with `new collation` data [#27024](https://github.com/pingcap/tidb/issues/27024)
-    - Fix the issue that the retried transactions' statements are not included in `TIDB_TRX` [#28670](https://github.com/pingcap/tidb/pull/28670)
+    - 修复 `plan cache` 无法感知 `unsigned` 标志变化的问题 [#28254](https://github.com/pingcap/tidb/issues/28254)
+    - 修复当分区功能出现 `out of range` 时 `partition pruning` 出错的问题 [#28233](https://github.com/pingcap/tidb/issues/28233)
+    - 修复在某些情况下 Planner 可能缓存无效 `join` 计划的问题 [#28087](https://github.com/pingcap/tidb/issues/28087)
+    - 修复 hash 列为 `enum` 时构建错误 `IndexLookUpJoin` 的问题 [#27893](https://github.com/pingcap/tidb/issues/27893)
+    - 修复批处理客户端在某些罕见情况下回收空闲连接可能会阻塞发送请求的问题 [#27688](https://github.com/pingcap/tidb/pull/27688)
+    - 修复当 TiDB Lightning 在目标集群上执行校验失败时 panic 的问题 [#27686](https://github.com/pingcap/tidb/pull/27686)
+    - 修复某些情况下 `date_add` 和 `date_sub` 函数执行结果错误的问题 [#27232](https://github.com/pingcap/tidb/issues/27232)
+    - 修复 `hour` 函数在向量化表达式中执行结果错误的问题 [#28643](https://github.com/pingcap/tidb/issues/28643)
+    - 修复连接到 MySQL 5.1 或更早的客户端时存在的认证问题 [#27855](https://github.com/pingcap/tidb/issues/27855)
+    - 修复当新增索引时自动分析可能会在指定时间之外触发的问题 [#28698](https://github.com/pingcap/tidb/issues/28698)
+    - 修复设置任何会话变量都会使 `tidb_snapshot` 失效的问题 [#28683](https://github.com/pingcap/tidb/pull/28683)
+    - 修复在有大量 `miss-peer region` 的集群中 BR 不可用的问题 [#27534](https://github.com/pingcap/tidb/issues/27534)
+    - 修复当不支持的 `cast` 被下推到 TiFlash 时出现的非预期错误，例如 `tidb_cast to Int32 is not supported` [#23907](https://github.com/pingcap/tidb/issues/23907)
+    - 修复 `%s value is out of range in '%s'` 报错中缺失 `DECIMAL overflow` 信息的问题 [#27964](https://github.com/pingcap/tidb/issues/27964)
+    - 修复 MPP 节点的可用性检测在某些边界场景中无法工作的问题 [#3118](https://github.com/pingcap/tics/issues/3118)
+    - 修复分配 `MPP task ID` 时出现 `DATA RACE` 的问题 [#27952](https://github.com/pingcap/tidb/issues/27952)
+    - 修复删除空的 `dual table` 后 MPP 查询出现 `index out of range` 报错的问题 [#28250](https://github.com/pingcap/tidb/issues/28250)
+    - 修复运行 MPP 查询时出现 `invalid cop task execution summaries length` 相关日志的问题 [#1791](https://github.com/pingcap/tics/issues/1791)
+    - 修复运行 MPP 查询时出现 `cannot found column in Schema column` 报错的问题 [#28149](https://github.com/pingcap/tidb/pull/28149)
+    - 修复 TiDB 在 TiFlash 关闭时可能出现 panic 的问题 [#28096](https://github.com/pingcap/tidb/issues/28096)
+    - 移除对基于 3DES (三重数据加密算法) 不安全的 TLS 加密套件的支持 [#27859](https://github.com/pingcap/tidb/pull/27859)
+    - 修复因 Lightning 前置检查会连接已下线的 TiKV 节点而导致导入失败的问题 [#27826](https://github.com/pingcap/tidb/pull/27826)
+    - 修复在导入太多文件到表时前置检查花费太多时间的问题 [#27605](https://github.com/pingcap/tidb/issues/27605)
+    - 修复表达式重写时 `between` 推断出错误排序规则的问题 [#27146](https://github.com/pingcap/tidb/issues/27146)
+    - 修复 `group_concat` 函数没有考虑排序规则的问题 [#27429](https://github.com/pingcap/tidb/issues/27429)
+    - 修复 `extract` 函数处理负值时的问题 [#27236](https://github.com/pingcap/tidb/issues/27236)
+    - 修复当设置 `NO_UNSIGNED_SUBTRACTION` 时创建分区失败的问题 [#26765](https://github.com/pingcap/tidb/issues/26765)
+    - 避免在列修剪和聚合下推中使用有副作用的表达式 [#27106](https://github.com/pingcap/tidb/issues/27106)
+    - 删除无用的 gRPC 日志 [#24190](https://github.com/pingcap/tidb/issues/24190)
+    - 限制有效的小数点长度以修复精度相关的问题 [#3091](https://github.com/pingcap/tics/issues/3091)
+    - 修复 `plus` 表达式中检查溢出方法出错的问题 [#26977](https://github.com/pingcap/tidb/issues/26977)
+    - 修复当导出带有 `new collation` 数据的表的统计信息时报 `data too long` 错误的问题 [#27024](https://github.com/pingcap/tidb/issues/27024)
+    - 修复 `TIDB_TRX` 中不包含重试事务的问题 [#28670](https://github.com/pingcap/tidb/pull/28670)
 
 + TiKV
 
-    - Fix the issue that CDC adds scan retries frequently due to the Congest error [#11082](https://github.com/tikv/tikv/issues/11082)
-    - Fix the issue that the raft connection is broken when the channel is full [#11047](https://github.com/tikv/tikv/issues/11047)
-    - Fix the issue that batch messages are too large in Raft client implementation [#9714](https://github.com/tikv/tikv/issues/9714)
-    - Fix the issue that some coroutines leak in `resolved_ts` [#10965](https://github.com/tikv/tikv/issues/10965)
-    - Fix a panic issue that occurs to the coprocessor when the size of response exceeds 4 GiB [#9012](https://github.com/tikv/tikv/issues/9012)
-    - Fix the issue that snapshot Garbage Collection (GC) misses GC snapshot files when snapshot files cannot be garbage collected [#10813](https://github.com/tikv/tikv/issues/10813)
-    - Fix a panic issue caused by timeout when processing Coprocessor requests [#10852](https://github.com/tikv/tikv/issues/10852)
+    - 修复因 Congest 错误而导致的 CDC 频繁增加 scan 重试的问题 [#11082](https://github.com/tikv/tikv/issues/11082)
+    - 修复因 channel 打满而导致的 Raft 断连情况 [#11047](https://github.com/tikv/tikv/issues/11047)
+    - 修复 Raft client 中 batch 消息过大的问题 [#9714](https://github.com/tikv/tikv/issues/9714)
+    - 修复 `resolved_ts` 中协程泄漏的问题 [#10965](https://github.com/tikv/tikv/issues/10965)
+    - 修复当 response 大小超过 4 GiB 时 Coprocessor panic 的问题 [#9012](https://github.com/tikv/tikv/issues/9012)
+    - 修复当一个 snapshot 文件无法被垃圾清理 (GC) 时 snapshot GC 会缺失 GC snapshot 文件的问题 [#10813](https://github.com/tikv/tikv/issues/10813)
+    - 修复当处理 Coprocessor 请求时因超时而导致 panic 的问题 [#10852](https://github.com/tikv/tikv/issues/10852)
 
 + PD
 
-    - Fix the issue that PD incorrectly delete the peers with data and in pending status because the number of peers exceeds the number of configured peers [#4045](https://github.com/tikv/pd/issues/4045)
-    - Fix the issue that PD does not fix down peers in time [#4077](https://github.com/tikv/pd/issues/4077)
-    - Fix the issue that the scatter range scheduler cannot schedule empty regions [#4118](https://github.com/tikv/pd/pull/4118)
-    - Fix the issue that the key manager cost too much CPU [#4071](https://github.com/tikv/pd/issues/4071)
-    - Fix the data race issue that might occur when setting configurations of hot region scheduler [#4159](https://github.com/tikv/pd/issues/4159)
-    - Fix slow leader election caused by stuck region syncer [#3936](https://github.com/tikv/pd/issues/3936)
+    - 修复因超过副本配置数量而导致错误删除带有数据且处于 pending 状态的副本的问题 [#4045](https://github.com/tikv/pd/issues/4045)
+    - 修复 PD 未能及时修复 Down Peer 副本的问题 [#4077](https://github.com/tikv/pd/issues/4077)
+    - 修复 Scatter Range 调度器无法对空 Region 进行调度的问题 [#4118](https://github.com/tikv/pd/pull/4118)
+    - 修复 key manager 占用过多 CPU 的问题 [#4071](https://github.com/tikv/pd/issues/4071)
+    - 修复热点调度器变更配置的过程中可能会存在的数据竞争问题 [#4159](https://github.com/tikv/pd/issues/4159)
+    - 修复因 Region syncer 卡住而导致 leader 选举慢的问题 [#3936](https://github.com/tikv/pd/issues/3936)
 
 + TiFlash
 
-    - Fix the issue that TiFlash fails to start up on some platforms due to the absence of library `nsl`
+    - 修复 TiFlash 在部分平台上由于缺失 `nsl` 库而无法启动的问题
 
 + Tools
 
     + TiCDC
-        - Fix the issue that TiCDC replication task might terminate when the upstream TiDB instance unexpectedly exits [#3061](https://github.com/pingcap/tiflow/issues/3061)
-        - Fix the issue that TiCDC process might panic when TiKV sends duplicate requests to the same Region [#2386](https://github.com/pingcap/tiflow/issues/2386)
-        - Fix unnecessary CPU consumption when verifying downstream TiDB/MySQL availability [#3073](https://github.com/pingcap/tiflow/issues/3073)
-        - Fix the issue that the volume of Kafka messages generated by TiCDC is not constrained by `max-message-size` [#2962](https://github.com/pingcap/tiflow/issues/2962)
-        - Fix the issue that TiCDC sync task might pause when an error occurs during writing a Kafka message [#2978](https://github.com/pingcap/tiflow/issues/2978)
-        - Fix the issue that some partitioned tables without valid indexes might be ignored when `force-replicate` is enabled [#2834](https://github.com/pingcap/tiflow/issues/2834)
-        - Fix the issue that scanning stock data might fail due to TiKV performing GC when scanning stock data takes too long [#2470](https://github.com/pingcap/tiflow/issues/2470)
-        - Fix a possible panic issue when encoding some types of columns into Open Protocol format [#2758](https://github.com/pingcap/tiflow/issues/2758)
-        - Fix a possible panic issue when encoding some types of columns into Avro format [#2648](https://github.com/pingcap/tiflow/issues/2648)
+
+        - 修复当上游 TiDB 实例意外退出时，TiCDC 同步任务推进可能停滞的问题 [#3061](https://github.com/pingcap/tiflow/issues/3061)
+        - 修复当 TiKV 向同一 Region 发送重复请求时，TiCDC 进程 panic 的问题 [#2386](https://github.com/pingcap/tiflow/issues/2386)
+        - 修复在验证下游 TiDB/MySQL 可用性时产生的不必要的 CPU 消耗 [#3073](https://github.com/pingcap/tiflow/issues/3073)
+        - 修复 TiCDC 产生的 Kafka 消息体积不受 `max-message-size` 约束的问题 [#2962](https://github.com/pingcap/tiflow/issues/2962)
+        - 修复当写入 Kafka 消息发生错误时，TiCDC 同步任务推进可能停滞的问题 [#2978](https://github.com/pingcap/tiflow/issues/2978)
+        - 修复当开启 `force-replicate` 时，可能某些没有有效索引的分区表被忽略的问题 [#2834](https://github.com/pingcap/tiflow/issues/2834)
+        - 修复当扫描存量数据耗时过长时，可能由于 TiKV 进行 GC 而导致存量数据扫描失败的问题 [#2470](https://github.com/pingcap/tiflow/issues/2470)
+        - 修复在将某些类型的列编码为 Open Protocol 格式时，TiCDC 进程可能 panic 的问题 [#2758](https://github.com/pingcap/tiflow/issues/2758)
+        - 修复在将某些类型的列编码为 Avro 格式时，TiCDC 进程可能 panic 的问题 [#2648](https://github.com/pingcap/tiflow/issues/2648)
 
     + TiDB Binlog
 
-        - Fix the issue that when most tables are filtered out, checkpoint cannot be updated under some special load [#1075](https://github.com/pingcap/tidb-binlog/pull/1075)
+        - 修复当大部分表被过滤掉时，在某些特殊的负载下，checkpoint 不更新的问题 [#1075](https://github.com/pingcap/tidb-binlog/pull/1075)

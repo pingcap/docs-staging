@@ -1,90 +1,89 @@
 ---
 title: TiDB 3.0.0-rc.2 Release Notes
-summary: TiDB 3.0.0-rc.2 was released on May 28, 2019, with improvements in stability, usability, features, SQL optimizer, statistics, and execution engine. The release includes enhancements to the SQL optimizer, execution engine, server, DDL, PD, TiKV, and tools like TiDB Binlog and TiDB Lightning. Some notable improvements include support for Index Join in more scenarios, handling virtual columns properly, and adding a metric to track data replication downstream.
+summary: TiDB 3.0.0-rc.2 发布，对系统稳定性、易用性、功能、优化器、统计信息和执行引擎做了很多改进。包括 SQL 优化器、执行引擎、Server、DDL 和 PD 的更新。TiKV 的更新包括 Engine、Server、Raftstore 和 Coprocessor 的改进。工具方面，TiDB Binlog 增加下游同步延迟监控项，TiDB Lightning 支持数据库合并和新增 KV 写入失败重试机制。
+aliases: ['/zh/tidb/dev/release-3.0.0-rc.2/','/zh/tidb/v3.0/release-3.0.0-rc.2','/docs-cn/dev/releases/release-3.0.0-rc.2/','/docs-cn/dev/releases/3.0.0-rc.2/','/zh/tidb/v5.4/release-3.0.0-rc.2','/zh/tidb/v6.1/release-3.0.0-rc.2','/zh/tidb/v6.5/release-3.0.0-rc.2','/zh/tidb/v7.1/release-3.0.0-rc.2','/zh/tidb/v7.5/release-3.0.0-rc.2','/zh/tidb/v8.1/release-3.0.0-rc.2']
 ---
 
 # TiDB 3.0.0-rc.2 Release Notes
 
-Release date: May 28, 2019
+发版日期：2019 年 5 月 28 日
 
-TiDB version: 3.0.0-rc.2
+TiDB 版本：3.0.0-rc.2
 
-TiDB Ansible version: 3.0.0-rc.2
+TiDB Ansible 版本：3.0.0-rc.2
 
 ## Overview
 
-On May 28, 2019, TiDB 3.0.0-rc.2 is released. The corresponding TiDB Ansible version is 3.0.0-rc.2. Compared with TiDB 3.0.0-rc.1, this release has greatly improved the stability, usability, features, the SQL optimizer, statistics, and the execution engine.
+2019 年 5 月 28 日，TiDB 发布 3.0.0-rc.2 版本，对应的 TiDB Ansible 版本为 3.0.0-rc.2。相比 3.0.0-rc.1 版本，该版本对系统稳定性、易用性、功能、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer
-    - Support Index Join in more scenarios [#10540](https://github.com/pingcap/tidb/pull/10540)
-    - Support exporting historical statistics [#10291](https://github.com/pingcap/tidb/pull/10291)
-    - Support the incremental `Analyze` operation on monotonically increasing index columns [#10355](https://github.com/pingcap/tidb/pull/10355)
-    - Neglect the NULL value in the `Order By` clause [#10488](https://github.com/pingcap/tidb/pull/10488)
-    - Fix the wrong schema information calculation of the `UnionAll` logical operator when simplifying the column information [#10384](https://github.com/pingcap/tidb/pull/10384)
-    - Avoid modifying the original expression when pushing down the `Not` operator [#10363](https://github.com/pingcap/tidb/pull/10363/files)
-    - Support the `dump`/`load` correlation of histograms [#10573](https://github.com/pingcap/tidb/pull/10573)
++ SQL 优化器
+    - 在更多的场景中支持 Index Join [#10540](https://github.com/pingcap/tidb/pull/10540)
+    - 支持导出历史统计信息 [#10291](https://github.com/pingcap/tidb/pull/10291)
+    - 支持对单调递增的索引列增量 `Analyze` [#10355](https://github.com/pingcap/tidb/pull/10355)
+    - 忽略 `Order By` 子句中的 NULL 值 [#10488](https://github.com/pingcap/tidb/pull/10488)
+    - 修复精简列信息时逻辑算子 `UnionAll` 的 Schema 信息的计算不正确的问题 [#10384](https://github.com/pingcap/tidb/pull/10384)
+    - 下推 `Not` 操作符时避免修改原表达式 [#10363](https://github.com/pingcap/tidb/pull/10363)
+    - 支持导入导出列的关联性信息 [#10573](https://github.com/pingcap/tidb/pull/10573)
 
-+ Execution Engine
-    - Handle virtual columns with a unique index properly when fetching duplicate rows in `batchChecker` [#10370](https://github.com/pingcap/tidb/pull/10370)
-    - Fix the scanning range calculation issue for the `CHAR` column [#10124](https://github.com/pingcap/tidb/pull/10124)
-    - Fix the issue of `PointGet` incorrectly processing negative numbers [#10113](https://github.com/pingcap/tidb/pull/10113)
-    - Merge `Window` functions with the same name to improve execution efficiency [#9866](https://github.com/pingcap/tidb/pull/9866)
-    - Allow the `RANGE` frame in a `Window` function to contain no `OrderBy` clause [#10496](https://github.com/pingcap/tidb/pull/10496)
++ 执行引擎
+    - 有唯一索引的虚拟生成列可以在 `replace on duplicate key update`/`insert on duplicate key update` 语句中被正确地处理 [#10370](https://github.com/pingcap/tidb/pull/10370)
+    - 修复 CHAR 列上的扫描范围计算 [#10124](https://github.com/pingcap/tidb/pull/10124)
+    - 修复 `PointGet` 处理负数不正确问题 [#10113](https://github.com/pingcap/tidb/pull/10113)
+    - 合并具有相同窗口名的窗口函数，提高执行效率 [#9866](https://github.com/pingcap/tidb/pull/9866)
+    - 窗口函数中 Range Frame 可以无需 `Order By` 子句 [#10496](https://github.com/pingcap/tidb/pull/10496)
 
 + Server
-    - Fix the issue that TiDB continuously creates a new connection to TiKV when a fault occurs in TiKV [#10301](https://github.com/pingcap/tidb/pull/10301)
-    - Make `tidb_disable_txn_auto_retry` affect all retryable errors instead of only write conflict errors [#10339](https://github.com/pingcap/tidb/pull/10339)
-    - Allow DDL statements without parameters to be executed using `prepare`/`execute` [#10144](https://github.com/pingcap/tidb/pull/10144)
-    - Add the `tidb_back_off_weight` variable to control the backoff time [#10266](https://github.com/pingcap/tidb/pull/10266)
-    - Prohibit TiDB retrying non-automatically committed transactions in default conditions by setting the default value of `tidb_disable_txn_auto_retry` to `on` [#10266](https://github.com/pingcap/tidb/pull/10266)
-    - Fix the database privilege judgment of `role` in `RBAC` [#10261](https://github.com/pingcap/tidb/pull/10261)
-    - Support the pessimistic transaction mode (experimental) [#10297](https://github.com/pingcap/tidb/pull/10297)
-    - Reduce the wait time for handling lock conflicts in some cases [#10006](https://github.com/pingcap/tidb/pull/10006)
-    - Make the Region cache able to visit follower nodes when a fault occurs in the leader node [#10256](https://github.com/pingcap/tidb/pull/10256)
-    - Add the `tidb_low_resolution_tso` variable to control the number of TSOs obtained in batches and reduce the times of transactions obtaining TSO to adapt for scenarios where data consistency is not so strictly required [#10428](https://github.com/pingcap/tidb/pull/10428)
+    - 修复 TiKV 故障时，TiDB 不断创建与 TiKV 的新连接的问题 [#10301](https://github.com/pingcap/tidb/pull/10301)
+    - `tidb_disable_txn_auto_retry` 不再只影响写入冲突错误，而是影响所有的可重试错误 [#10339](https://github.com/pingcap/tidb/pull/10339)
+    - 不带参数的 DDL 语句可以通过 `prepare`/`execute` 来执行 [#10144](https://github.com/pingcap/tidb/pull/10144)
+    - 新增 `tidb_back_off_weight` 变量，控制 TiDB 内部 back off 时间的长短 [#10266](https://github.com/pingcap/tidb/pull/10266)
+    - `tidb_disable_txn_auto_retry` 的默认值改为 on，即默认情况下，TiDB 不会重试非自动提交的事务 [#10266](https://github.com/pingcap/tidb/pull/10266)
+    - 修复 RBAC 中对 role 的数据库权限的判断不正确的问题 [#10261](https://github.com/pingcap/tidb/pull/10261)
+    - 支持悲观事务模式（实验特性）[#10297](https://github.com/pingcap/tidb/pull/10297)
+    - 降低某些情况下处理锁冲突时的等待时间 [#10006](https://github.com/pingcap/tidb/pull/10006)
+    - 重构 Region cache，增加在 Region 故障时的轮询逻辑 [#10256](https://github.com/pingcap/tidb/pull/10256)
+    - 新增 `tidb_low_resolution_tso` 变量，控制批量获取 `tso` 个数，减少事务获取 `tso` 的次数，以适应某些数据一致性要求较低的场景 [#10428](https://github.com/pingcap/tidb/pull/10428)
 
 + DDL
-    - Fix the uppercase issue of the charset name in the storage of the old version of TiDB [#10272](https://github.com/pingcap/tidb/pull/10272)
-    - Support `preSplit` of table partition, which pre-allocates table Regions when creating a table to avoid write hotspots after the table is created [#10221](https://github.com/pingcap/tidb/pull/10221)
-    - Fix the issue that TiDB incorrectly updates the version information in PD in some cases [#10324](https://github.com/pingcap/tidb/pull/10324)
-    - Support modifying the charset and collation using the `ALTER DATABASE` statement [#10393](https://github.com/pingcap/tidb/pull/10393)
-    - Support splitting Regions based on the index and range of the specified table to relieve hotspot issues [#10203](https://github.com/pingcap/tidb/pull/10203)
-    - Prohibit modifying the precision of the decimal column using the `alter table` statement [#10433](https://github.com/pingcap/tidb/pull/10433)
-    - Fix the restriction for expressions and functions in hash partition [#10273](https://github.com/pingcap/tidb/pull/10273)
-    - Fix the issue that adding indexes in a table that contains partitions will in some cases cause TiDB panic [#10475](https://github.com/pingcap/tidb/pull/10475)
-    - Validate table information before executing the DDL to avoid invalid table schemas [#10464](https://github.com/pingcap/tidb/pull/10464)
-    - Enable hash partition by default; and enable range columns partition when there is only one column in the partition definition [#9936](https://github.com/pingcap/tidb/pull/9936)
+    - 修复旧版本的 TiDB 存储的字符集名称大写的问题 [#10272](https://github.com/pingcap/tidb/pull/10272)
+    - 支持 table partition 预分裂 Region 功能，该选项可以在建表时预先分配 table Region，避免建表后大量写入造成的写热点 [#10221](https://github.com/pingcap/tidb/pull/10221)
+    - 修复某些情况下 TiDB 更新版本信息到 PD 不准确的问题 [#10324](https://github.com/pingcap/tidb/pull/10324)
+    - 支持通过 `alter schema` 语句修改数据库 charset 和 collation [#10393](https://github.com/pingcap/tidb/pull/10393)
+    - 支持通过语句按指定表的索引及范围分裂 Region，用于缓解热点问题 [#10203](https://github.com/pingcap/tidb/pull/10203)
+    - 禁止 `alter table` 语句修改 `decimal` 列的精度 [#10433](https://github.com/pingcap/tidb/pull/10433)
+    - 修复 hash partition 中对表达式和函数的约束 [#10273](https://github.com/pingcap/tidb/pull/10273)
+    - 修复某些情况下对含有 partition 的 table 添加索引时引发 TiDB panic 的问题 [#10475](https://github.com/pingcap/tidb/pull/10475)
+    - 添加对某些极端情况下导致 schema 出错的防护功能 [#10464](https://github.com/pingcap/tidb/pull/10464)
+    - 创建 range partition 若有单列或者创建 hash partition 时默认开启分区功能 [#9936](https://github.com/pingcap/tidb/pull/9936)
 
 ## PD
 
-- Enable the Region storage by default to store the Region metadata [#1524](https://github.com/pingcap/pd/pull/1524)
-- Fix the issue that hot Region scheduling is preempted by another scheduler [#1522](https://github.com/pingcap/pd/pull/1522)
-- Fix the issue that the priority for the leader does not take effect [#1533](https://github.com/pingcap/pd/pull/1533)
-- Add the gRPC interface for `ScanRegions` [#1535](https://github.com/pingcap/pd/pull/1535)
-- Push operators actively [#1536](https://github.com/pingcap/pd/pull/1536)
-- Add the store limit mechanism for separately controlling the speed of operators for each store [#1474](https://github.com/pingcap/pd/pull/1474)
-- Fix the issue of inconsistent `Config` status [#1476](https://github.com/pingcap/pd/pull/1476)
+- 默认开启 Region storage 将 Region 元信息存储到 Region storage 中 [#1524](https://github.com/pingcap/pd/pull/1524)
+- 修复热点调度受其他调度器抢占的问题 [#1522](https://github.com/pingcap/pd/pull/1522)
+- 修复 Leader 优先级不生效的问题 [#1533](https://github.com/pingcap/pd/pull/1533)
+- 新增 `ScanRegions` 的 gRPC 接口 [#1535](https://github.com/pingcap/pd/pull/1535)
+- 主动下发 operator 加快调度速度 [#1536](https://github.com/pingcap/pd/pull/1536)
+- 添加 store limit 机制，限制单个 store 的调度速度 [#1474](https://github.com/pingcap/pd/pull/1474)
+- 修复 `config` 状态不一致的问题 [#1476](https://github.com/pingcap/pd/pull/1476)
 
 ## TiKV
 
 + Engine
-    - Support multiple column families sharing a block cache [#4563](https://github.com/tikv/tikv/pull/4563)
-
+    - 支持多个 column family 共享 block cache [#4563](https://github.com/tikv/tikv/pull/4563)
 + Server
-    - Remove `TxnScheduler` [#4098](https://github.com/tikv/tikv/pull/4098)
-    - Support pessimistic lock transactions [#4698](https://github.com/tikv/tikv/pull/4698)
-
+    - 移除 txn scheduler [#4098](https://github.com/tikv/tikv/pull/4098)
+    - 支持悲观锁事务 [#4698](https://github.com/tikv/tikv/pull/4698)
 + Raftstore
-    - Support hibernate Regions to reduce the consumption of the raftstore CPU [#4591](https://github.com/tikv/tikv/pull/4591)
-    - Fix the issue that the leader does not reply to the `ReadIndex` requests for the learner [#4653](https://github.com/tikv/tikv/pull/4653)
-    - Fix transferring leader failures in some cases [#4684](https://github.com/tikv/tikv/pull/4684)
-    - Fix the dirty read issue in some cases [#4688](https://github.com/tikv/tikv/pull/4688)
-    - Fix the issue that a snapshot may lose applied data in some cases [#4716](https://github.com/tikv/tikv/pull/4716)
-
+    - 新增 hibernate Regions 特性，减少 raftstore CPU 的消耗 [#4591](https://github.com/tikv/tikv/pull/4591)
+    - 移除 local reader 线程 [#4558](https://github.com/tikv/tikv/pull/4558)
+    - 修复 Leader 不回复 Learner `ReadIndex` 请求的问题 [#4653](https://github.com/tikv/tikv/pull/4653)
+    - 修复在某些情况下 transfer leader 失败的问题 [#4684](https://github.com/tikv/tikv/pull/4684)
+    - 修复在某些情况下可能发生的脏读问题 [#4688](https://github.com/tikv/tikv/pull/4688)
+    - 修复在某些情况下 snapshot 少包含数据的问题 [#4716](https://github.com/tikv/tikv/pull/4716)
 + Coprocessor
-    - Add more RPN functions
+    - 新增更多的 RPN 函数
         - `LogicalOr` [#4691](https://github.com/tikv/tikv/pull/4601)
         - `LTReal` [#4602](https://github.com/tikv/tikv/pull/4602)
         - `LEReal` [#4602](https://github.com/tikv/tikv/pull/4602)
@@ -95,30 +94,29 @@ On May 28, 2019, TiDB 3.0.0-rc.2 is released. The corresponding TiDB Ansible ver
         - `IsNull` [#4720](https://github.com/tikv/tikv/pull/4720)
         - `IsTrue` [#4720](https://github.com/tikv/tikv/pull/4720)
         - `IsFalse` [#4720](https://github.com/tikv/tikv/pull/4720)
-        - Support comparison arithmetic for `Int` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support comparison arithmetic for `Decimal` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support comparison arithmetic for `String` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support comparison arithmetic for `Time` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support comparison arithmetic for `Duration` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support comparison arithmetic for `Json` [#4625](https://github.com/tikv/tikv/pull/4625)
-        - Support plus arithmetic for `Int` [#4733](https://github.com/tikv/tikv/pull/4733)
-        - Support plus arithmetic for `Real` [#4733](https://github.com/tikv/tikv/pull/4733)
-        - Support plus arithmetic for `Decimal` [#4733](https://github.com/tikv/tikv/pull/4733)
-        - Support MOD functions for `Int` [#4727](https://github.com/tikv/tikv/pull/4727)
-        - Support MOD functions for `Real` [#4727](https://github.com/tikv/tikv/pull/4727)
-        - Support MOD functions for `Decimal` [#4727](https://github.com/tikv/tikv/pull/4727)
-        - Support minus arithmetic for `Int` [#4746](https://github.com/tikv/tikv/pull/4746)
-        - Support minus arithmetic for `Real` [#4746](https://github.com/tikv/tikv/pull/4746)
-        - Support minus arithmetic for `Decimal` [#4746](https://github.com/tikv/tikv/pull/4746)
+        - 支持 `Int` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `Decimal` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `String` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `Time` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `Duration` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `Json` 比较运算 [#4625](https://github.com/tikv/tikv/pull/4625)
+        - 支持 `Int` 加法运算 [#4733](https://github.com/tikv/tikv/pull/4733)
+        - 支持 `Real` 加法运算 [#4733](https://github.com/tikv/tikv/pull/4733)
+        - 支持 `Decimal` 加法运算 [#4733](https://github.com/tikv/tikv/pull/4733)
+        - 支持 `Int` 求余函数 [#4727](https://github.com/tikv/tikv/pull/4727)
+        - 支持 `Real` 求余函数 [#4727](https://github.com/tikv/tikv/pull/4727)
+        - 支持 `Decimal` 求余函数 [#4727](https://github.com/tikv/tikv/pull/4727)
+        - 支持 `Int` 减法运算 [#4746](https://github.com/tikv/tikv/pull/4746)
+        - 支持 `Real` 减法运算 [#4746](https://github.com/tikv/tikv/pull/4746)
+        - 支持 `Decimal` 减法运算 [#4746](https://github.com/tikv/tikv/pull/4746)
 
 ## Tools
 
 + TiDB Binlog
-    - Add a metric to track the delay of data replication downstream [#594](https://github.com/pingcap/tidb-binlog/pull/594)
+    - Drainer 增加下游同步延迟监控项 `checkpoint_delay` [#594](https://github.com/pingcap/tidb-binlog/pull/594)
 
 + TiDB Lightning
-
-    - Support merging sharded databases and tables [#95](https://github.com/pingcap/tidb-lightning/pull/95)
-    - Add the retry mechanism for KV write failure [#176](https://github.com/pingcap/tidb-lightning/pull/176)
-    - Update the default value of `table-concurrency` to 6 [#175](https://github.com/pingcap/tidb-lightning/pull/175)
-    - Reduce required configuration items by automatically discovering `tidb.pd-addr` and `tidb.port` if they are not provided [#173](https://github.com/pingcap/tidb-lightning/pull/173)
+    - 支持数据库合并，数据表合并同步功能 [#95](https://github.com/pingcap/tidb-lightning/pull/95)
+    - 新增 KV 写入失败重试机制 [#176](https://github.com/pingcap/tidb-lightning/pull/176)
+    - 配置项 `table-concurrency` 默认值修改为 6 [#175](https://github.com/pingcap/tidb-lightning/pull/175)
+    - 减少必要的配置项，`tidb.port` 和 `tidb..pd-addr` 支持自动获取 [#173](https://github.com/pingcap/tidb-lightning/pull/173)

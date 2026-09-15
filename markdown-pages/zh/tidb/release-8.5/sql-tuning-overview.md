@@ -1,17 +1,17 @@
 ---
-title: SQL Tuning Overview
-summary: SQL is a declarative language, meaning it describes the final result, not the steps to execute. TiDB optimizes execution and can execute parts of the query in any order. It's similar to GPS navigation, using statistics and live traffic data. Concepts include understanding query execution plans, SQL optimization, and controlling execution plans for better performance.
+title: SQL 性能调优
+summary: SQL 性能调优是重要的，TiDB 会优化 SQL 语句的执行，以最省时的方式返回结果。这个过程类似于 GPS 导航，利用统计信息和实时交通信息规划最佳路线。了解 TiDB 执行计划、SQL 优化流程和控制执行计划可以帮助提高查询性能。
 ---
 
-# SQL Tuning Overview
+# SQL 性能调优
 
-SQL is a declarative language. That is, an SQL statement describes _what the final result should look like_ and not a set of steps to execute in sequence. TiDB will optimize the execution, and is semantically permitted to execute parts of the query in any order provided that it correctly returns the final result as described.
+SQL 是一种声明性语言。一条 SQL 语句描述的是最终结果应该如何，而非按顺序执行的步骤。TiDB 会优化 SQL 语句的执行，语义上允许以任何顺序执行查询的各部分，前提是能正确返回语句所描述的最终结果。
 
-A useful comparison to SQL optimization, is to describe what happens when you use GPS navigation. From your provided address, _2955 Campus Drive San Mateo CA 94403_, the GPS software plans the most time-efficient way to route you. It may make use of various statistics such as previous trips, meta data such as speed limits, and in modern cases, a live feed of traffic information. Several of these analogies translate to TiDB.
+SQL 性能优化的过程，可以理解为 GPS 导航的过程。你提供地址后，GPS 软件利用各种统计信息（例如以前的行程、速度限制等元数据，以及实时交通信息）规划出一条最省时的路线。这与 TiDB 中的 SQL 性能优化过程相对应。
 
-This section introduces several concepts about query execution:
+本章节包括以下文档，可帮助你更好地理解查询执行计划：
 
-- [Understanding the Query Execution Plan](/explain-overview.md) introduces how to use the `EXPLAIN` statement to understand how TiDB has decided to execute a statement.
-- [SQL Optimization Process](/sql-optimization-concepts.md) introduces what optimizations TiDB is capable of using to improve query execution performance.
-- [Control Execution Plans](/control-execution-plan.md) introduces ways to control the generation of the execution plan. This can be useful in cases where the execution plan decided by TiDB is suboptimal.
-- [Index Advisor](/index-advisor.md) introduces how to let TiDB recommend indexes for you automatically based on your workload.
+- [理解 TiDB 执行计划](/explain-overview.md)介绍如何使用 `EXPLAIN` 语句来理解 TiDB 是如何执行某个查询的。
+- [SQL 优化流程概览](/sql-optimization-concepts.md)介绍 TiDB 可以使用的几种优化，以提高查询性能。
+- [控制执行计划](/control-execution-plan.md)介绍如何控制执行计划的生成。TiDB 的执行计划非最优时，建议控制执行计划。
+- [索引推荐 (Index Advisor)](/index-advisor.md) 介绍如何让 TiDB 根据你的工作负载自动推荐索引。

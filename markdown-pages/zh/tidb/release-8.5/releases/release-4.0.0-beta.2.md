@@ -1,60 +1,59 @@
 ---
 title: TiDB 4.0.0 Beta.2 Release Notes
-summary: TiDB 4.0.0 Beta.2 was released on March 18, 2020. The new features include support for persisting dynamically updated configurations, bidirectional data replication, TLS configuration, change data capture, and experimental features like incremental backup. Bug fixes address issues with panic, hibernate regions, replication delay, and compatibility. TiDB Ansible now supports injecting node information to etcd and deploying services on the ARM platform.
+summary: TiDB 4.0.0 Beta.2 发布日期为 2020 年 3 月 18 日。该版本修复了 TiDB Binlog 在配置 `disable-dispatch`、`disable-causality` 时系统直接报错并退出的问题。新增了 TiKV 和 PD 支持将动态修改配置的结果持久化存储到硬盘的功能。另外，TiDB Binlog 新增了 TiDB 集群之间数据双向复制功能，TiDB Lightning 新增了配置 TLS 功能，新增了 TiCDC 工具，提供了进程级别的高可用能力。此外，BR 开启了增量备份、支持将备份文件存储在 AWS S3 等实验性功能。TiDB Ansible 新增了将节点信息注册到 etcd 的功能，新增支持在 ARM 平台上部署 TiDB 服务的功能。修复了 TiKV、PD 和 Tools 中的多个 bug。
+aliases: ['/zh/tidb/dev/release-4.0.0-beta.2/','/zh/tidb/v4.0/release-4.0.0-beta.2','/docs-cn/dev/releases/release-4.0.0-beta.2/','/docs-cn/dev/releases/4.0.0-beta.2/','/zh/tidb/v5.4/release-4.0.0-beta.2','/zh/tidb/v6.1/release-4.0.0-beta.2','/zh/tidb/v6.5/release-4.0.0-beta.2','/zh/tidb/v7.1/release-4.0.0-beta.2','/zh/tidb/v7.5/release-4.0.0-beta.2','/zh/tidb/v8.1/release-4.0.0-beta.2']
 ---
 
 # TiDB 4.0.0 Beta.2 Release Notes
 
-Release date: March 18, 2020
+发版日期：2020 年 3 月 18 日
 
-TiDB version: 4.0.0-beta.2
+TiDB 版本：4.0.0-beta.2
 
-TiDB Ansible version: 4.0.0-beta.2
+TiDB Ansible 版本：4.0.0-beta.2
 
-## Compatibility Changes
+## 兼容性变化
 
 + Tools
     - TiDB Binlog
-        - Fix the issue that the system returns an error and exits when `disable-dispatch` and `disable-causality` are configured in Drainer [#915](https://github.com/pingcap/tidb-binlog/pull/915)
+        - 修复 Drainer 配置 `disable-dispatch`、`disable-causality` 时系统直接报错并退出的问题 [#915](https://github.com/pingcap/tidb-binlog/pull/915)
 
-## New Features
+## 新功能
 
 + TiKV
-    - Support persisting the dynamically updated configuration into the hardware disk [#6684](https://github.com/tikv/tikv/pull/6684)
+    - 支持将动态修改配置的结果持久化存储到硬盘 [#6684](https://github.com/tikv/tikv/pull/6684)
 
 + PD
-    - Support persisting the dynamically updated configuration into the hardware disk [#2153](https://github.com/pingcap/pd/pull/2153)
+    - 支持将动态修改配置的结果持久化存储到硬盘 [#2153](https://github.com/pingcap/pd/pull/2153)
 
 + Tools
     - TiDB Binlog
-        - Support the bidirectional data replication between TiDB clusters [#879](https://github.com/pingcap/tidb-binlog/pull/879) [#903](https://github.com/pingcap/tidb-binlog/pull/903)
+        - 新增 TiDB 集群之间数据双向复制功能 [#879](https://github.com/pingcap/tidb-binlog/pull/879) [#903](https://github.com/pingcap/tidb-binlog/pull/903)
     - TiDB Lightning
-        - Support the TLS configuration [#40](https://github.com/tikv/importer/pull/40) [#270](https://github.com/pingcap/tidb-lightning/pull/270)
-    - TiCDC
-        - Initial release of the change data capture (CDC), providing the following features:
-            - Support capturing changed data from TiKV
-            - Support replicating the changed data from TiKV to MySQL compatible databases, and guarantee the eventual data consistency
-            - Support replicating the changed data to Kafka, and guarantee either the eventual data consistency or the row-level orderliness
-            - Provide process-level high availability
-    - Backup & Restore (BR)
-        - Enable experimental features such as incremental backup and backing up files to Amazon S3 [#175](https://github.com/pingcap/br/pull/175)
+        - 新增配置 TLS 功能 [#40](https://github.com/tikv/importer/pull/40) [#270](https://github.com/pingcap/tidb-lightning/pull/270)
+    - 新增 TiCDC 工具，提供以下功能：
+        - 捕捉 TiKV 变化的数据，同步到下游 Kafka、MySQL 协议的数据库
+        - 确保数据最终一致性，若下游是 Kafka，也可确保行级别的有序
+        - 提供进程级别的高可用能力
+    - BR
+        - 开启增量备份、支持将备份文件存储在 AWS S3 等实验性功能 [#175](https://github.com/pingcap/br/pull/175)
 
 + TiDB Ansible
-    - Support injecting the node information to etcd [#1196](https://github.com/pingcap/tidb-ansible/pull/1196)
-    - Support deploying TiDB services on the ARM platform [#1204](https://github.com/pingcap/tidb-ansible/pull/1204)
+    - 新增将节点信息注册到 etcd 的功能 [#1196](https://github.com/pingcap/tidb-ansible/pull/1196)
+    - 新增支持在 ARM 平台上部署 TiDB 服务的功能 [#1204](https://github.com/pingcap/tidb-ansible/pull/1204)
 
-## Bug Fixes
+## Bug 修复
 
 + TiKV
-    - Fix the panic issue that might occur when meeting empty short values during the backup [#6718](https://github.com/tikv/tikv/pull/6718)
-    - Fix the issue that Hibernate Regions might not be correctly awakened in some cases [#6772](https://github.com/tikv/tikv/pull/6672) [#6648](https://github.com/tikv/tikv/pull/6648) [#6376](https://github.com/tikv/tikv/pull/6736)
+    - 修复 backup 在遇到空的 short value 时可能 panic 的问题 [#6718](https://github.com/tikv/tikv/pull/6718)
+    - 修复 Hibernate Region 在某些特殊条件下未被正确唤醒的问题 [#6772](https://github.com/tikv/tikv/pull/6672) [#6648](https://github.com/tikv/tikv/pull/6648) [#6376](https://github.com/tikv/tikv/pull/6736)
 
 + PD
-    - Fix the panic issue that the rule checker fails to allocate stores to Regions [#2160](https://github.com/pingcap/pd/pull/2160)
-    - Fix the issue that after the dynamic configuration is enabled, the configuration might have replication delay when the Leader is being switched [#2154](https://github.com/pingcap/pd/pull/2154)
+    - 修复因 rule checker 在给 Region 分配 store 失败导致系统 panic 的问题 [#2160](https://github.com/pingcap/pd/pull/2160)
+    - 修复启用动态修改配置功能后，配置可能在切换 leader 时有同步延迟的问题 [#2154](https://github.com/pingcap/pd/pull/2154)
 
 + Tools
-    - Backup & Restore (BR)
-        - Fix the issue that BR might fail to restore data of a large size because PD cannot process large-sized data [#167](https://github.com/pingcap/br/pull/167)
-        - Fix the BR failure occurred because the BR version is not compatible with the TiDB version [#186](https://github.com/pingcap/br/pull/186)
-        - Fix the BR failure occurred because the BR version is not compatible with TiFlash [#194](https://github.com/pingcap/br/pull/194)
+    - BR
+        - 修复因 PD 无法处理过大消息导致在数据规模较大时恢复失败的问题 [#167](https://github.com/pingcap/br/pull/167)
+        - 修复因 BR 与 TiDB 版本不兼容导致 BR 运行失败的问题 [#186](https://github.com/pingcap/br/pull/186)
+        - 修复因 BR 与 TiFlash 不兼容导致 BR 运行失败的问题 [#194](https://github.com/pingcap/br/pull/194)

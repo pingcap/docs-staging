@@ -1,15 +1,15 @@
 ---
-title: SHOW [FULL] TABLES | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中使用 SHOW [FULL] TABLES 的概述。
+title: SHOW [FULL] TABLES
+summary: TiDB 数据库中 SHOW [FULL] TABLES 的使用概况。
 ---
 
 # SHOW [FULL] TABLES
 
-此语句显示当前选中的数据库中的表和视图列表。可选的关键字 `FULL` 表示表的类型是 `BASE TABLE`、`SEQUENCE` 还是 `VIEW`。
+`SHOW [FULL] TABLES` 语句用于显示当前所选数据库中表和视图的列表。可选关键字 `FULL` 说明表的类型是 `BASE TABLE`、`SEQUENCE` 还是 `VIEW`。
 
-若要显示其他数据库中的表，可以使用 `SHOW TABLES IN DatabaseName`。
+若要在不同的数据库中显示表，可使用 `SHOW TABLES IN DatabaseName` 语句。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 ShowTableStmt ::=
@@ -77,11 +77,11 @@ mysql> SHOW TABLES IN mysql;
 
 ## MySQL 兼容性
 
-TiDB 中的 `SHOW [FULL] TABLES` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`SHOW [FULL] TABLES` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [CREATE TABLE](/sql-statements/sql-statement-create-table.md)
 * [DROP TABLE](/sql-statements/sql-statement-drop-table.md)
 * [SHOW CREATE TABLE](/sql-statements/sql-statement-show-create-table.md)
-* [`INFORMATION_SCHEMA.TABLES`](/information-schema/information-schema-tables.md)
+* [`information_schema.tables`](/information-schema/information-schema-tables.md)

@@ -1,13 +1,13 @@
 ---
-title: SET PASSWORD | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 SET PASSWORD 的概述。
+title: SET PASSWORD
+summary: TiDB 数据库中 SET PASSWORD 的使用概况。
 ---
 
 # SET PASSWORD
 
-此语句用于更改 TiDB 系统数据库中用户账户的密码。
+`SET PASSWORD` 语句用于更改 TiDB 系统数据库中的用户密码。
 
-## 概述
+## 语法图
 
 ```ebnf+diagram
 SetPasswordStmt ::=
@@ -16,36 +16,78 @@ SetPasswordStmt ::=
 
 ## 示例
 
+
 ```sql
-mysql> SET PASSWORD='test'; -- 更改我的密码
-Query OK, 0 rows affected (0.01 sec)
+SET PASSWORD='test';
+```
 
-mysql> CREATE USER 'newuser' IDENTIFIED BY 'test';
+```
+Query OK, 0 rows affected (0.01 sec)
+```
+
+
+```sql
+CREATE USER 'newuser' IDENTIFIED BY 'test';
+```
+
+```
 Query OK, 1 row affected (0.00 sec)
+```
 
-mysql> SHOW CREATE USER 'newuser';
+
+```sql
+SHOW CREATE USER 'newuser';
+```
+
+```
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | CREATE USER for newuser@%                                                                                                                                            |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | CREATE USER 'newuser'@'%' IDENTIFIED WITH 'mysql_native_password' AS '*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
+```
 
-mysql> SET PASSWORD FOR newuser = 'test';
+
+```sql
+SET PASSWORD FOR 'newuser' = 'test';
+```
+
+```
 Query OK, 0 rows affected (0.01 sec)
+```
 
-mysql> SHOW CREATE USER 'newuser';
+
+```sql
+SHOW CREATE USER 'newuser';
+```
+
+```
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | CREATE USER for newuser@%                                                                                                                                            |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | CREATE USER 'newuser'@'%' IDENTIFIED WITH 'mysql_native_password' AS '*94BDCEBE19083CE2A1F959FD02F964C7AF4CFC29' REQUIRE NONE PASSWORD EXPIRE DEFAULT ACCOUNT UNLOCK |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 1 row in set (0.00 sec)
+```
 
-mysql> SET PASSWORD FOR newuser = PASSWORD('test'); -- 早期 MySQL 版本中的废弃语法
+
+```sql
+SET PASSWORD FOR 'newuser' = PASSWORD('test');
+```
+
+上述语法是早期 MySQL 版本的过时语法。
+
+```
 Query OK, 0 rows affected (0.00 sec)
+```
 
-mysql> SHOW CREATE USER 'newuser';
+
+```sql
+SHOW CREATE USER 'newuser';
+```
+
+```
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | CREATE USER for newuser@%                                                                                                                                            |
 +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -56,14 +98,9 @@ mysql> SHOW CREATE USER 'newuser';
 
 ## MySQL 兼容性
 
-TiDB 中的 `SET PASSWORD` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`SET PASSWORD` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [CREATE USER](/sql-statements/sql-statement-create-user.md)
-
-<CustomContent platform="tidb">
-
 * [Privilege Management](/privilege-management.md)
-
-</CustomContent>

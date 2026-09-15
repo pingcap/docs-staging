@@ -1,155 +1,157 @@
 ---
-title: TiDB 2.0 Release Notes
-summary: TiDB 2.0 GA release on April 27, 2018, brings improvements in MySQL compatibility, SQL optimizer, executor, and stability. Key updates include compact data structure for memory usage reduction, Stream Aggregation operator for empty GROUP BY clause, and support for more MySQL syntaxes. TiKV features include `Region Merge`, `Raw DeleteRange` API, and improved read performance using `ReadPool`. TiSpark 1.0 GA provides distributed computing of TiDB data using Apache Spark, with support for gRPC communication framework, calculation pushdown, index related support, cost-based optimization, and multiple Spark interfaces.
+title: TiDB 2.0 release notes
+summary: TiDB 2.0 GA 版本发布，对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。包括 SQL 优化器、SQL 执行引擎、Server、兼容性、DDL、PD、TiKV 和 TiSpark 的功能、性能和稳定性优化。
+aliases: ['/zh/tidb/dev/release-2.0-ga/','/zh/tidb/v2.0/release-2.0-ga','/docs-cn/dev/releases/release-2.0-ga/','/docs-cn/dev/releases/2.0ga/','/zh/tidb/v5.4/release-2.0-ga','/zh/tidb/v6.1/release-2.0-ga','/zh/tidb/v6.5/release-2.0-ga','/zh/tidb/v7.1/release-2.0-ga','/zh/tidb/v7.5/release-2.0-ga','/zh/tidb/v8.1/release-2.0-ga']
 ---
 
 # TiDB 2.0 Release Notes
 
-On April 27, 2018, TiDB 2.0 GA is released! Compared with TiDB 1.0, this release has great improvement in MySQL compatibility, SQL optimizer, executor, and stability.
+2018 年 4 月 27 日，TiDB 发布 2.0 GA 版。相比 1.0 版本，该版本对 MySQL 兼容性、系统稳定性、优化器和执行器做了很多改进。
 
 ## TiDB
 
-- SQL Optimizer
-    - Use more compact data structure to reduce the memory usage of statistics information
-    - Speed up loading statistics information when starting a tidb-server process
-    - Support updating statistics information dynamically [experimental]
-    - Optimize the cost model to provide more accurate query cost evaluation
-    - Use `Count-Min Sketch` to estimate the cost of point queries more accurately
-    - Support analyzing more complex conditions to make full use of indexes
-    - Support manually specifying the `Join` order using the `STRAIGHT_JOIN` syntax
-    - Use the Stream Aggregation operator when the `GROUP BY` clause is empty to improve the performance
-    - Support using indexes for the `MAX/MIN` function
-    - Optimize the processing algorithms for correlated subqueries to support decorrelating more types of correlated subqueries and transform them to `Left Outer Join`
-    - Extend `IndexLookupJoin` to be used in matching the index prefix
-- SQL Execution Engine
-    - Refactor all operators using the Chunk architecture, improve the execution performance of analytical queries, and reduce memory usage. There is a significant improvement in the TPC-H benchmark result.
-    - Support the Streaming Aggregation operators pushdown
-    - Optimize the `Insert Into Ignore` statement to improve the performance by over 10 times
-    - Optimize the `Insert On Duplicate Key Update` statement to improve the performance by over 10 times
-    - Optimize `Load Data` to improve the performance by over 10 times
-    - Push down more data types and functions to TiKV
-    - Support computing the memory usage of physical operators, and specifying the processing behavior in the configuration file and system variables when the memory usage exceeds the threshold
-    - Support limiting the memory usage by a single SQL statement to reduce the risk of OOM
-    - Support using implicit RowID in CRUD operations
-    - Improve the performance of point queries
+- SQL 优化器
+    - 精简统计信息数据结构，减小内存占用
+    - 加快进程启动时加载统计信息速度
+    - 支持统计信息动态更新 [experimental]
+    - 优化代价模型，对代价估算更精准
+    - 使用 `Count-Min Sketch` 更精确地估算点查的代价
+    - 支持分析更复杂的条件，尽可能充分的使用索引
+    - 支持通过 `STRAIGHT_JOIN` 语法手动指定 Join 顺序
+    - `GROUP BY`子句为空时使用 Stream Aggregation 算子，提升性能
+    - 支持使用索引计算 `Max/Min` 函数
+    - 优化关联子查询处理算法，支持将更多类型的关联子查询解关联并转化成 `Left Outer Join`
+    - 扩大 `IndexLookupJoin` 的使用范围，索引前缀匹配的场景也可以使用该算法
+- SQL 执行引擎
+    - 使用 Chunk 结构重构所有执行器算子，提升分析型语句执行性能，减少内存占用，显著提升 TPC-H 结果
+    - 支持 Streaming Aggregation 算子下推
+    - 优化 `Insert Into Ignore` 语句性能，提升 10 倍以上
+    - 优化 `Insert On Duplicate Key Update` 语句性能，提升 10 倍以上
+    - 下推更多的数据类型和函数到 TiKV 计算
+    - 优化 `Load Data` 性能，提升 10 倍以上
+    - 支持对物理算子内存使用进行统计，通过配置文件以及系统变量指定超过阈值后的处理行为
+    - 支持限制单条 SQL 语句使用内存的大小，减少程序 OOM 风险
+    - 支持在 CRUD 操作中使用隐式的行 ID
+    - 提升点查性能
 - Server
-    - Support the Proxy Protocol
-    - Add more monitoring metrics and refine the log
-    - Support validating the configuration files
-    - Support obtaining the information of TiDB parameters through HTTP API
-    - Resolve Lock in the Batch mode to speed up garbage collection
-    - Support multi-threaded garbage collection
-    - Support TLS
-- Compatibility
-    - Support more MySQL syntaxes
-    - Support modifying the `lower_case_table_names` system variable in the configuration file to support the OGG data replication tool
-    - Improve compatibility with the Navicat management tool
-    - Support displaying the table creating time in `Information_Schema`
-    - Fix the issue that the return types of some functions/expressions differ from MySQL
-    - Improve compatibility with JDBC
-    - Support more SQL Modes
+    - 支持 Proxy Protocol
+    - 添加大量监控项，优化日志
+    - 支持配置文件的合法性检测
+    - 支持 HTTP API 获取 TiDB 参数信息
+    - 使用 Batch 方式 Resolve Lock，提升垃圾回收速度
+    - 支持多线程垃圾回收
+    - 支持 TLS
+- 兼容性
+    - 支持更多 MySQL 语法
+    - 支持配置文件修改 `lower_case_table_names` 系统变量，用于支持 OGG 数据同步工具
+    - 提升对 Navicat 的兼容性
+    - 在 `Information_Schema` 中支持显示建表时间
+    - 修复部分函数/表达式返回类型和 MySQL 不同的问题
+    - 提升对 JDBC 兼容性
+    - 支持更多的 `SQL_MODE`
 - DDL
-    - Optimize the `Add Index` operation to greatly improve the execution speed in some scenarios
-    - Attach a lower priority to the `Add Index` operation to reduce the impact on online business
-    - Output more detailed status information of the DDL jobs in `Admin Show DDL Jobs`
-    - Support querying the original statements of currently running DDL jobs using `Admin Show DDL Job Queries JobID`
-    - Support recovering the index data using `Admin Recover Index` for disaster recovery
-    - Support modifying Table Options using the `Alter` statement
+    - 优化 `Add Index` 的执行速度，部分场景下速度大幅度提升
+    - `Add Index` 操作变更为低优先级，降低对线上业务影响
+    - `Admin Show DDL Jobs` 输出更详细的 DDL 任务状态信息
+    - 支持 `Admin Show DDL Job Queries JobID` 查询当前正在运行的 DDL 任务的原始语句
+    - 支持 `Admin Recover Index` 命令，用于灾难恢复情况下修复索引数据
+    - 支持通过 `Alter` 语句修改 Table Options
 
 ## PD
 
-- Support `Region Merge`, to merge empty Regions after deleting data [experimental]
-- Support `Raft Learner` [experimental]
-- Optimize the scheduler
-    - Make the scheduler to adapt to different Region sizes
-    - Improve the priority and speed of restoring data during TiKV outage
-    - Speed up data transferring when removing a TiKV node
-    - Optimize the scheduling policies to prevent the disks from becoming full when the space of TiKV nodes is insufficient
-    - Improve the scheduling efficiency of the balance-leader scheduler
-    - Reduce the scheduling overhead of the balance-region scheduler
-    - Optimize the execution efficiency of the hot-region scheduler
-- Operations interface and configuration
-    - Support TLS
-    - Support prioritizing the PD leaders
-    - Support configuring the scheduling policies based on labels
-    - Support configuring stores with a specific label not to schedule the Raft leader
-    - Support splitting Region manually to handle the hotspot in a single Region
-    - Support scattering a specified Region to manually adjust Region distribution in some cases
-    - Add check rules for configuration parameters and improve validity check of the configuration items
-- Debugging interface
-    - Add the `Drop Region` debugging interface
-    - Add the interfaces to enumerate the health status of each PD
-- Statistics
-    - Add statistics about abnormal Regions
-    - Add statistics about Region isolation level
-    - Add scheduling related metrics
-- Performance
-    - Keep the PD leader and the etcd leader together in the same node to improve write performance
-    - Optimize the performance of Region heartbeat
+- 增加 `Region Merge` 支持，合并数据删除后产生的空 Region [experimental]
+- 增加 `Raft Learner` 支持 [experimental]
+- 调度器优化
+    - 调度器适应不同的 Region size
+    - 提升 TiKV 宕机时数据恢复的优先级和恢复速度
+    - 提升下线 TiKV 节点搬迁数据的速度
+    - 优化 TiKV 节点空间不足时的调度策略，尽可能防止空间不足时磁盘被写满
+    - 提升 balance-leader scheduler 的调度效率
+    - 减少 balance-region scheduler 调度开销
+    - 优化 hot-region scheduler 的执行效率
+- 运维接口及配置
+    - 增加 TLS 支持
+    - 支持设置 PD leader 优先级
+    - 支持基于 label 配置属性
+    - 支持配置特定 label 的节点不调度 Region leader
+    - 支持手动 Split Region，可用于处理单 Region 热点的问题
+    - 支持打散指定 Region，用于某些情况下手动调整热点 Region 分布
+    - 增加配置参数检查规则，完善配置项的合法性较验
+- 调试接口
+    - 增加 `Drop Region` 调试接口
+    - 增加枚举各个 PD health 状态的接口
+- 统计相关
+    - 添加异常 Region 的统计
+    - 添加 Region 隔离级别的统计
+    - 添加调度相关 metrics
+- 性能优化
+    - PD leader 尽量与 etcd leader 保持同步，提升写入性能
+    - 优化 Region heartbeat 性能，现可支持超过 100 万 Region
 
 ## TiKV
 
-- Features
-    - Protect critical configuration from incorrect modification
-    - Support `Region Merge` [experimental]
-    - Add the `Raw DeleteRange` API
-    - Add the `GetMetric` API
-    - Add `Raw Batch Put`, `Raw Batch Get`, `Raw Batch Delete` and `Raw Batch Scan`
-    - Add Column Family options for the RawKV API and support executing operation on a specific Column Family
-    - Support Streaming and Streaming Aggregation in Coprocessor
-    - Support configuring the request timeout of Coprocessor
-    - Carry timestamps with Region heartbeats
-    - Support modifying some RocksDB parameters online, such as `block-cache-size`
-    - Support configuring the behavior of Coprocessor when it encounters some warnings or errors
-    - Support starting in the importing data mode to reduce write amplification during the data importing process
-    - Support manually splitting Region in halves
-    - Improve the data recovery tool `tikv-ctl`
-    - Return more statistics in Coprocessor to guide the behavior of TiDB
-    - Support the `ImportSST` API to import SST files [experimental]
-    - Add the TiKV Importer binary to integrate with TiDB Lightning to import data quickly [experimental]
-- Performance
-    - Optimize read performance using `ReadPool` and increase the `raw_get/get/batch_get` by 30%
-    - Improve metrics performance
-    - Inform PD immediately once the Raft snapshot process is completed to speed up balancing
-    - Solve performance jitter caused by RocksDB flushing
-    - Optimize the space reclaiming mechanism after deleting data
-    - Speed up garbage cleaning while starting the server
-    - Reduce the I/O overhead during replica migration using `DeleteFilesInRanges`
-- Stability
-    - Fix the issue that gRPC call does not get returned when the PD leader switches
-    - Fix the issue that it is slow to offline nodes caused by snapshots
-    - Limit the temporary space usage consumed by migrating replicas
-    - Report the Regions that cannot elect a leader for a long time
-    - Update the Region size information in time according to compaction events
-    - Limit the size of scan lock to avoid request timeout
-    - Limit the memory usage when receiving snapshots to avoid OOM
-    - Increase the speed of CI test
-    - Fix the OOM issue caused by too many snapshots
-    - Configure `keepalive` of gRPC
-    - Fix the OOM issue caused by an increase of the Region number
+- 功能
+    - 保护关键配置，防止错误修改
+    - 支持 `Region Merge` [experimental]
+    - 添加 `Raw DeleteRange` API
+    - 添加 `GetMetric` API
+    - 添加 `Raw Batch Put`，`Raw Batch Get`，`Raw Batch Delete` 和 `Raw Batch Scan`
+    - 给 Raw KV API 增加 Column Family 参数，能对特定 Column Family 进行操作
+    - Coprocessor 支持 streaming 模式，支持 streaming 聚合
+    - 支持配置 Coprocessor 请求的超时时间
+    - 心跳包携带时间戳
+    - 支持在线修改 RocksDB 的一些参数，包括 `block-cache-size` 大小等
+    - 支持配置 Coprocessor 遇到某些错误时的行为
+    - 支持以导数据模式启动，减少导数据过程中的写放大
+    - 支持手动对 region 进行对半 split
+    - 完善数据修复工具 tikv-ctl
+    - Coprocessor 返回更多的统计信息，以便指导 TiDB 的行为
+    - 支持 ImportSST API，可以用于 SST 文件导入 [experimental]
+    - 新增 TiKV Importer 二进制，与 TiDB Lightning 集成用于快速导入数据 [experimental]
+- 性能
+    - 使用 ReadPool 优化读性能，`raw_get/get/batch_get` 提升 30%
+    - 提升 metrics 的性能
+    - Raft snapshot 处理完之后立即通知 PD，加快调度速度
+    - 解决 RocksDB 刷盘导致性能抖动问题
+    - 提升在数据删除之后的空间回收
+    - 加速启动过程中的垃圾清理过程
+    - 使用 `DeleteFilesInRanges` 减少副本迁移时 I/O 开销
+- 稳定性
+    - 解决在 PD leader 发送切换的情况下 gRPC call 不返回问题
+    - 解决由于 snapshot 导致下线节点慢的问题
+    - 限制搬移副本临时占用的空间大小
+    - 如果有 Region 长时间没有 Leader，进行上报
+    - 根据 compaction 事件及时更新统计的 Region size
+    - 限制单次 scan lock 请求的扫描的数据量，防止超时
+    - 限制接收 snapshot 过程中的内存占用，防止 OOM
+    - 提升 CI test 的速度
+    - 解决由于 snapshot 太多导致的 OOM 问题
+    - 配置 gRPC 的 `keepalive` 参数
+    - 修复 Region 增多容易 OOM 的问题
 
 ## TiSpark
 
-TiSpark uses a separate version number. The current TiSpark version is 1.0 GA. The components of TiSpark 1.0 provide distributed computing of TiDB data using Apache Spark.
+TiSpark 使用独立的版本号，现为 1.0 GA。TiSpark 1.0 版本组件提供了针对 TiDB 上的数据使用 Apache Spark 进行分布式计算的能力。
 
-- Provide a gRPC communication framework to read data from TiKV
-- Provide encoding and decoding of TiKV component data and communication protocol
-- Provide calculation pushdown, which includes:
-    - Aggregate pushdown
-    - Predicate pushdown
-    - TopN pushdown
-    - Limit pushdown
-- Provide index related support
-    - Transform predicate into Region key range or secondary index
-    - Optimize `Index Only` queries
-    - Adaptively downgrade index scan to table scan per Region
-- Provide cost-based optimization
-    - Support statistics
-    - Select index
-    - Estimate broadcast table cost
-- Provide support for multiple Spark interfaces
-    - Support Spark Shell
-    - Support ThriftServer/JDBC
-    - Support Spark-SQL interaction
-    - Support PySpark Shell
-    - Support SparkR
+- 提供了针对 TiKV 读取的 gRPC 通信框架
+- 提供了对 TiKV 组件数据的和通信协议部分的编码解码
+- 提供了计算下推功能，包含：
+    - 聚合下推
+    - 谓词下推
+    - TopN 下推
+    - Limit 下推
+- 提供了索引相关的支持
+    - 谓词转化聚簇索引范围
+    - 谓词转化次级索引
+    - Index Only 查询优化
+    - 运行时索引退化扫表优化
+- 提供了基于代价的优化
+    - 统计信息支持
+    - 索引选择
+    - 广播表代价估算
+- 多种 Spark Interface 的支持
+    - Spark Shell 支持
+    - ThriftServer/JDBC 支持
+    - Spark-SQL 交互支持
+    - PySpark Shell 支持
+    - SparkR 支持

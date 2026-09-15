@@ -1,50 +1,46 @@
 ---
 title: tiup mirror sign
-summary: The `tiup mirror sign` command is used to sign metadata files in TiUP mirror. It supports network addresses and local file paths. Options include specifying the private key location and setting the access timeout for network signing. Successful execution results in no output, while errors are reported for duplicate signing or invalid manifest files.
+summary: tiup mirror sign 命令用于对镜像中定义的元信息文件进行签名。语法为 tiup mirror sign <manifest-file>。选项包括 -k, --key 和 --timeout。输出包括成功、文件已被指定的 key 签名过和文件不是合法的 manifest。
 ---
 
 # tiup mirror sign
 
-The `tiup mirror sign` command is used to sign the metadata files (*.json) defined in TiUP [mirror](/tiup/tiup-mirror-reference.md). These metadata files might be stored on the local file system or remotely stored using the HTTP protocol to provide a signature entry.
+命令 `tiup mirror sign` 用于对[镜像](/tiup/tiup-mirror-reference.md)中定义的元信息文件（*.json）进行签名，这些文件可能储存在本地文件系统，也可以放在远端使用 http 协议提供签名入口。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror sign <manifest-file> [flags]
 ```
 
-`<manifest-file>` is the address of the file to be signed, which has two forms:
+`<manifest-file>` 为被签名的文件地址，可以有两种地址：
 
-- Network address, which starts with HTTP or HTTPS, such as `http://172.16.5.5:8080/rotate/root.json`
-- Local file path, which is a relative path or an absolute path
+- 网络地址：http 或者 https 开头，如 `http://172.16.5.5:8080/rotate/root.json`
+- 本地文件路径：相对路径或绝对路径均可
 
-If it is a network address, this address must provide the following features:
+如果是网络地址，该地址必须提供以下功能：
 
-- Supports the access via `http get` that returns the complete content of the signed file (including the `signatures` field).
-- Supports the access via `http post`. The client adds the signature to the `signatures` field of the content that is returned by `http get` and posts to this network address.
+- 支持以 `http get` 访问，此时应当返回被签名文件的完整内容（包含 signatures 字段）
+- 支持以 `http post` 访问，客户端会在 `http get` 返回的内容的 signatures 字段中加上本次的签名 POST 到该地址
 
-## Options
+## 选项
 
-### -k, --key
+### -k, --key (string，默认 ${TIUP_HOME}/keys/private.json)
 
-- Specifies the location of the private key used for signing the `{component}.json` file.
-- Data type: `STRING`
-- - If this option is not specified in the command, `"${TIUP_HOME}/keys/private.json"` is used by default.
+指定用于签名的私钥位置。
 
-### --timeout
+### --timeout (int，默认 10)
 
-- Specifies the access timeout time for signing through the network. The unit is in seconds.
-- Data type: `INT`
-- Default: 10
+通过网络签名时网络的访问超时时间，单位为秒。
 
-> **Note:**
+> **注意：**
 >
-> This option is valid only when `<manifest-file>` is a network address.
+> 只有当 `<manifest-file>` 为网络地址时该选项有效。
 
-## Output
+## 输出
 
-- If the command is executed successfully, there is no output.
-- If the file has been signed by the specified key, TiUP reports the error `Error: this manifest file has already been signed by specified key`.
-- If the file is not a valid manifest, TiUP reports the error `Error: unmarshal manifest: %s`.
+- 成功：无输出
+- 文件已被指定的 key 签名过：`Error: this manifest file has already been signed by specified key`
+- 文件不是合法的 manifest：`Error: unmarshal manifest: %s`
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

@@ -1,47 +1,46 @@
 ---
 title: TiDB 2.1.11 Release Notes
-summary: TiDB 2.1.11 was released on June 03, 2019. It includes fixes for various issues in TiDB, PD, TiKV, and Tools. Some highlights are the fix for incorrect schema in delete from join, calculation errors of unix_timestamp(), and the addition of Drainer parameters in TiDB Ansible.
+summary: TiDB 2.1.11 发布，修复多表 join 删除错误 schema 问题，更新统计信息合并反馈信息，修复函数返回错误字段类型问题，修复时间计算错误问题，修复与 MySQL 8.0 不兼容问题，支持 SHOW OPEN TABLES 语句，修复 goroutine 泄露问题，修复设置 tidb_snapshot 变量时间格式解析出错问题。PD 修复热点 Region 调度问题，新增热点调度优先级配置项。TiKV 修复 leader, learner 读到空 index 问题，处理锁命令放在高优先级线程池中。TiDB Binlog 新增 GC 删数据限速功能。TiDB Ansible 新增 Drainer 参数。
+aliases: ['/zh/tidb/dev/release-2.1.11/','/zh/tidb/v2.1/release-2.1.11','/docs-cn/dev/releases/release-2.1.11/','/docs-cn/dev/releases/2.1.11/','/zh/tidb/v5.4/release-2.1.11','/zh/tidb/v6.1/release-2.1.11','/zh/tidb/v6.5/release-2.1.11','/zh/tidb/v7.1/release-2.1.11','/zh/tidb/v7.5/release-2.1.11','/zh/tidb/v8.1/release-2.1.11']
 ---
 
 # TiDB 2.1.11 Release Notes
 
-Release date: June 03, 2019
+发版日期：2019 年 6 月 03 日
 
-TiDB version: 2.1.11
+TiDB 版本：2.1.11
 
-TiDB Ansible version: 2.1.11
+TiDB Ansible 版本：2.1.11
 
 ## TiDB
 
-- Fix the issue that incorrect schema is used for `delete from join` [#10595](https://github.com/pingcap/tidb/pull/10595)
-- Fix the issue that the built-in `CONVERT()` may return incorrect field type [#10263](https://github.com/pingcap/tidb/pull/10263)
-- Merge non-overlapped feedback when updating bucket count [#10569](https://github.com/pingcap/tidb/pull/10569)
-- Fix calculation errors of `unix_timestamp()-unix_timestamp(now())` [#10491](https://github.com/pingcap/tidb/pull/10491)
-- Fix the incompatibility issue of `period_diff` with MySQL 8.0 [#10501](https://github.com/pingcap/tidb/pull/10501)
-- Skip `Virtual Column` when collecting statistics to avoid exceptions [#10628](https://github.com/pingcap/tidb/pull/10628)
-- Support the `SHOW OPEN TABLES` statement [#10374](https://github.com/pingcap/tidb/pull/10374)
-- Fix the issue that goroutine leak may happen in some cases [#10656](https://github.com/pingcap/tidb/pull/10656)
-- Fix the issue that setting the `tidb_snapshot` variable in some cases may cause incorrect parsing of time format  [#10637](https://github.com/pingcap/tidb/pull/10637)
+- 修复 delete 多表 join 的结果时使用错误 schema 的问题 [#10595](https://github.com/pingcap/tidb/pull/10595)
+- 修复 `CONVERT()` 函数返回错误的字段类型的问题 [#10263](https://github.com/pingcap/tidb/pull/10263)
+- 更新统计信息时合并不重叠的反馈信息 [#10569](https://github.com/pingcap/tidb/pull/10569)
+- 修复 `unix_timestamp()-unix_timestamp(now())` 计算错误的问题 [#10491](https://github.com/pingcap/tidb/pull/10491)
+- 修复 `period_diff` 与 MySQL 8.0 不兼容的问题 [#10501](https://github.com/pingcap/tidb/pull/10501)
+- 收集统计信息的时候，忽略 `Virtual Column`，避免异常报错 [#10628](https://github.com/pingcap/tidb/pull/10628)
+- 支持 `SHOW OPEN TABLES` 语句 [#10374](https://github.com/pingcap/tidb/pull/10374)
+- 修复某些情况下导致的 goroutine 泄露问题 [#10656](https://github.com/pingcap/tidb/pull/10656)
+- 修复某些情况下设置 `tidb_snapshot` 变量时间格式解析出错的问题 [#10637](https://github.com/pingcap/tidb/pull/10637)
 
 ## PD
 
-- Fix the issue that hots Region may fail to be scheduled due to `balance-region` [#1551](https://github.com/pingcap/pd/pull/1551)
-- Set hotspot related scheduling priorities to high [#1551](https://github.com/pingcap/pd/pull/1551)
-- Add two configuration items [#1551](https://github.com/pingcap/pd/pull/1551)
-    - `hot-region-schedule-limit` to control the maximum number of concurrent hotspot scheduling tasks
-    - `hot-region-cache-hits-threshold` to identify a hot Region
+- 修复因为 `balance-region` 可能会导致热点 Region 没有机会调度的问题 [#1551](https://github.com/pingcap/pd/pull/1551)
+- 将热点相关调度的优先级改为高优先级 [#1551](https://github.com/pingcap/pd/pull/1551)
+- 新增配置项 `hot-region-schedule-limit` 控制同时进行热点调度任务的数量及新增 `hot-region-cache-hits-threshold` 控制判断是否为热点 Region [#1551](https://github.com/pingcap/pd/pull/1551)
 
 ## TiKV
 
-- Fix the issue that the learner reads an empty index when there is only one leader and one learner [#4751](https://github.com/tikv/tikv/pull/4751)
-- Process `ScanLock` and `ResolveLock` in the thread pool with a high priority to reduce their impacts on commands with a normal priority [#4791](https://github.com/tikv/tikv/pull/4791)
-- Sync all files of received snapshots [#4811](https://github.com/tikv/tikv/pull/4811)
+- 修复在仅有一个 leader，learner 时，learner 读到空 index 的问题 [#4751](https://github.com/tikv/tikv/pull/4751)
+- 将 `ScanLock` 和 `ResolveLock` 放在高优先级线程池中处理，减少对普通优先级命令的影响 [#4791](https://github.com/tikv/tikv/pull/4791)
+- 同步所有收到的 snapshot 的文件 [#4811](https://github.com/tikv/tikv/pull/4811)
 
 ## Tools
 
 - TiDB Binlog
-    - Limit data deletion speed during GC to avoid QPS degrading caused by `WritePause` [#620](https://github.com/pingcap/tidb-binlog/pull/620)
+    - 新增 GC 删数据限速功能，避免因为删除数据导致 QPS 降低的问题 [#620](https://github.com/pingcap/tidb-binlog/pull/620)
 
 ## TiDB Ansible
 
-- Add Drainer parameters [#760](https://github.com/pingcap/tidb-ansible/pull/760)
+- 新增 Drainer 参数 [#760](https://github.com/pingcap/tidb-ansible/pull/760)

@@ -1,41 +1,44 @@
 ---
-title: Quick Start with TiDB Self-Managed
-summary: Learn how to quickly get started with TiDB Self-Managed using TiUP playground and see if TiDB is the right choice for you.
+title: TiDB 数据库快速上手指南
+summary: 了解如何快速上手使用 TiDB 数据库。
 ---
 
-# Quick Start with TiDB Self-Managed
+# TiDB 数据库快速上手指南
 
-This guide provides the quickest way to get started with TiDB Self-Managed. For non-production environments, you can deploy your TiDB database using either of the following methods:
+本指南介绍如何快速上手体验 TiDB 数据库。对于非生产环境，你可以选择以下任意一种方式部署 TiDB 数据库：
 
-- [Deploy a local test cluster](#deploy-a-local-test-cluster) (for macOS and Linux)
-- [Simulate production deployment on a single machine](#simulate-production-deployment-on-a-single-machine) (for Linux only)
+- [部署本地测试集群](#deploy-a-local-test-cluster)（支持 macOS 和 Linux）
+- [在单机上模拟部署生产环境集群](#在单机上模拟部署生产环境集群)（支持 Linux）
 
-In addition, you can try out TiDB features on [TiDB Playground](https://play.tidbcloud.com/?utm_source=docs&utm_medium=tidb_quick_start).
-
-> **Note:**
+> **注意：**
 >
-> The deployment method provided in this guide is **ONLY FOR** quick start, **NOT FOR** production or comprehensive functionality and stability testing.
+> 本指南中的 TiDB 部署方式仅适用于快速上手体验，不适用于生产环境。
 >
-> - To deploy a self-hosted production cluster, see the [production installation guide](/production-deployment-using-tiup.md).
-> - To deploy TiDB on Kubernetes, see [Get Started with TiDB on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable/get-started).
-> - To manage TiDB in the cloud, see [TiDB Cloud Quick Start](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart).
+> - 如需在生产环境部署 TiDB，请参考[在生产环境中部署 TiDB 指南](/production-deployment-using-tiup.md)。
+> - 如需在 Kubernetes 上部署 TiDB，请参考[快速上手 TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/get-started)。
+> - 如需在云上管理 TiDB，请参考 [TiDB Cloud 快速上手指南](https://docs.pingcap.com/tidbcloud/tidb-cloud-quickstart)。
 
-## Deploy a local test cluster
+要快速了解 TiUP 的基本功能、使用 TiUP 快速搭建 TiDB 集群的方法与连接 TiDB 集群并执行 SQL 的方法，建议先观看下面的培训视频（时长 15 分钟）。注意本视频只作为学习参考，如需了解 [TiUP](/tiup/tiup-overview.md) 的具体使用方法和 [TiDB 快速上手具体操作步骤](#deploy-a-local-test-cluster)，请以文档内容为准。
 
-This section describes how to quickly deploy a local TiDB cluster for testing on a single macOS or Linux server. By deploying such a cluster, you can learn the basic architecture of the TiDB database and the operation of its components, such as TiDB, TiKV, PD, and the monitoring components.
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn%2FLesson07_quick_start.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson7.png"></video>
+
+## 部署本地测试集群 {#deploy-a-local-test-cluster}
+
+本节介绍如何利用本地 macOS 或者单机 Linux 环境快速部署 TiDB 测试集群。通过部署 TiDB 集群，你可以了解 TiDB 的基本架构，以及 TiDB、TiKV、PD、监控等基础组件的运行。
 
 <SimpleTab>
 <div label="macOS">
 
-As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB instances, 3 TiKV instances, 3 PD instances, and optional TiFlash instances. With TiUP Playground, you can quickly set up a test cluster by following these steps:
+TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 TiDB 实例、3 个 TiKV 实例、3 个 PD 实例和可选的 TiFlash 实例构成。通过 TiUP Playground，可以快速搭建出上述的一套基础测试集群，步骤如下：
 
-1. Download and install TiUP:
+1. 下载并安装 TiUP。
 
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
 
-    If the following message is displayed, you have successfully installed TiUP:
+    安装完成后会提示如下信息：
 
     ```log
     Successfully set mirror to https://tiup-mirrors.pingcap.com
@@ -49,42 +52,42 @@ As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB in
     ===============================================
     ```
 
-    Note the Shell profile path in the output above. You need to use the path in the next step.
+    请注意上述输出中的 Shell profile 文件路径，下一步中需要使用该路径。
 
-    > **Note:**
+    > **注意：**
     >
-    > Starting from v5.2.0, TiDB supports running `tiup playground` on the machine that uses the Apple silicon chip.
+    > v5.2.0 及以上版本的 TiDB 支持在 Apple silicon 芯片的机器上运行 `tiup playground`。
 
-2. Declare the global environment variable:
+2. 声明全局环境变量。
 
-    > **Note:**
+    > **注意：**
     >
-    > After the installation, TiUP displays the absolute path of the corresponding Shell profile file. You need to modify `${your_shell_profile}` in the following `source` command according to the path. In this case, `${your_shell_profile}` is `/Users/user/.zshrc` from the output of Step 1.
+    > TiUP 安装完成后会提示 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
+    
     ```shell
     source ${your_shell_profile}
     ```
 
-3. Start the cluster in the current session:
+3. 在当前 session 执行以下命令启动集群。
 
-    > **Note:**
+    > **注意：**
     >
-    > - For the playground operated in the following way, after the deployment and testing are finished, TiUP will automatically clean up the cluster data. You will get a new cluster after re-running the command.
-    > - If you want to persist data on storage, then add the `--tag` flag when you start the cluster. For details, see [Specify a tag when starting the TiDB cluster to store the data](/tiup/tiup-playground.md#specify-a-tag-when-starting-the-tidb-cluster-to-store-the-data).
+    > - 如果按以下方式执行 playground，在结束部署测试后，TiUP 会自动清理掉原集群数据，重新执行命令会得到一个全新的集群。
+    > - 如果希望持久化数据，需要在启动集群时添加 TiUP 的 `--tag` 参数，详见[启动集群时指定 `tag` 以保留数据](/tiup/tiup-playground.md#启动集群时指定-tag-以保留数据)。
     >
     >     ```shell
     >     tiup playground --tag ${tag_name}
     >     ```
 
-    - To start a TiDB cluster of the latest version with 1 TiDB instance, 1 TiKV instance, 1 PD instance, and 1 TiFlash instance, run the following command:
+    - 直接执行 `tiup playground` 命令会运行最新版本的 TiDB 集群，其中 TiDB、TiKV、PD 和 TiFlash 实例各 1 个：
 
+        
         ```shell
         tiup playground
         ```
 
-        If this is the first time you run the command, TiUP will download the latest version of TiDB and start the cluster.
-
-        The output displays a list of endpoints of the cluster:
+        如果这是你第一次运行该命令，TiUP 会下载最新版本的 TiDB 并启动集群。命令输出中将显示集群的端点列表：
 
         ```log
         🎉 TiDB Playground Cluster is started, enjoy!
@@ -94,66 +97,68 @@ As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB in
         Grafana:         http://127.0.0.1:3000
         ```
 
-    - To specify the TiDB version and the number of instances of each component, run a command like this:
+    - 也可以指定 TiDB 版本以及各组件实例个数，命令类似于：
 
         ```shell
-        tiup playground 8.5.8 --db 2 --pd 3 --kv 3
+        tiup playground v8.5.8 --db 2 --pd 3 --kv 3
         ```
 
-        It is recommended to run this command on a machine with at least 10 GiB of memory and 4 CPU cores. Insufficient resources might cause the system to crash.  
+        执行该命令时，建议使用内存 10 GiB、4 CPU 及以上配置。配置过低可能会导致系统崩溃。
 
-        To view all available versions, run `tiup list tidb`.
+        如果要查看当前支持部署的所有 TiDB 版本，执行 `tiup list tidb`。
 
-4. Start a new session to access the TiDB cluster endpoints:
+4. 新开启一个 session 以访问 TiDB 数据库和集群端点。
 
-    - Connect to the TiDB database:
+    + 连接 TiDB 数据库：
 
-        - Use the TiUP client to connect to TiDB.
+        - 使用 TiUP `client` 连接 TiDB：
 
             ```shell
             tiup client
             ```
 
-        - Alternatively, you can use the MySQL client to connect to TiDB.
+        - 或者使用 MySQL 客户端连接 TiDB：
 
             ```shell
             mysql --host 127.0.0.1 --port 4000 -u root
             ```
 
-    - Prometheus: <http://127.0.0.1:9090>.
+    - 访问 Prometheus 管理界面：<http://127.0.0.1:9090>。
 
-    - [TiDB Dashboard](/dashboard/dashboard-intro.md): <http://127.0.0.1:2379/dashboard>. The default username is `root`, and the password is empty.
+    - 访问 [TiDB Dashboard](/dashboard/dashboard-intro.md) 页面：<http://127.0.0.1:2379/dashboard>，默认用户名为 `root`，密码为空。
 
-    - Grafana: <http://127.0.0.1:3000>. Both the default username and password are `admin`.
+    - 访问 Grafana 界面：<http://127.0.0.1:3000>，默认用户名和密码都为 `admin`。
 
-5. (Optional) [Load data to TiFlash](/tiflash/tiflash-overview.md#use-tiflash) for analysis.
+5. （可选）[将数据加载到 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash) 进行分析。
 
-6. Clean up the cluster after testing:
+6. 测试完成之后，可以通过执行以下步骤来清理集群：
 
-    1. Stop the above TiDB service by pressing <kbd>Control</kbd>+<kbd>C</kbd>.
+    1. 按下 <kbd>Control</kbd>+<kbd>C</kbd> 键停掉上述启用的 TiDB 服务。
 
-    2. Run the following command after the service is stopped:
+    2. 等待服务退出操作完成后，执行以下命令：
 
+        
         ```shell
         tiup clean --all
         ```
 
-> **Note:**
+> **注意：**
 >
-> TiUP Playground listens on `127.0.0.1` by default, and the service is only locally accessible. If you want the service to be externally accessible, specify the listening address using the `--host` parameter to bind the network interface card (NIC) to an externally accessible IP address.
+> TiUP Playground 默认监听 `127.0.0.1`，服务仅本地可访问；若需要使服务可被外部访问，可使用 `--host` 参数指定监听网卡绑定外部可访问的 IP。
 
 </div>
 <div label="Linux">
 
-As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB instances, 3 TiKV instances, 3 PD instances, and optional TiFlash instances. With TiUP Playground, you can quickly set up a test cluster by following these steps:
+TiDB 是一个分布式系统。最基础的 TiDB 测试集群通常由 2 个 TiDB 实例、3 个 TiKV 实例、3 个 PD 实例和可选的 TiFlash 实例构成。通过 TiUP Playground，可以快速搭建出上述的一套基础测试集群，步骤如下：
 
-1. Download and install TiUP:
+1. 下载并安装 TiUP。
 
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
 
-    If the following message is displayed, you have successfully installed TiUP:
+    安装完成后会提示如下信息：
 
     ```log
     Successfully set mirror to https://tiup-mirrors.pingcap.com
@@ -167,38 +172,38 @@ As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB in
     ===============================================
     ```
 
-    Note the Shell profile path in the output above. You need to use the path in the next step.
+    请注意上述输出中的 Shell profile 文件路径，下一步中需要使用该路径。
 
-2. Declare the global environment variable:
+2. 声明全局环境变量。
 
-    > **Note:**
+    > **注意：**
     >
-    > After the installation, TiUP displays the absolute path of the corresponding Shell profile file. You need to modify `${your_shell_profile}` in the following `source` command according to the path.
+    > TiUP 安装完成后会提示 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
+    
     ```shell
     source ${your_shell_profile}
     ```
 
-3. Start the cluster in the current session:
+3. 在当前 session 执行以下命令启动集群。
 
-    > **Note:**
+    > **注意：**
     >
-    > - For the playground operated in the following way, after the deployment and testing are finished, TiUP will automatically clean up the cluster data. You will get a new cluster after re-running the command.
-    > - If you want to persist data on storage, then add the `--tag` flag when you start the cluster. For details, see [Specify a tag when starting the TiDB cluster to store the data](/tiup/tiup-playground.md#specify-a-tag-when-starting-the-tidb-cluster-to-store-the-data).
+    > - 如果按以下方式执行 playground，在结束部署测试后，TiUP 会自动清理掉原集群数据，重新执行命令会得到一个全新的集群。
+    > - 如果希望持久化数据，需要在启动集群时添加 TiUP 的 `--tag` 参数，详见[启动集群时指定 `tag` 以保留数据](/tiup/tiup-playground.md#启动集群时指定-tag-以保留数据)。
     >
     >     ```shell
     >     tiup playground --tag ${tag_name}
     >     ```
 
-    - To start a TiDB cluster of the latest version with 1 TiDB instance, 1 TiKV instance, 1 PD instance, and 1 TiFlash instance, run the following command:
+    - 直接运行 `tiup playground` 命令会运行最新版本的 TiDB 集群，其中 TiDB、TiKV、PD 和 TiFlash 实例各 1 个：
 
+        
         ```shell
         tiup playground
         ```
 
-        If this is the first time you run the command, TiUP will download the latest version of TiDB and start the cluster.
-
-        The output displays a list of endpoints of the cluster:
+        如果这是你第一次运行该命令，TiUP 会下载最新版本的 TiDB 并启动集群。命令输出中将显示集群的端点列表：
 
         ```log
         🎉 TiDB Playground Cluster is started, enjoy!
@@ -208,138 +213,151 @@ As a distributed system, a basic TiDB test cluster usually consists of 2 TiDB in
         Grafana:         http://127.0.0.1:3000
         ```
 
-    - To specify the TiDB version and the number of instances of each component, run a command like this:
+    - 或者指定 TiDB 版本以及各组件实例个数，命令类似于：
 
+        
         ```shell
-        tiup playground 8.5.8 --db 2 --pd 3 --kv 3
+        tiup playground v8.5.8 --db 2 --pd 3 --kv 3
         ```
 
-        To view all available versions, run `tiup list tidb`.
+        如果要查看当前支持部署的所有 TiDB 版本，执行 `tiup list tidb`。
 
-4. Start a new session to access the TiDB cluster endpoints:
+4. 新开启一个 session 以访问 TiDB 数据库和集群端点。
 
-    - Connect to the TiDB database:
+    + 连接 TiDB 数据库：
 
-        - Use the TiUP client to connect to TiDB.
+        - 使用 TiUP `client` 连接 TiDB：
 
             ```shell
             tiup client
             ```
 
-        - Alternatively, you can use the MySQL client to connect to TiDB.
+        - 或者使用 MySQL 客户端连接 TiDB：
 
             ```shell
             mysql --host 127.0.0.1 --port 4000 -u root
             ```
 
-    - Prometheus: <http://127.0.0.1:9090>.
+    - 访问 Prometheus 管理界面：<http://127.0.0.1:9090>。
 
-    - [TiDB Dashboard](/dashboard/dashboard-intro.md): <http://127.0.0.1:2379/dashboard>. The default username is `root`, and the password is empty.
+    - 访问 [TiDB Dashboard](/dashboard/dashboard-intro.md) 页面：<http://127.0.0.1:2379/dashboard>，默认用户名为 `root`，密码为空。
 
-    - Grafana: <http://127.0.0.1:3000>. Both the default username and password are `admin`.
+    - 访问 Grafana 界面：<http://127.0.0.1:3000>，默认用户名和密码都为 `admin`。
 
-5. (Optional) [Load data to TiFlash](/tiflash/tiflash-overview.md#use-tiflash) for analysis.
+5. （可选）[将数据加载到 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash) 进行分析。
 
-6. Clean up the cluster after testing:
+6. 测试完成之后，可以通过执行以下步骤来清理集群：
 
-    1. Stop the process by pressing <kbd>Control</kbd>+<kbd>C</kbd>.
+    1. 按下 <kbd>Control</kbd>+<kbd>C</kbd> 键停掉上述启用的 TiDB 服务。
 
-    2. Run the following command after the service is stopped:
+    2. 等待服务退出操作完成后，执行以下命令：
 
+        
         ```shell
         tiup clean --all
         ```
 
-> **Note:**
+> **注意：**
 >
-> TiUP Playground listens on `127.0.0.1` by default, and the service is only locally accessible. If you want the service to be externally accessible, specify the listening address using the `--host` parameter to bind the network interface card (NIC) to an externally accessible IP address.
+> TiUP Playground 默认监听 `127.0.0.1`，服务仅本地可访问。若需要使服务可被外部访问，可使用 `--host` 参数指定监听网卡绑定外部可访问的 IP。
 
 </div>
 </SimpleTab>
 
-## Simulate production deployment on a single machine
+## 在单机上模拟部署生产环境集群
 
-This section describes how to set up the smallest TiDB cluster with a full topology, and simulate production deployment steps on a single Linux server.
+本节介绍如何在单台 Linux 服务器上体验 TiDB 最小的完整拓扑的集群，并模拟生产环境下的部署步骤。
 
-The following describes how to deploy a TiDB cluster using a YAML file of the smallest topology in TiUP.
+下文将参照 TiUP 最小拓扑的一个 YAML 文件部署 TiDB 集群。
 
-### Prepare
+### 准备环境
 
-Before deploying the TiDB cluster, ensure that the target machine meets the following requirements:
+开始部署 TiDB 集群前，准备一台部署主机，确保其软件满足需求：
 
-- CentOS 7.3 or a later version is installed.
-- The Linux OS has access to the internet, which is required to download TiDB and related software installation packages.
+- 推荐安装 CentOS 7.3 及以上版本
+- 运行环境可以支持互联网访问，用于下载 TiDB 及相关软件安装包
 
-The smallest TiDB cluster topology consists of the following instances:
+最小规模的 TiDB 集群拓扑包含以下实例：
 
-| Instance | Count | IP | Configuration |
+| 实例 | 个数 | IP | 配置 |
 |:-- | :-- | :-- | :-- |
-| TiKV | 3 | 10.0.1.1 | Use incremental port numbers to avoid conflicts |
-| TiDB | 1 | 10.0.1.1 | Use default port and other configurations |
-| PD | 1 | 10.0.1.1 | Use default port and other configurations |
-| TiFlash | 1 | 10.0.1.1 | Use default port and other configurations |
-| Monitor | 1 | 10.0.1.1 | Use default port and other configurations |
+| TiKV | 3 | 10.0.1.1 | 使用递增的端口号以避免冲突 |
+| TiDB | 1 | 10.0.1.1 | 使用默认端口和其他配置 |
+| PD | 1 | 10.0.1.1 | 使用默认端口和其他配置 |
+| TiFlash | 1 | 10.0.1.1 | 使用默认端口和其他配置 |
+| Monitor | 1 | 10.0.1.1 | 使用默认端口和其他配置 |
 
-> **Note:**
+> **注意：**
 >
-> The IP addresses of the instances are given as examples only. In your actual deployment, replace the IP addresses with your actual IP addresses.
+> 该表中拓扑实例的 IP 为示例 IP。在实际部署时，请替换为实际的 IP。
 
-Other requirements for the target machine include:
+部署主机软件和环境要求如下：
 
-- The `root` user and its password are required.
-- [Stop the firewall service of the target machine](/check-before-deployment.md#check-the-firewall-service-of-target-machines), or open the ports needed by the TiDB cluster nodes.
-- Currently, the TiUP cluster supports deploying TiDB on the x86_64 (AMD64) and ARM architectures:
+- 部署需要使用部署主机的 root 用户及密码
+- 部署主机[关闭防火墙](/check-before-deployment.md#检测目标部署机器的防火墙)或者开放 TiDB 集群的节点间所需端口
+- 目前 TiUP Cluster 支持在 x86_64（AMD64）和 ARM 架构上部署 TiDB 集群
+    - 在 AMD64 架构下，建议使用 CentOS 7.3 及以上版本 Linux 操作系统
+    - 在 ARM 架构下，建议使用 CentOS 7.6 (1810) 版本 Linux 操作系统
 
-    - It is recommended to use CentOS 7.3 or later versions on AMD64 architecture.
-    - It is recommended to use CentOS 7.6 (1810) on ARM architecture.
+### 实施部署
 
-### Deploy
-
-> **Note:**
+> **注意：**
 >
-> You can log in to the target machine as a regular user or the `root` user. The following steps use the `root` user as an example.
+> 你可以使用 Linux 系统的任一普通用户或 root 用户登录主机，以下步骤以 root 用户为例。
 
-1. Download and install TiUP:
+1. 下载并安装 TiUP：
 
+    
     ```shell
     curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh | sh
     ```
 
-2. Declare the global environment variable.
+2. 声明全局环境变量：
 
-    > **Note:**
+    > **注意：**
     >
-    > After the installation, TiUP displays the absolute path of the corresponding Shell profile file. You need to modify `${your_shell_profile}` in the following `source` command according to the path.
+    > TiUP 安装完成后会提示对应 Shell profile 文件的绝对路径。在执行以下 `source` 命令前，需要将 `${your_shell_profile}` 修改为 Shell profile 文件的实际位置。
 
+    
     ```shell
     source ${your_shell_profile}
     ```
 
-3. Install the cluster component of TiUP:
+3. 安装 TiUP 的 cluster 组件：
 
+    
     ```shell
     tiup cluster
     ```
 
-4. If the TiUP cluster is already installed on the machine, update the software version:
+4. 如果机器已经安装 TiUP cluster，需要更新软件版本：
 
+    
     ```shell
     tiup update --self && tiup update cluster
     ```
 
-5. Increase the connection limit of the `sshd` service using the root user privilege. This is because TiUP needs to simulate deployment on multiple machines.
+5. 由于模拟多机部署，需要通过 root 用户调大 sshd 服务的连接数限制：
 
-    1. Modify `/etc/ssh/sshd_config`, and set `MaxSessions` to `20`.
-    2. Restart the `sshd` service:
+    1. 修改 `/etc/ssh/sshd_config` 将 `MaxSessions` 调至 20。
+    2. 重启 sshd 服务：
 
+        
         ```shell
         service sshd restart
         ```
 
-6. Create and start the cluster:
+6. 创建并启动集群：
 
-    Create and edit the [topology configuration file](/tiup/tiup-cluster-topology-reference.md) according to the following template, and name it as `topo.yaml`:
+    按下面的配置模板，创建并编辑[拓扑配置文件](/tiup/tiup-cluster-topology-reference.md)，命名为 `topo.yaml`。其中：
 
+    - `user: "tidb"`：表示通过 `tidb` 系统用户（部署会自动创建）来做集群的内部管理，默认使用 22 端口通过 ssh 登录目标机器
+    - `replication.enable-placement-rules`：设置这个 PD 参数来确保 TiFlash 正常运行
+    - `host`：设置为本部署主机的 IP
+
+    配置模板如下：
+
+    
     ```yaml
     # # Global variables are applied to all deployments and used as the default value of
     # # the deployments if a specific deployment value is missing.
@@ -401,102 +419,101 @@ Other requirements for the target machine include:
      - host: 10.0.1.1
     ```
 
-    - `user: "tidb"`: Use the `tidb` system user (automatically created during deployment) to perform the internal management of the cluster. By default, use port 22 to log in to the target machine via SSH.
-    - `replication.enable-placement-rules`: This PD parameter is set to ensure that TiFlash runs normally.
-    - `host`: The IP of the target machine.
+7. 执行集群部署命令：
 
-7. Execute the cluster deployment command:
-
+    
     ```shell
     tiup cluster deploy <cluster-name> <version> ./topo.yaml --user root -p
     ```
 
-    - `<cluster-name>`: sets the cluster name.
-    - `<version>`: sets the TiDB cluster version, such as `8.5.8`. You can see all the supported TiDB versions by running the `tiup list tidb` command.
-    - `--user`: specifies the user to initialize the environment.
-    - `-p`: specifies the password used to connect to the target machine.
+    - 参数 `<cluster-name>` 表示设置集群名称
+    - 参数 `<version>` 表示设置集群版本，例如 `v8.5.8`。可以通过 `tiup list tidb` 命令来查看当前支持部署的 TiDB 版本
+    - 参数 `--user` 表示初始化环境的用户
+    - 参数 `-p` 表示在连接目标机器时使用密码登录
 
-        > **Note:**
+        > **注意：**
         >
-        > If you use secret keys, you can specify the path of the keys through `-i`. Do not use `-i` and `-p` at the same time.
+        > 如果主机通过密钥进行 SSH 认证，请使用 `-i` 参数指定密钥文件路径，`-i` 与 `-p` 不可同时使用。
 
-    Enter "y" and the `root` user's password to complete the deployment:
+    按照引导，输入”y”及 root 密码，来完成部署：
 
     ```log
     Do you want to continue? [y/N]:  y
     Input SSH password:
     ```
 
-8. Start the cluster:
+8. 启动集群：
 
+    
     ```shell
     tiup cluster start <cluster-name>
     ```
 
-9. Access the cluster endpoints:
+9. 访问集群端点：
 
-    - Install the MySQL client. If it is already installed, skip this step.
+    - 安装 MySQL 客户端。如果已安装，则跳过这一步骤。
 
+        
         ```shell
         yum -y install mysql
         ```
 
-    - Connect to the TiDB database using the MySQL client. The password is empty:
+    - 使用 MySQL 客户端访问 TiDB 数据库，密码为空：
 
         ```shell
         mysql -h 10.0.1.1 -P 4000 -u root
         ```
 
-    - Grafana: <http://{grafana-ip}:3000>. The default username and password are both `admin`.
+    - 访问 Grafana 监控页面：<http://{grafana-ip}:3000>，默认用户名和密码均为 `admin`。
 
-    - [TiDB Dashboard](/dashboard/dashboard-intro.md): <http://{pd-ip}:2379/dashboard>. The default username is `root`, and the password is empty.
+    - 访问集群 [TiDB Dashboard](/dashboard/dashboard-intro.md) 监控页面：<http://{pd-ip}:2379/dashboard>，默认用户名为 `root`，密码为空。
 
-10. (Optional) View the cluster list and topology.
+10. （可选）查看集群列表和拓扑结构：
 
-    - To view the cluster list:
+    - 执行以下命令确认当前已经部署的集群列表：
 
         ```shell
         tiup cluster list
         ```
 
-    - To view the cluster topology and status:
+    - 执行以下命令查看集群的拓扑结构和状态：
 
         ```shell
         tiup cluster display <cluster-name>
         ```
 
-    To learn more about the `tiup cluster` commands, see [TiUP Cluster Commands](/tiup/tiup-component-cluster.md).
+    要了解更多 `tiup cluster` 命令，请参阅 [TiUP 集群命令](/tiup/tiup-component-cluster.md)。
 
-11. Clean up the cluster after testing:
+11. 测试完成之后，可以通过执行以下步骤来清理集群：
 
-    1. Stop the above TiDB service by pressing <kbd>Control</kbd>+<kbd>C</kbd>.
+    1. 按下 <kbd>Control</kbd>+<kbd>C</kbd> 键停掉上述启用的 TiDB 服务。
 
-    2. Run the following command after the service is stopped:
+    2. 等待服务退出操作完成后，执行以下命令：
 
         ```shell
         tiup clean --all
         ```
 
-## What's next
+## 探索更多
 
-If you have just deployed a TiDB cluster for the local test environment, here are the next steps:
+如果你刚刚部署好一套 TiDB 本地测试集群，你可以继续：
 
-- Learn about basic SQL operations in TiDB by referring to [Basic SQL operations in TiDB](/basic-sql-operations.md).
-- You can also migrate data to TiDB by referring to [Migrate data to TiDB](/migration-overview.md).
-- Learn more about using TiUP to manage TiDB clusters by referring to [TiUP Overview](/tiup/tiup-overview.md).
+- 学习 [TiDB SQL 操作](/basic-sql-operations.md)
+- [迁移数据到 TiDB](/migration-overview.md)
+- 使用 [TiUP](/tiup/tiup-overview.md) 管理 TiDB 集群
 
-If you are ready to deploy a TiDB cluster for the production environment, here are the next steps:
+如果你准备好在生产环境部署 TiDB，你可以继续：
 
-- [Deploy TiDB using TiUP](/production-deployment-using-tiup.md)
-- Alternatively, you can deploy TiDB on Cloud using TiDB Operator by referring to the [TiDB on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable) documentation.
+- [使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)
+- [使用 TiDB Operator 在 Kubernetes 上部署 TiDB 集群](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable)
 
-If you are an application developer and want to quickly build an application using TiDB, here are the next steps:
+如果你是应用开发者，想要快速使用 TiDB 构建应用，可参阅以下文档：
 
-- [Developer Guide Overview](/develop/dev-guide-overview.md)
-- [Build a TiDB Cloud Starter Cluster](/develop/dev-guide-build-cluster-in-cloud.md)
-- [Example Applications](/develop/dev-guide-sample-application-java-jdbc.md)
+- [开发者手册概览](/develop/_index.md)
+- [使用 TiDB Cloud Starter 构建 TiDB 实例](/develop/dev-guide-build-cluster-in-cloud.md)
+- [示例程序](/develop/dev-guide-sample-application-java-jdbc.md)
 
-If you are looking for an analytics solution with TiFlash, here are the next steps:
+如果你想使用 TiFlash 作为数据分析的解决方案，可参阅以下文档：
 
-- [TiFlash Overview](/tiflash/tiflash-overview.md)
-- [Use TiFlash](/tiflash/tiflash-overview.md#use-tiflash)
+- [使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash)
+- [TiFlash 简介](/tiflash/tiflash-overview.md)
