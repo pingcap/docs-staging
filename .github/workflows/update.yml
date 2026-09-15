@@ -55,8 +55,9 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           sync_tidb_cloud_lake() {
-            local source_root="$1"
-            local target_root="./markdown-pages/en/tidb-cloud-lake/master"
+            local lang="$1"
+            local source_root="$2"
+            local target_root="./markdown-pages/${lang}/tidb-cloud-lake/master"
 
             mkdir -p "${target_root}"
             rm -rf "${target_root}/tidb-cloud-lake"
@@ -77,6 +78,8 @@ jobs:
           if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
           then
           yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
+          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          sync_tidb_cloud_lake "zh" "./markdown-pages/zh/tidb/release-8.5"
           exit 0
           fi
 
@@ -93,7 +96,7 @@ jobs:
           then
           yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
           yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
-          sync_tidb_cloud_lake "./markdown-pages/en/tidb/${{ inputs.branch }}"
+          sync_tidb_cloud_lake "en" "./markdown-pages/en/tidb/${{ inputs.branch }}"
           exit 0
           fi
 
@@ -113,8 +116,9 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           sync_tidb_cloud_lake() {
-            local source_root="$1"
-            local target_root="./markdown-pages/en/tidb-cloud-lake/master"
+            local lang="$1"
+            local source_root="$2"
+            local target_root="./markdown-pages/${lang}/tidb-cloud-lake/master"
 
             mkdir -p "${target_root}"
             rm -rf "${target_root}/tidb-cloud-lake"
@@ -133,9 +137,10 @@ jobs:
 
           sudo rm -fr ./markdown-pages/*
           yarn download:tidb:en:all
-          sync_tidb_cloud_lake "./markdown-pages/en/tidb/${{ env.EN_CLOUD_BRANCH }}"
+          sync_tidb_cloud_lake "en" "./markdown-pages/en/tidb/${{ env.EN_CLOUD_BRANCH }}"
           yarn download:tidb-cloud:en
           yarn download:tidb:zh:all
+          sync_tidb_cloud_lake "zh" "./markdown-pages/zh/tidb/release-8.5"
           yarn download:tidb:ja:all
           yarn download:tidb-cloud:ja
           yarn download:tidb-cloud:zh
