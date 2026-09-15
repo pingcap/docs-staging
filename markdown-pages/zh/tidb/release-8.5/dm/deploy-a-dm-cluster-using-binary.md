@@ -1,25 +1,29 @@
 ---
-title: 使用 DM binary 部署 DM 集群
-summary: 本文介绍了如何使用 DM binary 快速部署 DM 集群。首先需要下载 DM 安装包，然后在五台服务器上部署两个 DM-worker 实例和三个 DM-master 实例。对于 DM-master 的部署，可以使用命令行参数或配置文件两种方式。而对于 DM-worker 的部署，也可以使用命令行参数或配置文件两种方式。部署完成后，需要确保各组件间端口可正常连通。
+title: Deploy Data Migration Using DM Binary
+summary: Learn how to deploy a Data Migration cluster using DM binary.
 ---
 
-# 使用 DM binary 部署 DM 集群
+# Deploy Data Migration Using DM Binary
 
-本文将介绍如何使用 DM binary 快速部署 DM 集群。
+This document introduces how to quickly deploy the Data Migration (DM) cluster using DM binary.
 
-> **注意：**
+> **Note:**
 >
-> 对于生产环境，推荐[使用 TiUP 部署 DM 集群及相关监控组件](/dm/deploy-a-dm-cluster-using-tiup.md)。
+> In the production environment, it is recommended to [use TiUP to deploy a DM cluster](/dm/deploy-a-dm-cluster-using-tiup.md).
 
-## 下载 DM 安装包
+## Download DM binary
 
-DM 安装包位于 TiDB 离线工具包中。下载方式，请参考 [TiDB 工具下载](/download-ecosystem-tools.md)。
+The DM binary is included in the TiDB Toolkit. To download the TiDB Toolkit, see [Download TiDB Tools](/download-ecosystem-tools.md).
 
-## 使用样例
+## Sample scenario
 
-假设在五台服务器上部署两个 DM-worker 实例和三个 DM-master 实例。各个节点的信息如下：
+Suppose that you deploy a DM cluster based on this sample scenario:
 
-| 实例        | 服务器地址   | 端口 |
+Two DM-worker nodes and three DM-master nodes are deployed on five servers.
+
+Here is the address of each node:
+
+| Instance | Server address | Port |
 | :---------- | :----------- | :-- |
 | DM-master1 | 192.168.0.4 | 8261 |
 | DM-master2 | 192.168.0.5 | 8261 |
@@ -27,31 +31,28 @@ DM 安装包位于 TiDB 离线工具包中。下载方式，请参考 [TiDB 工�
 | DM-worker1 | 192.168.0.7 | 8262 |
 | DM-worker2 | 192.168.0.8 | 8262 |
 
-下面以此为例，说明如何部署 DM。
+Based on this scenario, the following sections describe how to deploy the DM cluster.
 
-> **注意：**
+> **Note:**
 >
-> - 在单机部署多个 DM-master 或 DM-worker 时，需要确保每个实例的端口以及运行命令的当前目录各不相同。
+> - If you deploy multiple DM-master or DM-worker instances in a single server, the port and working directory of each instance must be unique.
 >
-> - 如果不需要确保 DM 集群高可用，则可只部署 1 个 DM-master 节点，且部署的 DM-worker 节点数量不少于上游待迁移的 MySQL/MariaDB 实例数。
+> - If you do not need to ensure high availability of the DM cluster, deploy only one DM-master node, and the number of deployed DM-worker nodes must be no less than the number of upstream MySQL/MariaDB instances to be migrated.
 >
-> - 如果需要确保 DM 集群高可用，则推荐部署 3 个 DM-master 节点，且部署的 DM-worker 节点数量大于上游待迁移的 MySQL/MariaDB 实例数（如 DM-worker 节点数量比上游实例数多 2 个）。
+> - To ensure high availability of the DM cluster, it is recommended to deploy three DM-master nodes, and the number of deployed DM-worker nodes must be greater than the number of upstream MySQL/MariaDB instances to be migrated (for example, the number of DM-worker nodes is two more than the number of upstream instances).
 >
-> - 需要确保以下组件间端口可正常连通：
->
->     - 各 DM-master 节点间的 `8291` 端口可互相连通。
->
->     - 各 DM-master 节点可连通所有 DM-worker 节点的 `8262` 端口。
->
->     - 各 DM-worker 节点可连通所有 DM-master 节点的 `8261` 端口。
+> - Make sure that the ports among the following components are interconnected:
+>     - The `8291` ports among the DM-master nodes are interconnected.
+>     - Each DM-master node can connect to the `8262` ports of all DM-worker nodes.
+>     - Each DM-worker node can connect to the `8261` port of all DM-master nodes.
 
-### 部署 DM-master
+### Deploy DM-master
 
-DM-master 提供[命令行参数](#使用命令行参数部署-dm-master)和[配置文件](#使用配置文件部署-dm-master)两种配置方式。
+You can configure DM-master by using [command-line parameters](#dm-master-command-line-parameters) or [the configuration file](#dm-master-configuration-file).
 
-#### 使用命令行参数部署 DM-master
+#### DM-master command-line parameters
 
-DM-master 的命令行参数说明：
+The following is the description of DM-master command-line parameters:
 
 ```bash
 ./dm-master --help
@@ -86,55 +87,54 @@ Usage of dm-master:
         print sample config file of dm-worker
 ```
 
-> **注意：**
+> **Note:**
 >
-> 某些情况下，无法使用命令行参数来配置 DM-master，因为有的配置并未暴露给命令行。
+> In some situations, you cannot use the above method to configure DM-master because some configurations are not exposed to the command line. In such cases, use the configuration file instead.
 
-#### 使用配置文件部署 DM-master
+#### DM-master configuration file
 
-推荐使用配置文件，把以下配置文件内容写入到 `conf/dm-master1.toml` 中。
+The following is the configuration file of DM-master. It is recommended that you configure DM-master by using this method.
 
-DM-master 的配置文件：
+1. Write the following configuration to `conf/dm-master1.toml`:
 
-```toml
-# Master Configuration.
+      ```toml
+      # Master Configuration.
+      name = "master1"
 
-name = "master1"
+      # Log configurations.
+      log-level = "info"
+      log-file = "dm-master.log"
 
-# 日志配置
-log-level = "info"
-log-file = "dm-master.log"
+      # The listening address of DM-master.
+      master-addr = "192.168.0.4:8261"
 
-# DM-master 监听地址
-master-addr = "192.168.0.4:8261"
+      # The peer URLs of DM-master.
+      peer-urls = "192.168.0.4:8291"
 
-# DM-master 节点的对等 URL
-peer-urls = "192.168.0.4:8291"
+      # The value of `initial-cluster` is the combination of the `advertise-peer-urls` value of all DM-master nodes in the initial cluster.
+      initial-cluster = "master1=http://192.168.0.4:8291,master2=http://192.168.0.5:8291,master3=http://192.168.0.6:8291"
+      ```
 
-# 初始集群中所有 DM-master 的 advertise-peer-urls 的值
-initial-cluster = "master1=http://192.168.0.4:8291,master2=http://192.168.0.5:8291,master3=http://192.168.0.6:8291"
-```
+2. Execute the following command in the terminal to run DM-master:
 
-在终端中使用下面的命令运行 DM-master：
+      
+      ```bash
+      ./dm-master -config conf/dm-master1.toml
+      ```
 
+      > **Note:**
+      >
+      > The console does not output logs after this command is executed. If you want to view the runtime log, you can execute `tail -f dm-master.log`.
 
-> **注意：**
->
-> 执行该命令后控制台不会输出日志，可以通过 `tail -f dm-master.log` 查看运行日志。
+3. For DM-master2 and DM-master3, change `name` in the configuration file to `master2` and `master3` respectively, and change `peer-urls` to `192.168.0.5:8291` and `192.168.0.6:8291` respectively. Then repeat Step 2.
 
-```bash
-./dm-master -config conf/dm-master1.toml
-```
+### Deploy DM-worker
 
-对于 DM-master2 和 DM-master3，修改配置文件中的 `name` 为 `master2` 和 `master3`，并将 `peer-urls` 的值改为 `192.168.0.5:8291` 和 `192.168.0.6:8291` 即可。
+You can configure DM-worker by using [command-line parameters](#dm-worker-command-line-parameters) or [the configuration file](#dm-worker-configuration-file).
 
-### 部署 DM-worker
+#### DM-worker command-line parameters
 
-DM-worker 提供[命令行参数](#使用命令行参数部署-dm-worker)和[配置文件](#使用配置文件部署-dm-worker)两种配置方式。
-
-#### 使用命令行参数部署 DM-worker
-
-查看 DM-worker 的命令行参数说明：
+The following is the description of the DM-worker command-line parameters:
 
 
 ```bash
@@ -164,39 +164,38 @@ Usage of worker:
         listen address for client traffic
 ```
 
-> **注意：**
+> **Note:**
 >
-> 某些情况下，无法使用命令行参数的方法来配置 DM-worker，因为有的配置并未暴露给命令行。
+> In some situations, you cannot use the above method to configure DM-worker because some configurations are not exposed to the command line. In such cases, use the configuration file instead.
 
-#### 使用配置文件部署 DM-worker
+#### DM-worker configuration file
 
-推荐使用配置文件来配置 DM-worker，把以下配置文件内容写入到 `conf/dm-worker1.toml` 中。
+The following is the DM-worker configuration file. It is recommended that you configure DM-worker by using this method.
 
-DM-worker 的配置文件：
+1. Write the following configuration to `conf/dm-worker1.toml`:
 
-```toml
-# Worker Configuration.
+      ```toml
+      # Worker Configuration.
+      name = "worker1"
 
-name = "worker1"
+      # Log configuration.
+      log-level = "info"
+      log-file = "dm-worker.log"
 
-# 日志配置
-log-level = "info"
-log-file = "dm-worker.log"
+      # DM-worker address.
+      worker-addr = ":8262"
 
-# DM-worker 的地址
-worker-addr = ":8262"
+      # The master-addr configuration of the DM-master nodes in the cluster.
+      join = "192.168.0.4:8261,192.168.0.5:8261,192.168.0.6:8261"
+      ```
 
-# 对应集群中 DM-master 配置中的 master-addr
-join = "192.168.0.4:8261,192.168.0.5:8261,192.168.0.6:8261"
-```
+2. Execute the following command in the terminal to run DM-worker:
 
-在终端中使用下面的命令运行 DM-worker：
+      
+      ```bash
+      ./dm-worker -config conf/dm-worker1.toml
+      ```
 
+3. For DM-worker2, change `name` in the configuration file to `worker2`. Then repeat Step 2.
 
-```bash
-./dm-worker -config conf/dm-worker1.toml
-```
-
-对于 DM-worker2，修改配置文件中的 `name` 为 `worker2` 即可。
-
-这样，DM 集群就部署成功了。
+Now, a DM cluster is successfully deployed.

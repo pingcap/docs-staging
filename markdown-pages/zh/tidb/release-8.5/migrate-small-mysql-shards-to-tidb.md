@@ -1,40 +1,42 @@
 ---
-title: 从小数据量分库分表 MySQL 合并迁移数据到 TiDB
-summary: 介绍如何从 TB 级以下分库分表 MySQL 迁移数据到 TiDB。
+title: Migrate and Merge MySQL Shards of Small Datasets to TiDB
+summary: Learn how to migrate and merge small datasets of shards from MySQL to TiDB.
 ---
 
-# 从小数据量分库分表 MySQL 合并迁移数据到 TiDB
+# Migrate and Merge MySQL Shards of Small Datasets to TiDB
 
-如果你想把上游多个 MySQL 数据库实例合并迁移到下游的同一个 TiDB 数据库中，且数据量较小，你可以使用 DM 工具进行分库分表的合并迁移。本文所称“小数据量”通常指 TiB 级别以下。本文举例介绍了合并迁移的操作步骤、注意事项、故障排查等。本文档适用于:
+If you want to migrate and merge multiple MySQL database instances upstream to one TiDB database downstream, and the amount of data is not too large, you can use DM to migrate MySQL shards. "Small datasets" in this document usually mean data around or less than one TiB. Through examples in this document, you can learn the operation steps, precautions, and troubleshooting of the migration.
 
-- TiB 级以内的分库分表数据合并迁移
-- 基于 MySQL binlog 的增量、持续分库分表合并迁移
+This document applies to migrating MySQL shards less than 1 TiB in total. If you want to migrate MySQL shards with a total of more than 1 TiB of data, it will take a long time to migrate only using DM. In this case, it is recommended that you follow the operation introduced in [Migrate and Merge MySQL Shards of Large Datasets to TiDB](/migrate-large-mysql-shards-to-tidb.md) to perform migration.
 
-若要迁移分表总和 1 TiB 以上的数据，则 DM 工具耗时较长，可参考[从大数据量分库分表 MySQL 合并迁移数据到 TiDB](/migrate-large-mysql-shards-to-tidb.md)。
+This document takes a simple example to illustrate the migration procedure. The MySQL shards of the two data source MySQL instances in the example are migrated to the downstream TiDB cluster.
 
-在本文档的示例中，数据源 MySQL 实例 1 和实例 2 均使用以下表结构，计划将 store_01 和 store_02 中 sale 开头的表合并导入下游 store.sale 表。
+In this example, both MySQL Instance 1 and MySQL Instance 2 contain the following schemas and tables. In this example, you migrate and merge tables from `store_01` and `store_02` schemas with a `sale` prefix in both instances, into the downstream `sale` table in the `store` schema.
 
-|Schema|Tables|
-|-|-|
-|store_01   |sale_01, sale_02|
-|store_02   |sale_01, sale_02|
+| Schema | Table |
+|:------|:------|
+| store_01 | sale_01, sale_02 |
+| store_02 | sale_01, sale_02 |
 
-迁移目标库的结构如下：
+Target schemas and tables:
 
-|Schema|Tables|
-|-|-|
-|store      |sale|
+| Schema | Table |
+|:------|:------|
+| store | sale |
 
-## 前提条件
+## Prerequisites
 
-- [使用 TiUP 安装 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)
-- [DM 所需上下游数据库权限](/dm/dm-worker-intro.md)
+Before starting the migration, make sure you have completed the following tasks:
 
-## 分表数据冲突检查
+- [Deploy a DM Cluster Using TiUP](/dm/deploy-a-dm-cluster-using-tiup.md)
+- [Privileges required by DM-worker](/dm/dm-worker-intro.md)
 
-迁移中如果涉及合库合表，来自多张分表的数据可能引发主键或唯一索引的数据冲突。因此在迁移之前，需要检查各分表数据的业务特点。详情请参考[跨分表数据在主键或唯一索引冲突处理](/dm/shard-merge-best-practices.md#跨分表数据在主键或唯一索引冲突处理)。
+### Check conflicts for the sharded tables
 
-在本示例中：`sale_01` 和 `sale_02` 具有相同的表结构如下：
+If the migration involves merging data from different sharded tables, primary key or unique index conflicts may occur during the merge. Therefore, before migration, you need to take a deep look at the current sharding scheme from the business point of view, and find a way to avoid the conflicts. For more details, see [Handle conflicts between primary keys or unique indexes across multiple sharded tables](/dm/shard-merge-best-practices.md#handle-conflicts-between-primary-keys-or-unique-indexes-across-multiple-sharded-tables). The following is a brief description.
+
+In this example, `sale_01` and `sale_02` have the same table structure as follows
+
 
 ```sql
 CREATE TABLE `sale_01` (
@@ -47,7 +49,8 @@ CREATE TABLE `sale_01` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-其中 `id` 列为主键，`sid` 列为分片键，具有全局唯一性。`id` 列具有自增属性，多个分表范围重复会引发数据冲突。`sid` 可以保证全局满足唯一索引，因此可以按照参考[去掉自增主键的主键属性](/dm/shard-merge-best-practices.md#去掉自增主键的主键属性)中介绍的操作绕过 `id` 列。在下游创建 `sale` 表时移除 `id` 列的唯一键属性：
+The `id` column is the primary key, and the `sid` column is the sharding key. The `id` column is auto-incremental, and duplicated multiple sharded table ranges will cause data conflicts. The `sid` can ensure that the index is globally unique, so you can follow the steps in [Remove the primary key attribute of the auto-increment primary key](/dm/shard-merge-best-practices.md#remove-the-primary-key-attribute-from-the-column) to bypasses the `id` column.
+
 
 ```sql
 CREATE TABLE `sale` (
@@ -60,178 +63,177 @@ CREATE TABLE `sale` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
 ```
 
-## 第 1 步：创建数据源
+## Step 1. Load data sources
 
-新建 `source1.yaml` 文件，写入以下内容：
+Create a new data source file called `source1.yaml`, which configures an upstream data source into DM, and add the following content:
 
 
 ```yaml
-# 唯一命名，不可重复。
-source-id: "mysql-01"
-
-# DM-worker 是否使用全局事务标识符 (GTID) 拉取 binlog。使用前提是上游 MySQL 已开启 GTID 模式。若上游存在主从自动切换，则必须使用 GTID 模式。
+# Configuration.
+source-id: "mysql-01" # Must be unique.
+# Specifies whether DM-worker pulls binlogs with GTID (Global Transaction Identifier).
+# The prerequisite is that you have already enabled GTID in the upstream MySQL.
+# If you have configured the upstream database service to switch master between different nodes automatically, you must enable GTID.
 enable-gtid: true
-
 from:
-  host: "${host}" # 例如：172.16.10.81
+  host: "${host}"           # For example: 172.16.10.81
   user: "root"
-  password: "${password}" # 支持但不推荐使用明文密码，建议使用 dmctl encrypt 对明文密码进行加密后使用
-  port: 3306
+  password: "${password}"   # Plaintext passwords are supported but not recommended. It is recommended that you use dmctl encrypt to encrypt plaintext passwords.
+  port: ${port}             # For example: 3306
 ```
 
-在终端中执行下面的命令，使用 `tiup dmctl` 将数据源配置加载到 DM 集群中:
+Run the following command in a terminal. Use `tiup dmctl` to load the data source configuration into the DM cluster:
 
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
 ```
 
-该命令中的参数描述如下：
+The parameters are described as follows.
 
-| 参数           | 描述 |
-| -              | - |
-| `--master-addr`| dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261 |
-| `operate-source create` | 向 DM 集群加载数据源 |
+|Parameter      | Description |
+|-              |-            |
+|`--master-addr`         | `{advertise-addr}` of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261|
+|`operate-source create` | Load data sources to the DM clusters. |
 
-重复以上操作直至所有数据源均添加完成。
+Repeat the above steps until all data sources are added to the DM cluster.
 
-## 第 2 步：创建迁移任务
+## Step 2. Configure the migration task
 
-新建`task1.yaml`文件，写入以下内容：
+Create a task configuration file named `task1.yaml` and writes the following content to it:
 
 
 ```yaml
-name: "shard_merge"
-# 任务模式，可设为
-# full：只进行全量数据迁移
-# incremental： binlog 实时同步
-# all： 全量 + binlog 迁移
+name: "shard_merge"               # The name of the task. Should be globally unique.
+# Task mode. You can set it to the following:
+# - full: Performs only full data migration (incremental replication is skipped)
+# - incremental: Only performs real-time incremental replication using binlog. (full data migration is skipped)
+# - all: Performs both full data migration and incremental replication. For migrating small to medium amount of data here, use this option.
 task-mode: all
-# 分库分表合并任务则需要配置 shard-mode。默认使用悲观协调模式 "pessimistic"，在深入了解乐观协调模式的原理和使用限制后，也可以设置为乐观协调模式 "optimistic"
-# 详细信息可参考：https://docs.pingcap.com/zh/tidb/dev/feature-shard-merge/
+# Required for the MySQL shards. By default, the "pessimistic" mode is used.
+# If you have a deep understanding of the principles and usage limitations of the optimistic mode, you can also use the "optimistic" mode.
+# For more information, see [Merge and Migrate Data from Sharded Tables](https://docs.pingcap.com/tidb/dev/feature-shard-merge/)
 shard-mode: "pessimistic"
-meta-schema: "dm_meta"                          # 将在下游数据库创建 schema 用于存放元数据
-ignore-checking-items: ["auto_increment_ID"]    # 本示例中上游存在自增主键，因此需要忽略掉该检查项
+meta-schema: "dm_meta"                        # A schema will be created in the downstream database to store the metadata
+ignore-checking-items: ["auto_increment_ID"]  # In this example, there are auto-incremental primary keys upstream, so you do not need to check this item.
 
 target-database:
-  host: "${host}"                               # 例如：192.168.0.1
+  host: "${host}"                             # For example: 192.168.0.1
   port: 4000
   user: "root"
-  password: "${password}"                       # 支持但不推荐使用明文密码，建议使用 dmctl encrypt 对明文密码进行加密后使用
+  password: "${password}"                     # Plaintext passwords are supported but not recommended. It is recommended that you use dmctl encrypt to encrypt plaintext passwords.
 
 mysql-instances:
   -
-    source-id: "mysql-01"                                   # 数据源 ID，即 source1.yaml 中的 source-id
-    route-rules: ["sale-route-rule"]                        # 应用于该数据源的 table route 规则
-    filter-rules: ["store-filter-rule", "sale-filter-rule"] # 应用于该数据源的 binlog event filter 规则
-    block-allow-list:  "log-bak-ignored"                    # 应用于该数据源的 Block & Allow Lists 规则
+    source-id: "mysql-01"                                    # ID of the data source, which is source-id in source1.yaml
+    route-rules: ["sale-route-rule"]                         # Table route rules applied to the data source
+    filter-rules: ["store-filter-rule", "sale-filter-rule"]  # Binlog event filter rules applied to the data source
+    block-allow-list:  "log-bak-ignored"                     # Block & Allow Lists rules applied to the data source
   -
     source-id: "mysql-02"
     route-rules: ["sale-route-rule"]
     filter-rules: ["store-filter-rule", "sale-filter-rule"]
     block-allow-list:  "log-bak-ignored"
 
-# 分表合并配置
+# Configurations for merging MySQL shards
 routes:
   sale-route-rule:
-    schema-pattern: "store_*"                               # 合并 store_01 和 store_02 库到下游 store 库
-    table-pattern: "sale_*"                                 # 合并上述库中的 sale_01 和 sale_02 表到下游 sale 表
+    schema-pattern: "store_*"                               # Merge schemas store_01 and store_02 to the store schema in the downstream
+    table-pattern: "sale_*"                                 # Merge tables sale_01 and sale_02 of schemas store_01 and store_02 to the sale table in the downstream
     target-schema: "store"
     target-table:  "sale"
-    # 可选配置：提取各分库分表的源信息，并写入下游用户自建的列，用于标识合表中各行数据的来源。如果配置该项，需要提前在下游手动创建合表，具体可参考下面 Table routing 的用法
-    # extract-table:                                        # 提取分表去除 sale_ 的后缀信息，并写入下游合表 c_table 列，例如，sale_01 分表的数据会提取 01 写入下游 c_table 列
+    # Optional. Used for extracting the source information of sharded schemas and tables and writing the information to the user-defined columns in the downstream. If these options are configured, you need to manually create a merged table in the downstream. For details, see the following table routing setting.
+    # extract-table:                                        # Extracts and writes the table name suffix without the sale_ part to the c-table column of the merged table. For example, 01 is extracted and written to the c-table column for the sharded table sale_01.
     #   table-regexp: "sale_(.*)"
     #   target-column: "c_table"
-    # extract-schema:                                       # 提取分库去除 store_ 的后缀信息，并写入下游合表 c_schema 列，例如，store_02 分库的数据会提取 02 写入下游 c_schema 列
+    # extract-schema:                                       # Extracts and writes the schema name suffix without the store_ part to the c_schema column of the merged table. For example, 02 is extracted and written to the c_schema column for the sharded schema store_02.
     #   schema-regexp: "store_(.*)"
     #   target-column: "c_schema"
-    # extract-source:                                       # 提取数据库源实例信息写入 c_source 列，例如，mysql-01 数据源实例的数据会提取 mysql-01 写入下游 c_source 列
+    # extract-source:                                       # Extracts and writes the source instance information to the c_source column of the merged table. For example, mysql-01 is extracted and written to the c_source column for the data source mysql-01.
     #   source-regexp: "(.*)"
     #   target-column: "c_source"
 
-# 过滤部分 DDL 事件
+# Filters out some DDL events.
 filters:
-  sale-filter-rule:
-    schema-pattern: "store_*"
-    table-pattern: "sale_*"
-    events: ["truncate table", "drop table", "delete"]
-    action: Ignore
+  sale-filter-rule:           # Filter name.
+    schema-pattern: "store_*" # The binlog events or DDL SQL statements of upstream MySQL instance schemas that match schema-pattern are filtered by the rules below.
+    table-pattern: "sale_*"   # The binlog events or DDL SQL statements of upstream MySQL instance tables that match table-pattern are filtered by the rules below.
+    events: ["truncate table", "drop table", "delete"]   # The binlog event array.
+    action: Ignore                                       # The string (`Do`/`Ignore`). `Do` is the allow list. `Ignore` is the block list.
   store-filter-rule:
     schema-pattern: "store_*"
     events: ["drop database"]
     action: Ignore
 
-# 黑白名单
-block-allow-list:
-  log-bak-ignored:
-    do-dbs: ["store_*"]
-
+# Block and allow list
+block-allow-list:           # filter or only migrate all operations of some databases or some tables.
+  log-bak-ignored:          # Rule name.
+    do-dbs: ["store_*"]     # The allow list of the schemas to be migrated, similar to replicate-do-db in MySQL.
 ```
 
-以上内容为执行迁移的最小任务配置。关于任务的更多配置项，可以参考 [DM 任务完整配置文件介绍](/dm/task-configuration-file-full.md)。
+The above example is the minimum configuration to perform the migration task. For more information, see [DM Advanced Task Configuration File](/dm/task-configuration-file-full.md).
 
-若想了解配置文件中 `routes`、`filters` 等更多用法，请参考：
+For more information on `routes`, `filters` and other configurations in the task file, see the following documents:
 
 - [Table routing](/dm/dm-table-routing.md)
 - [Block & Allow Table Lists](/dm/dm-block-allow-table-lists.md)
-- [如何过滤 binlog 事件](/filter-binlog-event.md)
-- [如何通过 SQL 表达式过滤 DML](/filter-dml-event.md)
+- [Binlog event filter](/filter-binlog-event.md)
+- [Filter Certain Row Changes Using SQL Expressions](/filter-dml-event.md)
 
-## 第 3 步：启动任务
+## Step 3. Start the task
 
-在你启动数据迁移任务之前，建议使用 `check-task` 命令检查配置是否符合 DM 的配置要求，以降低后期报错的概率。
+Before starting a migration task, run the `check-task` subcommand in `tiup dmctl` to check whether the configuration meets the requirements of DM so as to avoid possible errors.
 
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
 ```
 
-使用 `tiup dmctl` 执行以下命令启动数据迁移任务。
+Run the following command in `tiup dmctl` to start a migration task:
 
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
 ```
 
-该命令中的参数描述如下：
+| Parameter | Description|
+|-|-|
+|`--master-addr`| `{advertise-addr}` of any DM-master node in the cluster that dmctl connects to. For example: 172.16.10.71:8261 |
+|`start-task`   | Starts the data migration task. |
 
-| 参数 | 描述 |
-| - | - |
-| `--master-addr` | dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261 |
-| `start-task` | 命令用于创建数据迁移任务 |
+If the migration task fails to start, modify the configuration information according to the error information, and then run `start-task task.yaml` again to start the migration task. If you encounter problems, see [Handle Errors](/dm/dm-error-handling.md) and [FAQ](/dm/dm-faq.md).
 
-如果任务启动失败，可根据返回结果的提示进行配置变更后执行 start-task task.yaml 命令重新启动任务。遇到问题请参考[故障及处理方法](/dm/dm-error-handling.md)以及[常见问题](/dm/dm-faq.md)。
+## Step 4. Check the task
 
-## 第 4 步：查看任务状态
-
-如需了解 DM 集群中是否存在正在运行的迁移任务及任务状态等信息，可使用 `tiup dmctl` 执行 `query-status` 命令进行查询：
+After starting the migration task, you can use `dmtcl tiup` to run `query-status` to view the status of the task.
 
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-关于查询结果的详细解读，请参考[查询状态](/dm/dm-query-status.md)。
+If you encounter errors, use `query-status ${task-name}` to view more detailed information. For details about the query results, task status and sub task status of the `query-status` command, see [TiDB Data Migration Query Status](/dm/dm-query-status.md).
 
-## 第 5 步： 监控任务与查看日志(可选)
+## Step 5. Monitor tasks and check logs (optional)
 
-你可以通过 Grafana 或者日志查看迁移任务的历史状态以及各种内部运行指标。
+You can view the history of a migration task and internal operational metrics through Grafana or logs.
 
-- 通过 Grafana 查看
+- Via Grafana
 
-    如果使用 TiUP 部署 DM 集群时，正确部署了 Prometheus、Alertmanager 与 Grafana，则使用部署时填写的 IP 及端口进入 Grafana，选择 DM 的 dashboard 查看 DM 相关监控项。
+    If Prometheus, Alertmanager, and Grafana are correctly deployed when you deploy the DM cluster using TiUP, you can view DM monitoring metrics in Grafana. Specifically, enter the IP address and port specified during deployment in Grafana and select the DM dashboard.
 
-- 通过日志查看
+- Via logs
 
-    DM 在运行过程中，DM-worker、DM-master 及 dmctl 都会通过日志输出相关信息，其中包含迁移任务的相关信息。各组件的日志目录如下：
+    When DM is running, DM-master, DM-worker, and dmctl output logs, which includes information about migration tasks. The log directory of each component is as follows.
 
-    - DM-master 日志目录：通过 DM-master 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-master-8261/log/`。
-    - DM-worker 日志目录：通过 DM-worker 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-worker-8262/log/`。
+    - DM-master log directory: It is specified by the DM-master process parameter `--log-file`. If DM is deployed using TiUP, the log directory is `/dm-deploy/dm-master-8261/log/`.
+    - DM-worker log directory: It is specified by the DM-worker process parameter `--log-file`. If DM is deployed using TiUP, the log directory is `/dm-deploy/dm-worker-8262/log/`.
 
-## 探索更多
+## See also
 
-- [分库分表合并中的悲观/乐观模式](/dm/feature-shard-merge.md)
-- [分表合并数据迁移最佳实践](/dm/shard-merge-best-practices.md)
-- [故障及处理方法](/dm/dm-error-handling.md)
-- [性能问题及处理方法](/dm/dm-handle-performance-issues.md)
-- [常见问题](/dm/dm-faq.md)
+- [Migrate and Merge MySQL Shards of Large Datasets to TiDB](/migrate-large-mysql-shards-to-tidb.md).
+- [Merge and Migrate Data from Sharded Tables](/dm/feature-shard-merge.md)
+- [Best Practices of Data Migration in the Shard Merge Scenario](/dm/shard-merge-best-practices.md)
+- [Handle Errors](/dm/dm-error-handling.md)
+- [Handle Performance Issues](/dm/dm-handle-performance-issues.md)
+- [FAQ](/dm/dm-faq.md)

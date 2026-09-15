@@ -1,1064 +1,1055 @@
 ---
-title: TiDB 配置文件描述
-summary: 介绍未包含在命令行参数中的 TiDB 配置文件选项。
+title: TiDB Configuration File
+summary: Learn the TiDB configuration file options that are not involved in command line options.
 ---
 
 <!-- markdownlint-disable MD001 -->
+<!-- markdownlint-disable MD024 -->
 
-# TiDB 配置文件描述
+# TiDB Configuration File
 
-TiDB 配置文件比命令行参数支持更多的选项。你可以在 [config/config.toml.example](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example) 找到默认值的配置文件，重命名为 `config.toml` 即可。本文档只介绍未包含在[命令行参数](/command-line-flags-for-tidb-configuration.md)中的参数。
+The TiDB configuration file supports more options than command-line parameters. You can download the default configuration file [`config.toml.example`](https://github.com/pingcap/tidb/blob/release-8.5/pkg/config/config.toml.example) and rename it to `config.toml`. This document describes only the options that are not involved in [command line options](/command-line-flags-for-tidb-configuration.md).
 
 > **Tip:**
 >
-> 如果你需要调整配置项的值，请参考[修改配置参数](/maintain-tidb-using-tiup.md#修改配置参数)进行操作。
+> If you need to adjust the value of a configuration item, refer to [Modify the configuration](/maintain-tidb-using-tiup.md#modify-the-configuration).
 
 ### `split-table`
 
-+ 为每个 table 建立单独的 Region。
-+ 默认值：true
-+ 如果需要创建大量的表（例如 10 万张以上），建议将此参数设置为 false。
+- Determines whether to create a separate Region for each table.
+- Default value: `true`
+- It is recommended to set it to `false` if you need to create a large number of tables (for example, more than 100 thousand tables).
 
-### `tidb-max-reuse-chunk` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `tidb-max-reuse-chunk` <span class="version-mark">New in v6.4.0</span>
 
-+ 用于控制每个连接最多缓存的 Chunk 对象数。配置过大会增加 OOM 的风险。
-+ 默认值：64
-+ 最小值：0
-+ 最大值：2147483647
+- Controls the maximum cached chunk objects of chunk allocation. Setting this configuration item to too large a value might increase the risk of OOM.
+- Default value: `64`
+- Minimum value: `0`
+- Maximum value: `2147483647`
 
-### `tidb-max-reuse-column` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `tidb-max-reuse-column` <span class="version-mark">New in v6.4.0</span>
 
-+ 用于控制每个连接最多缓存的 column 对象数。配置过大会增加 OOM 的风险。
-+ 默认值：256
-+ 最小值：0
-+ 最大值：2147483647
+- Controls the maximum cached column objects of chunk allocation. Setting this configuration item to too large a value might increase the risk of OOM.
+- Default value: `256`
+- Minimum value: `0`
+- Maximum value: `2147483647`
 
 ### `token-limit`
 
-+ 可以同时执行请求的 session 个数
-+ 类型：Integer
-+ 默认值：1000
-+ 最小值：1
-+ 最大值：`1048576`
++ The number of sessions that can execute requests concurrently.
++ Type: Integer
++ Default value: `1000`
++ Minimum value: `1`
++ Maximum value: `1048576`
 
-### `temp-dir` <span class="version-mark">从 v6.3.0 版本开始引入</span>
+### `temp-dir` <span class="version-mark">New in v6.3.0</span>
 
-+ TiDB 用于存放临时数据的路径。如果一个功能需要使用 TiDB 节点的本地存储，TiDB 将把对应数据临时存放在这个目录下。
-+ 在创建索引的过程中，如果开启了[创建索引加速](/system-variables.md#tidb_ddl_enable_fast_reorg-从-v630-版本开始引入)，那么新创建索引需要回填的数据会被先存放在 TiDB 本地临时存储路径，然后批量导入到 TiKV，从而提升索引创建速度。
-+ 在使用 [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) 导入数据时，排序后的数据会被先存放在 TiDB 本地临时存储路径，然后批量导入到 TiKV。
-+ 默认值："/tmp/tidb"
++ File system location used by TiDB to store temporary data. If a feature requires local storage in TiDB nodes, TiDB stores the corresponding temporary data in this location.
++ When creating an index, if [`tidb_ddl_enable_fast_reorg`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630) is enabled, data that needs to be backfilled for a newly created index will be at first stored in the TiDB local temporary directory, and then imported into TiKV in batches, thus accelerating the index creation.
++ When [`IMPORT INTO`](/sql-statements/sql-statement-import-into.md) is used to import data, the sorted data is first stored in the TiDB local temporary directory, and then imported into TiKV in batches.
++ Default value: `"/tmp/tidb"`
 
-> **注意：**
+> **Note:**
 >
-> 如果目录不存在，TiDB 在启动时会自动创建该目录。如果目录创建失败，或者 TiDB 对该目录没有读写权限，[Fast Online DDL](/system-variables.md#tidb_ddl_enable_fast_reorg-从-v630-版本开始引入) 在运行时可能产生不可预知的问题。
+> If the directory does not exist, TiDB will automatically create it upon startup. If the directory creation fails or TiDB does not have the read and write permissions on that directory, [`Fast Online DDL`](/system-variables.md#tidb_ddl_enable_fast_reorg-new-in-v630) might experience unpredictable issues.
 
 ### `oom-use-tmp-storage`
 
-> **警告：**
+> **Warning:**
 >
-> 自 v6.3.0 起，该配置项被废弃，其功能由系统变量 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) 代替。集群升级到 v6.3.0 及之后的版本后，会自动继承升级前的 `oom-use-tmp-storage` 设置，升级后再设置 `oom-use-tmp-storage` 将不生效。
+> Since v6.3.0, this configuration item is deprecated and superseded by the system variable [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom). When the TiDB cluster is upgraded to v6.3.0 or a later version, it will automatically initialize the variable with the value of `oom-use-tmp-storage`. After that, changing the value of `oom-use-tmp-storage` **does not** take effect anymore.
 
-+ 设置是否在单条 SQL 语句的内存使用超出系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 限制时为某些算子启用临时磁盘。
-+ 默认值：true
++ Controls whether to enable the temporary storage for some operators when a single SQL statement exceeds the memory quota specified by the system variable [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query).
++ Default value: `true`
 
 ### `tmp-storage-path`
 
-+ 单条 SQL 语句的内存使用超出系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 限制时，某些算子的临时磁盘存储位置。
-+ 默认值：`<操作系统临时文件夹>/<操作系统用户ID>_tidb/MC4wLjAuMDo0MDAwLzAuMC4wLjA6MTAwODA=/tmp-storage`。其中 `MC4wLjAuMDo0MDAwLzAuMC4wLjA6MTAwODA=` 是对 `<host>:<port>/<statusHost>:<statusPort>` 进行 `Base64` 编码的输出结果。
-+ 此配置仅在系统变量 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) 的值为 `ON` 时有效。
++ Specifies the temporary storage path for some operators when a single SQL statement exceeds the memory quota specified by the system variable [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query).
++ Default value: `<temporary directory of OS>/<OS user ID>_tidb/MC4wLjAuMDo0MDAwLzAuMC4wLjA6MTAwODA=/tmp-storage`. `MC4wLjAuMDo0MDAwLzAuMC4wLjA6MTAwODA=` is the `Base64` encoding result of `<host>:<port>/<statusHost>:<statusPort>`.
++ This configuration takes effect only when the system variable [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) is `ON`.
 
 ### `tmp-storage-quota`
 
-+ `tmp-storage-path` 存储使用的限额。
-+ 单位：Byte
-+ 当单条 SQL 语句使用临时磁盘，导致 TiDB server 的总体临时磁盘总量超过 `tmp-storage-quota` 时，当前 SQL 操作会被取消，并返回 `Out Of Global Storage Quota!` 错误。
-+ 当 `tmp-storage-quota` 小于 0 时则没有上述检查与限制。
-+ 默认值：-1
-+ 当 `tmp-storage-path` 的剩余可用容量低于 `tmp-storage-quota` 所定义的值时，TiDB server 启动时将会报出错误并退出。
++ Specifies the quota for the storage in `tmp-storage-path`. The unit is byte.
++ When a single SQL statement uses a temporary disk and the total volume of the temporary disk of the TiDB server exceeds this configuration value, the current SQL operation is cancelled and the `Out of Global Storage Quota!` error is returned.
++ When the value of this configuration is smaller than `0`, the above check and limit do not apply.
++ Default value: `-1`
++ When the remaining available storage in `tmp-storage-path` is lower than the value defined by `tmp-storage-quota`, the TiDB server reports an error when it is started, and exits.
 
 ### `lease`
 
-+ DDL 租约超时时间。
-+ 默认值：45s
-+ 单位：秒
++ The timeout of the DDL lease.
++ Default value: `45s`
++ Unit: second
 
 ### `compatible-kill-query`
 
-+ 设置 `KILL` 语句的兼容性。
-+ 默认值：false
-+ `compatible-kill-query` 仅在 [`enable-global-kill`](#enable-global-kill-从-v610-版本开始引入) 为 `false` 时生效。
-+ 当 [`enable-global-kill`](#enable-global-kill-从-v610-版本开始引入) 为 `false` 时，`compatible-kill-query` 控制杀死一条查询时是否需要加上 `TIDB` 关键词。
-    - `compatible-kill-query` 为 `false` 时，TiDB 中 `KILL xxx` 的行为和 MySQL 中的行为不同。为杀死一条查询，在 TiDB 中需要加上 `TIDB` 关键词，即 `KILL TIDB xxx`。
-    - `compatible-kill-query` 为 `true` 时，为杀死一条查询，在 TiDB 中无需加上 `TIDB` 关键词。**强烈不建议**设置 `compatible-kill-query` 为 `true`，**除非**你确定客户端将始终连接到同一个 TiDB 节点。这是因为当你在默认的 MySQL 客户端按下 <kbd>Control</kbd>+<kbd>C</kbd> 时，客户端会开启一个新连接，并在这个新连接中执行 `KILL` 语句。此时，如果客户端和 TiDB 之间存在代理，新连接可能会被路由到其他 TiDB 节点，从而错误地终止其他会话。
-+ 当 [`enable-global-kill`](#enable-global-kill-从-v610-版本开始引入) 为 `true` 时，`KILL xxx` 和 `KILL TIDB xxx` 的作用相同。
-+ 关于 `KILL` 语句的更多信息，请参考 [KILL [TIDB]](/sql-statements/sql-statement-kill.md)。
++ Determines whether to set the `KILL` statement to be MySQL compatible.
++ Default value: `false`
++ `compatible-kill-query` takes effect only when [`enable-global-kill`](#enable-global-kill-new-in-v610) is set to `false`.
++ When [`enable-global-kill`](#enable-global-kill-new-in-v610) is `false`, `compatible-kill-query` controls whether you need to append the `TIDB` keyword when killing a query.
+    - When `compatible-kill-query` is `false`, the behavior of `KILL xxx` in TiDB is different from that in MySQL. To kill a query in TiDB, you need to append the `TIDB` keyword, such as `KILL TIDB xxx`.
+    - When `compatible-kill-query` is `true`, to kill a query in TiDB, there is no need to append the `TIDB` keyword. It is **STRONGLY NOT RECOMMENDED** to set `compatible-kill-query` to `true` in your configuration file UNLESS you are certain that clients will be always connected to the same TiDB instance. This is because pressing <kbd>Control</kbd>+<kbd>C</kbd> in the default MySQL client opens a new connection in which `KILL` is executed. If there is a proxy between the client and the TiDB cluster, the new connection might be routed to a different TiDB instance, which possibly kills a different session by mistake.
++ When [`enable-global-kill`](#enable-global-kill-new-in-v610) is `true`, `KILL xxx` and `KILL TIDB xxx` have the same effect.
++ For more information about the `KILL` statement, see [KILL [TIDB]](/sql-statements/sql-statement-kill.md).
 
 ### `check-mb4-value-in-utf8`
 
-+ 开启检查 utf8mb4 字符的开关，如果开启此功能，字符集是 utf8，且在 utf8 插入 mb4 字符，系统将会报错。
-+ 默认值：true
-+ 自 v6.1.0 起，utf8mb4 字符检查改为通过 TiDB 配置项 `instance.tidb_check_mb4_value_in_utf8` 或系统变量 `tidb_check_mb4_value_in_utf8` 进行设置。`check-mb4-value-in-utf8` 仍可使用，但如果同时设置了 `check-mb4-value-in-utf8` 与 `instance.tidb_check_mb4_value_in_utf8`，TiDB 将采用 `instance.tidb_check_mb4_value_in_utf8` 的值。
+- Determines whether to enable the `utf8mb4` character check. When this feature is enabled, if the character set is `utf8` and the `mb4` characters are inserted in `utf8`, an error is returned.
+- Default value: `false`
+- Since v6.1.0, whether to enable the `utf8mb4` character check is determined by the TiDB configuration item `instance.tidb_check_mb4_value_in_utf8` or the system variable `tidb_check_mb4_value_in_utf8`. `check-mb4-value-in-utf8` still takes effect. But if both `check-mb4-value-in-utf8` and `instance.tidb_check_mb4_value_in_utf8` are set, the latter takes effect.
 
 ### `treat-old-version-utf8-as-utf8mb4`
 
-+ 将旧表中的 utf8 字符集当成 utf8mb4 的开关。
-+ 默认值：true
+- Determines whether to treat the `utf8` character set in old tables as `utf8mb4`.
+- Default value: `true`
 
-### `alter-primary-key`（已废弃）
+### `alter-primary-key` (Deprecated)
 
-+ 用于控制添加或者删除主键功能。
-+ 默认值：false
-+ 默认情况下，不支持增删主键。将此变量被设置为 true 后，支持增删主键功能。不过对在此开关开启前已经存在的表，且主键是整型类型时，即使之后开启此开关也不支持对此列表删除主键。
+- Determines whether to add or remove the primary key constraint to or from a column.
+- Default value: `false`
+- With this default setting, adding or removing the primary key constraint is not supported. You can enable this feature by setting `alter-primary-key` to `true`. However, if a table already exists before the switch is on, and the data type of its primary key column is an integer, dropping the primary key from the column is not possible even if you set this configuration item to `true`.
 
-> **注意：**
+> **Note:**
 >
-> 该配置项已被废弃，目前仅在 `@@tidb_enable_clustered_index` 取值为 `INT_ONLY` 时生效。如果需要增删主键，请在建表时使用 `NONCLUSTERED` 关键字代替。要了解关于 `CLUSTERED` 主键的详细信息，请参考[聚簇索引](/clustered-indexes.md)。
+> This configuration item has been deprecated, and currently takes effect only when the value of `@tidb_enable_clustered_index` is `INT_ONLY`. If you need to add or remove the primary key, use the `NONCLUSTERED` keyword instead when creating the table. For more details about the primary key of the `CLUSTERED` type, refer to [clustered index](/clustered-indexes.md).
 
 ### `server-version`
 
-+ 用来修改 TiDB 在以下情况下返回的版本号：
-    - 当使用内置函数 `VERSION()` 时。
-    - 当与客户端初始连接，TiDB 返回带有服务端版本号的初始握手包时。具体可以查看 MySQL 初始握手包的[描述](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html#sect_protocol_connection_phase_initial_handshake)。
-+ 默认值：""
-+ 默认情况下，TiDB 版本号格式为：`8.0.11-TiDB-${tidb_version}`。
++ Modifies the version string returned by TiDB in the following situations:
+    - When the built-in `VERSION()` function is used.
+    - When TiDB establishes the initial connection to the client and returns the initial handshake packet with version string of the server. For details, see [MySQL Initial Handshake Packet](https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase.html#sect_protocol_connection_phase_initial_handshake).
++ Default value: ""
++ By default, the format of the TiDB version string is `8.0.11-TiDB-${tidb_version}`.
 
-> **注意：**
+> **Note:**
 >
-> `server-version` 的值会被 TiDB 节点用于验证当前 TiDB 的版本。因此在进行 TiDB 集群升级前，请将 `server-version` 的值设置为空或者当前 TiDB 真实的版本值，避免出现非预期行为。
+> TiDB nodes use the value of `server-version` to verify the current TiDB version. Therefore, to avoid unexpected behaviors, before upgrading the TiDB cluster, you need to set the value of `server-version` to empty or the real version of the current TiDB cluster.
 
 ### `repair-mode`
 
-+ 用于开启非可信修复模式，启动该模式后，可以过滤 `repair-table-list` 名单中坏表的加载。
-+ 默认值：false
-+ 默认情况下，不支持修复语法，默认启动时会加载所有表信息。
+- Determines whether to enable the untrusted repair mode. When the `repair-mode` is set to `true`, bad tables in the `repair-table-list` cannot be loaded.
+- Default value: `false`
+- The `repair` syntax is not supported by default. This means that all tables are loaded when TiDB is started.
 
 ### `repair-table-list`
 
-+ 配合 `repair-mode` 为 true 时使用，用于列出实例中需要修复的坏表的名单，该名单的写法为 ["db.table1","db.table2", ……]。
-+ 默认值：[]
-+ 默认情况下，该 list 名单为空，表示没有所需修复的坏表信息。
+- `repair-table-list` is only valid when [`repair-mode`](#repair-mode) is set to `true`. `repair-table-list` is a list of bad tables that need to be repaired in an instance. An example of the list is: ["db.table1","db.table2"...].
+- Default value: []
+- The list is empty by default. This means that there are no bad tables that need to be repaired.
 
 ### `new_collations_enabled_on_first_bootstrap`
 
-+ 用于开启新的 collation 支持
-+ 默认值：true
-+ 注意：该配置项只有在初次初始化集群时生效，初始化集群后，无法通过更改该配置项打开或关闭新的 collation 框架。
+- Enables or disables the new collation support.
+- Default value: `true`
+- Note: This configuration takes effect only for the TiDB cluster that is first initialized. After the initialization, you cannot use this configuration item to enable or disable the new collation support.
 
 ### `max-server-connections`
 
-+ TiDB 中同时允许的最大客户端连接数，用于资源控制。
-+ 默认值：0
-+ 默认情况下，TiDB 不限制客户端连接数。当本配置项的值大于 `0` 且客户端连接数到达此值时，TiDB 服务端将会拒绝新的客户端连接。
-+ 自 v6.2.0 起，客户端连接数已改用配置项 [`instance.max_connections`](/tidb-configuration-file.md#max_connections) 或系统变量 [`max_connections`](/system-variables.md#max_connections) 进行设置。`max-server-connections` 仍可使用，但如果同时设置了 `max-server-connections` 与 `instance.max_connections`，TiDB 将采用 `instance.max_connections` 的值。
+- The maximum number of concurrent client connections allowed in TiDB. It is used to control resources.
+- Default value: `0`
+- By default, TiDB does not set limit on the number of concurrent client connections. When the value of this configuration item is greater than `0` and the number of actual client connections reaches this value, the TiDB server rejects new client connections.
+- Since v6.2.0, the TiDB configuration item [`instance.max_connections`](/tidb-configuration-file.md#max_connections) or the system variable [`max_connections`](/system-variables.md#max_connections) is used to set the maximum number of concurrent client connections allowed in TiDB. `max-server-connections` still takes effect. But if `max-server-connections` and `instance.max_connections` are set at the same time, the latter takes effect.
 
 ### `max-index-length`
 
-+ 用于设置新建索引的长度限制。
-+ 默认值：3072
-+ 单位：Byte
-+ 取值范围：`[3072, 3072*4]`
-+ 兼容性：
-    + MySQL：索引长度限制固定为 3072 字节。
-    + TiDB 早期版本：
-        + TiDB v3.0.7 及之前版本：索引长度限制固定为 3072 × 4 字节。
-        + TiDB v3.0.8 ~ v3.0.10：索引长度限制固定为 3072 字节。
-    + TiDB v3.0.11 及之后版本：新增了 `max-index-length` 配置项，用于兼容不同 TiDB 版本和 MySQL 的限制。
+- Sets the maximum allowable length of the newly created index.
+- Default value: `3072`
+- Unit: byte
+- Currently, the valid value range is `[3072, 3072*4]`. MySQL and TiDB (version < v3.0.11) do not have this configuration item, but both limit the length of the newly created index. This limit in MySQL is `3072`. In TiDB (version =< 3.0.7), this limit is `3072*4`. In TiDB (3.0.7 < version < 3.0.11), this limit is `3072`. This configuration is added to be compatible with MySQL and earlier versions of TiDB.
 
-### `table-column-count-limit` <span class="version-mark">从 v5.0 版本开始引入</span>
+### `table-column-count-limit` <span class="version-mark">New in v5.0</span>
 
-+ 用于设置单个表中列的数量限制
-+ 默认值：1017
-+ 目前的合法值范围 `[1017, 4096]`。
+- Sets the limit on the number of columns in a single table.
+- Default value: `1017`
+- Currently, the valid value range is `[1017, 4096]`.
 
-### `index-limit` <span class="version-mark">从 v5.0 版本开始引入</span>
+### `index-limit` <span class="version-mark">New in v5.0</span>
 
-+ 用于设置单个表中索引的数量限制
-+ 默认值：64
-+ 目前的合法值范围 `[64, 512]`。
+- Sets the limit on the number of indexes in a single table.
+- Default value: `64`
+- Currently, the valid value range is `[64, 512]`.
 
-### `enable-telemetry` <span class="version-mark">从 v4.0.2 版本开始引入</span>
+### `enable-telemetry` <span class="version-mark">New in v4.0.2 and deprecated in v8.1.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> - 在 v8.1.0 到 v8.5.2 及其之间的版本中，TiDB 已移除遥测功能，该配置项已不再生效。保留该配置项仅用于与之前版本兼容。
-> - 在 v8.5.3 到 v8.5.6 及其之间的版本中，TiDB 重新引入遥测功能，但其行为已更改为仅将遥测相关信息输出到日志文件，不再通过网络发送给 PingCAP。
-> - 从 v8.5.7 开始，TiDB 废弃了该配置项和遥测功能。
+> Starting from v8.1.0, the telemetry feature in TiDB is removed, and this configuration item is no longer functional. It is retained solely for compatibility with earlier versions.
 
-+ 用于控制是否在 TiDB 实例上开启遥测功能。
-+ 默认值：false
+- Before v8.1.0, this configuration item controls whether to enable telemetry collection in a TiDB instance.
+- Default value: `false`
 
 ### `deprecate-integer-display-length`
 
-+ 当此配置项设置为 `true` 时，弃用整数类型的显示宽度。
-+ 默认值：`true`。在 v8.5.0 之前，默认值为 `false`。
+- Deprecates the display width for integer types when this configuration item is set to `true`.
+- Default value: `true`. Before v8.5.0, the default value is `false`.
 
-### `enable-tcp4-only` <span class="version-mark">从 v5.0 版本开始引入</span>
+### `enable-tcp4-only` <span class="version-mark">New in v5.0</span>
 
-+ 控制是否只监听 TCP4。
-+ 默认值：false
-+ 当使用 LVS 为 TiDB 做负载均衡时，可开启此配置项。这是因为 [LVS 的 TOA 模块](https://github.com/alibaba/LVS/tree/master/kernel/net/toa)可以通过 TCP4 协议从 TCP 头部信息中解析出客户端的真实 IP。
+- Enables or disables listening on TCP4 only.
+- Default value: `false`
+- Enabling this option is useful when TiDB is used with LVS for load balancing because the [real client IP from the TCP header](https://github.com/alibaba/LVS/tree/master/kernel/net/toa) can be correctly parsed by the "tcp4" protocol.
 
-### `enable-enum-length-limit` <span class="version-mark">从 v5.0 版本开始引入</span>
+### `enable-enum-length-limit` <span class="version-mark">New in v5.0</span>
 
-+ 是否限制单个 `ENUM` 元素和单个 `SET` 元素的最大长度
-+ 默认值：true
-+ 当该配置项值为 `true` 时，`ENUM` 和 `SET` 单个元素的最大长度为 255 个字符，[与 MySQL 8 兼容](https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html)；当该配置项值为 `false` 时，不对单个元素的长度进行限制，与 TiDB v5.0 之前的版本兼容。
++ Determines whether to limit the maximum length of a single `ENUM` element and a single `SET` element.
++ Default value: `true`
++ When this configuration value is `true`, the maximum length of a single `ENUM` element and a single `SET` element is 255 characters, which is compatible with [MySQL 8.0](https://dev.mysql.com/doc/refman/8.0/en/string-type-syntax.html). When this configuration value is `false`, there is no limit on the length of a single element, which is compatible with TiDB (earlier than v5.0).
 
-### `graceful-wait-before-shutdown` <span class="version-mark">从 v5.0 版本开始引入</span>
+### `graceful-wait-before-shutdown` <span class="version-mark">New in v5.0</span>
 
-- 指定关闭服务器时 TiDB 等待的秒数，使得客户端有时间断开连接。
-- 默认值：0
-- 在 TiDB 等待服务器关闭期间，HTTP 状态会显示失败，使得负载均衡器可以重新路由流量。TiDB 还会在响应 `COM_PING` 命令时返回错误。
+- Specifies the number of seconds that TiDB waits when you shut down the server, which allows the clients to disconnect.
+- Default value: `0`
+- When TiDB is waiting for shutdown (in the grace period), the HTTP status will indicate a failure, which allows the load balancers to reroute traffic.
 
-> **注意：**
+> **Note:**
 >
-> TiDB 在关闭服务器之前等待的时长也会受到以下参数的影响：
+> The duration that TiDB waits before shutting down the server is also affected by the following parameters:
 >
-> - 当使用的平台采用了 SystemD 时，默认的停止超时为 90 秒。如果需要更长的超时时间，可以设置 [`TimeoutStopSec=`](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutStopSec=)。
+> - When you use a platform that employs SystemD, the default stop timeout is 90 seconds. If you need a longer timeout, you can set [`TimeoutStopSec=`](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html#TimeoutStopSec=).
 >
-> - 当使用 TiUP Cluster 组件时，默认的 [`--wait-timeout`](/tiup/tiup-component-cluster.md#--wait-timeoutuint默认-120) 为 120 秒。
+> - When you use the TiUP Cluster component, the default [`--wait-timeout`](/tiup/tiup-component-cluster.md#--wait-timeout) is 120 seconds.
 >
-> - 当使用 Kubernetes 时，默认的 [`terminationGracePeriodSeconds`](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#lifecycle) 为 30 秒。
+> - When you use Kubernetes, the default [`terminationGracePeriodSeconds`](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#lifecycle) is 30 seconds.
 
-### `enable-global-kill` <span class="version-mark">从 v6.1.0 版本开始引入</span>
+### `enable-global-kill` <span class="version-mark">New in v6.1.0</span>
 
-+ 用于开启 Global Kill（跨节点终止查询或连接）功能。
-+ 默认值：true
-+ 当该配置项值为 `true` 时，`KILL` 语句和 `KILL TIDB` 语句均能跨节点终止查询或连接，无需担心错误地终止其他查询或连接。当你使用客户端连接到任何一个 TiDB 节点执行 `KILL` 语句或 `KILL TIDB` 语句时，该语句会被转发给对应的 TiDB 节点。当客户端和 TiDB 中间有代理时，`KILL` 语句或 `KILL TIDB` 语句也会被转发给对应的 TiDB 节点执行。关于 `KILL` 语句的更多信息，请参考 [`KILL [TIDB]`](/sql-statements/sql-statement-kill.md)。
-+ TiDB 从 v7.3.0 开始支持在 `enable-global-kill = true` 和 [`enable-32bits-connection-id = true`](#enable-32bits-connection-id-从-v730-版本开始引入) 时使用 MySQL 命令行 <kbd>Control+C</kbd> 终止查询或连接。
++ Controls whether to enable the Global Kill (terminating queries or connections across instances) feature.
++ Default value: `true`
++ When the value is `true`, both `KILL` and `KILL TIDB` statements can terminate queries or connections across instances so you do not need to worry about erroneously terminating queries or connections. When you use a client to connect to any TiDB instance and execute the `KILL` or `KILL TIDB` statement, the statement will be forwarded to the target TiDB instance. If there is a proxy between the client and the TiDB cluster, the `KILL` and `KILL TIDB` statements will also be forwarded to the target TiDB instance for execution.
++ Starting from v7.3.0, you can terminate a query or connection using the MySQL command line <kbd>Control+C</kbd> when both `enable-global-kill` and [`enable-32bits-connection-id`](#enable-32bits-connection-id-new-in-v730) are set to `true`. For more information, see [`KILL`](/sql-statements/sql-statement-kill.md).
 
-### `enable-32bits-connection-id` <span class="version-mark">从 v7.3.0 版本开始引入</span>
+### `enable-32bits-connection-id` <span class="version-mark">New in v7.3.0</span>
 
-+ 用于控制是否开启生成 32 位 connection ID 的功能。
-+ 默认值：`true`
-+ 当该配置项值以及 [`enable-global-kill`](#enable-global-kill-从-v610-版本开始引入) 为 `true` 时，生成 32 位 connection ID，从而支持在 MySQL 命令行中通过 <kbd>Control+C</kbd> 终止查询或连接。
++ Controls whether to enable the 32-bit connection ID feature.
++ Default value: `true`
++ When both this configuration item and [`enable-global-kill`](#enable-global-kill-new-in-v610) are set to `true`, TiDB generates 32-bit connection IDs. This enables you to terminate queries or connections by the MySQL command-line <kbd>Control+C</kbd>.
 
-> **注意：**
+> **Warning:**
 >
-> 当集群中 TiDB 实例数量超过 2048 或者单个 TiDB 实例的同时连接数超过 1048576 后，由于 32 位 connection ID 空间不足，将自动升级为 64 位 connection ID。升级过程中业务以及已建立的连接不受影响，但后续的新建连接将无法通过 MySQL 命令行 <kbd>Control+C</kbd> 终止。
+> When the number of TiDB instances in the cluster exceeds 2048 or the concurrent connection count of a single TiDB instance exceeds 1048576, the 32-bit connection ID space becomes insufficient and is automatically upgraded to 64-bit connection IDs. During the upgrade process, existing business and established connections are unaffected. However, subsequent new connections cannot be terminated using <kbd>Control+C</kbd> in the MySQL command-line.
 
-### `initialize-sql-file` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `initialize-sql-file` <span class="version-mark">New in v6.6.0</span>
 
-+ 用于指定 TiDB 集群初次启动时执行的 SQL 脚本。
-+ 默认值：""
-+ 脚本中的所有 SQL 语句将以最高权限执行，不会进行权限检查。若指定的 SQL 脚本无法正确执行，可能导致 TiDB 集群启动失败。
-+ 通常用于修改系统变量的值、创建用户或分配权限等。
++ Specifies the SQL script to be executed when the TiDB cluster is started for the first time.
++ Default value: `""`
++ All SQL statements in this script are executed with the highest privilege without any privilege check. If the specified SQL script fails to execute, the TiDB cluster might fail to start.
++ This configuration item is used to perform such operations as modifying the value of a system variable, creating a user, or granting privileges.
 
-### `enable-forwarding` <span class="version-mark">从 v5.0.0 版本开始引入</span>
+### `enable-forwarding` <span class="version-mark">New in v5.0.0</span>
 
-+ 控制 TiDB 中的 PD client 以及 TiKV client 在疑似网络隔离的情况下是否通过 follower 将请求转发给 leader。
-+ 默认值：false
-+ 如果确认环境存在网络隔离的可能，开启这个参数可以减少服务不可用的窗口期。
-+ 如果无法准确判断隔离、网络中断、宕机等情况，这个机制存在误判情况从而导致可用性、性能降低。如果网络中从未发生过网络故障，不推荐开启此选项。
++ Controls whether the PD client and TiKV client in TiDB forward requests to the leader via the followers in the case of possible network isolation.
++ Default value: `false`
++ If the environment might have isolated network, enabling this parameter can reduce the window of service unavailability.
++ If you cannot accurately determine whether isolation, network interruption, or downtime has occurred, using this mechanism has the risk of misjudgment and causes reduced availability and performance. If network failure has never occurred, it is not recommended to enable this parameter.
 
-### `enable-table-lock` <span class="version-mark">从 v4.0.0 版本开始引入</span>
+### `enable-table-lock` <span class="version-mark">New in v4.0.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> 表级锁 (Table Lock) 为实验特性，不建议在生产环境中使用。
+> The table lock is an experimental feature. It is not recommended that you use it in the production environment.
 
-+ 控制是否开启表级锁特性。
-+ 默认值：false
-+ 表级锁用于协调多个 session 之间对同一张表的并发访问。目前已支持的锁种类包括 `READ`、`WRITE` 和 `WRITE LOCAL`。当该配置项为 `false` 时，执行 `LOCK TABLES` 和 `UNLOCK TABLES` 语句不会生效，并且会报 "LOCK/UNLOCK TABLES is not supported" 的警告。更多信息，请参考 [`LOCK TABLES` 和 `UNLOCK TABLES`](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md)。
++ Controls whether to enable the table lock feature.
++ Default value: `false`
++ The table lock is used to coordinate concurrent access to the same table among multiple sessions. Currently, the `READ`, `WRITE`, and `WRITE LOCAL` lock types are supported. When the configuration item is set to `false`, executing the `LOCK TABLES` or `UNLOCK TABLES` statement does not take effect and returns the "LOCK/UNLOCK TABLES is not supported" warning. For more information, see [`LOCK TABLES` and `UNLOCK TABLES`](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md).
 
 ### `labels`
 
-+ 指定服务器标签，例如 `{ zone = "us-west-1", dc = "dc1", rack = "rack1", host = "tidb1" }`。
-+ 默认值：`{}`
++ Specify server labels. For example, `{ zone = "us-west-1", dc = "dc1", rack = "rack1", host = "tidb1" }`.
++ Default value: `{}`
 
-> **注意：**
+> **Note:**
 >
-> - 标签 `zone` 在 TiDB 中具有特殊用途，用于指定服务器所在的区域信息，当设置 `zone` 为非空值时，对应的值会被自动用于 [`txn-score`](/system-variables.md#txn_scope) 和 [`Follower read`](/follower-read.md) 等功能。
-> - 标签 `group` 在 TiDB Operator 中具有特殊用途。对于使用 [TiDB Operator](/tidb-operator-overview.md) 部署的集群，建议不要手动指定此标签。
+> - In TiDB, the `zone` label is specially used to specify the zone where a server is located. If `zone` is set to a non-null value, the corresponding value is automatically used by features such as [`txn-score`](/system-variables.md#txn_scope) and [`Follower read`](/follower-read.md).
+> - The `group` label has a special use in TiDB Operator. For clusters deployed using [TiDB Operator](/tidb-operator-overview.md), it is **NOT** recommended that you specify the `group` label manually.
 
 ## log
 
-日志相关的配置项。
+Configuration items related to log.
 
 ### `level`
 
-+ 指定日志的输出级别，可选项为 [debug, info, warn, error, fatal]
-+ 默认值："info"
++ Specifies the log output level.
++ Value options: `debug`, `info`, `warn`, `error`, and `fatal`.
++ Default value: `info`
 
 ### `format`
 
-+ 指定日志输出的格式，可选项为 [json, text]。
-+ 默认值："text"
+- Specifies the log output format.
+- Value options: `json` and `text`.
+- Default value: `text`
 
 ### `enable-timestamp`
 
-+ 是否在日志中输出时间戳。
-+ 默认值：null
-+ 如果设置为 false，那么日志里面将不会输出时间戳。
+- Determines whether to enable timestamp output in the log.
+- Default value: `null`
+- If you set the value to `false`, the log does not output timestamp.
 
-> **注意：**
+> **Note:**
 >
-> - 考虑后向兼容性，原来的配置项 `disable-timestamp` 仍然有效，但如果和 `enable-timestamp` 配置的值在语义上冲突（例如在配置中把 `enable-timestamp` 和 `disable-timestamp` 同时设置为 `true`），则 TiDB 会忽略 `disable-timestamp` 的值。
-> - 当前 TiDB 默认使用 `disable-timestamp` 来决定是否在日志中输出时间戳，此时 `enable-timestamp` 的值为 `null`。
-> - 在未来的版本中，`disable-timestamp` 配置项将被彻底移除，请废弃 `disable-timestamp` 的用法，使用语义上更易于理解的 `enable-timestamp`。
+> - To be backward compatible, the initial `disable-timestamp` configuration item remains valid. But if the value of `disable-timestamp` semantically conflicts with the value of `enable-timestamp` (for example, if both `enable-timestamp` and `disable-timestamp` are set to `true`), TiDB ignores the value for `disable-timestamp`.
+> - Currently, TiDB use `disable-timestamp` to determine whether to output timestamps in the log. In this situation, the value of `enable-timestamp` is `null`.
+> - In later versions, the `disable-timestamp` configuration will be removed. Discard `disable-timestamp` and use `enable-timestamp` which is semantically easier to understand.
 
 ### `enable-slow-log`
 
-+ 是否开启慢查询日志
-+ 默认值：true
-+ 可以设置成 `true` 或 `false` 来启用或禁用慢查询日志。
-+ 自 v6.1.0 起，已改用配置项 `instance.tidb_enable_slow_log` 或系统变量 `tidb_enable_slow_log` 来设置是否开启慢查询日志。`enable-slow-log` 仍可使用，但如果同时设置了 `enable-slow-log` 与 `instance.tidb_enable_slow_log`，TiDB 将采用 `instance.tidb_enable_slow_log` 的值。
+- Determines whether to enable the slow query log.
+- Default value: `true`
+- To enable the slow query log, set `enable-slow-log` to `true`. Otherwise, set it to `false`.
+- Since v6.1.0, whether to enable slow query log is determined by the TiDB configuration item [`instance.tidb_enable_slow_log`](/tidb-configuration-file.md#tidb_enable_slow_log) or the system variable [`tidb_enable_slow_log`](/system-variables.md#tidb_enable_slow_log). `enable-slow-log` still takes effect. But if `enable-slow-log` and `instance.tidb_enable_slow_log` are set at the same time, the latter takes effect.
 
 ### `slow-query-file`
 
-+ 慢查询日志的文件名。
-+ 默认值："tidb-slow.log"。注：由于 TiDB V2.1.8 更新了慢日志格式，所以将慢日志单独输出到了慢日志文件。V2.1.8 之前的版本，该变量的默认值是 ""。
-+ 设置后，慢查询日志会单独输出到该文件。
+- The file name of the slow query log.
+- Default value: `tidb-slow.log`
+- The format of the slow log is updated in TiDB v2.1.8, so the slow log is output to the slow log file separately. In versions before v2.1.8, this variable is set to "" by default.
+- After you set it, the slow query log is output to this file separately.
 
 ### `slow-threshold`
 
-+ 输出慢日志的耗时阈值。
-+ 默认值：300
-+ 单位：毫秒
-+ 如果查询耗时大于这个值，会视作一个慢查询，并记录到慢查询日志。注意，当日志的输出级别 [`log.level`](#level) 是 `"debug"` 时，所有查询都会记录到慢日志，不受该参数的限制。
-+ 自 v6.1.0 起，已改用配置项 `instance.tidb_slow_log_threshold` 或系统变量 `tidb_slow_log_threshold` 来设置输出慢日志的耗时阈值。`slow-threshold` 仍可使用，但如果同时设置了 `slow-threshold` 与 `instance.tidb_slow_log_threshold`，TiDB 将采用 `instance.tidb_slow_log_threshold` 的值。
+- Outputs the threshold value of consumed time in the slow log.
+- Default value: `300`
+- Unit: Milliseconds
+- When the time consumed by a query is larger than this value, this query is considered as a slow query and its log is output to the slow query log. Note that when the output level of [`log.level`](#level) is `"debug"`, all queries are recorded in the slow query log, regardless of the setting of this parameter.
+- Since v6.1.0, the threshold value of consumed time in the slow log is specified by the TiDB configuration item [`instance.tidb_slow_log_threshold`](/tidb-configuration-file.md#tidb_slow_log_threshold) or the system variable [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold). `slow-threshold` still takes effect. But if `slow-threshold` and `instance.tidb_slow_log_threshold` are set at the same time, the latter takes effect.
 
 ### `record-plan-in-slow-log`
 
-+ 在慢日志中记录执行计划
-+ 默认值：1
-+ 自 v6.1.0 起，已改用配置项 [`instance.tidb_record_plan_in_slow_log`](/tidb-configuration-file.md#tidb_record_plan_in_slow_log) 或系统变量 [`tidb_record_plan_in_slow_log`](/system-variables.md#tidb_record_plan_in_slow_log) 来设置在慢日志中记录执行计划。`record-plan-in-slow-log` 仍可使用，但如果同时设置了 `record-plan-in-slow-log` 与 `instance.tidb_record_plan_in_slow_log`，TiDB 将采用 `instance.tidb_record_plan_in_slow_log` 的值。
+- Determines whether to record execution plans in the slow log.
+- Default value: `1`
+- Since v6.1.0, whether to record execution plans in the slow log is determined by the TiDB configuration item [`instance.tidb_record_plan_in_slow_log`](/tidb-configuration-file.md#tidb_record_plan_in_slow_log) or the system variable [`tidb_record_plan_in_slow_log`](/system-variables.md#tidb_record_plan_in_slow_log). `record-plan-in-slow-log` still takes effect. But if `record-plan-in-slow-log` and `instance.tidb_record_plan_in_slow_log` are set at the same time, the latter takes effect.
 
 ### `expensive-threshold`
 
-> **警告：**
+> **Warning:**
 >
-> 自 v5.4.0 起，该配置项被废弃。请使用 [`tidb_expensive_query_time_threshold`](/system-variables.md#tidb_expensive_query_time_threshold) 系统变量进行设置。
+> Starting from v5.4.0, the `expensive-threshold` configuration item is deprecated and replaced by the system variable [`tidb_expensive_query_time_threshold`](/system-variables.md#tidb_expensive_query_time_threshold).
 
-+ 输出 `expensive` 操作的行数阈值。
-+ 默认值：10000
-+ 当查询的行数（包括中间结果，基于统计信息）大于这个值，该操作会被认为是 `expensive` 查询，并输出一个前缀带有 `[EXPENSIVE_QUERY]` 的日志。
+- Outputs the threshold value of the number of rows for the `expensive` operation.
+- Default value: `10000`
+- When the number of query rows (including the intermediate results based on statistics) is larger than this value, it is an `expensive` operation and outputs log with the `[EXPENSIVE_QUERY]` prefix.
 
-### `general-log-file` <span class="version-mark">从 v8.0.0 版本开始引入</span>
+### `general-log-file` <span class="version-mark">New in v8.0.0</span>
 
-+ 设置 [general log](/system-variables.md#tidb_general_log) 的文件名。
-+ 默认值：""
-+ 如果设置了文件名，general log 会输出到指定的文件。如没有设置文件名，general log 会写入 TiDB 实例的日志文件中，该文件名通过 [`filename`](#filename) 指定。
++ The filename of the [general log](/system-variables.md#tidb_general_log).
++ Default value: `""`
++ If you specify a filename, the general log is written to this specified file. If the value is blank, the general log is written to the server log of the TiDB instance. You can specify the name of the server log using [`filename`](#filename).
 
-### `timeout` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+### `timeout` <span class="version-mark">New in v7.1.0</span>
 
-+ 用于设置 TiDB 写日志操作的超时时间。当磁盘故障导致日志无法写入时，该配置可以让 TiDB 进程崩溃而不是卡死。
-+ 默认值：0，表示不设置超时
-+ 单位：秒
-+ 在某些用户场景中，TiDB 日志可能是保存在热插拔盘或网络挂载盘上，这些磁盘可能会永久丢失。在这种场景下，TiDB 无法自动恢复，写日志操作会永久阻塞。尽管 TiDB 进程看起来仍在运行，但不会响应任何请求。该配置项用于处理这样的场景。
+- Sets the timeout for log-writing operations in TiDB. In case of a disk failure that prevents logs from being written, this configuration item can trigger the TiDB process to panic instead of hang.
+- Default value: `0`, indicating no timeout is set.
+- Unit: second
+- In some user scenarios, TiDB logs might be stored on hot-pluggable or network-attached disks, which might become permanently unavailable. In these cases, TiDB cannot recover automatically from such disaster and the log-writing operations will be permanently blocked. Although the TiDB process might seem to be running, it does not respond to any requests. This configuration item is designed to handle such situations.
 
-### log.file
+## log.file
 
-日志文件相关的配置项。
+Configuration items related to log files.
 
 #### `filename`
 
-+ 一般日志文件名字。
-+ 默认值：""
-+ 如果设置，会输出一般日志到这个文件。
+- The file name of the general log file.
+- Default value: ""
+- If you set it, the log is output to this file.
 
 #### `max-size`
 
-+ 日志文件的大小限制。
-+ 默认值：300
-+ 单位：MB
-+ 最大设置上限为 4096。
+- The size limit of the log file.
+- Default value: 300
+- Unit: MB
+- The maximum value is 4096.
 
 #### `max-days`
 
-+ 日志最大保留的天数。
-+ 默认值：0
-+ 默认不清理；如果设置了参数值，在 `max-days` 之后 TiDB 会清理过期的日志文件。
+- The maximum number of days that the log is retained.
+- Default value: `0`
+- The log is retained by default. If you set the value, the expired log is cleaned up after `max-days`.
 
 #### `max-backups`
 
-+ 保留的日志的最大数量。
-+ 默认值：0
-+ 默认全部保存；如果设置为 7，会最多保留 7 个老的日志文件。
+- The maximum number of retained logs.
+- Default value: `0`
+- All the log files are retained by default. If you set it to `7`, seven log files are retained at maximum.
 
-#### `compression` <span class="version-mark">从 v8.0.0 版本开始引入</span>
+#### `compression` <span class="version-mark">New in v8.0.0</span>
 
-+ 指定日志的压缩方式。
-+ 默认值：""
-+ 可选值：""、"gzip"
-+ 默认值为 "" ，即不压缩。修改为 "gzip" 可以使用 gzip 算法压缩数据。开启压缩后会影响所有的日志文件，包括 [`slow-query-file`](#slow-query-file)、[`general-log-file`](#general-log-file-从-v800-版本开始引入) 等。
++ The compression method for the log.
++ Default value: `""`
++ Value options: `""`, `"gzip"`
++ The default value is `""`, which means no compression. To enable the gzip compression, set this value to `"gzip"`. After compression is enabled, all log files are affected, such as [`slow-query-file`](#slow-query-file) and [`general-log-file`](#general-log-file-new-in-v800).
 
 ## security
 
-安全相关配置。
+Configuration items related to security.
 
 ### `enable-sem`
 
-- 启用安全增强模式 (SEM)。
-- 默认值：`false`
-- 可以通过系统变量 [`tidb_enable_enhanced_security`](/system-variables.md#tidb_enable_enhanced_security) 获取安全增强模式的状态。
+- Enables the Security Enhanced Mode (SEM).
+- Default value: `false`
+- The status of SEM is available via the system variable [`tidb_enable_enhanced_security`](/system-variables.md#tidb_enable_enhanced_security).
 
 ### `ssl-ca`
 
-+ PEM 格式的受信任 CA 的证书文件路径。
-+ 默认值：""
-+ 当同时设置了该选项和 `--ssl-cert`、`--ssl-key` 选项时，TiDB 将在客户端出示证书的情况下根据该选项指定的受信任的 CA 列表验证客户端证书。若验证失败，则连接会被终止。
-+ 即使设置了该选项，若客户端没有出示证书，则安全连接仍然继续，不会进行客户端证书验证。
+- The file path of the trusted CA certificate in the PEM format.
+- Default value: ""
+- If you set this option and `--ssl-cert`, `--ssl-key` at the same time, TiDB authenticates the client certificate based on the list of trusted CAs specified by this option when the client presents the certificate. If the authentication fails, the connection is terminated.
+- If you set this option but the client does not present the certificate, the secure connection continues without client certificate authentication.
 
 ### `ssl-cert`
 
-+ PEM 格式的 SSL 证书文件路径。
-+ 默认值：""
-+ 当同时设置了该选项和 `--ssl-key` 选项时，TiDB 将接受（但不强制）客户端使用 TLS 安全地连接到 TiDB。
-+ 若指定的证书或私钥无效，则 TiDB 会照常启动，但无法接受安全连接。
+- The file path of the SSL certificate in the PEM format.
+- Default value: ""
+- If you set this option and `--ssl-key` at the same time, TiDB allows (but not forces) the client to securely connect to TiDB using TLS.
+- If the specified certificate or private key is invalid, TiDB starts as usual but cannot receive secure connection.
 
 ### `ssl-key`
 
-+ PEM 格式的 SSL 证书密钥文件路径，即 `--ssl-cert` 所指定的证书的私钥。
-+ 默认值：""
-+ 目前 TiDB 不支持加载由密码保护的私钥。
+- The file path of the SSL certificate key in the PEM format, that is, the private key of the certificate specified by `--ssl-cert`.
+- Default value: ""
+- Currently, TiDB does not support loading the private keys protected by passwords.
 
 ### `cluster-ssl-ca`
 
-+ CA 根证书，用于用 tls 连接 TiKV/PD
-+ 默认值：""
+- The CA root certificate used to connect TiKV or PD with TLS.
+- Default value: ""
 
 ### `cluster-ssl-cert`
 
-+ ssl 证书文件路径，用于用 tls 连接 TiKV/PD
-+ 默认值：""
+- The path of the SSL certificate file used to connect TiKV or PD with TLS.
+- Default value: ""
 
 ### `cluster-ssl-key`
 
-+ ssl 私钥文件路径，用于用 tls 连接 TiKV/PD
-+ 默认值：""
+- The path of the SSL private key file used to connect TiKV or PD with TLS.
+- Default value: ""
 
 ### `cluster-verify-cn`
 
-+ 客户端提供的证书中，可接受的 X.509 通用名称列表。仅当提供的通用名称与列表中的条目之一完全匹配时，才会允许其请求。
-+ 默认值：[]，表示禁用客户端证书 CN 检查。
+- A list of acceptable X.509 Common Names in certificates presented by clients. Requests are permitted only when the presented Common Name is an exact match with one of the entries in the list.
+- Default value: [], which means that the client certificate CN check is disabled.
 
 ### `spilled-file-encryption-method`
 
-+ 内存落盘文件的加密方式。
-+ 默认值：`"plaintext"`，表示不进行加密。
-+ 可选值：`"plaintext"`、`"aes128-ctr"`。
++ Determines the encryption method used for saving the spilled files to disk.
++ Default value: `"plaintext"`, which disables encryption.
++ Optional values: `"plaintext"` and `"aes128-ctr"`
 
 ### `auto-tls`
 
-+ 控制 TiDB 启动时是否自动生成 TLS 证书。
-+ 默认值：`false`
+- Determines whether to automatically generate the TLS certificates on startup.
+- Default value: `false`
 
 ### `tls-version`
 
-> **警告：**
+> **Warning:**
 >
-> TiDB v7.6.0 废弃了对 `"TLSv1.0"` 和 `"TLSv1.1"` 协议对支持，并从 v8.0.0 开始移除对这两个协议的支持。
+> `"TLSv1.0"` and `"TLSv1.1"` protocols are deprecated in TiDB v7.6.0, and will be removed in v8.0.0.
 
-+ 设置用于连接 MySQL 协议的最低 TLS 版本。
-+ 默认值：""，支持 TLSv1.2 及以上版本。在 v7.6.0 之前，TiDB 默认支持 TLSv1.1 及以上版本。
-+ 可选值：`"TLSv1.2"` 和 `"TLSv1.3"`。在 v8.0.0 之前，TiDB 也支持 `"TLSv1.0"` 和 `"TLSv1.1"`。
+- Set the minimum TLS version for MySQL Protocol connections.
+- Default value: "", which allows TLSv1.2 or later versions. Before TiDB v7.6.0, the default value allows TLSv1.1 or later versions.
+- Optional values: `"TLSv1.2"` and `"TLSv1.3"`. Before TiDB v8.0.0, `"TLSv1.0"` and `"TLSv1.1"` are also allowed.
 
-### `auth-token-jwks` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `auth-token-jwks` <span class="version-mark">New in v6.4.0</span>
 
-+ 设置 [`tidb_auth_token`](/security-compatibility-with-mysql.md#tidb_auth_token) 认证方式的 JSON Web Key Sets (JWKS) 的本地文件路径。
-+ 默认值：""
+- Set the local file path of the JSON Web Key Sets (JWKS) for the [`tidb_auth_token`](/security-compatibility-with-mysql.md#tidb_auth_token) authentication method.
+- Default value: `""`
 
-### `auth-token-refresh-interval` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `auth-token-refresh-interval` <span class="version-mark">New in v6.4.0</span>
 
-+ 设置 [`tidb_auth_token`](/security-compatibility-with-mysql.md#tidb_auth_token) 认证方式的 JWKS 刷新时间间隔。
-+ 默认值：1h
+- Set the JWKS refresh interval for the [`tidb_auth_token`](/security-compatibility-with-mysql.md#tidb_auth_token) authentication method.
+- Default value: `1h`
 
-### `disconnect-on-expired-password` <span class="version-mark">从 v6.5.0 版本开始引入</span>
+### `disconnect-on-expired-password` <span class="version-mark">New in v6.5.0</span>
 
-+ 对于密码已过期的用户，通过 `disconnect-on-expired-password` 控制 TiDB 服务端是否直接断开该用户的连接。
-+ 默认值：`true`
-+ 默认值为 "true" 表示 TiDB 服务端将直接断开密码已过期用户的连接。设置为 "false" 时，TiDB 服务端将密码已过期用户的连接置于“沙盒模式”，允许该用户建立连接并执行密码重置操作。
+- Determines whether TiDB disconnects the client connection when the password is expired.
+- Default value: `true`
+- Optional values: `true`, `false`
+- If you set it to `true`, the client connection is disconnected when the password is expired. If you set it to `false`, the client connection is restricted to the "sandbox mode" and the user can only execute the password reset operation.
 
-### `session-token-signing-cert` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `session-token-signing-cert` <span class="version-mark">New in v6.4.0</span>
 
-+ 证书文件路径，用于 [TiProxy](/tiproxy/tiproxy-overview.md) 的会话迁移。
-+ 默认值：""
-+ 空值将导致 TiProxy 会话迁移失败。要启用会话迁移，所有的 TiDB 节点必须设置相同的证书和密钥。因此你应该在每个 TiDB 节点上存储相同的证书和密钥。
++ The certificate file path, which is used by [TiProxy](/tiproxy/tiproxy-overview.md) for session migration.
++ Default value: ""
++ Empty value will cause TiProxy session migration to fail. To enable session migration, all TiDB nodes must set this to the same certificate and key. This means that you should store the same certificate and key on every TiDB node.
 
-### `session-token-signing-key` <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### `session-token-signing-key` <span class="version-mark">New in v6.4.0</span>
 
-+ 密钥文件路径，用于 [TiProxy](/tiproxy/tiproxy-overview.md) 的会话迁移。
-+ 默认值：""
-+ 参阅 [`session-token-signing-cert`](#session-token-signing-cert-从-v640-版本开始引入) 的描述。
++ The key file path used by [TiProxy](/tiproxy/tiproxy-overview.md) for session migration.
++ Default value: ""
++ Refer to the descriptions of [`session-token-signing-cert`](#session-token-signing-cert-new-in-v640).
 
 ## performance
 
-性能相关配置。
+Configuration items related to performance.
 
 ### `max-procs`
 
-+ TiDB 的 CPU 使用数量。
-+ 默认值：0
-+ 默认值为 0 表示使用机器上所有的 CPU；如果设置成 n，那么 TiDB 会使用 n 个 CPU 数量。
+- The number of CPUs used by TiDB.
+- Default value: `0`
+- The default `0` indicates using all the CPUs on the machine. You can also set it to n, and then TiDB uses n CPUs.
 
-### `server-memory-quota` <span class="version-mark">从 v4.0.9 版本开始引入</span>
+### `server-memory-quota` <span class="version-mark">New in v4.0.9</span>
 
-> **警告：**
+> **Warning:**
 >
-> 自 v6.5.0 起，该配置项被废弃。请使用 [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-从-v640-版本开始引入) 系统变量进行设置。
+> Since v6.5.0, the `server-memory-quota` configuration item is deprecated and replaced by the system variable [`tidb_server_memory_limit`](/system-variables.md#tidb_server_memory_limit-new-in-v640).
 
-+ 设置 tidb-server 实例的最大内存用量，单位为字节。
-+ 默认值：0
-+ 默认值为 0 表示无内存限制。
-
-### `txn-entry-size-limit` <span class="version-mark">从 v4.0.10 和 v5.0.0 版本开始引入</span>
-
-+ TiDB 单行数据的大小限制
-+ 默认值：6291456
-+ 单位：Byte
-+ 事务中单个 key-value 记录的大小限制。若超出该限制，TiDB 将会返回 `entry too large` 错误。该配置项的最大值不超过 `125829120`（表示 120MB）。
-+ 从 v7.6.0 开始，你可以使用 [`tidb_txn_entry_size_limit`](/system-variables.md#tidb_txn_entry_size_limit-从-v760-版本开始引入) 系统变量动态修改该配置项的值。
-+ 注意，TiKV 有类似的限制。若单个写入请求的数据量大小超出 [`raft-entry-max-size`](/tikv-configuration-file.md#raft-entry-max-size)，默认为 8MB，TiKV 会拒绝处理该请求。当表的一行记录较大时，需要同时修改这两个配置。
-+ [`max_allowed_packet`](/system-variables.md#max_allowed_packet-从-v610-版本开始引入) (MySQL 协议的最大数据包大小) 的默认值为 `67108864`（64 MiB）。如果一行记录的大小超过 `max_allowed_packet`，该行记录会被截断。
-+ [`txn-total-size-limit`](#txn-total-size-limit)（TiDB 单个事务大小限制）的默认值为 100 MiB。如果将 `txn-entry-size-limit` 的值设置为 100 MiB 以上，需要相应地调大 `txn-total-size-limit` 的值。
-
-### `txn-total-size-limit`
-
-+ TiDB 单个事务大小限制
-+ 默认值：104857600
-+ 单位：Byte
-+ 单个事务中，所有 key-value 记录的总大小不能超过该限制。该配置项的最大值不超过 `1099511627776`（表示 1TB）。
-+ 在 v6.5.0 及之后的版本中，不再推荐使用该配置项，事务的内存大小会被累计计入所在会话的内存使用量中，并由 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 变量在单个会话内存超阈值时采取控制行为。为了向前兼容，由低版本升级至 v6.5.0 及更高版本时，该配置项的行为如下所述:
-    + 若该配置项未设置，或设置为默认值 (`104857600`)，升级后事务内存大小将会计入所在会话的内存使用中，由 `tidb_mem_quota_query` 变量控制。
-    + 若该配置项未设为默认值 (`104857600`)，升级前后该配置项仍生效，对单个事务大小的限制行为不会发生变化，事务内存大小不由 `tidb_mem_quota_query` 控制。
-+ 从 v8.0.0 开始，如果系统变量 [`tidb_dml_type`](/system-variables.md#tidb_dml_type-从-v800-版本开始引入) 以 `"bulk"` 方式执行事务时，事务的大小不受 TiDB 配置项 `txn-total-size-limit` 的限制。
++ The memory usage limit of tidb-server instances.
++ Default value: `0` (in bytes), which means no memory limit.
 
 ### `max-txn-ttl`
 
-+ 单个事务持锁的最长时间，超过该时间，该事务的锁可能会被其他事务清除，导致该事务无法成功提交。
-+ 默认值：3600000
-+ 单位：毫秒
-+ 超过此时间的事务只能执行提交或者回滚，提交不一定能够成功。
-+ 对于使用 [`"bulk"` DML 方式](/system-variables.md#tidb_dml_type-从-v800-版本开始引入)执行的事务，其最大 TTL 可以超过该配置项的限制，最大不超过 24 小时或该配置项值中的较大者。
+- The longest time that a single transaction can hold locks. If this time is exceeded, the locks of a transaction might be cleared by other transactions so that this transaction cannot be successfully committed.
+- Default value: `3600000`
+- Unit: Millisecond
+- The transaction that holds locks longer than this time can only be committed or rolled back. The commit might not be successful.
+- For transactions executed using the [`"bulk"` DML mode](/system-variables.md#tidb_dml_type-new-in-v800), the maximum TTL can exceed the limit of this configuration item. The maximum value is the greater value between this configuration item and 24 hours.
 
 ### `stmt-count-limit`
 
-+ TiDB 单个事务允许的最大语句条数限制。
-+ 默认值：5000
-+ 在一个事务中，超过 `stmt-count-limit` 条语句后还没有 rollback 或者 commit，TiDB 将会返回 `statement count 5001 exceeds the transaction limitation, autocommit = false` 错误。该限制只在可重试的乐观事务中生效，如果使用悲观事务或者关闭了[事务重试](/optimistic-transaction.md#事务的重试)，事务中的语句数将不受此限制。
+- The maximum number of statements allowed in a single TiDB transaction.
+- Default value: `5000`
+- If a transaction does not roll back or commit after the number of statements exceeds `stmt-count-limit`, TiDB returns the `statement count 5001 exceeds the transaction limitation, autocommit = false` error. This configuration takes effect **only** in the retryable optimistic transaction. If you use the pessimistic transaction or have disabled the transaction retry, the number of statements in a transaction is not limited by this configuration.
+
+### `txn-entry-size-limit` <span class="version-mark">New in v4.0.10 and v5.0.0</span>
+
+- The size limit of a single row of data in TiDB.
+- Default value: `6291456` (in bytes)
+- The size limit of a single key-value record in a transaction. If the size limit is exceeded, TiDB returns the `entry too large` error. The maximum value of this configuration item does not exceed `125829120` (120 MB).
+- Starting from v7.6.0, you can use the system variable [`tidb_txn_entry_size_limit`](/system-variables.md#tidb_txn_entry_size_limit-new-in-v760) to dynamically modify the value of this configuration item.
+- Note that TiKV has a similar limit. If the data size of a single write request exceeds [`raft-entry-max-size`](/tikv-configuration-file.md#raft-entry-max-size), which is 8 MB by default, TiKV refuses to process this request. When a table has a row of large size, you need to modify both configurations at the same time.
+- The default value of [`max_allowed_packet`](/system-variables.md#max_allowed_packet-new-in-v610) (the maximum size of a packet for the MySQL protocol) is 67108864 (64 MiB). If a row is larger than `max_allowed_packet`, the row gets truncated.
+- The default value of [`txn-total-size-limit`](#txn-total-size-limit) (the size limit of a single transaction in TiDB) is 100 MiB. If you increase the `txn-entry-size-limit` value to be over 100 MiB, you need to increase the `txn-total-size-limit` value accordingly.
+
+### `txn-total-size-limit`
+
+- The size limit of a single transaction in TiDB.
+- Default value: `104857600` (in bytes)
+- In a single transaction, the total size of key-value records cannot exceed this value. The maximum value of this parameter is `1099511627776` (1 TB).
+- In TiDB v6.5.0 and later versions, this configuration is no longer recommended. The memory size of a transaction will be accumulated into the memory usage of the session, and the [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) variable will take effect when the session memory threshold is exceeded. To be compatible with previous versions, this configuration works as follows when you upgrade from an earlier version to TiDB v6.5.0 or later:
+    - If this configuration is not set or is set to the default value (`104857600`), after an upgrade, the memory size of a transaction will be accumulated into the memory usage of the session, and the `tidb_mem_quota_query` variable will take effect.
+    - If this configuration is not defaulted (`104857600`), it still takes effect and its behavior on controlling the size of a single transaction remains unchanged before and after the upgrade. This means that the memory size of the transaction is not controlled by the `tidb_mem_quota_query` variable.
+- When TiDB executes transactions in the [`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) `"bulk"` mode, transaction size is not limited by the TiDB configuration item [`txn-total-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-total-size-limit).
 
 ### `tcp-keep-alive`
 
-+ TiDB 在 TCP 层开启 keepalive。
-+ 默认值：true
+- Determines whether to enable `keepalive` in the TCP layer.
+- Default value: `true`
 
 ### `tcp-no-delay`
 
-+ 控制 TiDB 是否在 TCP 层开启 TCP_NODELAY。开启后，TiDB 将禁用 TCP/IP 协议中的 Nagle 算法，允许小数据包的发送，可以降低网络延时，适用于延时敏感型且数据传输量比较小的应用。
-+ 默认值：true
+- Determines whether to enable TCP_NODELAY at the TCP layer. After it is enabled, TiDB disables the Nagle algorithm in the TCP/IP protocol and allows sending small data packets to reduce network latency. This is suitable for latency-sensitive applications with a small transmission volume of data.
+- Default value: `true`
 
 ### `cross-join`
 
-+ 默认值：true
-+ 默认可以执行在做 join 时两边表没有任何条件（where 字段）的语句；如果设置为 false，则有这样的 join 语句出现时，server 会拒绝执行
+- Default value: `true`
+- TiDB supports executing the `JOIN` statement without any condition (the `WHERE` field) of both sides tables by default; if you set the value to `false`, the server refuses to execute when such a `JOIN` statement appears.
 
-> **注意：**
+> **Note:**
 >
-> 在创建集群时，不要将 `cross-join` 设置为 false，否则会导致集群启动失败。
+> When creating a cluster, **DO NOT** set `cross-join` to false. Otherwise, the cluster will fail to start up.
 
 ### `stats-lease`
 
-+ TiDB 重载统计信息，更新表行数，检查是否需要自动 analyze，利用 feedback 更新统计信息以及加载列的统计信息的时间间隔。
-+ 默认值：3s
-    - 每隔 `stats-lease` 时间，TiDB 会检查统计信息是否有更新，如果有会将其更新到内存中
-    - 每隔 `20 * stats-lease` 时间，TiDB 会将 DML 产生的总行数以及修改的行数变化更新到系统表中
-    - 每隔 `stats-lease` 时间，TiDB 会检查是否有表或者索引需要自动 analyze
-    - 每隔 `stats-lease` 时间，TiDB 会检查是否有列的统计信息需要被加载到内存中
-    - 每隔 `200 * stats-lease` 时间，TiDB 会将内存中缓存的 feedback 写入系统表中
-    - 每隔 `5 * stats-lease` 时间，TiDB 会读取系统表中的 feedback，更新内存中缓存的统计信息
-+ 当 `stats-lease` 为 0s 时，TiDB 会以 3s 的时间间隔周期性的读取系统表中的统计信息并更新内存中缓存的统计信息。但不会自动修改统计信息相关系统表，具体来说，TiDB 不再自动修改这些表：
-    - `mysql.stats_meta`：TiDB 不再自动记录事务中对某张表的修改行数，也不会更新到这个系统表中
-    - `mysql.stats_histograms`/`mysql.stats_buckets` 和 `mysql.stats_top_n`：TiDB 不再自动 analyze 和主动更新统计信息
-    - `mysql.stats_feedback`：TiDB 不再根据被查询的数据反馈的部分统计信息更新表和索引的统计信息
+- The time interval of reloading statistics, updating the number of table rows, checking whether it is needed to perform the automatic analysis, using feedback to update statistics and loading statistics of columns.
+- Default value: `3s`
+    - At intervals of `stats-lease` time, TiDB checks the statistics for updates and updates them to the memory if updates exist.
+    - At intervals of `20 * stats-lease` time, TiDB updates the total number of rows generated by DML and the number of modified rows to the system table.
+    - At intervals of `stats-lease`, TiDB checks for tables and indexes that need to be automatically analyzed.
+    - At intervals of `stats-lease`, TiDB checks for column statistics that need to be loaded to the memory.
+    - At intervals of `200 * stats-lease`, TiDB writes the feedback cached in the memory to the system table.
+    - At intervals of `5 * stats-lease`, TiDB reads the feedback in the system table, and updates the statistics cached in the memory.
+- When `stats-lease` is set to 0s, TiDB periodically reads the feedback in the system table, and updates the statistics cached in the memory every three seconds. But TiDB no longer automatically modifies the following statistics-related system tables:
+    - `mysql.stats_meta`: TiDB no longer automatically records the number of table rows that are modified by the transaction and updates it to this system table.
+    - `mysql.stats_histograms`/`mysql.stats_buckets` and `mysql.stats_top_n`: TiDB no longer automatically analyzes and proactively updates statistics.
+    - `mysql.stats_feedback`: TiDB no longer updates the statistics of the tables and indexes according to a part of statistics returned by the queried data.
 
 ### `pseudo-estimate-ratio`
 
-+ 修改过的行数/表的总行数的比值，超过该值时系统会认为统计信息已经过期，会采用 pseudo 的统计信息。
-+ 默认值：0.8
-+ 最小值：0
-+ 最大值：1
+- The ratio of (number of modified rows)/(total number of rows) in a table. If the value is exceeded, the system assumes that the statistics have expired and the pseudo statistics will be used.
+- Default value: `0.8`
+- The minimum value is `0` and the maximum value is `1`.
 
 ### `force-priority`
 
-+ 把所有的语句优先级设置为 force-priority 的值。
-+ 默认值：NO_PRIORITY
-+ 可选值：默认值 NO_PRIORITY 表示不强制改变执行语句的优先级，其它优先级从低到高可设置为 LOW_PRIORITY、DELAYED 或 HIGH_PRIORITY。
-+ 自 v6.1.0 起，已改用配置项 [`instance.tidb_force_priority`](/tidb-configuration-file.md#tidb_force_priority) 或系统变量 [`tidb_force_priority`](/system-variables.md#tidb_force_priority) 来将所有语句优先级设为 force-priority 的值。`force-priority` 仍可使用，但如果同时设置了 `force-priority` 与 `instance.tidb_force_priority`，TiDB 将采用 `instance.tidb_force_priority` 的值。
+- Sets the priority for all statements.
+- Default value: `NO_PRIORITY`
+- Value options: The default value `NO_PRIORITY` means that the priority for statements is not forced to change. Other options are `LOW_PRIORITY`, `DELAYED`, and `HIGH_PRIORITY` in ascending order.
+- Since v6.1.0, the priority for all statements is determined by the TiDB configuration item [`instance.tidb_force_priority`](/tidb-configuration-file.md#tidb_force_priority) or the system variable [`tidb_force_priority`](/system-variables.md#tidb_force_priority). `force-priority` still takes effect. But if `force-priority` and `instance.tidb_force_priority` are set at the same time, the latter takes effect.
 
-> **注意：**
+> **Note:**
 >
-> TiDB 从 v6.6.0 版本开始支持[使用资源管控 (Resource Control) 实现资源组限制和流控](/tidb-resource-control-ru-groups.md)功能。该功能可以将不同优先级的语句放在不同的资源组中执行，并为这些资源组分配不同的配额和优先级，可以达到更好的资源管控效果。在开启资源管控功能后，语句的调度主要受资源组的控制，`PRIORITY` 将不再生效。建议在支持资源管控的版本优先使用资源管控功能。
+> Starting from v6.6.0, TiDB supports [Resource Control](/tidb-resource-control-ru-groups.md). You can use this feature to execute SQL statements with different priorities in different resource groups. By configuring proper quotas and priorities for these resource groups, you can gain better scheduling control for SQL statements with different priorities. When resource control is enabled, statement priority will no longer take effect. It is recommended that you use [Resource Control](/tidb-resource-control-ru-groups.md) to manage resource usage for different SQL statements.
 
 ### `distinct-agg-push-down`
 
-+ 设置优化器是否执行将带有 `Distinct` 的聚合函数（比如 `select count(distinct a) from t`）下推到 Coprocessor 的优化操作。
-+ 默认值：false
-+ 该变量作为系统变量 [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down) 的初始值。
+- Determines whether the optimizer executes the operation that pushes down the aggregation function with `Distinct` (such as `select count(distinct a) from t`) to Coprocessors.
+- Default: `false`
+- This variable is the initial value of the system variable [`tidb_opt_distinct_agg_push_down`](/system-variables.md#tidb_opt_distinct_agg_push_down).
 
 ### `enforce-mpp`
 
-+ 用于控制是否忽略优化器代价估算，强制使用 TiFlash 的 MPP 模式执行查询。
-+ 默认值：false
-+ 该配置项可以控制系统变量 [`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-从-v51-版本开始引入) 的初始值。例如，当设置该配置项为 true 时，`tidb_enforce_mpp` 的默认值为 ON。
++ Determines whether to ignore the optimizer's cost estimation and to forcibly use TiFlash's MPP mode for query execution.
++ Default value: `false`
++ This configuration item controls the initial value of [`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51). For example, when this configuration item is set to `true`, the default value of `tidb_enforce_mpp` is `ON`.
 
-### `stats-load-concurrency` <span class="version-mark">从 v5.4.0 版本开始引入</span>
+### `enable-stats-cache-mem-quota` <span class="version-mark">New in v6.1.0</span>
 
-+ TiDB 统计信息同步加载功能可以并发处理的最大列数
-+ 默认值：`0`。在 v8.2.0 之前，默认值为 `5`。
-+ 目前的合法值范围：`[0, 128]`。`0` 为自动模式，根据服务器情况，自动调节并发度。在 v8.2.0 之前，最小值为 `1`。
++ Controls whether to enable the memory quota for the statistics cache.
++ Default value: `true`
 
-### `stats-load-queue-size` <span class="version-mark">从 v5.4.0 版本开始引入</span>
+### `stats-load-concurrency` <span class="version-mark">New in v5.4.0</span>
 
-+ 用于设置 TiDB 统计信息同步加载功能最多可以缓存多少列的请求
-+ 默认值：1000
-+ 目前的合法值范围：`[1, 100000]`
++ The maximum number of columns that the TiDB synchronously loading statistics feature can process concurrently.
++ Default value: `0`. Before v8.2.0, the default value is `5`.
++ Currently, the valid value range is `[0, 128]`. The value `0` means the automatic mode, which automatically adjusts concurrency based on the configuration of the server. Before v8.2.0, the minimum value is `1`.
 
-### `enable-stats-cache-mem-quota` <span class="version-mark">从 v6.1.0 版本开始引入</span>
+### `stats-load-queue-size` <span class="version-mark">New in v5.4.0</span>
 
-+ 用于控制 TiDB 是否开启统计信息缓存的内存上限。
-+ 默认值：true
++ The maximum number of column requests that the TiDB synchronously loading statistics feature can cache.
++ Default value: `1000`
++ Currently, the valid value range is `[1, 100000]`.
 
-### `concurrently-init-stats` <span class="version-mark">从 v8.1.0 和 v7.5.2 版本开始引入</span>
+### `concurrently-init-stats` <span class="version-mark">New in v8.1.0 and v7.5.2</span>
 
-+ 用于控制 TiDB 启动时是否并发初始化统计信息。该配置项仅在 [`lite-init-stats`](#lite-init-stats-从-v710-版本开始引入) 为 `false` 时生效。
-+ 默认值：在 v8.2.0 之前版本中为 `false`，在 v8.2.0 及之后版本中为 `true`。
++ Controls whether to initialize statistics concurrently during TiDB startup. This configuration item takes effect only when [`lite-init-stats`](#lite-init-stats-new-in-v710) is set to `false`.
++ Default value: `false` for versions earlier than v8.2.0, `true` for v8.2.0 and later versions.
 
-### `lite-init-stats` <span class="version-mark">从 v7.1.0 版本开始引入</span>
+### `lite-init-stats` <span class="version-mark">New in v7.1.0</span>
 
-+ 用于控制 TiDB 启动时是否采用轻量级的统计信息初始化。
-+ 默认值：在 v7.2.0 之前版本中为 `false`，在 v7.2.0 及之后的版本中为 `true`。
-+ 当 `lite-init-stats` 为 `true` 时，统计信息初始化时列和索引的直方图、TopN、Count-Min Sketch 均不会加载到内存中。当 `lite-init-stats` 为 `false` 时，统计信息初始化时索引的直方图、TopN、Count-Min Sketch 会被加载到内存中，主键和列的直方图、TopN、Count-Min Sketch 不会加载到内存中。当优化器需要某一主键或列的直方图、TopN、Count-Min Sketch 时，这些统计信息会被同步或异步加载到内存中（由 [`tidb_stats_load_sync_wait`](/system-variables.md#tidb_stats_load_sync_wait-从-v540-版本开始引入) 控制）。
-+ 将 `lite-init-stats` 设置为 true，可以加速统计信息初始化，避免加载不必要的统计信息，从而降低 TiDB 的内存使用。详情请参考[统计信息的加载](/statistics.md#加载统计信息)。
++ Controls whether to use lightweight statistics initialization during TiDB startup.
++ Default value: `false` for versions earlier than v7.2.0, `true` for v7.2.0 and later versions.
++ When the value of `lite-init-stats` is `true`, statistics initialization does not load any histogram, TopN, or Count-Min Sketch of indexes and columns into memory. When the value of `lite-init-stats` is `false`, statistics initialization loads histograms, TopN, and Count-Min Sketch of indexes into memory but does not load any histogram, TopN, or Count-Min Sketch of primary keys and columns into memory. When the optimizer needs the histogram, TopN, and Count-Min Sketch of a specific primary key or column, the necessary statistics are loaded into memory synchronously or asynchronously (controlled by [`tidb_stats_load_sync_wait`](/system-variables.md#tidb_stats_load_sync_wait-new-in-v540)).
++ Setting `lite-init-stats` to `true` speeds up statistics initialization and reduces TiDB memory usage by avoiding unnecessary statistics loading. For details, see [Load statistics](/statistics.md#load-statistics).
 
-### `force-init-stats` <span class="version-mark">从 v6.5.7 和 v7.1.0 版本开始引入</span>
+### `force-init-stats` <span class="version-mark">New in v6.5.7 and v7.1.0</span>
 
-+ 用于控制 TiDB 启动时是否在统计信息初始化完成后再对外提供服务。
-+ 默认值：在 v7.2.0 之前版本中为 `false`，在 v7.2.0 及之后的版本中为 `true`。
-+ 当 `force-init-stats` 为 `true` 时，TiDB 启动时会等到统计信息初始化完成后再对外提供服务。需要注意的是，在表和分区数量较多且 [`lite-init-stats`](/tidb-configuration-file.md#lite-init-stats-从-v710-版本开始引入) 为 `false` 的情况下，`force-init-stats` 为 `true` 可能会导致 TiDB 从启动到开始对外提供服务的时间变长。
-+ 当 `force-init-stats` 为 `false` 时，TiDB 在统计信息初始化未完成时即可对外提供服务，但由于统计信息初始化未完成，优化器会用 pseudo 统计信息进行决策，可能会产生不合理的执行计划。
-
-### `enable-async-batch-get` <span class="version-mark">从 v8.5.5 版本开始引入</span>
-
-+ 用于控制 TiDB 是否使用异步方式执行 Batch Get 算子。使用异步方式能够降低 goroutine 开销，提供更优的性能。通常无需调整该配置项。
-+ 默认值：`false`
++ Controls whether to wait for statistics initialization to finish before providing services during TiDB startup.
++ Default value: `false` for versions earlier than v7.2.0, `true` for v7.2.0 and later versions.
++ When the value of `force-init-stats` is `true`, TiDB needs to wait until statistics initialization is finished before providing services upon startup. Note that if there are a large number of tables and partitions and the value of [`lite-init-stats`](/tidb-configuration-file.md#lite-init-stats-new-in-v710) is `false`, setting `force-init-stats` to `true` might prolong the time it takes for TiDB to start providing services.
++ When the value of `force-init-stats` is `false`, TiDB can still provide services before statistics initialization is finished, but the optimizer uses pseudo statistics to make decisions, which might result in suboptimal execution plans.
 
 ## opentracing
 
-opentracing 的相关的设置。
+Configuration items related to opentracing.
 
 ### `enable`
 
-+ 开启 opentracing 跟踪 TiDB 部分组件的调用开销。注意开启后会有一定的性能损失。
-+ 默认值：false
++ Enables opentracing to trace the call overhead of some TiDB components. Note that enabling opentracing causes some performance loss.
++ Default value: `false`
 
 ### `rpc-metrics`
 
-+ 开启 rpc metrics。
-+ 默认值：false
++ Enables RPC metrics.
++ Default value: `false`
 
-### opentracing.sampler
+## opentracing.sampler
 
-opentracing.sampler 相关的设置。
+Configuration items related to opentracing.sampler.
 
-#### `type`
+### `type`
 
-+ opentracing 采样器的类型。字符串取值大小写不敏感。
-+ 默认值："const"
-+ 可选值："const"，"probabilistic"，"ratelimiting"，remote"
++ Specifies the type of the opentracing sampler. The string value is case-insensitive.
++ Default value: `"const"`
++ Value options: `"const"`, `"probabilistic"`, `"ratelimiting"`, `"remote"`
 
-#### `param`
+### `param`
 
-+ 采样器参数。
-    - 对于 const 类型，可选值为 0 或 1，表示是否开启。
-    - 对于 probabilistic 类型，参数为采样概率，可选值为 0 到 1 之间的浮点数。
-    - 对于 ratelimiting 类型，参数为每秒采样 span 的个数。
-    - 对于 remote 类型，参数为采样概率，可选值为 0 到 1 之间的浮点数。
-+ 默认值：1.0
++ The parameter of the opentracing sampler.
+    - For the `const` type, the value can be `0` or `1`, which indicates whether to enable the `const` sampler.
+    - For the `probabilistic` type, the parameter specifies the sampling probability, which can be a float number between `0` and `1`.
+    - For the `ratelimiting` type, the parameter specifies the number of spans sampled per second.
+    - For the `remote` type, the parameter specifies the sampling probability, which can be a float number between `0` and `1`.
++ Default value: `1.0`
 
-#### `sampling-server-url`
+### `sampling-server-url`
 
-+ jaeger-agent 采样服务器的 HTTP URL 地址。
-+ 默认值：""
++ The HTTP URL of the jaeger-agent sampling server.
++ Default value: `""`
 
-#### `max-operations`
+### `max-operations`
 
-+ 采样器可追踪的最大操作数。如果一个操作没有被追踪，会启用默认的 probabilistic 采样器。
-+ 默认值：0
++ The maximum number of operations that the sampler can trace. If an operation is not traced, the default probabilistic sampler is used.
++ Default value: `0`
 
-#### `sampling-refresh-interval`
+### `sampling-refresh-interval`
 
-+ 控制远程轮询 jaeger-agent 采样策略的频率。
-+ 默认值：0
++ Controls the frequency of polling the jaeger-agent sampling policy.
++ Default value: `0`
 
-### opentracing.reporter
+## opentracing.reporter
 
-opentracing.reporter 相关的设置。
+Configuration items related to opentracing.reporter.
 
-#### `queue-size`
+### `queue-size`
 
-+ reporter 在内存中记录 spans 个数的队列容量。
-+ 默认值：0
++ The queue size with which the reporter records spans in memory.
++ Default value: `0`
 
-#### `buffer-flush-interval`
+### `buffer-flush-interval`
 
-+ reporter 缓冲区的刷新频率。
-+ 默认值：0
++ The interval at which the reporter flushes the spans in memory to the storage.
++ Default value: `0`
 
-#### `log-spans`
+### `log-spans`
 
-+ 是否为所有提交的 span 打印日志。
-+ 默认值：false
++ Determines whether to print the log for all submitted spans.
++ Default value: `false`
 
-#### `local-agent-host-port`
+### `local-agent-host-port`
 
-+ reporter 向 jaeger-agent 发送 span 的地址。
-+ 默认值：""
++ The address at which the reporter sends spans to the jaeger-agent.
++ Default value: `""`
 
 ## pd-client
 
 ### `pd-server-timeout`
 
-+ TiDB 通过 PD Client 向 PD 节点发送请求的超时时间。
-+ 默认值：3
-+ 单位：秒
++ The timeout for TiDB to send requests to PD nodes via the PD client.
++ Default value: 3
++ Unit: second
 
 ## tikv-client
 
 ### `grpc-connection-count`
 
-+ 跟每个 TiKV 之间建立的最大连接数。
-+ 默认值：4
+- The maximum number of connections established with each TiKV.
+- Default value: `4`
 
 ### `grpc-keepalive-time`
 
-+ TiDB 与 TiKV 节点之间 rpc 连接 keepalive 时间间隔，如果超过该值没有网络包，grpc client 会 ping 一下 TiKV 查看是否存活。
-+ 默认值：10
-+ 最小值：1
-+ 单位：秒
+- The `keepalive` time interval of the RPC connection between TiDB and TiKV nodes. If there is no network packet within the specified time interval, the gRPC client executes `ping` command to TiKV to see if it is alive.
+- Default: `10`
+- Minimum value: `1`
+- Unit: second
 
 ### `grpc-keepalive-timeout`
 
-+ TiDB 与 TiKV 节点 rpc keepalive 检查的超时时间
-+ 默认值：3
-+ 最小值：0.05
-+ 单位：秒
+- The timeout of the RPC `keepalive` check between TiDB and TiKV nodes.
+- Default value: `3`
+- Minimum value: `0.05`
+- Unit: second
 
 ### `grpc-compression-type`
 
-+ 控制 TiDB 向 TiKV 节点传输数据使用的压缩算法类型。默认值为 "none" 即不压缩。修改为 "gzip" 可以使用 gzip 算法压缩数据。
-+ 默认值："none"
-+ 可选值："none", "gzip"
+- Specifies the compression type used for data transfer from TiDB nodes to TiKV nodes. The default value is `"none"`, which means no compression. To enable the gzip compression, set this value to `"gzip"`.
+- Default value: `"none"`
+- Value options: `"none"`, `"gzip"`
 
-> **注意：**
+> **Note:**
 >
-> TiKV 节点返回给 TiDB 的响应消息的压缩算法是由 TiKV 配置项 [`grpc-compression-type`](/tikv-configuration-file.md#grpc-compression-type) 控制的。
+> The compression algorithm for response messages returned from TiKV nodes to TiDB nodes is controlled by the TiKV configuration item [`grpc-compression-type`](/tikv-configuration-file.md#grpc-compression-type).
 
 ### `commit-timeout`
 
-+ 执行事务提交时，最大的超时时间。
-+ 默认值：41s
-+ 这个值必须是大于两倍 Raft 选举的超时时间。
+- The maximum timeout when executing a transaction commit.
+- Default value: `41s`
+- It is required to set this value larger than twice of the Raft election timeout.
 
-### `batch-policy` <span class="version-mark">从 v8.3.0 版本开始引入</span>
+### `batch-policy` <span class="version-mark">New in v8.3.0</span>
 
-+ 控制 TiDB 向 TiKV 发送请求时的批处理策略。TiDB 在向 TiKV 发送请求时，始终会将当前等待队列中的请求封装为 `BatchCommandsRequest` 并打包发送给 TiKV，这是基础的批处理机制。当 TiKV 负载吞吐较高时，TiDB 会根据 `batch-policy` 的配置决定是否在基础的批处理后额外等待一段时间，以在单个 `BatchCommandsRequest` 中封装更多的请求，即进行额外的批处理。
-+ 默认值：`"standard"`
-+ 可选值：
-    - `"basic"`：行为与 v8.3.0 之前的版本一致，即 TiDB 仅在 [`tikv-client.max-batch-wait-time`](#max-batch-wait-time) 大于 0 且 TiKV 的负载超过 [`tikv-client.overload-threshold`](#overload-threshold) 时进行额外的批处理。
-    - `"standard"`：TiDB 根据最近请求的到达时间间隔动态批处理，适用于高吞吐场景。
-    - `"positive"`：TiDB 始终进行额外的批处理，适用于高吞吐压测场景，以获得最佳性能。但在低负载场景下，该策略可能会引入不必要的批处理等待时间，从而导致性能下降。
-    - `"custom{...}"`：自定义批处理策略参数，仅用于 TiDB 内部测试，**不推荐用户使用**。
+- Controls the batching strategy for requests from TiDB to TiKV. When sending requests to TiKV, TiDB always encapsulates the requests in the current waiting queue into a `BatchCommandsRequest` and sends it to TiKV as a packet. This is the basic batching strategy. When the TiKV load throughput is high, TiDB decides whether to wait for an additional period after the basic batching based on the value of `batch-policy`. This additional batching allows more requests to be encapsulated in a single `BatchCommandsRequest`.
+- Default value: `"standard"`
+- Value options:
+    - `"basic"`: the behavior is consistent with versions before v8.3.0, where TiDB performs additional batching only if [`tikv-client.max-batch-wait-time`](#max-batch-wait-time) is greater than 0 and the load of TiKV exceeds the value of [`tikv-client.overload-threshold`](#overload-threshold).
+    - `"standard"`: TiDB dynamically batches requests based on the arrival time intervals of recent requests, suitable for high-throughput scenarios.
+    - `"positive"`: TiDB always performs additional batching, suitable for high-throughput testing scenarios to achieve optimal performance. However, in low-load scenarios, this strategy might introduce unnecessary batching wait time, potentially reducing performance.
+    - `"custom{...}"`: allows customization of batching strategy parameters. This option is intended for the internal testing of TiDB and is **NOT recommended** for general use.
 
 ### `max-batch-size`
 
-+ 批量发送 rpc 封包的最大数量，如果不为 0，将使用 BatchCommands api 发送请求到 TiKV，可以在并发度高的情况降低 rpc 的延迟，推荐不修改该值。
-+ 默认值：128
+- The maximum number of RPC packets sent in batch. If the value is not `0`, the `BatchCommands` API is used to send requests to TiKV, and the RPC latency can be reduced in the case of high concurrency. It is recommended that you do not modify this value.
+- Default value: `128`
 
 ### `max-batch-wait-time`
 
-+ 等待 `max-batch-wait-time` 纳秒批量将此期间的数据包封装成一个大包发送给 TiKV 节点，仅在 `tikv-client.max-batch-size` 值大于 0 时有效，不推荐修改该值。
-+ 默认值：0
-+ 单位：纳秒
+- Waits for `max-batch-wait-time` to encapsulate the data packets into a large packet in batch and send it to the TiKV node. It is valid only when the value of `tikv-client.max-batch-size` is greater than `0`. It is recommended not to modify this value.
+- Default value: `0`
+- Unit: nanoseconds
 
 ### `batch-wait-size`
 
-+ 批量向 TiKV 发送的封包最大数量，不推荐修改该值。
-+ 默认值：8
-+ 若此值为 0 表示关闭此功能。
+- The maximum number of packets sent to TiKV in batch. It is recommended not to modify this value.
+- Default value: `8`
+- If the value is `0`, this feature is disabled.
 
 ### `overload-threshold`
 
-+ TiKV 的负载阈值，如果超过此阈值，会收集更多的 batch 封包，来减轻 TiKV 的压力。该配置项仅在 [`tikv-client.max-batch-size`](#max-batch-size) 和 [`tikv-client.max-batch-wait-time`](#max-batch-wait-time) 的值均大于 0 时有效，不推荐修改该值。
-+ 默认值：200
+- The threshold of the TiKV load. If the TiKV load exceeds this threshold, more `batch` packets are collected to relieve the pressure of TiKV. It is valid only when the value of `tikv-client.max-batch-size` is greater than `0`. It is recommended not to modify this value.
+- Default value: `200`
 
-### `copr-req-timeout` <span class="version-mark">从 v7.5.0 版本开始引入</span>
+### `copr-req-timeout` <span class="version-mark">New in v7.5.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> 该配置项可能会在未来版本中废弃，**不要修改该配置**。
+> This configuration parameter might be deprecated in future versions. **DO NOT** change the value of it.
 
-+ 单个 Coprocessor Request 的超时时间
-+ 默认值：60
-+ 单位：秒
++ The timeout of a single Coprocessor request.
++ Default value: `60`
++ Unit: second
 
-### `enable-replica-selector-v2` <span class="version-mark">从 v8.0.0 版本开始引入</span>
+### `enable-replica-selector-v2` <span class="version-mark">New in v8.0.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> 从 v8.2.0 开始，该配置项被废弃。给 TiKV 发送 RPC 请求时，默认使用新版本的 Region 副本选择器。
+> Starting from v8.2.0, this configuration item is deprecated. The new version of the Region replica selector is used by default when sending RPC requests to TiKV.
 
-+ 用于控制给 TiKV 发送 RPC 请求时，是否使用新版本的 Region 副本选择器。
-+ 默认值：true
++ Whether to use the new version of the Region replica selector when sending RPC requests to TiKV.
++ Default value: `true`
 
-### tikv-client.copr-cache <span class="version-mark">从 v4.0.0 版本开始引入</span>
+## tikv-client.copr-cache <span class="version-mark">New in v4.0.0</span>
 
-本部分介绍 [Coprocessor Cache](/coprocessor-cache.md) 相关的配置项。
+This section introduces configuration items related to the [Coprocessor Cache](/coprocessor-cache.md) feature.
 
-#### `capacity-mb`
+### `capacity-mb`
 
-+ 缓存的总数据量大小。当缓存空间满时，旧缓存条目将被逐出。值为 0.0 时表示关闭 Coprocessor Cache。
-+ 默认值：1000.0
-+ 单位：MB
-+ 类型：Float
+- The total size of the cached data. When the cache space is full, old cache entries are evicted. When the value is `0.0`, the Coprocessor Cache feature is disabled.
+- Default value: `1000.0`
+- Unit: MB
+- Type: Float
 
 ## txn-local-latches
 
-与事务锁存相关的配置项。这些配置项今后可能会废弃，不建议启用。
+Configuration items related to the transaction latch. These configuration items might be deprecated in the future. It is not recommended to use them.
 
 ### `enabled`
 
-- 控制是否开启事务的内存锁。
-- 默认值：`false`
+- Determines whether to enable the memory lock of transactions.
+- Default value: `false`
 
 ### `capacity`
 
-- Hash 对应的 slot 数量，自动向上调整为 2 的指数倍。每个 slot 占用 32 字节内存。如果设置过小，在数据写入范围较大的场景（如导入数据），可能会导致运行速度变慢，性能变差。
-- 默认值：`2048000`
+- The number of slots corresponding to Hash, which automatically adjusts upward to an exponential multiple of 2. Each slot occupies 32 Bytes of memory. If set too small, it might result in slower running speed and poor performance in the scenario where data writing covers a relatively large range (such as importing data).
+- Default value: `2048000`
 
 ## status
 
-TiDB 服务状态相关配置。
+Configuration related to the status of TiDB service.
 
 ### `report-status`
 
-+ 开启 HTTP API 服务的开关。
-+ 默认值：true
+- Enables or disables the HTTP API service.
+- Default value: `true`
 
 ### `record-db-qps`
 
-+ 输出与 database 相关的 QPS metrics 到 Prometheus 的开关。
-+ 默认值：false
+- Determines whether to transmit the database-related QPS metrics to Prometheus.
+- Default value: `false`
 
 ### `record-db-label`
 
-- 控制是否向 Prometheus 传输与数据库相关的 QPS 指标。
-- 支持的指标类型比 `record-db-qps` 更多，比如 duration 和 statements。
-- 默认值：`false`
+- Determines whether to transmit the database-related QPS metrics to Prometheus.
+- Supports more metrics types than `record-db-qps`, for example, duration and statements.
+- Default value: `false`
 
 ## pessimistic-txn
 
-悲观事务使用方法请参考 [TiDB 悲观事务模式](/pessimistic-transaction.md)。
+For pessimistic transaction usage, refer to [TiDB Pessimistic Transaction Mode](/pessimistic-transaction.md).
 
 ### max-retry-count
 
-+ 悲观事务中单个语句最大重试次数，重试次数超过该限制，语句执行将会报错。
-+ 默认值：256
+- The maximum number of retries of each statement in pessimistic transactions. If the number of retries exceeds this limit, an error occurs.
+- Default value: `256`
 
 ### deadlock-history-capacity
 
-+ 单个 TiDB 节点的 [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md) 表最多可记录的死锁事件个数。当表的容量已满时，如果再次发生死锁错误，最早的一次死锁错误的信息将从表中移除。
-+ 默认值：10
-+ 最小值：0
-+ 最大值：10000
++ The maximum number of deadlock events that can be recorded in the [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md) table of a single TiDB server. If this table is in full volume and an additional deadlock event occurs, the earliest record in the table will be removed to make place for the newest error.
++ Default value: `10`
++ Minimum value: `0`
++ Maximum value: `10000`
 
 ### deadlock-history-collect-retryable
 
-+ 控制 [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md) 表中是否收集可重试的死锁错误信息。详见 `DEADLOCKS` 表文档的[可重试的死锁错误](/information-schema/information-schema-deadlocks.md#可重试的死锁错误)小节。
-+ 默认值：false
++ Controls whether the [`INFORMATION_SCHEMA.DEADLOCKS`](/information-schema/information-schema-deadlocks.md) table collects the information of retryable deadlock errors. For the description of retryable deadlock errors, see [Retryable deadlock errors](/information-schema/information-schema-deadlocks.md#retryable-deadlock-errors).
++ Default value: `false`
 
-### pessimistic-auto-commit
+### pessimistic-auto-commit <span class="version-mark">New in v6.0.0</span>
 
-+ 用来控制开启全局悲观事务模式下 (`tidb_txn_mode='pessimistic'`) 时，自动提交的事务使用的事务模式。默认情况下，即使开启全局悲观事务模式，自动提交事务依然使用乐观事务模式来执行。当开启该配置项后（设置为 `true`），在全局悲观事务模式下，自动提交事务将也使用悲观事务模式执行。行为与其他显式提交的悲观事务相同。
-+ 对于存在冲突的场景，开启本开关可以将自动提交事务纳入全局等锁管理中，从而避免死锁，改善冲突造成死锁带来的时延尖刺。
-+ 对于不存在冲突的场景，如果有大量自动提交事务（例如自动提交事务数量占业务数量的比例超过一半甚至更多，需要根据实际情况分析）且单个事务操作数据量较大的情况下，开启该配置项会造成性能回退。例如，自动提交的 `INSERT INTO SELECT` 语句。
-+ 当 SESSION 级系统变量 [`tidb_dml_type`](/system-variables.md#tidb_dml_type-从-v800-版本开始引入) 设置为 `"bulk"` 时，在该 SESSION 中，该配置项的效果等同于设置为 `false`。
-+ 默认值：false
++ Determines the transaction mode that the auto-commit transaction uses when the pessimistic transaction mode is globally enabled (`tidb_txn_mode='pessimistic'`). By default, even if the pessimistic transaction mode is globally enabled, the auto-commit transaction still uses the optimistic transaction mode. After enabling `pessimistic-auto-commit` (set to `true`), the auto-commit transaction also uses pessimistic mode, which is consistent with the other explicitly committed pessimistic transactions.
++ For scenarios with conflicts, after enabling this configuration, TiDB includes auto-commit transactions into the global lock-waiting management, which avoids deadlocks and mitigates the latency spike brought by deadlock-causing conflicts.
++ For scenarios with no conflicts, if there are many auto-commit transactions (the specific number is determined by the real scenarios. For example, the number of auto-commit transactions accounts for more than half of the total number of applications), and a single transaction operates a large data volume, enabling this configuration causes performance regression. For example, the auto-commit `INSERT INTO SELECT` statement.
++ When the session-level system variable [`tidb_dml_type`](/system-variables.md#tidb_dml_type-new-in-v800) is set to `"bulk"`, the effect of this configuration in the session is equivalent to setting it to `false`.
++ Default value: `false`
 
-### constraint-check-in-place-pessimistic <span class="version-mark">从 v6.4.0 版本开始引入</span>
+### constraint-check-in-place-pessimistic <span class="version-mark">New in v6.4.0</span>
 
-+ 用来控制系统变量 [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-从-v630-版本开始引入) 的默认值。
-+ 默认值：true
++ Controls the default value of the system variable [`tidb_constraint_check_in_place_pessimistic`](/system-variables.md#tidb_constraint_check_in_place_pessimistic-new-in-v630).
++ Default value: `true`
 
 ## isolation-read
 
-读取隔离相关的配置项。
+Configuration items related to read isolation.
 
 ### `engines`
 
-+ 用于控制 TiDB 节点允许从哪种类型的引擎读取数据。
-+ 默认值：["tikv", "tiflash", "tidb"]，表示由优化器自动选择存储引擎。
-+ 可选值："tikv", "tiflash", "tidb" 的组合，如：["tikv", "tidb"]、["tiflash", "tidb"]。
+- Controls from which engine TiDB allows to read data.
+- Default value: ["tikv", "tiflash", "tidb"], indicating that the engine is automatically selected by the optimizer.
+- Value options: Any combinations of "tikv", "tiflash", and "tidb", for example, ["tikv", "tidb"] or ["tiflash", "tidb"]
 
 ## instance
 
 ### `tidb_enable_collect_execution_info`
 
-+ 用于控制是否同时将各个执行算子的执行信息记录入 slow query log 中，以及是否维护[访问索引有关的统计信息](/information-schema/information-schema-tidb-index-usage.md)。
-+ 默认值：true
-+ 在 v6.1.0 之前，该功能通过配置项 `enable-collect-execution-info` 进行设置。
+- This configuration controls whether to record the execution information of each operator in the slow query log and whether to record the [usage statistics of indexes](/information-schema/information-schema-tidb-index-usage.md).
+- Default value: `true`
+- Before v6.1.0, this configuration is set by `enable-collect-execution-info`.
 
 ### `tidb_enable_slow_log`
 
-+ 是否开启慢查询日志。
-+ 默认值：true
-+ 可以设置成 `true` 或 `false` 来启用或禁用慢查询日志。
-+ 在 v6.1.0 之前，该功能通过配置项 `enable-slow-log` 进行设置。
+- This configuration is used to control whether to enable the slow log feature.
+- Default value: `true`
+- Value options: `true` or `false`
+- Before v6.1.0, this configuration is set by `enable-slow-log`.
 
 ### `tidb_slow_log_threshold`
 
-+ 输出慢日志的耗时阈值。
-+ 默认值：300
-+ 范围：`[-1, 9223372036854775807]`
-+ 单位：毫秒
-+ 如果查询耗时大于这个值，会视作一个慢查询，并记录到慢查询日志。注意，当日志的输出级别 [`log.level`](#level) 是 `"debug"` 时，所有查询都会记录到慢日志，不受该参数的限制。
-+ 在 v6.1.0 之前，该功能通过配置项 `slow-threshold` 进行设置。
+- Outputs the threshold value of the time consumed by the slow log.
+- Default value: `300`
+- Range: `[-1, 9223372036854775807]`
+- Unit: Milliseconds
+- When the time consumed by a query is larger than this value, this query is considered as a slow query and its log is output to the slow query log. Note that when the output level of [`log.level`](#level) is `"debug"`, all queries are recorded in the slow query log, regardless of the setting of this parameter.
+- Before v6.1.0, this configuration is set by `slow-threshold`.
 
-### `in-mem-slow-query-topn-num` <span class="version-mark">从 v7.3.0 版本开始引入</span>
+### `in-mem-slow-query-topn-num` <span class="version-mark">New in v7.3.0</span>
 
-+ 缓存在内存中的最慢的 slow query 个数。
-+ 默认值：30
++ The configuration controls the number of slowest queries that are cached in memory.
++ Default value: 30
 
-### `in-mem-slow-query-recent-num` <span class="version-mark">从 v7.3.0 版本开始引入</span>
+### `in-mem-slow-query-recent-num` <span class="version-mark">New in v7.3.0</span>
 
-+ 缓存在内存中的最近使用的 slow query 个数。
-+ 默认值：500
++ The configuration controls the number of recently used slow queries that are cached in memory.
++ Default value: 500
 
 ### `tidb_expensive_query_time_threshold`
 
-+ 控制打印 expensive query 日志的阈值时间，默认值是 60 秒。expensive query 日志和慢日志的差别是，慢日志是在语句执行完后才打印，expensive query 日志可以把正在执行中且执行时间超过该阈值的语句及其相关信息打印出来。
-+ 默认值：60
-+ 范围：`[10, 2147483647]`
-+ 单位：秒
-+ 在 v5.4.0 之前，该功能通过配置项 `expensive-threshold` 进行设置。
+- This configuration is used to set the threshold value that determines whether to print expensive query logs. The difference between expensive query logs and slow query logs is:
+    - Slow logs are printed after the statement is executed.
+    - Expensive query logs print the statements that are being executed, with execution time exceeding the threshold value, and their related information.
+- Default value: `60`
+- Range: `[10, 2147483647]`
+- Unit: Seconds
+- Before v5.4.0, this configuration is set by `expensive-threshold`.
 
 ### `tidb_record_plan_in_slow_log`
 
-+ 在慢日志中记录执行计划。
-+ 默认值：1
-+ 0 表示关闭，1 表示开启，默认开启，该值作为系统变量 [`tidb_record_plan_in_slow_log`](/system-variables.md#tidb_record_plan_in_slow_log) 的初始值。
-+ 在 v6.1.0 之前，该功能通过配置项 `record-plan-in-slow-log` 进行设置。
+- This configuration is used to control whether to include the execution plan of slow queries in the slow log.
+- Default value: `1`
+- Value options: `1` (enabled, default) or `0` (disabled).
+- The value of this configuration will initialize the value of system variable [`tidb_record_plan_in_slow_log`](/system-variables.md#tidb_record_plan_in_slow_log)
+- Before v6.1.0, this configuration is set by `record-plan-in-slow-log`.
 
 ### `tidb_force_priority`
 
-+ 把所有的语句优先级设置为系统变量 `tidb_force_priority` 的值。
-+ 默认值：NO_PRIORITY
-+ 默认值 NO_PRIORITY 表示不强制改变执行语句的优先级，其它优先级从低到高可设置为 LOW_PRIORITY、DELAYED 或 HIGH_PRIORITY。
-+ 在 v6.1.0 之前，该功能通过配置项 `force-priority` 进行设置。
+- This configuration is used to change the default priority for statements executed on a TiDB server.
+- Default value: `NO_PRIORITY`
+- The default value `NO_PRIORITY` means that the priority for statements is not forced to change. Other options are `LOW_PRIORITY`, `DELAYED`, and `HIGH_PRIORITY` in ascending order.
+- Before v6.1.0, this configuration is set by `force-priority`.
 
-> **注意：**
+> **Note:**
 >
-> TiDB 从 v6.6.0 版本开始支持[使用资源管控 (Resource Control) 实现资源组限制和流控](/tidb-resource-control-ru-groups.md)功能。该功能可以将不同优先级的语句放在不同的资源组中执行，并为这些资源组分配不同的配额和优先级，可以达到更好的资源管控效果。在开启资源管控功能后，语句的调度主要受资源组的控制，`PRIORITY` 将不再生效。建议在支持资源管控的版本优先使用资源管控功能。
+> Starting from v6.6.0, TiDB supports [Resource Control](/tidb-resource-control-ru-groups.md). You can use this feature to execute SQL statements with different priorities in different resource groups. By configuring proper quotas and priorities for these resource groups, you can gain better scheduling control for SQL statements with different priorities. When resource control is enabled, statement priority will no longer take effect. It is recommended that you use [Resource Control](/tidb-resource-control-ru-groups.md) to manage resource usage for different SQL statements.
 
 ### `max_connections`
 
-+ TiDB 中同时允许的最大客户端连接数，用于资源控制。
-+ 默认值：0
-+ 取值范围：`[0, 100000]`
-+ 默认情况下，TiDB 不限制客户端连接数。当本配置项的值大于 `0` 且客户端连接数到达此值时，TiDB 服务端将会拒绝新的客户端连接。
-+ 该值作为系统变量 [`max_connections`](/system-variables.md#max_connections) 的初始值。
-+ 在 v6.2.0 之前，该功能通过配置项 `max-server-connections` 进行设置。
+- The maximum number of connections permitted for a single TiDB instance. It can be used for resources control.
+- Default value: `0`
+- Range: `[0, 100000]`
+- The default value `0` means no limit. When the value of this variable is larger than `0`, and the number of connections reaches the value, the TiDB server will reject new connections from clients.
+- The value of this configuration will initialize the value of system variable [`max_connections`](/system-variables.md#max_connections)
+- Before v6.2.0, this configuration is set by `max-server-connections`.
 
 ### `tidb_enable_ddl`
 
-+ 用于表示该 tidb-server 是否可以成为 DDL owner。
-+ 默认值：true
-+ 该值作为系统变量 [`tidb_enable_ddl`](/system-variables.md#tidb_enable_ddl-从-v630-版本开始引入) 的初始值。
-+ 在 v6.3.0 之前，该功能由配置项 `run-ddl` 进行设置。
+- This configuration controls whether the corresponding TiDB instance can become a DDL owner or not.
+- Default value: `true`
+- Possible values: `OFF`, `ON`
+- The value of this configuration will initialize the value of the system variable [`tidb_enable_ddl`](/system-variables.md#tidb_enable_ddl-new-in-v630)
+- Before v6.3.0, this configuration is set by `run-ddl`.
 
-### `tidb_enable_stats_owner` <span class="version-mark">从 v8.4.0 版本开始引入</span>
+### `tidb_enable_stats_owner` <span class="version-mark">New in v8.4.0</span>
 
-+ 用于表示该 tidb-server 是否可以运行[统计信息自动更新](/statistics.md#自动更新)任务。
-+ 默认值：`true`
-+ 可选值：`true`、`false`
-+ 该值作为系统变量 [`tidb_enable_stats_owner`](/system-variables.md#tidb_enable_stats_owner-从-v840-版本开始引入) 的初始值。
+- This configuration controls whether the corresponding TiDB instance can run [automatic statistics update](/statistics.md#automatic-update) tasks.
+- Default value: `true`
+- Possible values: `true`, `false`
+- The value of this configuration will initialize the value of the system variable [`tidb_enable_stats_owner`](/system-variables.md#tidb_enable_stats_owner-new-in-v840).
 
-### `tidb_stmt_summary_enable_persistent` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `tidb_stmt_summary_enable_persistent` <span class="version-mark">New in v6.6.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> statements summary 持久化目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Statements summary persistence is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-+ 用于控制是否开启 statements summary 持久化。
-+ 默认值：false
-+ 详情参考[持久化 statements summary](/statement-summary-tables.md#持久化-statements-summary)。
++ Controls whether to enable statements summary persistence.
++ Default value: `false`
++ For more details, see [Persist statements summary](/statement-summary-tables.md#persist-statements-summary).
 
-### `tidb_stmt_summary_filename` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `tidb_stmt_summary_filename` <span class="version-mark">New in v6.6.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> statements summary 持久化目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Statements summary persistence is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-+ 当开启了 statements summary 持久化时，该配置用于指定持久化数据所写入的文件。
-+ 默认值："tidb-statements.log"
++ When statements summary persistence is enabled, this configuration specifies the file to which persistent data is written.
++ Default value: `tidb-statements.log`
 
-### `tidb_stmt_summary_file_max_days` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `tidb_stmt_summary_file_max_days` <span class="version-mark">New in v6.6.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> statements summary 持久化目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Statements summary persistence is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-+ 当开启了 statements summary 持久化时，该配置用于指定持久化数据文件所保留的最大天数。
-+ 默认值：3
-+ 单位：天
-+ 可结合数据保留时长需求与磁盘空间占用适当调整。
++ When statements summary persistence is enabled, this configuration specifies the maximum number of days to keep persistent data files.
++ Default value: `3`
++ Unit: day
++ You can adjust the value based on the data retention requirements and disk space usage.
 
-### `tidb_stmt_summary_file_max_size` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `tidb_stmt_summary_file_max_size` <span class="version-mark">New in v6.6.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> statements summary 持久化目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Statements summary persistence is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-+ 当开启了 statements summary 持久化时，该配置用于限制持久化数据单个文件的大小。
-+ 默认值：64
-+ 单位：MiB
-+ 可结合数据保留时长需求与磁盘空间占用适当调整。
++ When statements summary persistence is enabled, this configuration specifies the maximum size of a persistent data file.
++ Default value: `64`
++ Unit: MiB
++ You can adjust the value based on the data retention requirements and disk space usage.
 
-### `tidb_stmt_summary_file_max_backups` <span class="version-mark">从 v6.6.0 版本开始引入</span>
+### `tidb_stmt_summary_file_max_backups` <span class="version-mark">New in v6.6.0</span>
 
-> **警告：**
+> **Warning:**
 >
-> statements summary 持久化目前为实验特性，不建议在生产环境中使用。该功能可能会在未事先通知的情况下发生变化或删除。如果发现 bug，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
+> Statements summary persistence is an experimental feature. It is not recommended that you use it in the production environment. This feature might be changed or removed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
 
-+ 当开启了 statements summary 持久化时，该配置用于限制持久化数据文件最大数量，`0` 表示不限制。
-+ 默认值：0
-+ 可结合数据保留时长需求与磁盘空间占用适当调整。
++ When statements summary persistence is enabled, this configuration specifies the maximum number of data files that can be persisted. `0` means no limit on the number of files.
++ Default value: `0`
++ You can adjust the value based on the data retention requirements and disk space usage.
 
 ## proxy-protocol
 
-PROXY 协议相关的配置项。
+Configuration items related to the PROXY protocol.
 
 ### `networks`
 
-+ 允许使用 [PROXY 协议](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)连接 TiDB 的代理服务器地址列表。
-+ 默认值：""
-+ 通常情况下，通过反向代理使用 TiDB 时，TiDB 会将反向代理服务器的 IP 地址视为客户端 IP 地址。对于支持 PROXY 协议的反向代理（如 HAProxy），开启 PROXY 协议后能让反向代理透传客户端真实的 IP 地址给 TiDB。
-+ 配置该参数后，TiDB 将允许配置的源 IP 地址使用 PROXY 协议连接到 TiDB，且拒绝这些源 IP 地址使用非 PROXY 协议连接。若该参数为空，则任何源 IP 地址都不能使用 PROXY 协议连接到 TiDB。地址可以使用 IP 地址格式 (192.168.1.50) 或者 CIDR 格式 (192.168.1.0/24)，并可用 `,` 分隔多个地址，或用 `*` 代表所有 IP 地址。
+- The list of proxy server's IP addresses allowed to connect to TiDB using the [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt)
+- Default value: ""
+- In general cases, when you access TiDB behind a reverse proxy, TiDB takes the IP address of the reverse proxy server as the IP address of the client. By enabling the PROXY protocol, reverse proxies that support this protocol, such as HAProxy, can pass the real client IP address to TiDB.
+- After configuring this parameter, TiDB allows the configured source IP address to connect to TiDB using the PROXY protocol; if a protocol other than PROXY is used, this connection will be denied. If this parameter is left empty, no IP address can connect to TiDB using the PROXY protocol. The value can be an IP address (192.168.1.50) or CIDR (192.168.1.0/24) with `,` as the separator. `*` means any IP addresses.
 
-> **警告：**
+> **Warning:**
 >
-> 需谨慎使用 `*` 符号，因为 `*` 允许来自任何 IP 的客户端自行汇报其 IP 地址，从而可能引入安全风险。另外，`*` 可能导致部分直接连接 TiDB 的内部组件无法使用，例如 TiDB Dashboard。
+> Use `*` with caution because it might introduce security risks by allowing a client of any IP address to report its IP address. In addition, using `*` might also cause the internal component that directly connects to TiDB (such as TiDB Dashboard) to be unavailable.
 
-### `fallbackable` <span class="version-mark">从 v6.5.1 版本开始引入</span>
+### `fallbackable` <span class="version-mark">New in v6.5.1</span>
 
-+ 用于控制是否启用 PROXY 协议回退模式。如果设置为 `true`，TiDB 可以接受属于 `proxy-protocol.networks` 的客户端使用非 PROXY 协议规范或者没有发送 PROXY 协议头的客户端连接。默认情况下，TiDB 仅接受属于 `proxy-protocol.networks` 的客户端发送 PROXY 协议头的客户端连接。
-+ 默认：`false`
++ Controls whether to enable the PROXY protocol fallback mode. If this configuration item is set to `true`, TiDB can accept clients that belong to `proxy-protocol.networks` to connect to TiDB without using the PROXY protocol specification or without sending the PROXY protocol header. By default, TiDB only accepts client connections that belong to `proxy-protocol.networks` and send a PROXY protocol header.
++ Default value: `false`
 
 ## experimental
 
-experimental 部分为 TiDB 实验功能相关的配置。该部分从 v3.1.0 开始引入。
+The `experimental` section, introduced in v3.1.0, describes the configurations related to the experimental features of TiDB.
 
-### `allow-expression-index` <span class="version-mark">从 v4.0.0 版本开始引入</span>
+### `allow-expression-index` <span class="version-mark">New in v4.0.0</span>
 
-+ 用于控制是否能创建表达式索引。自 v5.2.0 版本起，如果表达式中的函数是安全的，你可以直接基于该函数创建表达式索引，不需要打开该配置项。如果要创建基于其他函数的表达式索引，可以打开该配置项，但可能存在正确性问题。通过查询 `tidb_allow_function_for_expression_index` 变量可得到能直接用于创建表达式的安全函数。
-+ 默认值：false
++ Controls whether an expression index can be created. Since TiDB v5.2.0, if the function in an expression is safe, you can create an expression index directly based on this function without enabling this configuration. If you want to create an expression index based on other functions, you can enable this configuration, but correctness issues might exist. By querying the `tidb_allow_function_for_expression_index` variable, you can get the functions that are safe to be directly used for creating an expression.
++ Default value: `false`

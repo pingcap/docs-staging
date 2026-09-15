@@ -1,114 +1,107 @@
 ---
-title: TiCDC 双向复制
-summary: 了解 TiCDC 双向复制的使用方法。
+title: Bidirectional Replication
+summary: Learn how to use bidirectional replication of TiCDC.
 ---
 
-# TiCDC 双向复制
+# Bidirectional Replication
 
-TiCDC 支持在两个 TiDB 集群之间进行双向复制 (Bidirectional replication, BDR)。基于该功能，你可以使用 TiCDC 来构建 TiDB 集群的多写多活解决方案。
+TiCDC supports bi-directional replication (BDR) among two TiDB clusters. Based on this feature, you can create a multi-active TiDB solution using TiCDC.
 
-本文档以在两个 TiDB 集群之间进行双向复制为例，介绍双向复制的使用方法。
+This section describes how to use bi-directional replication taking two TiDB clusters as an example.
 
-## 部署双向复制
+## Deploy bi-directional replication
 
-TiCDC 复制功能只会将指定时间点之后的增量变更复制到下游集群。开始双向复制之前，需要采取以下步骤：
+TiCDC only replicates incremental data changes that occur after a specified timestamp to the downstream cluster. Before starting the bi-directional replication, you need to take the following steps:
 
-1. （可选）根据实际需要，使用数据导出工具 [Dumpling](/dumpling-overview.md) 和导入工具 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 将两个集群的数据导入到对方集群。
+1. (Optional) According to your needs, import the data of the two TiDB clusters into each other using the data export tool [Dumpling](/dumpling-overview.md) and data import tool [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md).
 
-2. 在这两个 TiDB 集群之间部署两套 TiCDC 集群，集群的拓扑如下图所示，图中箭头所指的方向即为该 TiCDC 集群同步数据的流向。
+2. Deploy two TiCDC clusters between the two TiDB clusters. The cluster topology is as follows. The arrows in the diagram indicate the directions of data flow.
 
-    ![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs-cn/ticdc/ticdc-bidirectional-replication.png)
+    ![TiCDC bidirectional replication](https://docs-download.pingcap.com/media/images/docs/ticdc/ticdc-bidirectional-replication.png)
 
-3. 指定上下游集群的数据同步的开始时间点。
+3. Specify the starting time point of data replication for the upstream and downstream clusters.
 
-    1. 确认上下游集群的时间点。如果进行双集群容灾，那么建议确保两个集群在某个对应的时刻的数据是一致的，例如 TiDB 1 在 `ts=1` 时刻与 TiDB 2 在 `ts=2` 的时刻数据是一致的。
+    1. Check the time point of the upstream and downstream clusters. In the case of two TiDB clusters, make sure that data in the two clusters are consistent at certain time points. For example, the data of TiDB A at `ts=1` and the data of TiDB B at `ts=2` are consistent.
 
-    2. 在创建同步任务时，分别把对应集群的同步任务的 `--start-ts` 参数指定为对应的 `tso`，即上游为 TiDB 1 的同步任务需设置参数 `--start-ts=1`，下游为 TiDB 2 的同步任务需设置参数 `--start-ts=2`。
+    2. When you create the changefeed, set the `--start-ts` of the changefeed for the upstream cluster to the corresponding `tso`. That is, if the upstream cluster is TiDB A, set `--start-ts=1`; if the upstream cluster is TiDB B, set `--start-ts=2`.
 
-4. 在创建同步任务的 `--config` 参数所指定的配置文件中，添加如下配置:
+4. In the configuration file specified by the `--config` parameter, add the following configuration:
 
     ```toml
-    # 是否启用 bdr 模式
+    # Whether to enable the bi-directional replication mode
     bdr-mode = true
     ```
 
-这样，以上搭建好的集群即可对数据进行双向复制。
+After the configuration takes effect, the clusters can perform bi-directional replication.
 
-## DDL 类别
+## DDL types
 
-从 v7.6.0 开始，为了在双向复制中尽可能地支持 DDL 同步，根据 DDL 对业务的影响，TiDB 将 [TiCDC 原本支持同步的 DDL](/ticdc/ticdc-ddl.md) 划分为两种 DDL：可复制的 DDL 和不可复制的 DDL。
+Starting from v7.6.0, to support DDL replication as much as possible in bi-directional replication, TiDB divides the [DDLs that TiCDC originally supports](/ticdc/ticdc-ddl.md) into two types: replicable DDLs and non-replicable DDLs, according to the impact of DDLs on the business.
 
-### 可复制的 DDL
+### Replicable DDLs
 
-可复制的 DDL 是指在双向复制中，可以直接执行并同步到其他 TiDB 集群的 DDL。
+Replicable DDLs are the DDLs that can be directly executed and replicated to other TiDB clusters in bi-directional replication.
 
-可复制的 DDL 包括：
+Replicable DDLs include:
 
-- [`ALTER TABLE ... ADD COLUMN`](/sql-statements/sql-statement-add-column.md)：添加的列必须可以为 `null`，或者是同时带有 `not null` 和 `default value`
-- [`ALTER TABLE ... ADD INDEX`](/sql-statements/sql-statement-add-index.md) (non-unique)
-- [`ALTER TABLE ... ADD PARTITION`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... ALTER COLUMN DROP DEFAULT`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... ALTER COLUMN SET DEFAULT`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... COMMENT=...`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... DROP PRIMARY KEY`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... MODIFY COLUMN`](/sql-statements/sql-statement-modify-column.md)：仅能修改列的 `default value` 和 `comment`
-- [`ALTER TABLE ... RENAME INDEX`](/sql-statements/sql-statement-rename-index.md)
-- [`ALTER TABLE ... ALTER INDEX ... INVISIBLE`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... ALTER INDEX ... VISIBLE`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE REMOVE TTL`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE TTL`](/sql-statements/sql-statement-alter-table.md)
-- [`CREATE DATABASE`](/sql-statements/sql-statement-create-database.md)
-- [`CREATE INDEX`](/sql-statements/sql-statement-create-index.md)
-- [`CREATE TABLE`](/sql-statements/sql-statement-create-table.md)
-- [`CREATE VIEW`](/sql-statements/sql-statement-create-view.md)
-- [`DROP INDEX`](/sql-statements/sql-statement-drop-index.md)
-- [`DROP VIEW`](/sql-statements/sql-statement-drop-view.md)
+- `CREATE DATABASE`
+- `CREATE TABLE`
+- `ADD COLUMN`: the column can be `null`, or has `not null` and `default value` at the same time
+- `ADD NON-UNIQUE INDEX`
+- `DROP INDEX`
+- `MODIFY COLUMN`: you can only modify the `default value` and `comment` of the column
+- `ALTER COLUMN DEFAULT VALUE`
+- `MODIFY TABLE COMMENT`
+- `RENAME INDEX`
+- `ADD TABLE PARTITION`
+- `DROP PRIMARY KEY`
+- `ALTER TABLE INDEX VISIBILITY`
+- `ALTER TABLE TTL`
+- `ALTER TABLE REMOVE TTL`
+- `CREATE VIEW`
+- `DROP VIEW`
 
-### 不可复制的 DDL
+### Non-replicable DDLs
 
-不可复制的 DDL 是指对业务影响较大、可能会造成集群间数据不一致性的 DDL，这类 DDL 不能在双向复制中直接通过 TiCDC 同步到其他 TiDB 集群的 DDL。不可复制的 DDL 必须通过特定的操作来执行。
+Non-replicable DDLs are the DDLs that have a great impact on the business, and might cause data inconsistency between clusters. Non-replicable DDLs cannot be directly replicated to other TiDB clusters in bi-directional replication through TiCDC. Non-replicable DDLs must be executed through specific operations.
 
-不可复制的 DDL 包括：
+Non-replicable DDLs include:
 
-- [`ALTER DATABASE CHARACTER SET`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... ADD COLUMN`](/sql-statements/sql-statement-alter-table.md)：添加的列为 `not null` 且不带有 `default value`
-- [`ALTER TABLE ... ADD PRIMARY KEY`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... ADD UNIQUE INDEX`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... AUTO_INCREMENT=...`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... AUTO_RANDOM_BASE=...`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... CHARACTER SET=...`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... DROP COLUMN`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... DROP PARTITION`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... EXCHANGE PARTITION`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... MODIFY COLUMN`](/sql-statements/sql-statement-modify-column.md):：修改列除 `default value` 和 `comment` 以外的属性
-- [`ALTER TABLE ... REORGANIZE PARTITION`](/sql-statements/sql-statement-alter-table.md)
-- [`ALTER TABLE ... TRUNCATE PARTITION`](/sql-statements/sql-statement-alter-table.md)
-- [`DROP DATABASE`](/sql-statements/sql-statement-drop-database.md)
-- [`DROP TABLE`](/sql-statements/sql-statement-drop-table.md)
-- [`RECOVER TABLE`](/sql-statements/sql-statement-recover-table.md)
-- [`RENAME TABLE`](/sql-statements/sql-statement-rename-table.md)
-- [`TRUNCATE TABLE`](/sql-statements/sql-statement-truncate.md)
+- `DROP DATABASE`
+- `DROP TABLE`
+- `ADD COLUMN`: the column is `not null` and does not have a `default value`
+- `DROP COLUMN`
+- `ADD UNIQUE INDEX`
+- `TRUNCATE TABLE`
+- `MODIFY COLUMN`: you can modify the attributes of the column except `default value` and `comment`
+- `RENAME TABLE`
+- `DROP PARTITION`
+- `TRUNCATE PARTITION`
+- `ALTER TABLE CHARACTER SET`
+- `ALTER DATABASE CHARACTER SET`
+- `RECOVER TABLE`
+- `ADD PRIMARY KEY`
+- `REBASE AUTO ID`
+- `EXCHANGE PARTITION`
+- `REORGANIZE PARTITION`
 
-## DDL 同步
+## DDL replication
 
-为了能够解决上述可复制的 DDL 和不可复制的 DDL 两类 DDL 的同步问题，TiDB 引入了两种 BDR role：
+To solve the problem of replicable DDLs and non-replicable DDLs, TiDB introduces the following BDR roles:
 
-- `PRIMARY`：你可以执行可复制的 DDL，但不能执行不可复制的 DDL。TiCDC 会把 PRIMARY 集群执行的可复制的 DDL 同步到下游。
-- `SECONDARY`：你不能执行上述所有的 DDL。但是，TiCDC 能够把 PRIMARY 集群执行的 DDL 同步到 SECONDARY 集群。
+- `PRIMARY`: You can execute replicable DDLs, but not non-replicable DDLs. Replicable DDLs executed in a PRIMARY cluster will be replicated to the downstream by TiCDC.
+- `SECONDARY`: You cannot execute replicable DDLs or non-replicable DDLs. However, DDLs executed in a PRIMARY cluster can be replicated to a SECONDARY cluster by TiCDC.
 
-在不设置 BDR role 时，你可以执行任意 DDL。但是处于 BDR 模式中的 changefeed 不会同步该集群上的任何 DDL。
+When no BDR role is set, you can execute any DDL. However, the changefeed in BDR mode does not replicate any DDL on that cluster.
 
-总的来说，在 BDR 模式下，TiCDC 仅会将 PRIMARY 集群上可复制的 DDL 同步到下游。
+In short, in BDR mode, TiCDC only replicates replicable DDLs in the PRIMARY cluster to the downstream.
 
-### 可复制的 DDL 的同步场景
+### Replication scenarios of replicable DDLs
 
-1. 选择一个 TiDB 集群，执行 `ADMIN SET BDR ROLE PRIMARY` 将其设置为主集群。如下所示：
+1. Choose a TiDB cluster and execute `ADMIN SET BDR ROLE PRIMARY` to set it as the primary cluster.
 
     ```sql
     ADMIN SET BDR ROLE PRIMARY;
-    ```
-
-    ```
     Query OK, 0 rows affected
     Time: 0.003s
 
@@ -120,53 +113,53 @@ TiCDC 复制功能只会将指定时间点之后的增量变更复制到下游�
     +----------+
     ```
 
-2. 在其他 TiDB 集群上，执行 `ADMIN SET BDR ROLE SECONDARY` 将其设置为从集群。
-3. 在主集群上执行**可复制的 DDL**，执行成功的 DDL 会被 TiCDC 同步到从集群中。
+2. On other TiDB clusters, execute `ADMIN SET BDR ROLE SECONDARY` to set them as the secondary clusters.
+3. Execute **replicable DDLs** on the primary cluster. The successfully executed DDLs will be replicated to the secondary clusters by TiCDC.
 
-> **注意：**
+> **Note:**
 >
-> 为了防止误操作：
+> To prevent misuse:
 >
-> - 如果在主集群中尝试执行**不可复制的 DDL**，会[报错 8263](/error-codes.md)。
-> - 无论在从集群中尝试执行**可复制的 DDL** 还是**不可复制的 DDL**，都会[报错 8263](/error-codes.md)。
+> - If you try to execute **non-replicable DDLs** on the primary cluster, you will get the [Error 8263](/error-codes.md).
+> - If you try to execute **replicable DDLs** or **non-replicable DDLs** on the secondary clusters, you will get the [Error 8263](/error-codes.md).
 
-### 不可复制的 DDL 的同步场景
+### Replication scenarios of non-replicable DDLs
 
-1. 对所有 TiDB 集群执行 `ADMIN UNSET BDR ROLE`，撤销集群的 BDR role。
-2. 暂停所有集群中需要执行 DDL 的对应的表的写入操作。
-3. 等待所有集群中对应表的所有写入已经同步到其他集群后，手动在每一个 TiDB 集群上单独执行所有的 DDL。
-4. 等待 DDL 完成之后，重新恢复写入。
-5. 按照[可复制的 DDL 的同步场景](#可复制的-ddl-的同步场景)的操作步骤，切换回可复制的 DDL 的同步场景。
+1. Execute `ADMIN UNSET BDR ROLE` on all TiDB clusters to unset the BDR role.
+2. Stop writing data to the tables that need to execute DDLs in all clusters.
+3. Wait until all writes to the corresponding tables in all clusters are replicated to other clusters, and then manually execute all DDLs on each TiDB cluster.
+4. Wait until the DDLs are completed, and then resume writing data.
+5. Follow the steps in [Replication scenarios of replicable DDLs](#replication-scenarios-of-replicable-ddls) to switch back to the replication scenario of replicable DDLs.
 
-> **注意：**
+> **Warning:**
 >
-> 对所有 TiDB 集群执行 `ADMIN UNSET BDR ROLE` 之后，所有 DDL 都不会被 TiCDC 同步，需要手动在各个集群上分别执行 DDL。
+> After you execute `ADMIN UNSET BDR ROLE` on all TiDB clusters, none of the DDLs are replicated by TiCDC. You need to manually execute the DDLs on each cluster separately.
 
-## 停止双向复制
+## Stop bi-directional replication
 
-在业务数据停止写入之后，你可以在两个集群中都插入一行特殊的值，通过检查这两行特殊的值来确保数据达到了一致的状态。
+After the application has stopped writing data, you can insert a special record into each cluster. By checking the two special records, you can make sure that data in two clusters are consistent.
 
-检查完毕之后，停止同步任务，并对所有集群执行 `ADMIN UNSET BDR ROLE`。
+After the check is completed, you can stop the changefeed to stop bi-directional replication, and execute `ADMIN UNSET BDR ROLE` on all TiDB clusters.
 
-## 使用限制
+## Limitations
 
-- BDR role 只能在以下两种场景中正常使用：
+- Use BDR role only in the following scenarios:
 
-    - 1 个 `PRIMARY` 集群和 n 个 `SECONDARY` 集群（可复制的 DDL 的同步场景）
-    - n 个不设置 BDR role 的集群（用于在每个集群手动执行不可复制的 DDL 的同步场景）
+    - 1 `PRIMARY` cluster and n `SECONDARY` clusters (replication scenarios of replicable DDLs)
+    - n clusters that have no BDR roles (replication scenarios in which you can manually execute non-replicable DDLs on each cluster)
 
-    > **注意：**
+    > **Note:**
     >
-    > 请勿将 BDR role 设置为其他情况，例如，既存在设置了 `PRIMARY`、`SECONDARY` 的集群，又存在没有设置 BDR role 的集群。如果错误地设置了 BDR role，TiCDC 同步数据期间无法保证数据正确性和一致性。
+    > Do not set the BDR role in other scenarios, for example, setting `PRIMARY`, `SECONDARY`, and no BDR roles at the same time. If you set the BDR role incorrectly, TiDB cannot guarantee data correctness and consistency during data replication.
 
-- 一般情况下，禁止在同步的表中使用 [`AUTO_INCREMENT`](/auto-increment.md) 或 [`AUTO_RANDOM`](/auto-random.md) 键，以免产生数据冲突的问题。如果需要使用 `AUTO_INCREMENT` 或 `AUTO_RANDOM` 键，可以通过在不同的集群设置 `auto_increment_increment` 和 `auto_increment_offset` 来使得不同的集群都能够分配到不同的主键。假设有三个 TiDB 集群（A、B、C）处于双向同步中，那么你可以采取如下设置：
+- Usually do not use `AUTO_INCREMENT` or `AUTO_RANDOM` to avoid data conflicts in the replicated tables. If you need to use `AUTO_INCREMENT` or `AUTO_RANDOM`, you can set different `auto_increment_increment` and `auto_increment_offset` for different clusters to ensure that different clusters can be assigned different primary keys. For example, if there are three TiDB clusters (A, B, and C) in bi-directional replication, you can set them as follows:
 
-    - 在 A 中设置 `auto_increment_increment=3`，`auto_increment_offset=2000`
-    - 在 B 中设置 `auto_increment_increment=3`，`auto_increment_offset=2001`
-    - 在 C 中设置 `auto_increment_increment=3`，`auto_increment_offset=2002`
+    - In Cluster A, set `auto_increment_increment=3` and `auto_increment_offset=2000`
+    - In Cluster B, set `auto_increment_increment=3` and `auto_increment_offset=2001`
+    - In Cluster C, set `auto_increment_increment=3` and `auto_increment_offset=2002`
 
-  这样 A、B、C 隐式分配到的 `AUTO_INCREMENT` ID 和 `AUTO_RANDOM` ID 就不会互相冲突。如果需要增加 BDR 模式的集群，需要临时暂停相关业务的写入，重新在所有集群上设置合适的 `auto_increment_increment` 和 `auto_increment_offset`，然后再开启相关业务。
+    This way, A, B, and C will not conflict with each other in the implicitly assigned `AUTO_INCREMENT` ID and `AUTO_RANDOM` ID. If you need to add a cluster in BDR mode, you need to temporarily stop writing data of the related application, set the appropriate values for `auto_increment_increment` and `auto_increment_offset` on all clusters, and then resume writing data of the related application.
 
-- 双向复制的集群不具备检测写冲突的功能，写冲突将会导致未定义问题。你需要在业务层面保证不出现写冲突。
+- Bi-directional replication clusters cannot detect write conflicts, which might cause undefined behaviors. Therefore, you must ensure that there are no write conflicts from the application side.
 
-- TiCDC 双向复制功能支持超过 2 个集群的双向同步，但是不支持多个集群级联模式的同步，即 TiDB A -> TiDB B ->  TiDB C -> TiDB A 的环形复制方式。在这种部署方式下，如果其中一个链路出现问题则会影响整个数据同步链路。因此，如果需要部署多个集群之间的双向复制，每个集群都需要与其他集群两两相连，即 `TiDB A <-> TiDB B`，`TiDB B <-> TiDB C`，`TiDB C <-> TiDB A`。
+- Bi-directional replication supports more than two clusters, but does not support multiple clusters in cascading mode, that is, a cyclic replication like TiDB A -> TiDB B -> TiDB C -> TiDB A. In such a topology, if one cluster fails, the whole data replication will be affected. Therefore, to enable bi-directional replication among multiple clusters, you need to connect each cluster with every other clusters, for example, `TiDB A <-> TiDB B`, `TiDB B <-> TiDB C`, `TiDB C <-> TiDB A`.

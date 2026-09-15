@@ -1,53 +1,55 @@
 ---
-title: 通过反向代理使用 TiDB Dashboard
-summary: TiDB Dashboard 可通过反向代理安全提供给外部网络。首先获取实际地址，然后配置反向代理，最后修改路径前缀。详细步骤可参考官方文档。
+title: Use TiDB Dashboard behind a Reverse Proxy
+summary: TiDB Dashboard can be safely exposed using a reverse proxy. To do this, get the actual TiDB Dashboard address and configure the reverse proxy using either HAProxy or NGINX. You can also customize the path prefix for the TiDB Dashboard service. To enhance security, consider configuring a firewall.
 ---
 
-# 通过反向代理使用 TiDB Dashboard
+# Use TiDB Dashboard behind a Reverse Proxy
 
-你可以使用反向代理将 TiDB Dashboard 服务安全从内部网络提供给外部网络。
+You can use a reverse proxy to safely expose the TiDB Dashboard service from the internal network to the external.
 
-## 操作步骤
+## Procedures
 
-### 第 1 步：获取实际 TiDB Dashboard 地址
+### Step 1: Get the actual TiDB Dashboard address
 
-当集群中部署有多个 PD 实例时，其中仅有一个 PD 实例会真正运行 TiDB Dashboard，因此需要确保反向代理的上游 (Upstream) 指向了正确的地址。关于该机制的详情，可参阅 [TiDB Dashboard 多 PD 实例部署](/dashboard/dashboard-ops-deploy.md#多-pd-实例部署)章节。
+When multiple PD instances are deployed in the cluster, only one of the PD instances actually runs TiDB Dashboard. Therefore, you need to ensure that the upstream of the reverse proxy points to the correct address. For details of this mechanism, see [Deployment with multiple PD instances](/dashboard/dashboard-ops-deploy.md#deployment-with-multiple-pd-instances).
 
-使用 TiUP 部署工具时，操作命令如下（将 `CLUSTER_NAME` 替换为集群名称）：
+When you use the TiUP tool for deployment, execute the following command to get the actual TiDB Dashboard address (replace `CLUSTER_NAME` with your cluster name):
+
 
 ```shell
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-输出即为实际 TiDB Dashboard 地址。样例如下：
+The output is the actual TiDB Dashboard address. A sample is as follows:
 
-```
+```bash
 http://192.168.0.123:2379/dashboard/
 ```
 
-> **注意：**
+> **Note:**
 >
-> 该功能在 TiUP Cluster v1.0.3 或更高版本部署工具中提供。
+> This feature is available only in the later version of the `tiup cluster` deployment tool (v1.0.3 or later).
 >
 > <details>
-> <summary>升级 TiUP Cluster 步骤</summary>
+> <summary>Upgrade TiUP Cluster</summary>
 >
-> ```shell
+> ```bash
 > tiup update --self
 > tiup update cluster --force
 > ```
 >
 > </details>
 
-### 第 2 步：配置反向代理
+### Step 2: Configure the reverse proxy
 
 <details>
-<summary>使用 HAProxy 反向代理</summary>
+<summary> <strong>Use HAProxy</strong> </summary>
 
-[HAProxy](https://www.haproxy.org/) 作为反向代理时，方法如下：
+When you use [HAProxy](https://www.haproxy.org/) as the reverse proxy, take the following steps:
 
-1. 以在 8033 端口反向代理 TiDB Dashboard 为例，在 HAProxy 配置文件中，新增如下配置：
+1. Use reverse proxy for TiDB Dashboard on the `8033` port (for example). In the HAProxy configuration file, add the following configuration:
 
+    
     ```haproxy
     frontend tidb_dashboard_front
       bind *:8033
@@ -58,59 +60,62 @@ http://192.168.0.123:2379/dashboard/
       server tidb_dashboard 192.168.0.123:2379
     ```
 
-    其中 `192.168.0.123:2379` 需替换为[第 1 步：获取实际 TiDB Dashboard 地址](#第-1-步获取实际-tidb-dashboard-地址)中取得的 TiDB Dashboard 实际地址中的 IP 及端口部分。
+    Replace `192.168.0.123:2379` with IP and port of the actual address of the TiDB Dashboard obtained in [Step 1](#step-1-get-the-actual-tidb-dashboard-address).
 
-    > **警告：**
+    > **Warning:**
     >
-    > 请务必保留 `use_backend` 指令中的 `if` 部分，确保只有该路径下的服务会被反向代理，否则将引入安全风险。参见[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)。
+    > You must retain the `if` part in the `use_backend` directive to ensure that services **only in this path** are behind reverse proxy; otherwise, security risks might be introduced. See [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).
 
-2. 重启 HAProxy，以使配置生效。
+2. Restart HAProxy for the configuration to take effect.
 
-3. 测试反向代理是否生效：访问 HAProxy 所在机器的 8033 端口下 `/dashboard/` 地址，如 <http://example.com:8033/dashboard/>，即可访问 TiDB Dashboard。
+3. Test whether the reverse proxy is effective: access the `/dashboard/` address on the `8033` port of the machine where HAProxy is located (such as `http://example.com:8033/dashboard/`) to access TiDB Dashboard.
 
 </details>
 
 <details>
-<summary>使用 NGINX 反向代理</summary>
+<summary> <strong>Use NGINX</strong> </summary>
 
-[NGINX](https://nginx.org/) 作为反向代理时，方法如下：
+When you use [NGINX](https://nginx.org/) as the reverse proxy, take the following steps:
 
-1. 以在 8033 端口反向代理 TiDB Dashboard 为例，在 NGINX 配置文件中，新增如下配置：
+1. Use reverse proxy for TiDB Dashboard on the `8033` port (for example). In the NGINX configuration file, add the following configuration:
 
+    
     ```nginx
     server {
-      listen 8033;
-      location /dashboard/ {
+        listen 8033;
+        location /dashboard/ {
         proxy_pass http://192.168.0.123:2379/dashboard/;
-      }
+        }
     }
     ```
 
-    其中 `http://192.168.0.123:2379/dashboard/` 需替换为[第 1 步：获取实际 TiDB Dashboard 地址](#第-1-步获取实际-tidb-dashboard-地址)中取得的 TiDB Dashboard 实际地址。
+    Replace `http://192.168.0.123:2379/dashboard/` with the actual address of the TiDB Dashboard obtained in [Step 1](#step-1-get-the-actual-tidb-dashboard-address).
 
-    > **警告：**
+    > **Warning:**
     >
-    > 请务必保留 `proxy_pass` 指令中的 `/dashboard/` 路径，确保只有该路径下的服务会被反向代理，否则将引入安全风险。参见[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)。
+    > You must keep the `/dashboard/` path in the `proxy_pass` directive to ensure that only the services under this path are reverse proxied. Otherwise, security risks will be introduced. See [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).
 
-2. 重新载入 NGINX 以使配置生效：
+2. Reload NGINX for the configuration to take effect.
 
+    
     ```shell
     sudo nginx -s reload
     ```
 
-3. 测试反向代理是否生效：访问 NGINX 所在机器的 8033 端口下 `/dashboard/` 地址，如 `http://example.com:8033/dashboard/`，即可访问 TiDB Dashboard。
+3. Test whether the reverse proxy is effective: access the `/dashboard/` address on the `8033` port of the machine where NGINX is located (such as `http://example.com:8033/dashboard/`) to access TiDB Dashboard.
 
 </details>
 
-## 自定义路径前缀
+## Customize path prefix
 
-TiDB Dashboard 默认在 `/dashboard/` 路径下提供服务，即使是反向代理也是如此，例如 `http://example.com:8033/dashboard/`。若要配置反向代理以非默认的路径提供 TiDB Dashboard 服务，例如 `http://example.com:8033/foo/` 或 `http://example.com:8033/`，可参考以下步骤。
+TiDB Dashboard provides services by default in the `/dashboard/` path, such as `http://example.com:8033/dashboard/`, which is the case even for reverse proxies. To configure the reverse proxy to provide the TiDB Dashboard service with a non-default path, such as `http://example.com:8033/foo/` or `http://example.com:8033/`, take the following steps.
 
-### 第 1 步：修改 PD 配置指定 TiDB Dashboard 服务路径前缀
+### Step 1: Modify PD configuration to specify the path prefix of TiDB Dashboard service
 
-修改 PD 配置中 `[dashboard]` 类别的 `public-path-prefix` 配置项，可指定服务路径前缀。该配置修改后需要重启 PD 实例生效。
+Modify the `public-path-prefix` configuration item in the `[dashboard]` category of the PD configuration to specify the path prefix of the TiDB Dashboard service. After this item is modified, restart the PD instance for the modification to take effect.
 
-以 TiUP 部署且希望运行在 `http://example.com:8033/foo/` 为例，可指定以下配置：
+For example, if the cluster is deployed using TiUP and you want the service to run on `http://example.com:8033/foo/`, you can specify the following configuration:
+
 
 ```yaml
 server_configs:
@@ -119,42 +124,28 @@ server_configs:
 ```
 
 <details>
-  <summary>使用 TiUP 部署全新集群时修改配置</summary>
+<summary> <strong>Modify configuration when deploying a new cluster using TiUP</strong> </summary>
 
-若要全新部署集群，可在 TiUP 拓扑文件 `topology.yaml` 中加入上述配置项后进行部署，具体步骤参阅 [TiUP 部署文档](/production-deployment-using-tiup.md#第-3-步初始化集群拓扑文件)。
+If you are deploying a new cluster, you can add the configuration above to the `topology.yaml` TiUP topology file and deploy the cluster. For specific instruction, see [TiUP deployment document](/production-deployment-using-tiup.md#step-3-initialize-the-cluster-topology-file).
 
 </details>
 
 <details>
-  <summary>使用 TiUP 修改已部署集群的配置</summary>
 
-1. 以编辑模式打开该集群的配置文件（将 `CLUSTER_NAME` 替换为集群名称）
+<summary> <strong>Modify configuration of a deployed cluster using TiUP</strong> </summary>
 
+For a deployed cluster:
+
+1. Open the configuration file of the cluster in the edit mode (replace `CLUSTER_NAME` with the cluster name).
+
+    
     ```shell
     tiup cluster edit-config CLUSTER_NAME
     ```
 
-2. 在 `server_configs` 的 `pd` 配置下修改或新增配置项，若没有 `server_configs` 请在最顶层新增：
+2. Modify or add configuration items under the `pd` configuration of `server_configs`. If no `server_configs` exists, add it at the top level:
 
-    ```yaml
-    server_configs:
-      pd:
-        dashboard.public-path-prefix: /foo
-    ```
-
-    修改完成后的配置文件类似于：
-
-    ```yaml
-    server_configs:
-      pd:
-        dashboard.public-path-prefix: /foo
-    global:
-      user: tidb
-      ...
-    ```
-
-    或
-
+    
     ```yaml
     monitored:
       ...
@@ -166,17 +157,44 @@ server_configs:
       ...
     ```
 
-3. 滚动重启所有 PD 实例生效配置（将 `CLUSTER_NAME` 替换为集群名称）
+    The configuration file after the modification is similar to the following file:
 
+    
+    ```yaml
+    server_configs:
+      pd:
+        dashboard.public-path-prefix: /foo
+      global:
+        user: tidb
+        ...
+    ```
+
+    Or
+
+    
+    ```yaml
+    monitored:
+      ...
+    server_configs:
+      tidb: ...
+      tikv: ...
+      pd:
+        dashboard.public-path-prefix: /foo
+    ```
+
+3. Perform a rolling restart to all PD instances for the modified configuration to take effect (replace `CLUSTER_NAME` with your cluster name):
+
+    
     ```shell
     tiup cluster reload CLUSTER_NAME -R pd
     ```
 
-    详情请参阅 [TiUP 常见运维操作 - 修改配置参数](/maintain-tidb-using-tiup.md#修改配置参数)。
+See [Common TiUP Operations - Modify the configuration](/maintain-tidb-using-tiup.md#modify-the-configuration) for details.
 
 </details>
 
-若希望运行在根路径（如 `http://example.com:8033/`）下，相应的配置为：
+If you want that the TiDB Dashboard service is run in the root path (such as `http://example.com:8033/`), use the following configuration:
+
 
 ```yaml
 server_configs:
@@ -184,16 +202,17 @@ server_configs:
     dashboard.public-path-prefix: /
 ```
 
-> **警告：**
+> **Warning:**
 >
-> 修改自定义路径前缀生效后，直接访问将不能正常使用 TiDB Dashboard，您只能通过和路径前缀匹配的反向代理访问。
+> After the modified and customized path prefix takes effect, you cannot directly access TiDB Dashboard. You can only access TiDB Dashboard through a reverse proxy that matches the path prefix.
 
-### 第 2 步：修改反向代理配置
+### Step 2: Modify the reverse proxy configuration
 
 <details>
-<summary>使用 HAProxy 反向代理</summary>
+<summary> <strong>Use HAProxy</strong> </summary>
 
-以 `http://example.com:8033/foo/` 为例，HAProxy 配置如下：
+Taking `http://example.com:8033/foo/` as an example, the corresponding HAProxy configuration is as follows:
+
 
 ```haproxy
 frontend tidb_dashboard_front
@@ -206,33 +225,33 @@ backend tidb_dashboard_back
   server tidb_dashboard 192.168.0.123:2379
 ```
 
-其中 `192.168.0.123:2379` 需替换为[第 1 步：获取实际 TiDB Dashboard 地址](#第-1-步获取实际-tidb-dashboard-地址)中取得的 TiDB Dashboard 实际地址中的 IP 及端口部分。
+Replace `192.168.0.123:2379` with IP and port of the actual address of the TiDB Dashboard obtained in [Step 1](#step-1-get-the-actual-tidb-dashboard-address).
 
-> **警告：**
+> **Warning:**
 >
-> 请务必保留 `use_backend` 指令中的 `if` 部分，确保只有该路径下的服务会被反向代理，否则将引入安全风险。参见[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)。
+> You must retain the `if` part in the `use_backend` directive to ensure that services **only in this path** are behind reverse proxy; otherwise, security risks might be introduced. See [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).
 
-若希望运行在根路径（如 `http://example.com:8033/`），HAProxy 配置如下：
+If you want that the TiDB Dashboard service is run in the root path (such as `http://example.com:8033/`), use the following configuration:
 
-```nginx
+```haproxy
 frontend tidb_dashboard_front
   bind *:8033
   use_backend tidb_dashboard_back
-
 backend tidb_dashboard_back
   mode http
   http-request set-path /dashboard%[path]
   server tidb_dashboard 192.168.0.123:2379
 ```
 
-修改配置并重启 HAProxy 后即可生效。
+Modify the configuration and restart HAProxy for the modified configuration to take effect.
 
 </details>
 
 <details>
-<summary>使用 NGINX 反向代理</summary>
+<summary> <strong>Use NGINX</strong> </summary>
 
-以 `http://example.com:8033/foo/` 为例，相应的 NGINX 配置为：
+Taking `http://example.com:8033/foo/` as an example, the corresponding NGINX configuration is as follows:
+
 
 ```nginx
 server {
@@ -243,13 +262,14 @@ server {
 }
 ```
 
-其中 `http://192.168.0.123:2379/dashboard/` 需替换为[第 1 步：获取实际 TiDB Dashboard 地址](#第-1-步获取实际-tidb-dashboard-地址)中取得的 TiDB Dashboard 实际地址。
+Replace `http://192.168.0.123:2379/dashboard/` with the actual address of the TiDB Dashboard obtained in [Step 1](#step-1-get-the-actual-tidb-dashboard-address).
 
-> **警告：**
+> **Warning:**
 >
-> 请务必保留 `proxy_pass` 指令中的 `/dashboard/` 路径，确保只有该路径下的服务会被反向代理，否则将引入安全风险。参见[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)。
+> You must retain the `/dashboard/` path in the `proxy_pass` directive to ensure that services **only in this path** are behind reverse proxy; otherwise, security risks might be introduced. See [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).
 
-若希望运行在根路径（如 `http://example.com:8033/`），NGINX 配置为：
+If you want that the TiDB Dashboard service is run in the root path (such as `http://example.com:8033/`), use the following configuration:
+
 
 ```nginx
 server {
@@ -260,7 +280,8 @@ server {
 }
 ```
 
-修改配置并重启 NGINX 后即可生效：
+Modify the configuration and restart NGINX for the modified configuration to take effect.
+
 
 ```shell
 sudo nginx -s reload
@@ -268,6 +289,6 @@ sudo nginx -s reload
 
 </details>
 
-## 下一步
+## What's next
 
-参阅[提高 TiDB Dashboard 安全性](/dashboard/dashboard-ops-security.md)文档了解如何增强 TiDB Dashboard 的安全性，如配置防火墙等。
+To learn how to enhance the security of TiDB Dashboard, such as configuring a firewall, see [Secure TiDB Dashboard](/dashboard/dashboard-ops-security.md).

@@ -1,19 +1,23 @@
 ---
-title: SHOW [BACKUPS|RESTORES]
-summary: TiDB 数据库中 SHOW [BACKUPS|RESTORES] 的使用概况。
+title: SHOW [BACKUPS|RESTORES] | TiDB SQL Statement Reference
+summary: TiDB 数据库中 SHOW [BACKUPS|RESTORES] 的用法概述。
 ---
 
 # SHOW [BACKUPS|RESTORES]
 
-`SHOW [BACKUPS|RESTORES]` 语句会列出所有在 TiDB 实例上队列中的、正在执行的和近期完成的 [`BACKUP`](/sql-statements/sql-statement-backup.md) 和 [`RESTORE`](/sql-statements/sql-statement-restore.md) 任务。
+这些语句会显示在 TiDB 实例上执行的所有已排队、正在运行以及最近完成的 [`BACKUP`](/sql-statements/sql-statement-backup.md) 和 [`RESTORE`](/sql-statements/sql-statement-restore.md) 任务的列表。
 
-查询 `BACKUP` 任务时，使用 `SHOW BACKUPS` 语句。查询 `RESTORE` 任务时，使用 `SHOW RESTORES` 语句。
+这两个语句都需要 `SUPER` 权限才能执行。
 
-执行 `SHOW BACKUPS` 需要 `SUPER` 或 `BACKUP_ADMIN` 权限。执行 `SHOW RESTORES` 需要 `SUPER` 或 `RESTORE_ADMIN`权限。
+使用 `SHOW BACKUPS` 查询 `BACKUP` 任务，使用 `SHOW RESTORES` 查询 `RESTORE` 任务。
 
-不显示用 `br` 命令行工具启动的备份和恢复。
+> **Note:**
+>
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
 
-## 语法图
+通过 `br` 命令行工具启动的备份和恢复任务不会显示在这里。
+
+## 语法
 
 ```ebnf+diagram
 ShowBRIEStmt ::=
@@ -26,15 +30,13 @@ ShowLikeOrWhere ::=
 
 ## 示例
 
-在一个连接中，执行以下命令备份数据库：
-
+在一个连接中，执行以下语句：
 
 ```sql
-BACKUP DATABASE `test` TO 's3://example-bucket/backup-01/';
+BACKUP DATABASE `test` TO 's3://example-bucket/backup-01';
 ```
 
-在备份完成之前，在新的连接中执行 `SHOW BACKUPS`：
-
+在备份完成之前，在新的连接中运行 `SHOW BACKUPS`：
 
 ```sql
 SHOW BACKUPS;
@@ -49,29 +51,28 @@ SHOW BACKUPS;
 1 row in set (0.00 sec)
 ```
 
-输出结果的第一行描述如下：
+上面结果的第一行描述如下：
 
 | 列名 | 描述 |
 | :-------- | :--------- |
-| `Destination` | 目标存储的 URL（为避免泄露密钥，所有参数均不显示） |
-| `State` | 任务状态 |
-| `Progress` | 当前状态的进度（百分比） |
-| `Queue_time` | 任务开始排队的时间 |
-| `Execution_time` | 任务开始执行的时间；对于队列中任务，该值为 `0000-00-00 00:00:00` |
-| `Finish_time` | 任务完成的时间戳；对于队列中的和运行的任务，该值为 `0000-00-00 00:00:00` |
-| `Connection` | 运行任务的连接 ID |
+| `Destination` | 目标 URL（已去除所有参数以避免泄露密钥） |
+| `State` | 任务的状态 |
+| `Progress` | 当前状态下的预计进度百分比 |
+| `Queue_time` | 任务被排队的时间 |
+| `Execution_time` | 任务开始执行的时间；对于排队中的任务，该值为 `0000-00-00 00:00:00` |
+| `Finish_time` | 任务完成时的时间戳；对于排队和运行中的任务，该值为 `0000-00-00 00:00:00` |
+| `Connection` | 执行该任务的连接 ID |
 | `Message` | 详细信息 |
 
 可能的状态有：
 
-| 状态 | 说明 |
+| State | 描述 |
 | :-----|:------------|
-| Backup | 进行备份 |
+| Backup | 正在进行备份 |
 | Wait | 等待执行 |
-| Checksum | 运行 checksum 操作 |
+| Checksum | 正在执行校验和操作 |
 
-连接 ID 可用于在 [`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md) 语句中取消备份/恢复任务：
-
+可以使用连接 ID 通过 [`KILL TIDB QUERY`](/sql-statements/sql-statement-kill.md) 语句取消备份/恢复任务。
 
 ```sql
 KILL TIDB QUERY 4;
@@ -83,15 +84,13 @@ Query OK, 0 rows affected (0.00 sec)
 
 ### 过滤
 
-在 `LIKE` 子句中使用通配符，可以按目标存储 URL 筛选任务：
-
+使用 `LIKE` 子句，通过通配符表达式匹配目标 URL 来过滤任务。
 
 ```sql
 SHOW BACKUPS LIKE 's3://%';
 ```
 
-使用 `WHERE` 子句，可以按列筛选任务：
-
+使用 `WHERE` 子句按列进行过滤。
 
 ```sql
 SHOW BACKUPS WHERE `Progress` < 25.0;
@@ -101,7 +100,7 @@ SHOW BACKUPS WHERE `Progress` < 25.0;
 
 该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 参见
 
 * [BACKUP](/sql-statements/sql-statement-backup.md)
 * [RESTORE](/sql-statements/sql-statement-restore.md)

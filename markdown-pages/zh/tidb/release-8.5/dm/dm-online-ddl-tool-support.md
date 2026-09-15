@@ -1,49 +1,51 @@
 ---
-title: TiDB Data Migration 对 online DDL 工具的支持
-summary: 了解 DM 对常见 online DDL 工具的支持情况，使用方法和注意事项。
+title: TiDB Data Migration Support for Online DDL Tools
+summary: Learn about the support for common online DDL tools, usage, and precautions in DM.
 ---
 
-# TiDB Data Migration 对 online DDL 工具的支持
+# TiDB Data Migration Support for Online DDL Tools
 
-在 MySQL 生态中，gh-ost 与 pt-osc 等工具较广泛地被使用，TiDB Data Migration (DM) 对其提供了特殊的支持以避免对不必要的中间数据进行迁移。本文介绍了在 DM 中使用常见 online DDL 工具的方法和注意事项。
+In the MySQL ecosystem, tools such as gh-ost and pt-osc are widely used. TiDB Data Migration (DM) provides supports for these tools to avoid migrating unnecessary intermediate data.
 
-有关 DM 对 online DDL 工具支持的原理、处理流程等，可参考 [online-ddl](/dm/feature-online-ddl.md)。
+This document introduces the support for common online DDL tools, usage, and precautions in DM.
 
-## 使用限制
+For the working principles and implementation methods of DM for online DDL tools, refer to [online-ddl](/dm/feature-online-ddl.md).
 
-- DM 仅针对 gh-ost 与 pt-osc 做了特殊支持。
-- 在开启 `online-ddl` 时，增量复制对应的 checkpoint 应不处于 online DDL 执行过程中。如上游某次 online DDL 操作开始于 binlog `position-A`、结束于 `position-B`，则增量复制的起始点应早于 `position-A` 或晚于 `position-B`，否则可能出现迁移出错，具体可参考 [FAQ](/dm/dm-faq.md#设置了-online-ddl-truegh-ost-表相关的-ddl-报错该如何处理)。
+## Restrictions
 
-## 参数配置
+- DM only supports gh-ost and pt-osc.
+- When `online-ddl` is enabled, the checkpoint corresponding to incremental replication should not be in the process of online DDL execution. For example, if an upstream online DDL operation starts at `position-A` and ends at `position-B` of the binlog, the starting point of incremental replication should be earlier than `position-A` or later than `position-B`; otherwise, an error occurs. For details, refer to [FAQ](/dm/dm-faq.md#how-to-handle-the-error-returned-by-the-ddl-operation-related-to-the-gh-ost-table-after-online-ddl-true-is-set).
+
+## Configure parameters
 
 <SimpleTab>
-<div label="v2.0.5 及之后的版本">
+<div label="v2.0.5 and later">
 
-在 v2.0.5 及之后的版本，请在 `task` 配置文件中使用 `online-ddl` 配置项。
+In v2.0.5 and later versions, you need to use the `online-ddl` configuration item in the `task` configuration file.
 
-如上游 MySQL/MariaDB （同时）使用 gh-ost 或 pt-osc 工具，则在 task 的配置文件中设置：
+- If the upstream MySQL/MariaDB (at the same time) uses the gh-ost or pt-osc tool, set `online-ddl` to `true` in the task configuration file:
 
 ```yml
 online-ddl: true
 ```
 
-> **注意：**
+> **Note:**
 >
-> 自 v2.0.5 起，`online-ddl-scheme` 已被弃用，请使用 `online-ddl` 代替 `online-ddl-scheme`。如设置 `online-ddl: true` 会覆盖掉 `online-ddl-scheme`。如设置 `online-ddl-scheme: "pt"` 或 `online-ddl-scheme: "gh-ost"` 会被转换为 `online-ddl: true`。
+> Since v2.0.5, `online-ddl-scheme` has been deprecated, so you need to use `online-ddl` instead of `online-ddl-scheme`. That means that setting `online-ddl: true` overwrites `online-ddl-scheme`, and setting `online-ddl-scheme: "pt"` or `online-ddl-scheme: "gh-ost"` is converted to `online-ddl: true`.
 
 </div>
 
-<div label="v2.0.5 之前的版本">
+<div label="earlier than v2.0.5">
 
-在 v2.0.5 之前的版本（不含 v2.0.5），请在 `task` 配置文件中使用 `online-ddl-scheme` 配置项。
+Before v2.0.5 (not including v2.0.5), you need to use the `online-ddl-scheme` configuration item in the `task` configuration file.
 
-如上游 MySQL/MariaDB 使用的是 gh-ost 工具，则在 task 的配置文件中设置：
+- If the upstream MySQL/MariaDB uses the gh-ost tool, set it in the task configuration file:
 
 ```yml
 online-ddl-scheme: "gh-ost"
 ```
 
-如上游 MySQL/MariaDB 使用的是 pt-osc 工具，则在 task 的配置文件中设置：
+- If the upstream MySQL/MariaDB uses the pt tool, set it in the task configuration file:
 
 ```yml
 online-ddl-scheme: "pt"

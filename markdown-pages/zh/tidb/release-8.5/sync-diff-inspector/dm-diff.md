@@ -1,40 +1,40 @@
 ---
-title: 基于 DM 同步场景下的数据校验
-summary: 了解如何使用 TiDB DM 拉取指定配置进行数据校验。
+title: Data Check in the DM Replication Scenario
+summary: Learn about how to set a specific `task-name` configuration from `DM-master` to perform a data check.
 ---
 
-# 基于 DM 同步场景下的数据校验
+# Data Check in the DM Replication Scenario
 
-当你在使用 [TiDB DM](/dm/dm-overview.md) 等同步工具时，需要校验 DM 同步后数据的一致性。你可以从 `DM-master` 拉取指定 `task-name` 的配置，进行数据校验。
+When using replication tools such as [TiDB Data Migration](/dm/dm-overview.md), you need to check the data consistency before and after the replication process. You can set a specific `task-name` configuration from `DM-master` to perform a data check.
 
-下面是一个简单的配置文件说明，要了解完整配置，请参考 [sync-diff-inspector 用户文档](/sync-diff-inspector/sync-diff-inspector-overview.md)。
+The following is a simple configuration example. To learn the complete configuration, refer to [Sync-diff-inspector User Guide](/sync-diff-inspector/sync-diff-inspector-overview.md).
 
 ```toml
 # Diff Configuration.
 
 ######################### Global config #########################
 
-# 检查数据的线程数量，上下游数据库的连接数会略大于该值
+# The number of goroutines created to check data. The number of connections between upstream and downstream databases are slightly greater than this value.
 check-thread-count = 4
 
-# 如果开启，若表存在不一致，则输出用于修复的 SQL 语句
+# If enabled, SQL statements is exported to fix inconsistent tables.
 export-fix-sql = true
 
-# 只对比表结构而不对比数据
+# Only compares the table structure instead of the data.
 check-struct-only = false
 
-# dm-master 的地址, 格式为 "http://127.0.0.1:8261"
+# The IP address of dm-master and the format is "http://127.0.0.1:8261".
 dm-addr = "http://127.0.0.1:8261"
 
-# 指定 DM 的 `task-name`
+# Specifies the `task-name` of DM.
 dm-task = "test"
 
 ######################### Task config #########################
 [task]
     output-dir = "./output"
 
-    # 需要比对的下游数据库的表，每个表需要包含数据库名和表名，两者由 `.` 隔开
+    # The tables of downstream databases to be compared. Each table needs to contain the schema name and the table name, separated by '.'
     target-check-tables = ["hb_test.*"]
 ```
 
-该配置在 dm-task = "test" 中，会对该任务下 hb_test 库的所有表进行检验，自动从 DM 配置中获取上游对下游库名的正则匹配，以校验 DM 同步后数据的一致性。
+This example is configured in dm-task = "test", which checks all the tables of hb_test schema under the "test" task. It automatically gets the regular matching of the schemas between upstream and downstream databases to verify the data consistency after DM replication.

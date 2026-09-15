@@ -1,11 +1,15 @@
 ---
 title: TIDB_HOT_REGIONS
-summary: 了解 information_schema 表 `TIDB_HOT_REGIONS`。
+summary: Learn the `TIDB_HOT_REGIONS` information_schema table.
 ---
 
 # TIDB_HOT_REGIONS
 
-`TIDB_HOT_REGIONS` 表提供了关于当前热点 Region 的相关信息。历史热点信息可以在 [`TIDB_HOT_REGIONS_HISTORY`](/information-schema/information-schema-tidb-hot-regions-history.md) 表查看。
+The `TIDB_HOT_REGIONS` table provides information about the current hot Regions. For information about history hot Regions, see `[TIDB_HOT_REGIONS_HISTORY](/information-schema/information-schema-tidb-hot-regions-history.md)`.
+
+> **Note:**
+>
+> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
 
 
 ```sql
@@ -13,7 +17,7 @@ USE information_schema;
 DESC tidb_hot_regions;
 ```
 
-```sql
+```
 +----------------+-------------+------+------+---------+-------+
 | Field          | Type        | Null | Key  | Default | Extra |
 +----------------+-------------+------+------+---------+-------+
@@ -31,15 +35,15 @@ DESC tidb_hot_regions;
 10 rows in set (0.00 sec)
 ```
 
-`TIDB_HOT_REGIONS` 表各列字段含义如下：
+The description of columns in the `TIDB_HOT_REGIONS` table is as follows:
 
-* TABLE_ID：热点 Region 所在表的 ID。
-* INDEX_ID：热点 Region 所在索引的 ID。
-* DB_NAME：热点 Region 所在数据库对象的数据库名。
-* TABLE_NAME：热点 Region 所在表的名称。
-* INDEX_NAME：热点 Region 所在索引的名称。
-* REGION_ID：热点 Region 的 ID。
-* TYPE：热点 Region 的类型。
-* MAX_HOT_DEGREE：该 Region 的最大热度。
-* REGION_COUNT：所在实例的热点 Region 数量。
-* FLOW_BYTES：该 Region 内读写的字节数量。
+* `TABLE_ID`: The ID of the table in which the hot Region is located.
+* `INDEX_ID`: The ID of the index in which the hot Region is located.
+* `DB_NAME`: The database name of the object in which the hot Region is located.
+* `TABLE_NAME`: The name of the table in which the hot Region is located.
+* `INDEX_NAME`: The name of the index in which the hot Region is located.
+* `REGION_ID`: The ID of the hot Region.
+* `TYPE`: The type of the hot Region.
+* `MAX_HOT_DEGREE`: The maximum hot degree of the Region.
+* `REGION_COUNT`: The number of hot Regions in the instance. 
+* `FLOW_BYTES`: The number of bytes written and read in the Region.

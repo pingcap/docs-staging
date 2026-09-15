@@ -1,207 +1,209 @@
 ---
-title: TiDB Lightning 并行导入
-summary: 本文档介绍了 TiDB Lightning 并行导入的概念、使用场景和使用方法。
+title: Use TiDB Lightning to Import Data in Parallel
+summary: Learn the concept, user scenarios, usages, and limitations of importing data in parallel when using TiDB Lightning.
 ---
 
-# TiDB Lightning 并行导入
+# Use TiDB Lightning to Import Data in Parallel
 
-TiDB Lightning 的[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)从 v5.3.0 版本开始支持单表或多表数据的并行导入。你可以同时启动多个 TiDB Lightning 实例，并行导入不同的单表或多表数据，从而使 TiDB Lightning 具备水平扩展的能力，大大降低导入大量数据所需的时间。
+Since v5.3.0, the [physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md) of TiDB Lightning supports the parallel import of a single table or multiple tables. By simultaneously running multiple TiDB Lightning instances, you can import data from single or multiple tables in parallel. In this way, TiDB Lightning provides the ability to scale horizontally, which greatly reduces the time required to import large amount of data.
 
-在技术实现上，TiDB Lightning 通过在目标 TiDB 中记录各个实例以及每个导入表导入数据的元信息，协调不同实例的 Row ID 分配范围、全局 Checksum 的记录和 TiKV 及 PD 的配置变更与恢复。
+In technical implementation, TiDB Lightning records the meta data of each instance and the data of each imported table in the target TiDB, and coordinates the Row ID allocation range of different instances, the record of global Checksum, and the configuration changes and recovery of TiKV and PD.
 
-TiDB Lightning 并行导入可以用于以下场景：
+You can use TiDB Lightning to import data in parallel in the following scenarios:
 
-- 并行导入分库分表的数据。在该场景中，来自上游多个数据库实例中的多个表，分别由不同的 TiDB Lightning 实例并行导入到下游 TiDB 数据库中。
-- 并行导入单表的数据。在该场景中，存放在某个目录中或云存储（如 Amazon S3）中的多个单表文件，分别由不同的 TiDB Lightning 实例并行导入到下游 TiDB 数据库中。该功能为 v5.3.0 版本引入的新功能。
+- Import sharded schemas and sharded tables. In this scenario, multiple tables from multiple upstream database instances are imported into the downstream TiDB database by different TiDB Lightning instances in parallel.
+- Import single tables in parallel. In this scenario, single tables stored in a certain directory or cloud storage (such as Amazon S3) are imported into the downstream TiDB cluster by different TiDB Lightning instances in parallel. This is a new feature introduced in TiDB 5.3.0.
 
-> **注意：**
+> **Note:**
 >
-> - 并行导入只支持初始化 TiDB 的空表，不支持导入数据到已有业务写入的数据表，否则可能会导致数据不一致的情况。
+> - Parallel import only supports initialized empty tables in TiDB and does not support migrating data to tables with data written by existing services. Otherwise, data inconsistencies may occur.
 >
-> - 并行导入一般用于物理导入模式，需要设置 `parallel-import = true`。
+> - Parallel import is usually used in the physical import mode. You need to configure `parallel-import = true`.
 >
-> - 并行导入一般用于物理导入模式；虽然也能用于逻辑导入模式，但是一般不会带来明显的性能提升。
+> - Apply only one backend at a time when using multiple TiDB Lightning instances to import data to the same target. For example, you cannot import data to the same TiDB cluster in both the physical and logical import modes at the same time.
 
-## 使用说明
+## Considerations
 
-使用 TiDB Lightning 并行导入需要设置 `parallel-import = true`。TiDB Lightning 在启动时，会在下游 TiDB 中注册元信息，并自动检测是否有其他实例向目标集群导入数据。如果有，则自动进入并行导入模式。
+To use parallel import, you need to configure `parallel-import = true`. When TiDB Lightning is started, it registers meta data in the downstream TiDB cluster and automatically detects whether there are other instances migrating data to the target cluster at the same time. If there is, it automatically enters the parallel import mode.
 
-但是在并行导入时，需要注意以下情况：
+But when migrating data in parallel, you need to take the following into consideration:
 
-- 解决主键或者唯一索引的冲突
-- 导入性能优化
+- Handle conflicts between primary keys or unique indexes across multiple sharded tables
+- Optimize import performance
 
-### 解决主键或者唯一索引的冲突
+### Handle conflicts between primary keys or unique indexes
 
-在使用[物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)并行导入时，需要确保多个 TiDB Lightning 的数据源之间，以及它们和 TiDB 的目标表中的数据没有主键或者唯一索引的冲突，并且导入的目标表不能有其他应用进行数据写入。否则，TiDB Lightning 将无法保证导入结果的正确性，并且导入完成后相关的数据表将处于数据索引不一致的状态。
+When using [the physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md) to import data in parallel, ensure that there are no primary key or unique index conflicts between data sources, and between the tables in the target TiDB cluster, and there are no data writes in the target table during import. Otherwise, TiDB Lightning will fail to guarantee the correctness of the imported data, and the target table will contain inconsistent indexes after the import is completed.
 
-### 导入性能优化
+### Optimize import performance
 
-由于 TiDB Lightning 需要将生成的 Key-Value 数据上传到对应 Region 的每一个副本所在的 TiKV 节点，其导入速度受目标集群规模的限制。在通常情况下，建议确保目标 TiDB 集群中的 TiKV 实例数量与 TiDB Lightning 的实例数量大于 n:1 (n 为 Region 的副本数量)。同时，在使用 TiDB Lightning 并行导入模式时，为达到最优性能，建议进行如下限制：
+Because TiDB Lightning needs to upload the generated Key-Value data to the TiKV node where each copy of the corresponding Region is located, the import speed is limited by the size of the target cluster. It is recommended to ensure that the number of TiKV instances in the target TiDB cluster and the number of TiDB Lightning instances are greater than n:1 (n is the number of copies of the Region). At the same time, the following requirements should be met to achieve optimal import performance:
 
-- 每个 TiDB Lightning 部署在单独的机器上面。TiDB Lightning 默认会消耗所有的 CPU 资源，在单台机器上面部署多个实例并不能提升性能。
-- 每个 TiDB Lightning 实例导入的源文件总大小不超过 5 TiB
-- TiDB Lightning 实例的总数量不超过 10 个
+- Deploy each TiDB Lightning instance on a dedicated machine. Since one TiDB Lightning instance consumes all CPU resources by default, deploying multiple instances on a single machine cannot improve performance.
+- The total size of source files for each TiDB Lightning instance performing parallel import should be smaller than 5 TiB
+- The total number of TiDB Lightning instances should be smaller than 10.
 
-在使用 TiDB Lightning 并行导入分库分表数据的时候，请根据数据量大小选择使用的 TiDB Lightning 实例数量。
+When using TiDB Lightning to import shared databases and tables in parallel, choose an appropriate number of TiDB Lightning instances according to the amount of data.
 
-- 如果 MySQL 数据量小于 2 TiB，可以使用 1 个 TiDB Lightning 实例进行并行导入
-- 如果 MySQL 数据量超过 2 TiB，并且 MySQL 实例总数小于 10 个，建议每个 MySQL 实例对应 1 个 TiDB Lightning 实例，而且并行 TiDB Lightning 实例数量不要超过 10 个
-- 如果 MySQL 数据量超过 2 TiB，并且 MySQL 实例总数超过 10 个，建议这些 MySQL 实例导出的数据平均分配 5 到 10 个 TiDB Lightning 实例进行导入
+- If the MySQL data volume is less than 2 TiB, you can use one TiDB Lightning instance for parallel import.
+- If the MySQL data volume exceeds 2 TiB and the total number of MySQL instances is smaller than 10, it is recommended that you use one TiDB Lightning instance for each MySQL instance, and the number of parallel TiDB Lightning instances should not exceed 10.
+- If the MySQL data volume exceeds 2 TiB and the total number of MySQL instances exceeds 10, it is recommended that you allocate 5 to 10 TiDB Lightning instances for importing the data exported by these MySQL instances.
 
-接下来，本文档将以两个并行导入的示例，详细介绍了不同场景下并行导入的操作步骤：
+Next, this document uses two examples to detail the operation steps of parallel import in different scenarios:
 
-- 示例 1：使用 Dumpling + TiDB Lightning 并行导入分库分表数据至 TiDB
-- 示例 2：使用 TiDB Lightning 并行导入单表数据
+- Example 1: Use Dumpling + TiDB Lightning to import sharded databases and tables into TiDB in parallel
+- Example 2: Import single tables in parallel
 
-### 使用限制
+### Restrictions
 
-TiDB Lightning 在运行时，需要独占部分资源，因此如果需要在单台机器上面部署多个 TiDB Lightning 实例(不建议生产环境使用)或多台机器共享磁盘存储时，需要注意如下使用限制：
+TiDB Lightning exclusively uses some resources when it is running. If you need to deploy multiple TiDB Lightning instances on a single machine (which is not recommended for production environments), or on a disk shared by multiple machines, be aware of the following usage restrictions.
 
-- 每个 TiDB Lightning 实例的 tikv-importer.sorted-kv-dir 必须设置为不同的路径。多个实例共享相同的路径会导致非预期的行为，可能导致导入失败或数据出错。
-- 每个 TiDB Lightning 的 checkpoint 需要分开存储。checkpoint 的详细配置见 [TiDB Lightning 断点续传](/tidb-lightning/tidb-lightning-checkpoints.md)。
-    - 如果设置 checkpoint.driver = "file"（默认值），需要确保每个实例设置的 checkpoint 的路径不同。
-    - 如果设置 checkpoint.driver = "mysql"，需要为每个实例设置不同的 schema。
-- 每个 TiDB Lightning 的 log 文件应该设置为不同的路径。共享同一个 log 文件将不利于日志的查询和排查问题。
-- 如果使用 Debug API 或 server mode 下的 HTTP API，需要为每个实例的 `lightning.status-addr` 设置不同地址，否则，TiDB Lightning 进程会由于端口冲突无法启动。
+- Set `tikv-importer.sorted-kv-dir` to a unique path for each TiDB Lightning instance. Multiple instances sharing the same path can lead to unintended behavior and may result in import failures or data errors.
+- Store each TiDB Lightning checkpoint separately. For more information about checkpoint configurations, see [TiDB Lightning Checkpoints](/tidb-lightning/tidb-lightning-checkpoints.md).
+    - If you set checkpoint.driver = "file" (default), make sure that the path to the checkpoint is unique for each instance.
+    - If you set checkpoint.driver = "mysql", you need to set a unique schema for each instance.
+- The log file for each TiDB Lightning should be set to a unique path. Sharing the same log file will impact log querying and troubleshooting.
+- If you use the [Web Interface](/tidb-lightning/tidb-lightning-web-interface.md) or Debug API, you need to set `lightning.status-addr` to a unique address for each instance; otherwise, the TiDB Lightning process fails to start due to port conflict.
 
-## 示例 1：使用 Dumpling + TiDB Lightning 并行导入分库分表数据至 TiDB
+## Example 1: Use Dumpling + TiDB Lightning to Import Sharded Databases and Tables into TiDB in Parallel
 
-在本示例中，假设上游为包含 10 个分表的 MySQL 集群，总共大小为 10 TiB。使用 5 个 TiDB Lightning 实例并行导入，每个实例导入 2 TiB 数据，预计可以将总导入时间（不包含 Dumpling 导出的耗时）由约 40 小时降至约 10 小时。
+In this example, assume that the upstream is a MySQL cluster with 10 sharded tables, with a total size of 10 TiB. You can Use 5 TiDB Lightning instances to perform parallel import, and each instance imports 2 TiB. It is estimated that the total import time (excluding the time required for Dumpling export) can be reduced from about 40 hours to about 10 hours.
 
-假设上游的库名为 `my_db`，每个分表的名字为 `my_table_01` ~ `my_table_10`，需要合并导入至下游的 `my_db.my_table` 表中。下面介绍具体的操作步骤。
+Assume that the upstream library is named `my_db`, and the name of each sharded table is `my_table_01` ~ `my_table_10`. You want to merge and import them into the downstream `my_db.my_table` table. The specific steps are described in the following sections.
 
-### 第 1 步：使用 Dumpling 导出数据
+### Step 1: Use Dumpling to export data
 
-在部署 TiDB Lightning 的 5 个节点上面分别导出两个分表的数据：
+Export two sharded tables on the 5 nodes where TiDB Lightning is deployed:
 
-- 如果两个分表位于同一个 MySQL 实例中，可以直接使用 Dumpling 的 `--filter` 参数一次性导出。此时在使用 TiDB Lightning 导入时，指定 `data-source-dir` 为 Dumpling 数据导出的目录即可；
-- 如果两个分表的数据分布在不同的 MySQL 节点上，则需要使用 Dumpling 分别导出，两次导出数据需要放置在同一父目录下<b>不同子目录里</b>，然后在使用 TiDB Lightning 导入时，`data-source-dir` 指定为此父级目录。
+- If the two sharded tables are in the same MySQL instance, you can use the `--filter` parameter of Dumpling to directly export them. When using TiDB Lightning to import, you can specify `data-source-dir` as the directory where Dumpling exports data to;
+- If the data of the two sharded tables are distributed on different MySQL nodes, you need to use Dumpling to separately export them. The exported data needs to be placed in the same parent directory <b>but in different sub-directories</b>. When using TiDB Lightning to perform parallel import, you need to specify `data-source-dir` as the parent directory.
 
-使用 Dumpling 导出数据的步骤，请参考 [Dumpling](/dumpling-overview.md)。
+For more information on how to use Dumpling to export data, see [Dumpling](/dumpling-overview.md).
 
-### 第 2 步：配置 TiDB Lightning 的数据源
+### Step 2: Configure TiDB Lightning data sources
 
-创建 `tidb-lightning.toml` 配置文件，并加入如下内容：
+Create a configuration file `tidb-lightning.toml`, and then add the following content:
 
 ```
 [lightning]
 status-addr = ":8289"
 
 [mydumper]
-# 设置为 Dumpling 导出数据的路径，如果 Dumpling 执行了多次并分属不同的目录，请将多次导出的数据置放在相同的父目录下并指定此父目录即可。
+# Specify the path for Dumpling to export data. If Dumpling performs several times and the data belongs to different directories, you can place all the exported data in the same parent directory and specify this parent directory here.
 data-source-dir = "/path/to/source-dir"
 
 [tikv-importer]
-# 是否允许向已存在数据的表导入数据。默认值为 false。
-# 当使用并行导入模式时，由于多个 TiDB Lightning 实例同时导入一张表，因此此开关必须设置为 true。
+# Whether to allow importing data into tables that already have data. The default value is `false`.
+# When using parallel import, because multiple TiDB Lightning instances import a table at the same time, this configuration item must be set to `true`.
 parallel-import = true
-# "local"：物理导入模式，默认使用。适用于 TB 级以上大数据量，但导入期间下游 TiDB 无法对外提供服务。
-# "tidb"：逻辑导入模式。TB 级以下数据量也可以采用，下游 TiDB 可正常提供服务。
+# "local": The default mode. It applies to large dataset import, for example, greater than 1 TiB. However, during the import, downstream TiDB is not available to provide services.
+# "tidb": You can use this mode for small dataset import, for example, smaller than 1 TiB. During the import, downstream TiDB is available to provide services.
 backend = "local"
 
-# 设置本地排序数据的路径
+# Specify the path for local sorting data.
 sorted-kv-dir = "/path/to/sorted-dir"
 ```
 
-如果数据源存放在 Amazon S3 或 GCS 等外部存储中，需要额外的连接配置，你可以为这类配置指定参数。如下例子假设数据源存放在 Amazon S3 中：
+If the data source is stored in external storage such as Amazon S3 or GCS, you need to configure additional parameters for connection. You can specify parameters for such configuration. For example, the following example assumes that data is stored in Amazon S3:
 
 ```
 tiup tidb-lightning --tidb-port=4000 --pd-urls=127.0.0.1:2379 --backend=local --sorted-kv-dir=/tmp/sorted-kvs \
     -d 's3://my-bucket/sql-backup'
 ```
 
-更多参数设置，请参考[外部存储服务的 URI 格式](/external-storage-uri.md)。
+For more parameter descriptions, see [URI Formats of External Storage Services](/external-storage-uri.md).
 
-### 第 3 步：开启 TiDB Lightning 进行数据导入
+### Step 3: Start TiDB Lightning to import data
 
-在使用 TiDB Lightning 并行导入时，对每个 TiDB Lightning 节点机器配置的需求与非并行导入模式相同，每个 TiDB Lightning 节点需要消耗相同的资源，建议部署在不同的机器上。详细的部署步骤，请参考 [TiDB Lightning 部署与执行](/tidb-lightning/deploy-tidb-lightning.md)
+During parallel import, the server configuration requirements for each TiDB Lightning node are the same as the non-parallel import mode. Each TiDB Lightning node needs to consume the same resources. It is recommended to deploy them on different servers. For detailed deployment steps, see [Deploy TiDB Lightning](/tidb-lightning/deploy-tidb-lightning.md).
 
-依次在每台机器上面运行 TiDB Lightning。如果直接在命令行中用 `nohup` 启动程序，可能会因为 SIGHUP 信号而退出，建议把 `nohup` 放到脚本里面，如：
+Start TiDB Lightning on each server in turn. If you use `nohup` to directly start it from the command line, it might exit due to the SIGHUP signal. So it is recommended to put `nohup` in the script, for example:
 
 ```shell
 # !/bin/bash
 nohup tiup tidb-lightning -config tidb-lightning.toml > nohup.out &
 ```
 
-在并行导入的场景下，TiDB Lightning 在启动任务之后，会自动进行下列检查：
+During parallel import, TiDB Lightning automatically performs the following checks after starting the task.
 
-- 检查本地盘空间（即 `sort-kv-dir` 配置）以及 TiKV 集群是否有足够空间导入数据，空间大小的详细说明参考 [TiDB Lightning 下游数据库所需空间](/tidb-lightning/tidb-lightning-requirements.md#目标数据库所需空间)和 [TiDB Lightning 运行时资源要求](/tidb-lightning/tidb-lightning-physical-import-mode.md#运行环境需求)。检查时会对数据源进行采样，通过采样结果预估索引大小占比。由于估算中考虑了索引，因此可能会出现尽管数据源大小低于本地盘可用空间，但依然无法通过检测的情况。
-- 检查 TiKV 集群的 region 分布是否均匀，以及是否存在大量空 region，如果空 region 的数量大于 max(1000,  表的数量 * 3)，即大于 “1000” 和 “3 倍表数量”二者中的最大者，则无法执行导入。
-- 检查数据源导入数据是否有序，并且根据检查结果自动调整 `mydumper.batch-size` 的大小。因此 `mydumper.batch-size` 配置不再对用户开放。
+- Check whether there is enough space on the local disk (controlled by the `sort-kv-dir` configuration) and on the TiKV cluster for importing data. To learn the required disk space, see [Downstream storage space requirements](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database) and [Resource requirements](/tidb-lightning/tidb-lightning-physical-import-mode.md#environment-requirements). TiDB Lightning samples the data sources and estimates the percentage of the index size from the sample result. Because indexes are included in the estimation, there might be cases where the size of the source data is less than the available space on the local disk, but still the check fails.
+- Check whether the regions in the TiKV cluster are distributed evenly and whether there are too many empty regions. If the number of empty regions exceeds max(1000, number of tables * 3), i.e. greater than the bigger one of "1000" or "3 times the number of tables ", then the import cannot be executed.
+- Check whether the data is imported in order from the data sources. The size of `mydumper.batch-size` is automatically adjusted based on the result of the check. Therefore, the `mydumper.batch-size` configuration is no longer available.
 
-你也可以通过 `lightning.check-requirements` 配置来关闭检查，执行强制导入。更多详细检查内容，可以查看 [Lightning 执行前检查项](/tidb-lightning/tidb-lightning-prechecks.md)。
+You can also turn off the check and perform a forced import with the `lightning.check-requirements` configuration. For more detailed checks, see [TiDB Lightning prechecks](/tidb-lightning/tidb-lightning-prechecks.md)
 
-### 第 4 步：查看进度
+### Step 4: Check the import progress
 
-开始导入后，可以通过以下任意方式查看进度：
+After starting the import, you can check the progress in either of the following ways:
 
-- 通过 `grep` 日志关键字 `progress` 查看进度，默认 5 分钟更新一次。
-- 通过监控面板查看进度。详情请参见 [TiDB Lightning 监控](/tidb-lightning/monitor-tidb-lightning.md)。
+- Check the progress through the `grep` log keyword `progress`. It is updated every 5 minutes by default.
+- Check the progress through the monitoring console. For details, see [TiDB Lightning Monitoring](/tidb-lightning/monitor-tidb-lightning.md).
 
-等待所有的 TiDB Lightning 运行结束，则整个导入完成。
+Wait for all TiDB Lightning instances to finish, then the entire import is completed.
 
-## 示例 2：使用 TiDB Lightning 并行导入单表数据
+## Example 2: Import single tables in parallel
 
-TiDB Lightning 也支持并行导入单表的数据。例如，将存放在 Amazon S3 中的多个单表文件，分别由不同的 TiDB Lightning 实例并行导入到下游 TiDB 数据库中。该方法可以加快整体导入速度。关于详细的参数配置，可以参考[外部存储服务的 URI 格式](/external-storage-uri.md)。
+TiDB Lightning also supports parallel import of single tables. For example, import multiple single tables stored in Amazon S3 by different TiDB Lightning instances into the downstream TiDB cluster in parallel. This method can speed up the overall import speed. When remote storages such as Amazon S3 is used, the configuration parameters of TiDB Lightning are the same as those of BR. For more details, see [URI Formats of External Storage Services](/external-storage-uri.md).
 
-> **注意：**
+> **Note:**
 >
-> 在本地环境下，可以使用 Dumpling 的 `--filesize` 或 `--where` 参数，预先将单表的数据划分成不同的部分导出至多台机器的本地磁盘，此时依然可以使用并行导入功能，其配置与示例 1 相同。
+>In the local environment, you can use the `--filesize` or `--where` parameter of Dumpling to divide the data of a single table into different parts and export it to the local disks of multiple servers in advance. This way, you can still perform parallel import. The configuration is the same as Example 1.
 
-假设通过 Dumpling 导出的源文件存放在 Amazon S3 云存储中，数据文件为 `my_db.my_table.00001.sql` ~ `my_db.my_table.10000.sql` 共计 10000 个 SQL 文件。如果希望使用 2 个 TiDB Lightning 实例加速导入，则需要在配置文件中增加如下设置：
+Assuming that the source files are stored in Amazon S3, the table files are `my_db.my_table.00001.sql` ~ `my_db.my_table.10000.sql`, a total of 10,000 SQL files. If you want to use 2 TiDB Lightning instances to speed up the import, you need to add the following settings in the configuration file:
 
 ```
 [[mydumper.files]]
-# db schema 文件
+# the db schema file
 pattern = '(?i)^(?:[^/]*/)*my_db-schema-create\.sql'
 schema = "my_db"
 type = "schema-schema"
 
 [[mydumper.files]]
-# table schema 文件
+# the table schema file
 pattern = '(?i)^(?:[^/]*/)*my_db\.my_table-schema\.sql'
 schema = "my_db"
 table = "my_table"
 type = "table-schema"
 
 [[mydumper.files]]
-# 只导入 00001~05000 这些数据文件并忽略其他文件
+# Only import 00001~05000 and ignore other files
 pattern = '(?i)^(?:[^/]*/)*my_db\.my_table\.(0[0-4][0-9][0-9][0-9]|05000)\.sql'
 schema = "my_db"
 table = "my_table"
 type = "sql"
 
 [tikv-importer]
-# 是否允许向已存在数据的表导入数据。默认值为 false。
-# 当使用并行导入模式时，由于多个 TiDB Lightning 实例同时导入一张表，因此此开关必须设置为 true。
+# Whether to allow importing data into tables that already have data. The default value is `false`.
+# When using parallel import, because multiple TiDB Lightning instances import a table at the same time, this configuration item must be set to `true`.
 parallel-import = true
 ```
 
-另外一个实例的配置修改为只导入 `05001 ~ 10000` 数据文件即可。
+You can modify the configuration of the other instance to only import the `05001 ~ 10000` data files.
 
-其他步骤请参考示例 1 中的相关步骤。
+For other steps, see the relevant steps in Example 1.
 
-## 错误处理
+## Handle errors
 
-### 部分 TiDB Lightning 节点异常终止
+### Some TiDB Lightning nodes exit abnormally
 
-在并行导入过程中，如果一个或多个 TiDB Lightning 节点异常终止，需要首先根据日志中的报错明确异常退出的原因，然后根据错误类型做不同处理：
+If one or more TiDB Lightning nodes exit abnormally during a parallel import, identify the cause based on the logged error, and handle the error according to the error type:
 
-- 如果是正常退出，例如手动 Kill 或内存溢出被操作系统终止等，可以在适当调整配置后直接重启 TiDB Lightning，无须任何其他操作。
+- If the error shows normal exit (for example, exit in response to a kill command) or termination by the operating system due to OOM, adjust the configuration and then restart the TiDB Lightning nodes.
 
-- 如果是不影响数据正确性的报错，例如网络超时，请按以下步骤解决：
+- If the error has no impact on data accuracy, for example, network timeout, perform the following steps:
 
-    1. 在每一个失败的节点上，执行 [checkpoint-error-ignore](/tidb-lightning/tidb-lightning-checkpoints.md#--checkpoint-error-ignore) 命令，值设置为 `all`，以清除断点续传源数据中记录的错误。
+    1. Run the [`checkpoint-error-ignore`](/tidb-lightning/tidb-lightning-checkpoints.md#--checkpoint-error-ignore) command with the setting `--checkpoint-error-ignore=all` on all failed nodes to clean errors in the checkpoint source data.
 
-    2. 重启这些异常的节点，从断点位置继续导入。
+    2. Restart these nodes to continue importing data from checkpoints.
 
-- 如果在日志中看到影响数据正确性的报错，如 checksum mismatched，表示源文件中有非法的数据，请按以下步骤解决：
+- If you see errors in the log that result in data inaccuracies, such as a checksum mismatch indicating invalid data in the source file, you can perform the following steps to resolve this issue:
 
-    1. 在每一个 Lightning 节点（包括成功导入数据的节点）上执行 [checkpoint-error-destroy](/tidb-lightning/tidb-lightning-checkpoints.md#--checkpoint-error-destroy) 命令，以清除失败的表中已导入的数据，并将这些表的 checkpoint 状态重置为 "not yet started"。
+    1. Run the [`checkpoint-error-destroy`](/tidb-lightning/tidb-lightning-checkpoints.md#--checkpoint-error-destroy) command on all Lightning nodes, including successful nodes. This command removes the imported data from failed tables and resets the checkpoint status of these tables to "not yet started".
 
-    2. 使用 [`filter`](/table-filter.md) 参数在所有 TiDB Lightning 节点（包括任务正常结束的节点）上重新配置和导入失败表的数据。重新配置任务时，不要将 checkpoint-error-destroy 命令放在每一个 Lightning 节点的启动脚本中，否则会删除多个并行导入任务使用的共享元数据，可能会导致数据导入过程出现问题。例如，如果启动了第二个 Lightning 导入任务，它将删除第一个数据导入任务写入的元数据，导致数据导入异常。
+    2. Reconfigure and import the data of failed tables by using the [`filter`](/table-filter.md) parameter on all TiDB Lightning nodes, including normally exiting nodes.
 
-### 导入过程中报错 "Target table is calculating checksum. Please wait until the checksum is finished and try again"
+        When you reconfigure the Lightning parallel import task, do not include the `checkpoint-error-destroy` command in the startup script of each Lightning node. Otherwise, this command deletes shared metadata used by multiple parallel import tasks, which might cause issues during data import. For example, if a second Lightning import task is started, it will delete the metadata written by the first task, leading to abnormal data import.
 
-在部分并行导入场景，如果表比较多或者一些表的数据量比较小，可能会出现当一个或多个任务开始处理某个表的时候，此表对应的其他任务已经完成，并开始数据一致性校验。此时，由于数据一致性校验不支持写入其他数据，对应的任务会返回 "Target table is calculating checksum. Please wait until the checksum is finished and try again" 错误。等校验任务完成，重启这些失败的任务，报错会消失，数据的正确性也不会受影响。
+### During an import, an error "Target table is calculating checksum. Please wait until the checksum is finished and try again" is reported
+
+Some parallel imports involve a large number of tables or tables with a small volume of data. In this case, it is possible that before one or more tasks start processing a table, other tasks of this table have finished and data checksum is in progress. At this time, an error `Target table is calculating checksum. Please wait until the checksum is finished and try again` is reported. In this case, you can wait for the completion of checksum and then restart the failed tasks. The error disappears and data accuracy is not affected.

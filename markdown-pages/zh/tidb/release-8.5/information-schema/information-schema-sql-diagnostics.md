@@ -1,45 +1,56 @@
 ---
-title: SQL 诊断
-summary: 了解 SQL 诊断功能。
+title: SQL Diagnostics
+summary: Understand SQL diagnostics in TiDB.
 ---
 
-# SQL 诊断
+# SQL Diagnostics
 
-SQL 诊断功能是在 TiDB 4.0 版本中引入的特性，用于提升 TiDB 问题定位的效率。TiDB 4.0 版本以前，用户需要使用不同的工具以异构的方式获取不同信息。新的 SQL 诊断系统对这些离散的信息进行了整体设计，它整合系统各个维度的信息，通过系统表的方式向上层提供一致的接口，提供监控汇总与自动诊断，方便用户查询集群信息。
+SQL diagnostics is a feature introduced in TiDB v4.0. You can use this feature to locate problems in TiDB with higher efficiency. Before TiDB v4.0, you need to use different tools to obtain different information.
 
-SQL 诊断共分三大块：
+The SQL diagnostic system has the following advantages:
 
-* **集群信息表**：TiDB 4.0 诊断系统添加了集群信息表，为原先离散的各实例信息提供了统一的获取方式。它将整个集群的集群拓扑、硬件信息、软件信息、内核参数、监控、系统信息、慢查询、语句、日志完全整合在表中，让用户能够统一使用 SQL 进行查询。
-* **集群监控表**：TiDB 4.0 诊断系统添加了集群监控系统表，所有表都在 `metrics_schema` 中，可以通过 SQL 语句来查询监控信息。比起原先的可视化监控，SQL 查询监控允许用户对整个集群的所有监控进行关联查询，并对比不同时间段的结果，迅速找出性能瓶颈。由于 TiDB 集群的监控指标数量较大，SQL 诊断还提供了监控汇总表，让用户能够更便捷地从众多监控中找出异常的监控项。
-* **自动诊断**：尽管用户可以手动执行 SQL 来查询集群信息表、集群监控表与汇总表来定位问题，但自动诊断可以快速对常见异常进行定位。SQL 诊断基于已有的集群信息表和监控表，提供了与之相关的诊断结果表与诊断汇总表来执行自动诊断。
++ It integrates information from all components of the system as a whole.
++ It provides a consistent interface to the upper layer through system tables.
++ It provides monitoring summaries and automatic diagnostics.
++ You will find it easier to query cluster information.
 
-## 集群信息表
+## Overview
 
-集群信息表将一个集群中的所有实例的信息都汇聚在一起，让用户仅通过一条 SQL 就能查询整个集群相关信息。集群信息表列表如下：
+The SQL diagnostic system consists of three major parts:
 
-* 集群拓扑表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 用于获取集群当前的拓扑信息，以及各个实例的版本、版本对应的 Git Hash、各实例的启动时间、各实例的运行时间。
-* 集群配置表 [`information_schema.cluster_config`](/information-schema/information-schema-cluster-config.md) 用于获取集群当前所有实例的配置。对于 TiDB 4.0 之前的版本，用户必须逐个访问各个实例的 HTTP API 才能获取这些配置信息。
-* 集群硬件表 [`information_schema.cluster_hardware`](/information-schema/information-schema-cluster-hardware.md) 用于快速查询集群硬件信息。
-* 集群负载表 [`information_schema.cluster_load`](/information-schema/information-schema-cluster-load.md) 用于查询集群不同实例以及不同硬件类型的负载信息。
-* 内核参数表 [`information_schema.cluster_systeminfo`](/information-schema/information-schema-cluster-systeminfo.md) 用于查询集群不同实例的内核配置信息。目前支持查询 sysctl 的信息。
-* 集群日志表 [`information_schema.cluster_log`](/information-schema/information-schema-cluster-log.md) 用于集群日志查询，通过将查询条件下推到各个实例，降低日志查询对集群的影响，性能影响小于等 grep 命令。
++ **Cluster information table**: The SQL diagnostics system introduces cluster information tables that provide a unified way to get the discrete information of each instance. This system fully integrates the cluster topology, hardware information, software information, kernel parameters, monitoring, system information, slow queries, statements, and logs of the entire cluster into the table. So you can query this information using SQL statements.
 
-TiDB 4.0 之前的系统表，只能查看当前实例信息，TiDB 4.0 实现了对应的集群表，可以在单个 TiDB 实例上拥有整个集群的全局视图。这些表目前都位于 `information_schema` 中，查询方式与其他 `information_schema` 系统表一致。
++ **Cluster monitoring table**: The SQL diagnostic system introduces cluster monitoring tables. All of these tables are in `metrics_schema`, and you can query monitoring information using SQL statements. Compared to the visualized monitoring before v4.0, you can use this SQL-based method to perform correlated queries on all the monitoring information of the entire cluster, and compare the results of different time periods to quickly identify performance bottlenecks. Because the TiDB cluster has many monitoring metrics, the SQL diagnostic system also provides monitoring summary tables, so you can find abnormal monitoring items more easily.
 
-## 集群监控表
+**Automatic diagnostics**: Although you can manually execute SQL statements to query cluster information tables, cluster monitoring tables, and summary tables to locate issues, the automatic diagnostics allows you to quickly locate common issues. The SQL diagnostic system performs automatic diagnostics based on the existing cluster information tables and monitoring tables, and provides relevant diagnostic result tables and diagnostic summary tables.
 
-为了能够动态地观察并对比不同时间段的集群情况，TiDB 4.0 诊断系统添加了集群监控系统表。所有监控表都在 `metrics_schema` 中，可以通过 SQL 的方式查询监控信息。SQL 查询监控允许用户对整个集群的所有监控进行关联查询，并对比不同时间段的结果，迅速找出性能瓶颈。
+## Cluster information tables
 
-* [`information_schema.metrics_tables`](/information-schema/information-schema-metrics-tables.md)：由于目前添加的系统表数量较多，因此用户可以通过该表查询这些监控表的相关元信息。
+The cluster information tables bring together the information of all instances and instances in a cluster. With these tables, you can query all cluster information using only one SQL statement. The following is a list of cluster information tables:
 
-由于 TiDB 集群的监控指标数量较大，因此 TiDB 4.0 提供以下监控汇总表：
++ From the cluster topology table [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md), you can get the current topology information of the cluster, the version of each instance, the Git Hash corresponding to the version, the starting time of each instance, and the running time of each instance.
++ From the cluster configuration table [`information_schema.cluster_config`](/information-schema/information-schema-cluster-config.md), you can get the configuration of all instances in the cluster. For versions earlier than 4.0, you need to access the HTTP API of each instance one by one to get these configuration information.
++ On the cluster hardware table [`information_schema.cluster_hardware`](/information-schema/information-schema-cluster-hardware.md), you can quickly query the cluster hardware information.
++ On the cluster load table [`information_schema.cluster_load`](/information-schema/information-schema-cluster-load.md), you can query the load information of different instances and hardware types of the cluster.
++ On the kernel parameter table [`information_schema.cluster_systeminfo`](/information-schema/information-schema-cluster-systeminfo.md), you can query the kernel configuration information of different instances in the cluster. Currently, TiDB supports querying the sysctl information.
++ On the cluster log table [`information_schema.cluster_log`](/information-schema/information-schema-cluster-log.md), you can query cluster logs. By pushing down query conditions to each instance, the impact of the query on cluster performance is less than that of the `grep` command.
 
-* 监控汇总表 [`information_schema.metrics_summary`](/information-schema/information-schema-metrics-summary.md) 用于汇总所有监控数据，以提升用户排查各监控指标的效率。
-* 监控汇总并按 label 聚合表 [`information_schema.metrics_summary_by_label`](/information-schema/information-schema-metrics-summary.md) 同样用于汇总所有监控数据，但该表会对各项监控的不同的 label 进行聚合统计。
+On the system tables earlier than TiDB v4.0, you can only view the current instance. TiDB v4.0 introduces the corresponding cluster tables and you can have a global view of the entire cluster on a single TiDB instance. These tables are currently in `information_schema`, and the query method is the same as other `information_schema` system tables.
 
-## 自动诊断
+## Cluster monitoring tables
 
-以上集群信息表和集群监控表均需要用户手动执行 SQL 语句来排查集群问题。TiDB 4.0 中添加了自动诊断功能，根据已有的基础信息表，提供诊断相关的系统表，使诊断自动执行。自动诊断相关的系统表如下：
+To dynamically observe and compare cluster conditions in different time periods, the SQL diagnostic system introduces cluster monitoring system tables. All monitoring tables are in `metrics_schema`, and you can query the monitoring information using SQL statements. Using this method, you can perform correlated queries on all monitoring information of the entire cluster and compare the results of different time periods to quickly identify performance bottlenecks.
 
-* 诊断结果表 [`information_schema.inspection_result`](/information-schema/information-schema-inspection-result.md) 用于展示对系统的诊断结果。诊断是惰性触发，使用 `select * from inspection_result` 会触发所有诊断规则对系统进行诊断，并在结果中展示系统中的故障或风险。
-* 诊断汇总表 [`information_schema.inspection_summary`](/information-schema/information-schema-inspection-summary.md) 用于对特定链路或模块的监控进行汇总，用户可以根据整个模块或链路的上下文来排查定位问题。
++ [`information_schema.metrics_tables`](/information-schema/information-schema-metrics-tables.md): Because many system tables exist now, you can query meta-information of these monitoring tables on the `information_schema.metrics_tables` table.
+
+Because the TiDB cluster has many monitoring metrics, TiDB provides the following monitoring summary tables in v4.0:
+
++ The monitoring summary table [`information_schema.metrics_summary`](/information-schema/information-schema-metrics-summary.md) summarizes all monitoring data to for you to check each monitoring metric with higher efficiency.
++ [`information_schema.metrics_summary_by_label`](/information-schema/information-schema-metrics-summary.md) also summarizes all monitoring data. Particularly, this table aggregates statistics using different labels of each monitoring metric.
+
+## Automatic diagnostics
+
+On the cluster information tables and cluster monitoring tables above, you need to manually execute SQL statements to troubleshoot the cluster. TiDB v4.0 supports the automatic diagnostics. You can use diagnostic-related system tables based on the existing basic information tables, so that the diagnostics is automatically executed. The following are the system tables related to the automatic diagnostics:
+
++ The diagnostic result table [`information_schema.inspection_result`](/information-schema/information-schema-inspection-result.md) displays the diagnostic result of the system. The diagnostics is passively triggered. Executing `select * from inspection_result` triggers all diagnostic rules to diagnose the system, and the faults or risks in the system are displayed in the results.
++ The diagnostic summary table [`information_schema.inspection_summary`](/information-schema/information-schema-inspection-summary.md) summarizes the monitoring information of a specific link or module. You can troubleshoot and locate problems based on the context of the entire module or link.

@@ -1,29 +1,24 @@
 ---
-title: 使用 TiUP 运维 DM 集群
-summary: 学习如何使用 TiUP 运维 DM 集群。
+title: Maintain a DM Cluster Using TiUP
+summary: Learn how to maintain a DM cluster using TiUP.
 ---
 
-# 使用 TiUP 运维 DM 集群
+# Maintain a DM Cluster Using TiUP
 
-本文介绍如何使用 TiUP 的 DM 组件运维 DM 集群。
+This document introduces how to maintain a DM cluster using the TiUP DM component.
 
-如果你还未部署 DM 集群，可参考[使用 TiUP 部署 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)。
+If you have not deployed a DM cluster yet, you can refer to [Deploy a DM Cluster Using TiUP](/dm/deploy-a-dm-cluster-using-tiup.md) for instructions.
 
-> **注意：**
+> **Note:**
 >
-> - 需要确保以下组件间端口可正常连通：
->
->     - 各 DM-master 节点间的 `peer_port`（默认为 `8291`）可互相连通。
->
->     - 各 DM-master 节点可连通所有 DM-worker 节点的 `port`（默认为 `8262`）。
->
->     - 各 DM-worker 节点可连通所有 DM-master 节点的 `port`（默认为 `8261`）。
->
->     - TiUP 节点可连通所有 DM-master 节点的 `port`（默认为 `8261`）。
->
->     - TiUP 节点可连通所有 DM-worker 节点的 `port`（默认为 `8262`）。
+> - Make sure that the ports among the following components are interconnected
+>     - The `peer_port` (`8291` by default) among the DM-master nodes are interconnected.
+>     - Each DM-master node can connect to the `port` of all DM-worker nodes (`8262` by default).
+>     - Each DM-worker node can connect to the `port` of all DM-master nodes (`8261` by default).
+>     - The TiUP nodes can connect to the `port` of all DM-master nodes (`8261` by default).
+>     - The TiUP nodes can connect to the `port` of all DM-worker nodes (`8262` by default).
 
-TiUP DM 组件的帮助信息如下：
+For the help information of the TiUP DM component, run the following command:
 
 ```bash
 tiup dm --help
@@ -64,9 +59,9 @@ Flags:
   -y, --yes                Skip all confirmations and assumes 'yes'
 ```
 
-## 查看集群列表
+## View the cluster list
 
-集群部署成功后，可以通过 `tiup dm list` 命令在集群列表中查看该集群：
+After the cluster is successfully deployed, view the cluster list by running the following command:
 
 
 ```bash
@@ -79,18 +74,20 @@ Name  User  Version  Path                                  PrivateKey
 prod-cluster  tidb  ${version}  /root/.tiup/storage/dm/clusters/test  /root/.tiup/storage/dm/clusters/test/ssh/id_rsa
 ```
 
-## 启动集群
+## Start the cluster
 
-集群部署成功后，可以执行以下命令启动该集群。如果忘记了部署的集群名字，可以使用 `tiup dm list` 命令查看。
+After the cluster is successfully deployed, start the cluster by running the following command:
 
 
 ```shell
 tiup dm start prod-cluster
 ```
 
-## 检查集群状态
+If you forget the name of your cluster, view the cluster list by running `tiup dm list`.
 
-如果想查看集群中每个组件的运行状态，逐一登录到各个机器上查看显然很低效。因此，TiUP 提供了 `tiup dm display` 命令，用法如下：
+## Check the cluster status
+
+TiUP provides the `tiup dm display` command to view the status of each component in the cluster. With this command, you do not have to log in to each machine to see the component status. The usage of the command is as follows:
 
 
 ```bash
@@ -113,46 +110,47 @@ ID                 Role          Host          Ports      OS/Arch       Status  
 172.19.0.101:9090  prometheus    172.19.0.101  9090       linux/x86_64  Up         /home/tidb/data/prometheus-9090    /home/tidb/deploy/prometheus-9090
 ```
 
-Status 列用 `Up` 或者 `Down` 表示该服务是否正常。对于 DM-master 组件，同时可能会带有 `|L` 表示该 DM-master 是 Leader，对于 DM-worker 组件，`Free` 表示当前 DM-worker 没有与上游绑定。
+The `Status` column uses `Up` or `Down` to indicate whether the service is running normally.
 
-## 缩容节点
+For the DM-master component, `|L` might be appended to a status, which indicates that the DM-master node is a Leader. For the DM-worker component, `Free` indicates that the current DM-worker node is not bound to an upstream.
 
-缩容即下线服务，最终会将指定的节点从集群中移除，并删除遗留的相关数据文件。
+## Scale in a cluster
 
-缩容操作进行时，内部对 DM-master、DM-worker 组件的操作流程为：
+Scaling in a cluster means making some node(s) offline. This operation removes the specified node(s) from the cluster and deletes the remaining data files.
 
-1. 停止组件进程
-2. 调用 DM-master 删除 member 的 API
-3. 清除节点的相关数据文件
+When you scale in a cluster, DM operations on DM-master and DM-worker components are performed in the following order:
 
-缩容命令的基本用法：
+1. Stop component processes.
+2. Call the API for DM-master to delete the `member`.
+3. Clean up the data files related to the node.
+
+The basic usage of the scale-in command:
 
 ```bash
 tiup dm scale-in <cluster-name> -N <node-id>
 ```
 
-它需要指定至少两个参数，一个是集群名字，另一个是节点 ID。节点 ID 可以参考上一节使用 `tiup dm display` 命令获取。
+To use this command, you need to specify at least two arguments: the cluster name and the node ID. The node ID can be obtained by using the `tiup dm display` command in the previous section.
 
-比如想缩容 172.16.5.140 上的 DM-worker 节点（DM-master 的缩容类似），可以执行：
+For example, to scale in the DM-worker node on `172.16.5.140` (similar to scaling in DM-master), run the following command:
 
 
 ```bash
 tiup dm scale-in prod-cluster -N 172.16.5.140:8262
 ```
 
-## 扩容节点
+## Scale out a cluster
 
-扩容的内部逻辑与部署类似，TiUP DM 组件会先保证节点的 SSH 连接，在目标节点上创建必要的目录，然后执行部署并且启动服务。
+The scale-out operation has an inner logic similar to that of deployment: the TiUP DM component first ensures the SSH connection of the node, creates the required directories on the target node, then executes the deployment operation, and starts the node service.
 
-例如，在集群 `prod-cluster` 中扩容一个 DM-worker 节点（DM-master 的扩容类似）：
+For example, to scale out a DM-worker node in the `prod-cluster` cluster, take the following steps (scaling out DM-master has similar steps):
 
-1. 新建 scale.yaml 文件，添加新增的 woker 节点信息：
+1. Create a `scale.yaml` file and add information of the new worker node:
 
-    > **注意：**
+    > **Note:**
     >
-    > 需要新建一个拓扑文件，文件中只写入扩容节点的描述信息，不要包含已存在的节点。
-    >
-    > 其他更多配置项（如：部署目录等）请参考 [TiUP 配置参数模版](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml)。
+    > You need to create a topology file, which includes only the description of the new nodes, not the existing nodes.
+    > For more configuration items (such as the deployment directory), refer to this [TiUP configuration parameter example](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml).
 
     ```yaml
     ---
@@ -162,63 +160,63 @@ tiup dm scale-in prod-cluster -N 172.16.5.140:8262
 
     ```
 
-2. 执行扩容操作。TiUP DM 根据 scale.yaml 文件中声明的端口、目录等信息在集群中添加相应的节点：
+2. Perform the scale-out operation. TiUP DM adds the corresponding nodes to the cluster according to the port, directory, and other information described in `scale.yaml`.
 
     
     ```shell
     tiup dm scale-out prod-cluster scale.yaml
     ```
 
-    执行完成之后可以通过 `tiup dm display prod-cluster` 命令检查扩容后的集群状态。
+    After the command is executed, you can check the status of the scaled-out cluster by running `tiup dm display prod-cluster`.
 
-## 滚动升级
+## Rolling upgrade
 
-> **注意：**
+> **Note:**
 >
-> 从 v2.0.5 版本开始，dmctl 支持[导出和导入集群的数据源和任务配置](/dm/dm-export-import-config.md)。
+> Since v2.0.5, dmctl support [Export and Import Data Sources and Task Configuration of Clusters](/dm/dm-export-import-config.md).
 >
-> 升级前，可使用 `config export` 命令导出集群的配置文件，升级后如需降级回退到旧版本，可重建旧集群后，使用 `config import` 导入之前的配置。
+> Before upgrading, you can use `config export` to export the configuration files of clusters. After upgrading, if you need to downgrade to an earlier version, you can first redeploy the earlier cluster and then use `config import` to import the previous configuration files.
 >
-> 对于 v2.0.5 之前版本的集群，可使用 >= v2.0.5 且 < v8.0.0 的 dmctl 导出和导入集群配置。
+> For clusters earlier than v2.0.5, you can use dmctl (>= v2.0.5 and < v8.0.0) to export and import the data source and task configuration files.
 >
-> 对于 v2.0.2 之后的版本，导入集群配置时暂不支持自动恢复 relay worker 相关配置，可手动执行 `start-relay` 命令[开启 relay log](/dm/relay-log.md#开启关闭-relay-log)。
+> For clusters later than v2.0.2, currently, it is not supported to automatically import the configuration related to relay worker. You can use `start-relay` command to manually [start relay log](/dm/relay-log.md#enable-and-disable-relay-log).
 
-滚动升级过程中尽量保证对前端业务透明、无感知，其中对不同节点有不同的操作。
+The rolling upgrade process is made as transparent as possible to the application, and does not affect the business. The operations vary with different nodes.
 
-### 升级操作
+### Upgrade command
 
-可使用 `tiup dm upgrade` 命令来升级集群。例如，以下示例将集群升级到 `${version}`，执行命令前，将 `${version}` 替换为实际需要的版本：
+You can run the `tiup dm upgrade` command to upgrade a DM cluster. For example, the following command upgrades the cluster to `${version}`. Modify `${version}` to your needed version before running this command:
 
-> **注意：**
+> **Note:**
 >
-> 从 v8.0.0 开始，DM 移除了固定的加解密 key，并支持设置自定义加解密 key。如果升级前[数据源配置](/dm/dm-source-configuration-file.md)和[迁移任务配置](/dm/task-configuration-file-full.md)里使用了加密密码，需参考 [DM 自定义加解密 key](/dm/dm-customized-secret-key.md) 里的升级步骤进行额外操作。
+> Starting from v8.0.0, DM removes the fixed secret key for encryption and decryption and enables you to customize a secret key for encryption and decryption. If encrypted passwords are used in [data source configurations](/dm/dm-source-configuration-file.md) and [migration task configurations](/dm/task-configuration-file-full.md) before the upgrade, you need to refer to the upgrade steps in [Customize a Secret Key for DM Encryption and Decryption](/dm/dm-customized-secret-key.md) for additional operations.
 
 
 ```bash
-tiup dm upgrade prod-cluster `${version}`
+tiup dm upgrade prod-cluster ${version}
 ```
 
-## 更新配置
+## Update configuration
 
-如果想要动态更新组件的配置，TiUP DM 组件为每个集群保存了一份当前的配置，如果想要编辑这份配置，则执行 `tiup dm edit-config <cluster-name>` 命令。例如：
+If you want to dynamically update the component configurations, the TiUP DM component saves a current configuration for each cluster. To edit this configuration, execute the `tiup dm edit-config <cluster-name>` command. For example:
 
 
 ```bash
 tiup dm edit-config prod-cluster
 ```
 
-然后 TiUP DM 组件会使用 vi 打开配置文件供编辑（如果你想要使用其他编辑器，请使用 `EDITOR` 环境变量自定义编辑器，例如 `export EDITOR=nano`），编辑完之后保存即可。此时的配置并没有应用到集群，如果想要让它生效，还需要执行：
+TiUP DM opens the configuration file in the vi editor. If you want to use other editors, use the `EDITOR` environment variable to customize the editor, such as `export EDITOR=nano`. After editing the file, save the changes. To apply the new configuration to the cluster, execute the following command:
 
 
 ```bash
 tiup dm reload prod-cluster
 ```
 
-该操作会将配置发送到目标机器，滚动重启集群，使配置生效。
+The command sends the configuration to the target machine and restarts the cluster to make the configuration take effect.
 
-## 更新组件
+## Update component
 
-常规的升级集群可以使用 `upgrade` 命令，但是在某些场景下（例如 Debug)，可能需要用一个临时的包替换正在运行的组件，此时可以用 `patch` 命令：
+For normal upgrade, you can use the `upgrade` command. But in some scenarios, such as debugging, you might need to replace the currently running component with a temporary package. To achieve this, use the `patch` command:
 
 
 ```bash
@@ -245,53 +243,54 @@ Global Flags:
   -y, --yes                Skip all confirmations and assumes 'yes'
 ```
 
-例如，有一个 DM-master 的 hotfix 包放在 `/tmp/dm-master-hotfix.tar.gz`，如果此时想要替换集群上的所有 DM-master，则可以执行：
+If a DM-master hotfix package is in `/tmp/dm-master-hotfix.tar.gz` and you want to replace all the DM-master packages in the cluster, run the following command:
 
 
 ```bash
 tiup dm patch prod-cluster /tmp/dm-master-hotfix.tar.gz -R dm-master
 ```
 
-或者只替换其中一个 DM-master：
+You can also replace only one DM-master package in the cluster:
 
 
 ```bash
 tiup dm patch prod-cluster /tmp/dm--hotfix.tar.gz -N 172.16.4.5:8261
 ```
 
-## 导入和升级由 DM-Ansible 部署的 DM 1.0 集群
+## Import and upgrade a DM 1.0 cluster deployed using DM-Ansible
 
-> **注意：**
+> **Note:**
 >
-> - TiUP 不支持在 DM 1.0 集群中导入 DM Portal 组件。
-> - 导入 DM 集群前，终止运行待导入的集群。
-> - 如果需要将迁移任务升级至 2.0，不可对该任务执行 `stop-run` 命令。
-> - TiUP 仅支持导入数据到 v2.0.0-rc.2 或以上版本的 DM 集群。
-> - `import` 命令用于将数据从 DM 1.0 集群导入到一个新的 DM 2.0 集群。如果你需要将 DM 迁移任务导入一个现有的 DM 2.0 集群，可以参考 [TiDB Data Migration 1.0.x 到 2.0+ 手动升级](/dm/manually-upgrade-dm-1.0-to-2.0.md)。
-> - 导入集群某些组件的部署目录与原始集群的部署目录不同，可以执行 `display` 命令来查看相关信息。
-> - 导入前，执行 `tiup update --self && tiup update dm`，以确保 DM 组件是最新版本。
-> - 导入后，集群中只存在一个 DM-master 节点。请参考[扩容节点](#扩容节点)来扩展 DM-master。
+> - TiUP does not support importing the DM Portal component in a DM 1.0 cluster.
+> - You need to stop the original cluster before importing.
+> - Don't run `stop-task` for tasks that need to be upgraded to 2.0.
+> - TiUP only supports importing to a DM cluster of v2.0.0-rc.2 or a later version.
+> - The `import` command is used to import data from a DM 1.0 cluster to a new DM 2.0 cluster. If you need to import DM migration tasks to an existing DM 2.0 cluster, refer to [Manually Upgrade TiDB Data Migration from v1.0.x to v2.0+](/dm/manually-upgrade-dm-1.0-to-2.0.md).
+> - The deployment directories of some components are different from those of the original cluster. You can execute the `display` command to view the details.
+> - Run `tiup update --self && tiup update dm` before importing to make sure that the TiUP DM component is the latest version.
+> - Only one DM-master node exists in the cluster after importing. Refer to [Scale out a cluster](#scale-out-a-cluster) to scale out the DM-master.
 
-引入 TiUP 前，DM-Ansible 用于部署 DM 集群。要使 TiUP 接管由 DM-Ansible 部署的 DM 1.0 集群，需要执行 `import` 命令：
+Before TiUP is released, DM-Ansible is often used to deploy DM clusters. To enable TiUP to take over the DM 1.0 cluster deployed by DM-Ansible, use the `import` command.
 
-例如，以下命令可导入使用 DM-Ansible 部署的集群：
+For example, to import a cluster deployed using DM Ansible:
+
 
 ```bash
 tiup dm import --dir=/path/to/dm-ansible --cluster-version ${version}
 ```
 
-可以执行 `tiup list dm-master` 来查看 TiUP 支持的最新集群版本。
+Execute `tiup list dm-master` to view the latest cluster version supported by TiUP.
 
-`import` 命令的执行过程如下：
+The process of using the `import` command is as follows:
 
-1. 根据之前使用 DM-Ansible 部署的 DM 集群，TiUP 生成一个拓扑文件 [`topology.yml`](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml)。
-2. 确认拓扑文件生成后，你可以用这个文件来部署 v2.0 或更高版本的 DM 集群。
+1. TiUP generates a topology file [`topology.yml`](https://github.com/pingcap/tiup/blob/master/embed/examples/dm/topology.example.yaml) based on the DM cluster previously deployed using DM-Ansible.
+2. After confirming that the topology file has been generated, you can use it to deploy the DM cluster of v2.0 or later versions.
 
-部署完成后，执行 `tiup dm start` 命令来启动集群和开始 DM 内核升级流程。
+After the deployment is completed, you can execute the `tiup dm start` command to start the cluster and begin the process of upgrading the DM kernel.
 
-## 查看操作日志
+## View the operation log
 
-操作日志的查看可以借助 `audit` 命令，其用法如下：
+To view the operation log, use the `audit` command. The usage of the `audit` command is as follows:
 
 ```bash
 Usage:
@@ -301,7 +300,7 @@ Flags:
   -h, --help   help for audit
 ```
 
-在不使用 `[audit-id]` 参数时，该命令会显示执行的命令列表，如下：
+If the `[audit-id]` argument is not specified, the command shows a list of commands that have been executed. For example:
 
 
 ```bash
@@ -316,16 +315,16 @@ ID      Time                  Command
 4D5kNr  2020-08-13T05:36:10Z  tiup dm deploy -p prod-cluster ${version} ./examples/dm/minimal.yaml
 ```
 
-第一列为 audit-id，如果想看某个命令的执行日志，则传入这个 audit-id：
+The first column is `audit-id`. To view the execution log of a certain command, pass the `audit-id` argument as follows:
 
 
 ```bash
 tiup dm audit 4D5kQY
 ```
 
-## 在集群节点机器上执行命令
+## Run commands on a host in the DM cluster
 
-`exec` 命令可以很方便地到集群的机器上执行命令，使用方式如下：
+To run commands on a host in the DM cluster, use the `exec` command. The usage of the `exec` command is as follows:
 
 ```bash
 Usage:
@@ -339,63 +338,63 @@ Flags:
       --sudo             use root permissions (default false)
 ```
 
-例如，如果要到所有的 DM 节点上执行 `ls /tmp`，则可以执行：
+For example, to execute `ls /tmp` on all DM nodes, run the following command:
 
 
 ```bash
 tiup dm exec prod-cluster --command='ls /tmp'
 ```
 
-## 集群控制工具 (dmctl)
+## dmctl
 
-TiUP 集成了 DM 的控制工具 `dmctl`：
+TiUP integrates the DM cluster controller `dmctl`.
 
-运行命令如下：
+Run the following command to use dmctl:
 
 ```bash
 tiup dmctl [args]
 ```
 
-指定 dmctl 版本。执行如下命令前，将 ${version} 修改为实际需要的版本。
+Specify the version of dmctl. Modify `${version}` to your needed version before running this command:
 
 ```
-tiup dmctl: ${version} [args]
+tiup dmctl:${version} [args]
 ```
 
-例如，以前添加 source 命令为 `dmctl --master-addr master1:8261 operate-source create /tmp/source1.yml`，集成到 TiUP 中的命令为：
+The previous dmctl command to add a source is `dmctl --master-addr master1:8261 operate-source create /tmp/source1.yml`. After dmctl is integrated into TiUP, the command is:
 
 
 ```bash
 tiup dmctl --master-addr master1:8261 operate-source create /tmp/source1.yml
 ```
 
-## 使用中控机系统自带的 SSH 客户端连接集群
+## Use the system's native SSH client to connect to cluster
 
-在以上所有操作中，涉及到对集群机器的操作都是通过 TiUP 内置的 SSH 客户端连接集群执行命令，但是在某些场景下，需要使用系统自带的 SSH 客户端来对集群执行操作，比如：
+All operations above performed on the cluster machine use the SSH client embedded in TiUP to connect to the cluster and execute commands. However, in some scenarios, you might also need to use the SSH client native to the control machine system to perform such cluster operations. For example:
 
-- 使用 SSH 插件来做认证
-- 使用定制的 SSH 客户端
+- To use an SSH plug-in for authentication
+- To use a customized SSH client
 
-此时可以通过命令行参数 `--native-ssh` 启用系统自带命令行：
+Then you can use the `--native-ssh` command-line flag to enable the system-native command-line tool:
 
-- 部署集群：`tiup dm deploy <cluster-name> <version> <topo> --native-ssh`，其中 `<cluster-name>` 为集群名称，`<version>` 为 DM 集群版本（例如 `v8.5.8`），`<topo>` 为拓扑文件路径
-- 启动集群：`tiup dm start <cluster-name> --native-ssh`
-- 升级集群：`tiup dm upgrade ... --native-ssh`
+- Deploy a cluster: `tiup dm deploy <cluster-name> <version> <topo> --native-ssh`. Fill in the name of your cluster for `<cluster-name>`, the DM version to be deployed (such as `8.5.8`) for `<version>`, and the topology file name for `<topo>`.
+- Start a cluster: `tiup dm start <cluster-name> --native-ssh`.
+- Upgrade a cluster: `tiup dm upgrade ... --native-ssh`
 
-所有涉及集群操作的步骤都可以加上 `--native-ssh` 来使用系统自带的客户端。
+You can add `--native-ssh` in all cluster operation commands above to use the system's native SSH client.
 
-也可以使用环境变量 `TIUP_NATIVE_SSH` 来指定是否使用本地 SSH 客户端，避免每个命令都需要添加 `--native-ssh` 参数：
+To avoid adding such a flag in every command, you can use the `TIUP_NATIVE_SSH` system variable to specify whether to use the local SSH client:
 
 ```sh
 export TIUP_NATIVE_SSH=true
-# 或者
+# or
 export TIUP_NATIVE_SSH=1
-# 或者
+# or
 export TIUP_NATIVE_SSH=enable
 ```
 
-若环境变量和 `--native-ssh` 同时指定，则以 `--native-ssh` 为准。
+If you specify this environment variable and `--native-ssh` at the same time, `--native-ssh` has higher priority.
 
-> **注意：**
+> **Note:**
 >
-> 在部署集群的步骤中，若需要使用密码的方式连接 (-p)，或者密钥文件设置了 passphrase，则需要保证中控机上安装了 sshpass，否则连接时会报错。
+> During the process of cluster deployment, if you need to use a password for connection or `passphrase` is configured in the key file, you must ensure that `sshpass` is installed on the control machine; otherwise, a timeout error is reported.

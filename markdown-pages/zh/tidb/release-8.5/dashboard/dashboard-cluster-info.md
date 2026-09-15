@@ -1,91 +1,87 @@
 ---
-title: TiDB Dashboard 集群信息页面
-summary: 查看整个集群中 TiDB、TiKV、PD、TiFlash 组件的运行状态及其所在主机的运行状态
+title: TiDB Dashboard Cluster Information Page
+summary: The TiDB Dashboard Cluster Information Page allows users to view the running status of TiDB, TiKV, PD, and TiFlash components in the entire cluster, as well as the running status of the host on which these components are located. Users can access the page by logging in to TiDB Dashboard and clicking on Cluster Info in the left navigation menu, or by visiting a specific URL in their browser. The page provides instance, host, and disk lists, showing detailed information about each component and its running status.
 ---
 
-# TiDB Dashboard 集群信息页面
+# TiDB Dashboard Cluster Information Page
 
-该页面上允许用户查看整个集群中 TiDB、TiKV、PD、TiFlash 组件的运行状态及其所在主机的运行状态。
+On the cluster information page, you can view the running status of TiDB, TiKV, PD, TiFlash components in the entire cluster and the running status of the host on which these components are located.
 
-## 访问
+## Access the page
 
-可以通过以下两种方法访问集群信息页面：
+You can use one of the following two methods to access the cluster information page:
 
-* 登录 TiDB Dashboard 后，在左侧导航栏中点击**集群信息** (Cluster Info)。
+* After logging in to TiDB Dashboard, click **Cluster Info** in the left navigation menu.
 
-* 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/cluster_info/instance>（将 `127.0.0.1:2379` 替换为实际 PD 实例地址和端口）。
+* Visit <http://127.0.0.1:2379/dashboard/#/cluster_info/instance> in your browser. Replace `127.0.0.1:2379` with the actual PD instance address and port.
 
-## 实例列表
+## Instance list
 
-点击**实例** (Instances) 可查看实例列表：
+Click **Instances** to view the list of instances:
 
-![实例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-instances-v650.png)
+![Instance list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-instances-v650.png)
 
-实例列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例的概况信息。
+This instance list shows the overview information of all instances of TiDB, TiKV, PD, and TiFlash components in the cluster.
 
-表格包含以下列：
+The list includes the following information:
 
-- 地址 (Address)：实例地址
-- 状态 (Status)：实例的运行状态
-- 启动时间 (Up Time)：实例的启动时间
-- 版本 (Version)：实例版本号
-- Git 哈希值 (Git Hash)：实例二进制对应的 Git 哈希值
-- 部署路径 (Deployment Directory)：实例二进制文件所在目录路径
+- Address: The instance address.
+- Status: The running status of the instance.
+- Up Time: The start time of the instance.
+- Version: The instance version number.
+- Git Hash: The Git Hash value corresponding to the instance binary file.
+- Deployment directory: The directory in which the instance binary file is located.
 
-### 实例运行状态 (Status)
+### Instance status
 
-实例可能处于如下任一运行状态：
+An instance can run in one of the following statuses:
 
-- 在线 (Up)：实例正常运行。
-- 离线 (Down) 或无法访问 (Unreachable)：实例未启动或对应主机存在网络问题。
-- 已缩容下线 (Tombstone)：实例上的数据已被完整迁出并缩容完毕。仅 TiKV 或 TiFlash 实例存在该状态。
-- 下线中 (Leaving)：实例上的数据正在被迁出并缩容。仅 TiKV 或 TiFlash 实例存在该状态。
-- 未知 (Unknown)：未知的实例运行状态。
+- Up: The instance is running normally.
+- Down or Unreachable: The instance is not running or a network problem exists on the corresponding host.
+- Tombstone: The data on the instance has been completely migrated out and the scaling-in is complete. This status exists only on TiKV or TiFlash instances.
+- Leaving: The data on the instance is being migrated out and the scaling-in is in process. This status exists only on TiKV or TiFlash instances.
+- Unknown: The running state of the instance is unknown.
 
-> **注意：**
+> **Note:**
 >
-> - TiDB Dashboard 显示的 `Leaving`、PD API 返回的 `Offline` 以及 TiUP 显示的 `Pending Offline` 这三个状态的含义相同。
-> - 表格中部分列仅在实例处于在线状态 (Up) 时能显示。
+> - `Leaving` in TiDB Dashboard, `Offline` returned by PD API, and `Pending Offline` in TiUP indicate the same status.
+> - Some columns in the table can be displayed only when the instance is up.
 
-实例运行状态来自于 PD 的调度信息。更详细的描述请参考 [TiDB 数据库的调度 -- 信息收集](/tidb-scheduling.md#信息收集)。
+Instance status derives from the PD scheduling information. For more details, see [Information collection](/tidb-scheduling.md#information-collection).
 
-## 主机列表
+## Host list
 
-点击**主机** (Hosts) 可查看主机列表：
+Click **Hosts** to view the list of hosts:
 
-![主机](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-hosts-v650.png)
+![Host list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-hosts-v650.png)
 
-主机列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例对应主机的运行情况。
+This host list shows the running status of hosts that correspond to all instances of TiDB, TiKV, PD, and TiFlash components in the cluster.
 
-表格包含以下列：
+The list includes the following information:
 
-- 主机地址 (Host Address)：主机 IP 地址
-- CPU：主机 CPU 逻辑核心数
-- CPU 使用率 (CPU Usage)：主机当前 1 秒的用户态和内核态 CPU 使用率
-- 物理内存 (Memory)：主机总计的物理内存大小
-- 内存使用率 (Memory Usage)：主机当前内存使用率
+- Host Address: The Host IP address.
+- CPU: The number of logical cores of the host CPU.
+- CPU Usage: The user-mode and kernel-mode CPU usage in the current 1 second.
+- Memory: The total physical memory size of the host.
+- Memory Usage: The current memory usage of the host.
 
-> **注意：**
+> **Note:**
 >
-> 主机列表信息由各个实例进程给出，因此当主机上所有实例都处于离线状态时，该主机信息将无法显示。
+> The host list information is provided by each instance process, so when all instances on the host are down, the host information is not displayed.
 
-## 磁盘列表
+## Disk list
 
-点击**磁盘** (Disks) 可查看磁盘列表：
+Click **Disks** to view the list of disks:
 
-![磁盘](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-cluster-info-disks-v650.png)
+![Disk list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-cluster-info-disks-v650.png)
 
-磁盘列表列出了该集群中 TiDB、TiKV、PD 和 TiFlash 组件所有实例对应主机磁盘的情况。
+This disk list shows the status of disks on which the TiDB, TiKV, PD, and TiFlash instances run.
 
-表格包含以下列：
+The list includes the following information:
 
-- 主机地址 (Host Address)：主机 IP 地址
-- 磁盘挂载点 (Mount Directory)：主机上运行实例所在磁盘的挂载路径
-- 文件系统 (File System)：主机上运行实例所在磁盘的文件系统类型
-- 磁盘容量 (Disk Capacity)：主机上运行实例所在磁盘的总空间大小
-- 磁盘使用率 (Disk Usage)：主机上运行实例所在磁盘的空间使用率
-- 实例 (Instance)：主机上运行的实例
-
-> **注意：**
->
-> **磁盘**列表可能无法显示某些主机的磁盘信息，具体取决于组件类型、分区配置和部署方式。在这种情况下，会显示一个黄色警告图标（⚠️）。将鼠标悬停在该图标上，会显示提示信息“获取主机信息失败”。这是预期行为。
+- Host Address: The Host IP address.
+- Mount Directory: The mount path of this disk on the host on which the instance is running.
+- File System: The file system type of this disk on the host on which the instance is running.
+- Disk Capacity: The total space of the disk on the host on which the instance is running.
+- Disk Usage: The space usage of the disk on the host on which the instance is running.
+- Instance: The instance running on this host.

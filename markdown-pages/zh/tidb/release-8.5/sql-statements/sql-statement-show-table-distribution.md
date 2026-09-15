@@ -1,13 +1,17 @@
 ---
 title: SHOW TABLE DISTRIBUTION
-summary: 介绍 TiDB 数据库中 SHOW TABLE DISTRIBUTION 的使用概况。
+summary: TiDB 数据库中 SHOW TABLE DISTRIBUTION 的用法概述。
 ---
 
-# SHOW TABLE DISTRIBUTION <span class="version-mark">从 v8.5.4 开始引入</span>
+# SHOW TABLE DISTRIBUTION <span class="version-mark">New in v8.5.4</span>
 
-`SHOW TABLE DISTRIBUTION` 语句用于显示指定表的 Region 分布情况。
+`SHOW TABLE DISTRIBUTION` 语句用于显示指定表的 Region 分布信息。
 
-## 语法图
+> **Note:**
+>
+> 此功能不适用于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例。
+
+## 语法
 
 ```ebnf+diagram
 ShowTableDistributionStmt ::=
@@ -19,7 +23,7 @@ TableName ::=
 
 ## 示例
 
-显示当前表 `t` 的 Region 分布情况：
+显示表 `t` 的 Region 分布信息：
 
 ```sql
 CREATE TABLE `t` (
@@ -58,3 +62,4 @@ SHOW TABLE t DISTRIBUTIONS;
 
 - [`DISTRIBUTE TABLE`](/sql-statements/sql-statement-distribute-table.md)
 - [`SHOW DISTRIBUTION JOBS`](/sql-statements/sql-statement-show-distribution-jobs.md)
+- [`CANCEL DISTRIBUTION JOB`](/sql-statements/sql-statement-cancel-distribution-job.md)

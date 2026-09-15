@@ -1,127 +1,127 @@
 ---
-title: Scheduling 配置文件描述
-summary: Scheduling 配置文件包含了多个配置项，如节点名称、数据路径、节点 URL 等。
+title: Scheduling Configuration File
+summary: The Scheduling configuration file includes multiple configuration items such as node name, data path, and node URL.
 ---
 
-# Scheduling 配置文件描述
+# Scheduling Configuration File
 
 <!-- markdownlint-disable MD001 -->
 
-Scheduling 节点用于提供 PD 的 `scheduling` 微服务。本文档仅在 PD 开启微服务模式下适用。
+The Scheduling node is used for providing the `scheduling` microservice for PD. This document is applicable only in PD microservice mode.
 
 > **Tip:**
 >
-> 如果你需要调整配置项的值，请参考[修改配置参数](/maintain-tidb-using-tiup.md#修改配置参数)进行操作。
+> If you need to adjust the value of a configuration item, refer to [Modify the configuration](/maintain-tidb-using-tiup.md#modify-the-configuration).
 
 ### `name`
 
-- Scheduling 节点名称。
-- 默认值：`"Scheduling"`
-- 如果你需要启动多个 Scheduling 节点，请确保不同的 Scheduling 节点使用不同的名字。
+- The name of the Scheduling node
+- Default value: `"Scheduling"`
+- To start multiple Scheduling nodes, use a unique name for each node.
 
 ### `data-dir`
 
-- Scheduling 节点上的数据存储路径。
-- 默认值：`"default.${name}"`
+- The directory in which the Scheduling node stores data
+- Default value: `"default.${name}"`
 
 ### `listen-addr`
 
-- Scheduling 节点监听的客户端 URL。
-- 默认值：`"http://127.0.0.1:3379"`
-- 部署集群时，`listen-addr` 必须指定当前主机的 IP 地址，例如 `"http://192.168.100.113:3379"`。如果运行在 Docker 中，则需要指定为 `"http://0.0.0.0:3379"`。
+- The client URL that the current Scheduling node listens to
+- Default value: `"http://127.0.0.1:3379"`
+- When deploying a cluster, you must specify the IP address of the current host as `listen-addr` (for example, `"http://192.168.100.113:3379"`). If the node runs on Docker, specify the Docker IP address as `"http://0.0.0.0:3379"`.
 
 ### `advertise-listen-addr`
 
-- 用于外部访问 Scheduling 节点的 URL。
-- 默认值：`"${listen-addr}"`
-- 在某些情况下，例如 Docker 或者 NAT 网络环境，客户端并不能通过 Scheduling 节点自己监听的地址来访问 Scheduling 节点。此时，你可以设置 `advertise-listen-addr` 来让客户端访问。
-- 例如，Docker 内部 IP 地址为 `172.17.0.1`，而宿主机的 IP 地址为 `192.168.100.113` 并且设置了端口映射 `-p 2379:2379`，那么可以设置 `advertise-listen-addr="http://192.168.100.113:2379"`，然后客户端就可以通过 `http://192.168.100.113:2379` 来找到这个服务。
+- The URL for the client to access the Scheduling node
+- Default value: `"${listen-addr}"`
+- In some situations such as in Docker or NAT network environments, if a client cannot access the Scheduling node through the default client URLs listened to by the Scheduling node, you must manually set `advertise-listen-addr` for client access.
+- For example, the internal IP address of Docker is `172.17.0.1`, while the IP address of the host is `192.168.100.113` and the port mapping is set to `-p 3379:3379`. In this case, you can set `advertise-listen-addr="http://192.168.100.113:2379"`. Then, the client can find this service through `http://192.168.100.113:2379`.
 
 ### `backend-endpoints`
 
-- Scheduling 节点监听其他 Scheduling 节点的 URL 列表。
-- 默认值：`"http://127.0.0.1:2379"`
+- The list of backend endpoints of other Scheduling nodes that the current Scheduling node listens to
+- Default value: `"http://127.0.0.1:2379"`
 
 ### `lease`
 
-- Scheduling Primary Key 租约超时时间，超时系统重新选举 Primary。
-- 默认值：3
-- 单位：秒
+- The timeout of the Scheduling Primary Key lease. After the timeout, the system re-elects a Primary.
+- Default value: `3`
+- Unit: seconds
 
 ## security
 
-安全相关配置项。
+Configuration items related to security
 
 ### `cacert-path`
 
-- CA 文件路径
-- 默认值：""
+- The path of the CA file
+- Default value: ""
 
 ### `cert-path`
 
-- 包含 X.509 证书的 PEM 文件路径
-- 默认值：""
+- The path of the Privacy Enhanced Mail (PEM) file that contains the X.509 certificate
+- Default value: ""
 
 ### `key-path`
 
-- 包含 X.509 key 的 PEM 文件路径
-- 默认值：""
+- The path of the PEM file that contains the X.509 key
+- Default value: ""
 
 ### `redact-info-log`
 
-- 控制 Scheduling 节点日志脱敏的开关
-- 该配置项值设为 true 时将对 Scheduling 日志脱敏，遮蔽日志中的用户信息。
-- 默认值：false
+- Controls whether to enable log redaction in Scheduling node logs.
+- When you set the configuration value to `true`, user data is redacted in Scheduling node logs.
+- Default value: `false`
 
 ## log
 
-日志相关的配置项。
+Configuration items related to logs.
 
 ### `level`
 
-- 指定日志的输出级别。
-- 可选值："debug"，"info"，"warn"，"error"，"fatal"
-- 默认值："info"
+- Specifies the level of the output log.
+- Optional value: `"debug"`, `"info"`, `"warn"`, `"error"`, `"fatal"`
+- Default value: `"info"`
 
 ### `format`
 
-- 日志格式。
-- 可选值："text"，"json"
-- 默认值："text"
+- The log format
+- Optional value: `"text"`, `"json"`
+- Default value: `"text"`
 
 ### `disable-timestamp`
 
-- 是否禁用日志中自动生成的时间戳。
-- 默认值：false
+- Controls whether to disable the automatically generated timestamp in logs.
+- Default value: `false`
 
 ## log.file
 
-日志文件相关的配置项。
+Configuration items related to the log file
 
 ### `max-size`
 
-- 单个日志文件最大大小，超过该值系统自动切分成多个文件。
-- 默认值：300
-- 单位：MiB
-- 最小值为 1
+- The maximum size of a single log file. When this value is exceeded, the system automatically splits the log into several files.
+- Default value: `300`
+- Unit: MiB
+- Minimum value: `1`
 
 ### `max-days`
 
-- 日志保留的最长天数。
-- 如果未设置本参数或把本参数设置为默认值 `0`，Scheduling 不清理日志文件。
-- 默认：0
+- The maximum number of days in which a log is kept.
+- If the configuration item is unset or set to the default value `0`, Scheduling does not clean up log files.
+- Default value: `0`
 
 ### `max-backups`
 
-- 日志文件保留的最大个数。
-- 如果未设置本参数或把本参数设置为默认值 `0`，Scheduling 会保留所有的日志文件。
-- 默认：0
+- The maximum number of log files to be kept.
+- If the configuration item is unset or set to the default value `0`, Scheduling keeps all log files.
+- Default value: `0`
 
 ## metric
 
-监控相关的配置项。
+Configuration items related to monitoring
 
 ### `interval`
 
-- 向 Prometheus 推送监控指标数据的间隔时间。
-- 默认：15s
+- The interval at which monitoring metric data is pushed to Prometheus
+- Default value: `15s`

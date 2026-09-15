@@ -1,20 +1,19 @@
 ---
 title: TiDB 4.0.4 Release Notes
-summary: TiDB 4.0.4 发布日期为 2020 年 7 月 31 日。此版本修复了多个 bug，包括查询 `information_schema.columns` 卡死的问题、`PointGet` 和 `BatchPointGet` 在遇到 `in(null)` 条件时出错的问题、`BatchPointGet` 算子结果不正确的问题以及 `HashJoin` 算子在遇到 `set`、`enum` 类型时查询结果不正确的问题。
-aliases: ['/zh/tidb/dev/release-4.0.4/','/zh/tidb/v4.0/release-4.0.4','/docs-cn/dev/releases/release-4.0.4/','/zh/tidb/v5.4/release-4.0.4','/zh/tidb/v6.1/release-4.0.4','/zh/tidb/v6.5/release-4.0.4','/zh/tidb/v7.1/release-4.0.4','/zh/tidb/v7.5/release-4.0.4','/zh/tidb/v8.1/release-4.0.4']
+summary: TiDB 4.0.4 was released on July 31, 2020. Bug fixes include issues with querying `information_schema.columns`, errors with `PointGet` and `BatchPointGet` operators, wrong results with `BatchPointGet`, and incorrect query results with the `HashJoin` operator encountering `set` or `enum` type.
 ---
 
 # TiDB 4.0.4 Release Notes
 
-发版日期：2020 年 7 月 31 日
+Release date: July 31, 2020
 
-TiDB 版本：4.0.4
+TiDB version: 4.0.4
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复查询 `information_schema.columns` 卡死的问题 [#18849](https://github.com/pingcap/tidb/pull/18849)
-    - 修复 `PointGet` 和 `BatchPointGet` 在遇到 `in(null)` 条件时出错的问题 [#18848](https://github.com/pingcap/tidb/pull/18848)
-    - 修复 `BatchPointGet` 算子结果不正确的问题 [#18815](https://github.com/pingcap/tidb/pull/18815)
-    - 修复 `HashJoin` 算子在遇到 `set`、`enum` 类型时查询结果不正确的问题 [#18859](https://github.com/pingcap/tidb/pull/18859)
+    - Fix the issue of getting stuck when querying `information_schema.columns` [#18849](https://github.com/pingcap/tidb/pull/18849)
+    - Fix the errors that occur when the `PointGet` and `BatchPointGet` operators encounter `in null` [#18848](https://github.com/pingcap/tidb/pull/18848)
+    - Fix the wrong result of `BatchPointGet` [#18815](https://github.com/pingcap/tidb/pull/18815)
+    - Fix the issue of incorrect query result that occurs when the `HashJoin` operator encounters the `set` or `enum` type [#18859](https://github.com/pingcap/tidb/pull/18859)

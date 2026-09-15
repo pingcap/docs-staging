@@ -1,13 +1,13 @@
 ---
-title: DROP ROLE
-summary: TiDB 数据库中 DROP ROLE 的使用概况。
+title: DROP ROLE | TiDB SQL Statement Reference
+summary: 关于在 TiDB 数据库中使用 DROP ROLE 的概述。
 ---
 
 # DROP ROLE
 
-使用 `DROP ROLE` 语句可删除已用 `CREATE ROLE` 语句创建的角色。
+此语句用于删除之前通过 `CREATE ROLE` 创建的角色。
 
-## 语法图
+## 概述
 
 ```ebnf+diagram
 DropRoleStmt ::=
@@ -19,13 +19,13 @@ RolenameList ::=
 
 ## 示例
 
-以 `root` 用户连接 TiDB：
+以 `root` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-创建新角色 `analyticsteam` 和新用户 `jennifer`：
+创建一个新角色 `analyticsteam` 和一个新用户 `jennifer`：
 
 ```sql
 CREATE ROLE analyticsteam;
@@ -41,13 +41,13 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-以 `jennifer` 用户连接 TiDB：
+以 `jennifer` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-需要注意的是，默认情况下，用户 `jennifer` 需要执行 `SET ROLE analyticsteam` 语句才能使用与角色相关联的权限：
+注意，默认情况下，`jennifer` 需要执行 `SET ROLE analyticsteam` 才能使用与 `analyticsteam` 角色相关联的权限：
 
 ```sql
 SHOW GRANTS;
@@ -83,26 +83,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-以 `root` 用户连接 TiDB：
+以 `root` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-执行 `SET DEFAULT ROLE` 语句将用户 `jennifer` 与 `analyticsteam` 角色相关联：
+可以使用 `SET DEFAULT ROLE` 将 `analyticsteam` 角色关联到 `jennifer`：
 
 ```sql
 SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-以 `jennifer` 用户连接 TiDB：
+以 `jennifer` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-此时 `jennifer` 用户无需执行 `SET ROLE` 语句就能拥有 `analyticsteam` 角色相关联的权限：
+此后，`jennifer` 具有与 `analyticsteam` 角色相关联的权限，且无需执行 `SET ROLE` 语句：
 
 ```sql
 SHOW GRANTS;
@@ -124,28 +124,28 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-以 `root` 用户连接 TiDB：
+以 `root` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-删除角色 `analyticsteam`：
+删除 `analyticsteam` 角色：
 
 ```sql
 DROP ROLE analyticsteam;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-`jennifer` 用户不再具有与 `analyticsteam` 关联的默认角色，或不能再将 `analyticsteam` 设为启用角色：
+`jennifer` 不再拥有 `analyticsteam` 角色的默认权限，也不能将角色设置为 `analyticsteam`。
 
-以 `jennifer` 用户连接 TiDB：
+以 `jennifer` 用户连接到 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-查看 `jennifer` 用户的权限：
+显示 `jennifer` 的权限：
 
 ```sql
 SHOW GRANTS;
@@ -162,13 +162,18 @@ ERROR 3530 (HY000): `analyticsteam`@`%` is is not granted to jennifer@%
 
 ## MySQL 兼容性
 
-`DROP ROLE` 语句与 MySQL 8.0 的角色功能完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
+TiDB 中的 `DROP ROLE` 语句与 MySQL 8.0 中的角色功能完全兼容。如果发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
 
 * [`CREATE ROLE`](/sql-statements/sql-statement-create-role.md)
 * [`GRANT <role>`](/sql-statements/sql-statement-grant-role.md)
 * [`REVOKE <role>`](/sql-statements/sql-statement-revoke-role.md)
 * [`SET ROLE`](/sql-statements/sql-statement-set-role.md)
 * [`SET DEFAULT ROLE`](/sql-statements/sql-statement-set-default-role.md)
-* [基于角色的访问控制](/role-based-access-control.md)
+
+<CustomContent platform="tidb">
+
+* [Role-Based Access Control](/role-based-access-control.md)
+
+</CustomContent>

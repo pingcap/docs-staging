@@ -1,114 +1,113 @@
 ---
 title: TiDB 3.1 RC Release Notes
-summary: TiDB 3.1 RC 发布日期为 2020 年 4 月 2 日。该版本存在已知问题，建议使用最新版本 3.1.x。新功能包括性能提升、数据恢复、TLS 证书动态更新等。Bug 修复包括信息 schema 错误、DDL 卡住、冲突检测失效等。PD 修复了数据竞争、规则未遵守等问题。工具方面优化了性能、修复了数据错误和无法恢复的问题。
-aliases: ['/zh/tidb/dev/release-3.1.0-rc/','/zh/tidb/v3.1/release-3.1.0-rc','/docs-cn/dev/releases/release-3.1.0-rc/','/docs-cn/dev/releases/3.1.0-rc/','/zh/tidb/v5.4/release-3.1.0-rc','/zh/tidb/v6.1/release-3.1.0-rc','/zh/tidb/v6.5/release-3.1.0-rc','/zh/tidb/v7.1/release-3.1.0-rc','/zh/tidb/v7.5/release-3.1.0-rc','/zh/tidb/v8.1/release-3.1.0-rc']
+summary: TiDB 3.1 RC was released on April 2, 2020. It includes new features such as improved partition pruning, support for `RECOVER` syntax, and TLS certificate updates. Bug fixes include resolving issues with TiFlash replica, `last_insert_id`, and `Aggregation` pushdown. TiKV now supports TLS authentication and AWS IAM web identity for backup. PD has fixed data race issues and placement rule inconsistencies. Tools like TiDB Lightning and BR have also been optimized and fixed.
 ---
 
 # TiDB 3.1 RC Release Notes
 
-发版日期：2020 年 4 月 2 日
+Release date: April 2, 2020
 
-TiDB 版本：3.1.0-rc
+TiDB version: 3.1.0-rc
 
-TiDB Ansible 版本：3.1.0-rc
+TiDB Ansible version: 3.1.0-rc
 
-> **警告：**
+> **Warning:**
 >
-> 该版本存在一些已知问题，已在新版本中修复，建议使用 3.1.x 的最新版本。
+> Some known issues are found in this version, and these issues are fixed in new versions. It is recommended that you use the latest 3.1.x version.
 
-## 新功能
+## New Features
 
 + TiDB
 
-    - 采用的二分搜索实现分区裁剪，以来提升性能 [#15678](https://github.com/pingcap/tidb/pull/15678)
-    - 支持 `RECOVER` 语法恢复被 `truncate table` 删除的数据 [#15460](https://github.com/pingcap/tidb/pull/15460)
-    - 支持重用语句重试中已分配的 `AUTO_RANDOM` ID [#15393](https://github.com/pingcap/tidb/pull/15393)
-    - 支持 `recover table` 恢复 `AUTO_RANDOM` ID 分配器的状态 [#15393](https://github.com/pingcap/tidb/pull/15393)
-    - 支持 `YEAR`、`MONTH`、`TO_DAY` 函数作为 Hash partition table 的分区 key [#15619](https://github.com/pingcap/tidb/pull/15619)
-    - 只在读到数据，需要加锁的时候，才对表做 schema-change 的检查 [#15708](https://github.com/pingcap/tidb/pull/15708)
-    - 为 session 变量 `tidb_replica_read` 增加 `leader-and-follower` 值，实现读请求在 leader 和 follower 直接负载均衡 [#15721](https://github.com/pingcap/tidb/pull/15721)
-    - 支持 TiDB 在每次新建连接时动态更新 TLS 证书，实现不重启更新过期客户端证书 [#15163](https://github.com/pingcap/tidb/pull/15163)
-    - 通过更新 PD Client 支持每次新建连接是读取加载最新的证书 [#15425](https://github.com/pingcap/tidb/pull/15425)
-    - 如果配置了 `Cluster-SSL-*` 强制让 TiDB-PD 和 TiDB-TiDB 使用配置的证书进行 HTTPS 协议传输 [#15430](https://github.com/pingcap/tidb/pull/15430)
-    - 新增和 MySQL 兼容的 `--require-secure-transport` 启动项，配置时强制客户端使用 TLS [#15442](https://github.com/pingcap/tidb/pull/15442)
-    - 添加 `cluster-verify-cn` 配置，只有拥有特定 CN 属性值证书的访问者才能访问 TiDB Status Port 或建立 gRPC 连接 [#15137](https://github.com/pingcap/tidb/pull/15137)
+    - Use the binary search to re-implement partition pruning for better performance [#15678](https://github.com/pingcap/tidb/pull/15678)
+    - Support using the `RECOVER` syntax to recover the truncated table [#15460](https://github.com/pingcap/tidb/pull/15460)
+    - Add the `AUTO_RANDOM` ID cache for retrying statements and recovering tables [#15393](https://github.com/pingcap/tidb/pull/15393)
+    - Support restoring the state of the `AUTO_RANDOM` ID allocator using the `recover table` statement [#15393](https://github.com/pingcap/tidb/pull/15393)
+    - Support `YEAR`, `MONTH`, and `TO_DAY` functions as the partitioning keys of the Hash partitioned table [#15619](https://github.com/pingcap/tidb/pull/15619)
+    - Add the table ID to the schema-change related tables only when keys need to be locked in the `SELECT... FOR UPDATE` statement [#15708](https://github.com/pingcap/tidb/pull/15708)
+    - Add the feature of automatically reading data from different roles according to the load balancing policy and add the `leader-and-follower` system variable to enable this feature [#15721](https://github.com/pingcap/tidb/pull/15721)
+    - Support dynamically updating the TLS certificate every time TiDB establishes a new connection to update expired client certificate without restarting the RPC client side [#15163](https://github.com/pingcap/tidb/pull/15163)
+    - Upgrade PD Client to support loading the latest certificate every time TiDB establishes a new connection [#15425](https://github.com/pingcap/tidb/pull/15425)
+    - Forcibly use the HTTPS protocol with the configured TLS certificates between a TiDB server and a PD server, or between two TiDB servers when `cluster-ssl-*` is configured [#15430](https://github.com/pingcap/tidb/pull/15430)
+    - Add the MySQL-compatible `--require-secure-transport` startup option to force the client to enable TLS authentication during the configuration [#15442](https://github.com/pingcap/tidb/pull/15442)
+    - Add the `cluster-verify-cn` configuration item. After configuration, the status service can only be used when with the corresponding CN certificate [#15137](https://github.com/pingcap/tidb/pull/15137)
 
 + TiKV
 
-    - 支持通过 Raw KV API 备份数据 [#7051](https://github.com/tikv/tikv/pull/7051)
-    - 状态服务支持 TLS [#7142](https://github.com/tikv/tikv/pull/7142)
-    - KV server 支持 TLS [#7305](https://github.com/tikv/tikv/pull/7305)
-    - 优化持有锁的时间以提升备份性能 [#7202](https://github.com/tikv/tikv/pull/7202)
+    - Support backing up data with the Raw KV API [#7051](https://github.com/tikv/tikv/pull/7051)
+    - Support TLS authentication for the status server [#7142](https://github.com/tikv/tikv/pull/7142)
+    - Support TLS authentication for the KV server [#7305](https://github.com/tikv/tikv/pull/7305)
+    - Optimize the time to hold locks to improve the performance of backup [#7202](https://github.com/tikv/tikv/pull/7202)
 
 + PD
 
-    - `shuffle-region-scheduler` 支持调度 learner [#2235](https://github.com/pingcap/pd/pull/2235)
-    - pd-ctl 增加配置 Placement Rules 的命令 [#2306](https://github.com/pingcap/pd/pull/2306)
+    - Support scheduling learner using `shuffle-region-scheduler` [#2235](https://github.com/pingcap/pd/pull/2235)
+    - Add commands in pd-ctl to configure Placement Rules [#2306](https://github.com/pingcap/pd/pull/2306)
 
 + Tools
 
     - TiDB Binlog
 
-        * 同步链路新增 TLS 功能 [#931](https://github.com/pingcap/tidb-binlog/pull/931) [#937](https://github.com/pingcap/tidb-binlog/pull/937) [#939](https://github.com/pingcap/tidb-binlog/pull/939)
-        * Drainer 新增 `kafka-client-id` 配置项，支持连接 Kafka 客户端配置客户端 ID [#929](https://github.com/pingcap/tidb-binlog/pull/929)
+        * Support TLS authentication between the components [#931](https://github.com/pingcap/tidb-binlog/pull/931) [#937](https://github.com/pingcap/tidb-binlog/pull/937) [#939](https://github.com/pingcap/tidb-binlog/pull/939)
+        * Add the `kafka-client-id` configuration item in Drainer to configure Kafka's client ID [#929](https://github.com/pingcap/tidb-binlog/pull/929)
 
     - TiDB Lightning
 
-        * 优化 Lightning 的性能 [#281](https://github.com/pingcap/tidb-lightning/pull/281) [#275](https://github.com/pingcap/tidb-lightning/pull/275)
-        * 支持 TLS [#270](https://github.com/pingcap/tidb-lightning/pull/270)
+        * Optimize the performance of TiDB Lightning [#281](https://github.com/pingcap/tidb-lightning/pull/281) [#275](https://github.com/pingcap/tidb-lightning/pull/275)
+        * Support TLS authentication for TiDB Lightning [#270](https://github.com/pingcap/tidb-lightning/pull/270)
 
-    - BR
+    - Backup & Restore (BR)
 
-        * 优化日志输出信息，对用户更友好 [#189](https://github.com/pingcap/br/pull/189)
+        * Optimize the log output [#189](https://github.com/pingcap/br/pull/189)
 
 + TiDB Ansible
 
-    - 优化 TiFlash 数据目录创建的方式 [#1242](https://github.com/pingcap/tidb-ansible/pull/1242)
-    - TiFlash 新增 `Write Amplification` 监控项 [#1234](https://github.com/pingcap/tidb-ansible/pull/1234)
-    - 优化 CPU epollexclusive 检查失败时提示信息，包括：通过升级内核版本解决，且提示支持的最小内核版本 [#1243](https://github.com/pingcap/tidb-ansible/pull/1243)
+    - Optimize the way the TiFlash data directories are created [#1242](https://github.com/pingcap/tidb-ansible/pull/1242)
+    - Add the `Write Amplification` monitoring item in TiFlash [#1234](https://github.com/pingcap/tidb-ansible/pull/1234)
+    - Optimize the error message of failed preflight checks when CPU epollexclusive is unavailable [#1243](https://github.com/pingcap/tidb-ansible/pull/1243)
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复由于 update tiflash replica 类型的 DDL 太频繁导致的 information schema changed 错误的问题 [#14884](https://github.com/pingcap/tidb/pull/14884)
-    - 修复在使用 `AUTO_RANDOM` 时，未正确生成的 `last_insert_id` 的问题 [#15149](https://github.com/pingcap/tidb/pull/15149)
-    - 修复更新 TiFlash replica 状态时可能导致 DDL 卡住的问题 [#15161](https://github.com/pingcap/tidb/pull/15161)
-    - 当存在谓词无法下推时，禁止聚合下推和 `TopN` 下推 [#15141](https://github.com/pingcap/tidb/pull/15141)
-    - 禁止相互嵌套地创建 `view` [#15440](https://github.com/pingcap/tidb/pull/15440)
-    - 修复 `set role all` 后执行 `select current_role` 报错的问题 [#15570](https://github.com/pingcap/tidb/pull/15570)
-    - 修复查询中指定列的 `view` 名时，报不识别 `view` 的问题 [#15573](https://github.com/pingcap/tidb/pull/15573)
-    - 修复预处理 DDL 语句在写 binlog 信息时可能出错的问题 [#15444](https://github.com/pingcap/tidb/pull/15444)
-    - 修复同时访问视图和分区表时导致 panic 的问题 [#15560](https://github.com/pingcap/tidb/pull/15560)
-    - 修复 `update duplicate key` 语句中 `bit(n)` 类型的 column 报错的问题 [#15487](https://github.com/pingcap/tidb/pull/15487)
-    - 修复 `max-execution-time` 部分场景下不生效的问题 [#15616](https://github.com/pingcap/tidb/pull/15616)
-    - 修复在生成 Index 计划时未判断当前的 ReadEngine 中是否包含 TiKV 的问题 [#15773](https://github.com/pingcap/tidb/pull/15773)
+    - Fix the information schema error caused by frequently updating the TiFlash replica [#14884](https://github.com/pingcap/tidb/pull/14884)
+    - Fix the issue that `last_insert_id` is incorrectly generated when applying `AUTO_RANDOM` [#15149](https://github.com/pingcap/tidb/pull/15149)
+    - Fix the issue that updating the status of TiFlash replica might cause the DDL operation to get stuck [#15161](https://github.com/pingcap/tidb/pull/15161)
+    - Forbid `Aggregation` pushdown and `TopN` pushdown when there are predicates that cannot be pushed down [#15141](https://github.com/pingcap/tidb/pull/15141)
+    - Forbid the nested `view` creation [#15440](https://github.com/pingcap/tidb/pull/15440)
+    - Fix the error occurred when executing `SELECT CURRENT_ROLE()` after `SET ROLE ALL` [#15570](https://github.com/pingcap/tidb/pull/15570)
+    - Fix the failure to identify the `view` name when executing the `select view_name.col_name from view_name` statement [#15573](https://github.com/pingcap/tidb/pull/15573)
+    - Fix the issue that an error might occur when pre-processing DDL statements during the write of binlog information [#15444](https://github.com/pingcap/tidb/pull/15444)
+    - Fix the panic occurred when accessing both `view`s and partitioned tables [#15560](https://github.com/pingcap/tidb/pull/15560)
+    - Fix the error occurred when executing the `VALUES` function with the `update duplicate key` statement that contains the `bit(n)` data type [#15487](https://github.com/pingcap/tidb/pull/15487)
+    - Fix the issue that the specified maximum execution time fails to take effect in some scenarios [#15616](https://github.com/pingcap/tidb/pull/15616)
+    - Fix the issue that whether the current `ReadEngine` contains TiKV server is not checked when generating the execution plan using `Index Scan` [#15773](https://github.com/pingcap/tidb/pull/15773)
 
 + TiKV
 
-    - 修复在关闭一致性检查参数时，事务中插入已存在的 Key 且立马删除导致冲突检测失效或数据索引不一致的问题 [#7112](https://github.com/tikv/tikv/pull/7112)
-    - 修复 `TopN` 比较无符号整型时计算错误的问题 [#7199](https://github.com/tikv/tikv/pull/7199)
-    - Raftstore 引入流控机制，解决没有流控可能导致追日志太慢可能导致集群卡住，以及事务大小太大会导致 TiKV 间连接频繁重连的问题 [#7087](https://github.com/tikv/tikv/pull/7087) [#7078](https://github.com/tikv/tikv/pull/7078)
-    - 修复发送到 replicas 的读请求可能被永久卡住的问题 [#6543](https://github.com/tikv/tikv/pull/6543)
-    - 修复 replica read 会被 apply snapshot 阻塞的问题 [#7249](https://github.com/tikv/tikv/pull/7249)
-    - 修复 read index 在 transfer leader 情况下可能导致 panic 的问题 [#7240](https://github.com/tikv/tikv/pull/7240)
-    - 修复备份到 S3 时所有 SST 文件填充为零的问题 [#6967](https://github.com/tikv/tikv/pull/6967)
-    - 修复备份时未记录 SST 文件大小的导致恢复后有很多空 Region 的问题 [#6983](https://github.com/tikv/tikv/pull/6983)
-    - 备份支持 AWS IAM web identity [#7297](https://github.com/tikv/tikv/pull/7297)
+    - Fix the issue of conflict check failure or data index inconsistency caused by inserting an existing key into a transaction and then deleting it immediately when disabling the consistency check parameter [#7112](https://github.com/tikv/tikv/pull/7112)
+    - Fix the calculation error when `TopN` compares unsigned integers [#7199](https://github.com/tikv/tikv/pull/7199)
+    - Introduce a flow control mechanism in Raftstore to solve the problem that without flow control, it might cause slow log tracking and cause the cluster to be stuck; and the problem that the large transaction size might cause the frequent reconnection among TiKV servers [#7087](https://github.com/tikv/tikv/pull/7087) [#7078](https://github.com/tikv/tikv/pull/7078)
+    - Fix the issue that pending read requests sent to replicas might be permanently blocked [#6543](https://github.com/tikv/tikv/pull/6543)
+    - Fix the issue that replica read might be blocked by applying snapshots [#7249](https://github.com/tikv/tikv/pull/7249)
+    - Fix the issue that transferring leader might cause TiKV to panic [#7240](https://github.com/tikv/tikv/pull/7240)
+    - Fix the issue that all SST files are filled with zeroes when backing up data to S3 [#6967](https://github.com/tikv/tikv/pull/6967)
+    - Fix the issue that the size of SST file is not recorded during backup, resulting in many empty Regions after restoration [#6983](https://github.com/tikv/tikv/pull/6983)
+    - Support AWS IAM web identity for backup [#7297](https://github.com/tikv/tikv/pull/7297)
 
 + PD
 
-    - 修复 PD 因处理 Region heartbeat 时的数据竞争导致 Region 信息不正确的问题 [#2234](https://github.com/pingcap/pd/pull/2234)
-    - 修复 `random-merge-scheduler` 未遵守 location labels 和 Placement Rules 规则的问题 [#2212](https://github.com/pingcap/pd/pull/2221)
-    - 修复 Placement Rule 被具有相同 `startKey` 和 `endKey` 的 Placement Rule 覆盖的问题 [#2222](https://github.com/pingcap/pd/pull/2222)
-    - 修复 API 输出的版本号与 PD server 输出版本号不一致的问题 [#2192](https://github.com/pingcap/pd/pull/2192)
+    - Fix the issue of incorrect Region information caused by data race when PD processes Region heartbeats [#2234](https://github.com/pingcap/pd/pull/2234)
+    - Fix the issue that `random-merge-scheduler` fails to follow location labels and Placement Rules [#2212](https://github.com/pingcap/pd/pull/2221)
+    - Fix the issue that a placement rule is overwritten by another placement rule with the same `startKey` and `endKey` [#2222](https://github.com/pingcap/pd/pull/2222)
+    - Fix the issue that the version number of API is inconsistent with that of PD server [#2192](https://github.com/pingcap/pd/pull/2192)
 
 + Tools
 
     - TiDB Lightning
 
-        * 修复 backend 是 TiDB 时由于字符转化错误导致数据错误的问题 [#283](https://github.com/pingcap/tidb-lightning/pull/283)
+        * Fix the bug that the `&` character is replaced by the `EOF` character in TiDB backend [#283](https://github.com/pingcap/tidb-lightning/pull/283)
 
-    - BR
+    - Backup & Restore (BR)
 
-        * 修复了在开启 TiFlash 集群中，无法使用 BR 恢复的问题 [#194](https://github.com/pingcap/br/pull/194)
+        * Fix the issue that BR cannot restore the TiFlash cluster data [#194](https://github.com/pingcap/br/pull/194)

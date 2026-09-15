@@ -1,116 +1,122 @@
 ---
-title: HTAP 深入探索指南
-summary: 本文介绍如何深入探索并使用 TiDB 的 HTAP 功能。
+title: Explore HTAP
+summary: Learn how to explore and use the features of TiDB HTAP.
 ---
 
-# HTAP 深入探索指南
+# Explore HTAP
 
-本指南介绍如何进一步探索并使用 TiDB 在线事务与在线分析处理 (Hybrid Transactional and Analytical Processing, HTAP) 功能。
+This guide describes how to explore and use the features of TiDB Hybrid Transactional and Analytical Processing (HTAP).
 
-> **注意：**
+> **Note:**
 >
-> 如果你对 TiDB HTAP 功能还不太了解，希望快速试用体验，请参阅[快速上手 HTAP](/quick-start-with-htap.md)。
+> If you are new to TiDB HTAP and want to start using it quickly, see [Quick Start with TiDB HTAP](/quick-start-with-htap.md).
 
-## HTAP 适用场景
+## Use cases
 
-TiDB HTAP 可以满足企业海量数据的增产需求、降低运维的风险成本、与现有的大数据栈无缝缝合，从而实现数据资产价值的实时变现。
+TiDB HTAP can handle the massive data that increases rapidly, reduce the cost of DevOps, and be deployed in either self-hosted or cloud environments easily, which brings the value of data assets in real time.
 
-以下是三种 HTAP 典型适用场景：
+The following are the typical use cases of HTAP:
 
-- 混合负载场景
+- Hybrid workload
 
-    当将 TiDB 应用于在线实时分析处理的混合负载场景时，开发人员只需要提供一个入口，TiDB 将自动根据业务类型选择不同的处理引擎。
+    When using TiDB for real-time Online Analytical Processing (OLAP) in hybrid load scenarios, you only need to provide an entry point of TiDB to your data. TiDB automatically selects different processing engines based on the specific business.
 
-- 实时流处理场景
+- Real-time stream processing
 
-    当将 TiDB 应用于实时流处理场景时，TiDB 能保证源源不断流入系统的数据实时可查，同时可兼顾高并发数据服务与 BI 查询。
+    When using TiDB in real-time stream processing scenarios, TiDB ensures that all the data flowed in constantly can be queried in real time. At the same time, TiDB also can handle highly concurrent data workloads and Business Intelligence (BI) queries.
 
-- 数据中枢场景
+- Data hub
 
-    当将 TiDB 应用于数据中枢场景时，TiDB 作为数据中枢可以无缝连接数据业务层和数据仓库层，满足不同业务的需求。
+    When using TiDB as a data hub, TiDB can meet specific business needs by seamlessly connecting the data for the application and the data warehouse.
 
-如果想了解更多关于 TiDB HTAP 场景信息，请参阅 [TiDB HTAP 用户案例合集](https://pingkai.cn/tidbcommunity/blog/tag/htap)。
+For more information about use cases of TiDB HTAP, see [blogs about HTAP on the PingCAP website](https://www.pingcap.com/blog/?tag=htap).
 
-当遇到以下技术场景时，建议使用 TiDB HTAP 提升 TiDB 数据库整体表现：
+To enhance the overall performance of TiDB, it is recommended to use HTAP in the following technical scenarios:
 
-- 提升分析性能
+- Improve analytical processing performance
 
-    你的业务中存在某些复杂的分析查询，如聚合、关联等操作。当这些分析查询涉及大量数据（超过 1000 万行）时，如果查询涉及的表无法有效利用索引或者索引的选择性较差，而行存储引擎 [TiKV](/tikv-overview.md) 难以满足查询的性能需求。
+    If your application involves complex analytical queries, such as aggregation and join operations, and these queries are performed on a large amount of data (more than 10 million rows), the row-based storage engine [TiKV](/tikv-overview.md) might not meet your performance requirements if the tables in these queries cannot effectively use indexes or have low index selectivity.
 
-- 混合负载隔离
+- Hybrid workload isolation
 
-    在高并发的 OLTP 业务同时，你可能需要处理一些 OLAP 业务，同时还需要避免 OLAP 查询影响 OLTP 业务性能，确保系统的整体稳定性。
+   While dealing with high-concurrency Online Transactional Processing (OLTP) workloads, your system might also need to handle some OLAP workloads. To ensure the overall system stability, you expect to avoid the impact of OLAP queries on OLTP performance.
 
-- 简化 ETL 技术栈
+- Simplify the ETL technology stack
 
-    当需要加工的数据量为中等规模（100 TB 以内）、数据加工调度流程相对简单、并发度不高（10 以内）时，你可能希望简化技术栈，替换原本需要使用多个不同技术栈的 OLTP、ETL 和 OLAP 系统，使用一个数据库同时满足交易系统以及分析系统的需求，降低技术门槛和运维人员需求。
+    When the amount of data to be processed is of medium scale (less than 100 TB), the data processing and scheduling processes are relatively simple, and the concurrency is not high (less than 10), you might want to simplify the technology stack of your system. By replacing multiple different technology stacks used in OLTP, ETL, and OLAP systems with a single database, you can meet the requirements of both transactional systems and analytical systems. This reduces technical complexity and the need for maintenance personnel.
 
-- 强一致性分析
+- Strongly consistent analysis
 
-    如果需要对业务数据进行实时、强一致的分析计算，并且要求数据分析结果和业务数据完全一致，避免数据延迟和不一致的问题。
+    To achieve real-time, strongly consistent data analysis and calculation, and ensure the analysis results to be completely consistent with the transactional data, you need to avoid data latency and inconsistency issues.
 
-## HTAP 架构
+## Architecture
 
-在 TiDB 中，面向在线事务处理的行存储引擎 [TiKV](/tikv-overview.md) 与面向实时分析场景的列存储引擎 [TiFlash](/tiflash/tiflash-overview.md) 同时存在，自动同步，保持强一致性。
+In TiDB, a row-based storage engine [TiKV](/tikv-overview.md) for Online Transactional Processing (OLTP) and a columnar storage engine [TiFlash](/tiflash/tiflash-overview.md) for Online Analytical Processing (OLAP) co-exist, replicate data automatically, and keep strong consistency.
 
-更多架构信息，请参考 [TiDB HTAP 形态架构](/tiflash/tiflash-overview.md#整体架构)。
+For more information about the architecture, see [architecture of TiDB HTAP](/tiflash/tiflash-overview.md#architecture).
 
-## HTAP 环境准备
+## Environment preparation
 
-在深入探索 TiDB HTAP 功能前，请部署 TiDB 以及对应的数据分析引擎 TiFlash。大数据场景 (100 T) 下，推荐使用 TiFlash MPP 作为 HTAP 的方案。
+Before exploring the features of TiDB HTAP, you need to deploy TiDB and the corresponding storage engines according to the data volume. If the data volume is large (for example, 100 T), it is recommended to use TiFlash Massively Parallel Processing (MPP) as the primary solution and TiSpark as the supplementary solution.
 
-- 如果已经部署 TiDB 集群但尚未部署 TiFlash 节点，请参阅[扩容 TiFlash 节点](/scale-tidb-using-tiup.md#扩容-tiflash-节点)中的步骤在现有 TiDB 集群中添加 TiFlash 节点。
-- 如果尚未部署 TiDB 集群，请使用 [TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)，并在包含最小拓扑的基础上，同时[增加 TiFlash 拓扑架构](/tiflash-deployment-topology.md)。
-- 在决定如何选择 TiFlash 节点数量时，请考虑以下几种业务场景：
+- TiFlash
 
-    - 如果业务场景以 OLTP 为主，做轻量级的 Ad hoc OLAP 计算，通常部署 1 个或几个 TiFlash 节点就会产生明显的加速效果。
-    - 当 OLTP 数据吞吐量对节点 I/O 无明显压力时，每个 TiFlash 节点将会使用较多资源用于计算，这样 TiFlash 集群可实现近似线性的扩展能力。TiFlash 节点数量应根据期待的性能和响应时间调整。
-    - 当 OLTP 数据吞吐量较高时（例如写入或更新超过千万行/小时），由于网络和物理磁盘的写入能力有限，内部 TiKV 与 TiFlash 之间的 I/O 会成为主要瓶颈，也容易产生读写热点。此时 TiFlash 节点数与 OLAP 计算量有较复杂非线性关系，需要根据具体系统状态调整节点数量。
+    - If you have deployed a TiDB cluster with no TiFlash node, add the TiFlash nodes in the current TiDB cluster. For detailed information, see [Scale out a TiFlash cluster](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster).
+    - If you have not deployed a TiDB cluster, see [Deploy a TiDB Cluster Using TiUP](/production-deployment-using-tiup.md). Based on the minimal TiDB topology, you also need to deploy the [topology of TiFlash](/tiflash-deployment-topology.md).
+    - When deciding how to choose the number of TiFlash nodes, consider the following scenarios:
 
-<!--    - 实时流处理
-  - 如果你想将 TiDB 与 Flink 结合构建高效易用的实时数仓，请参与 Apache Flink x TiDB Meetup 系列讲座。-->
+        - If your use case requires OLTP with small-scale analytical processing and Ad-Hoc queries, deploy one or several TiFlash nodes. They can dramatically increase the speed of analytic queries.
+        - If the OLTP throughput does not cause significant pressure to I/O usage rate of the TiFlash nodes, each TiFlash node uses more resources for computation, and thus the TiFlash cluster can have near-linear scalability. The number of TiFlash nodes should be tuned based on expected performance and response time.
+        - If the OLTP throughput is relatively high (for example, the write or update throughput is higher than 10 million lines/hours), due to the limited write capacity of network and physical disks, the I/O between TiKV and TiFlash becomes a bottleneck and is also prone to read and write hotspots. In this case, the number of TiFlash nodes has a complex non-linear relationship with the computation volume of analytical processing, so you need to tune the number of TiFlash nodes based on the actual status of the system.
 
-## HTAP 数据准备
+- TiSpark
 
-TiFlash 部署完成后并不会自动同步数据，你需要指定需要同步到 TiFlash 的数据表。指定后，TiDB 将创建对应的 TiFlash 副本。
+    - If your data needs to be analyzed with Spark, deploy TiSpark. For specific process, see [TiSpark User Guide](/tispark-overview.md).
 
-- 如果 TiDB 集群中还没有数据，请先迁移数据到 TiDB。详情请参阅[数据迁移](/migration-overview.md)。
-- 如果 TiDB 集群中已经有从上游同步过来的数据，TiFlash 部署完成后并不会自动同步数据，而需要手动指定需要同步的表，详情请参阅[使用 TiFlash](/tiflash/tiflash-overview.md#使用-tiflash)。
+<!--    - Real-time stream processing
+  - If you want to build an efficient and easy-to-use real-time data warehouse with TiDB and Flink, you are welcome to participate in Apache Flink x TiDB meetups.-->
 
-## HTAP 数据处理
+## Data preparation
 
-使用 TiDB 时，你只需输入 SQL 语句进行查询或者写入需求。对于创建了 TiFlash 副本的表，TiDB 会依靠前端优化器自由选择最优的执行方式。
+After TiFlash is deployed, TiKV does not replicate data to TiFlash automatically. You need to manually specify which tables need to be replicated to TiFlash. After that, TiDB creates the corresponding TiFlash replicas.
 
-> **注意：**
-> 
-> TiFlash 的 MPP 模式默认开启。当执行 SQL 语句时，TiDB 会通过优化器自动判断并选择是否以 MPP 模式执行。
+- If there is no data in the TiDB Cluster, migrate the data to TiDB first. For detailed information, see [data migration](/migration-overview.md).
+- If the TiDB cluster already has the replicated data from upstream, after TiFlash is deployed, data replication does not automatically begin. You need to manually specify the tables to be replicated to TiFlash. For detailed information, see [Use TiFlash](/tiflash/tiflash-overview.md#use-tiflash).
+
+## Data processing
+
+With TiDB, you can simply enter SQL statements for query or write requests. For the tables with TiFlash replicas, TiDB uses the front-end optimizer to automatically choose the optimal execution plan.
+
+> **Note:**
 >
-> - 如需关闭 MPP 模式，请将系统变量 [tidb_allow_mpp](/system-variables.md#tidb_allow_mpp-从-v50-版本开始引入) 的值设置为 OFF。
-> - 如需强制使用 TiFlash 的 MPP 模式执行查询，请将系统变量 [tidb_allow_mpp](/system-variables.md#tidb_allow_mpp-从-v50-版本开始引入) 和 [tidb_enforce_mpp](/system-variables.md#tidb_enforce_mpp-从-v51-版本开始引入) 的值设置为 ON。
-> - 如需查看 TiDB 是否选择以 MPP 模式执行，你可以[通过 EXPLAIN 语句查看具体的查询执行计划](/explain-mpp.md#用-explain-查看-mpp-模式查询的执行计划)。如果 EXPLAIN 语句的结果中出现 ExchangeSender 和 ExchangeReceiver 算子，表明 MPP 已生效。
+> The MPP mode of TiFlash is enabled by default. When an SQL statement is executed, TiDB automatically determines whether to run in the MPP mode through the optimizer.
+>
+> - To disable the MPP mode of TiFlash, set the value of the [tidb_allow_mpp](/system-variables.md#tidb_allow_mpp-new-in-v50) system variable to `OFF`.
+> - To forcibly enable MPP mode of TiFlash for query execution, set the values of [tidb_allow_mpp](/system-variables.md#tidb_allow_mpp-new-in-v50) and [tidb_enforce_mpp](/system-variables.md#tidb_enforce_mpp-new-in-v51) to `ON`.
+> - To check whether TiDB chooses the MPP mode to execute a specific query, see [Explain Statements in the MPP Mode](/explain-mpp.md#explain-statements-in-the-mpp-mode). If the output of `EXPLAIN` statement includes the `ExchangeSender` and `ExchangeReceiver` operators, the MPP mode is in use.
 
-## HTAP 性能监控
+## Performance monitoring
 
-在 TiDB 的使用过程中，可以选择以下方式监控 TiDB 集群运行情况并查看性能数据。
+When using TiDB, you can monitor the TiDB cluster status and performance metrics in either of the following ways:
 
-- [TiDB Dashboard](/dashboard/dashboard-intro.md)：查看集群整体运行概况，分析集群读写流量分布及趋势变化，详细了解耗时较长的 SQL 语句的执行信息。
-- [监控系统 (Prometheus & Grafana)](/grafana-overview-dashboard.md)：查看 TiDB 集群各组件（包括 PD、TiDB、TiKV、TiFlash、TiCDC、Node_exporter）的相关监控参数。
+- [TiDB Dashboard](/dashboard/dashboard-intro.md): you can see the overall running status of the TiDB cluster, analyse distribution and trends of read and write traffic, and learn the detailed execution information of slow queries.
+- [Monitoring system (Prometheus & Grafana)](/grafana-overview-dashboard.md): you can see the monitoring parameters of TiDB cluster-related components including PD, TiDB, TiKV, TiFlash, TiCDC, and Node_exporter.
 
-如需查看 TiDB 和 TiFlash 集群报警规则和处理方法，请查阅 [TiDB 集群报警规则](/alert-rules.md)和 [TiFlash 报警规则](/tiflash/tiflash-alert-rules.md)。
+To see the alert rules of TiDB cluster and TiFlash cluster, see [TiDB cluster alert rules](/alert-rules.md) and [TiFlash alert rules](/tiflash/tiflash-alert-rules.md).
 
-## HTAP 故障诊断
+## Troubleshooting
 
-在使用 TiDB 的过程中如果遇到问题，请参阅以下文档：
+If any issue occurs during using TiDB, refer to the following documents:
 
-- [分析慢查询](/analyze-slow-queries.md)
-- [定位消耗系统资源多的查询](/identify-expensive-queries.md)
-- [TiDB 热点问题处理](/troubleshoot-hot-spot-issues.md)
-- [TiDB 集群故障诊断](/troubleshoot-tidb-cluster.md)
-- [TiFlash 常见问题](/tiflash/troubleshoot-tiflash.md)
+- [Analyze slow queries](/analyze-slow-queries.md)
+- [Identify expensive queries](/identify-expensive-queries.md)
+- [Troubleshoot hotspot issues](/troubleshoot-hot-spot-issues.md)
+- [TiDB cluster troubleshooting guide](/troubleshoot-tidb-cluster.md)
+- [Troubleshoot a TiFlash Cluster](/tiflash/troubleshoot-tiflash.md)
 
-除此之外，你可以在 [Github Issues](https://github.com/pingcap/tiflash/issues) 新建一个 Issue 反馈问题，或者在 [AskTUG](https://pingkai.cn/tidbcommunity/forum/) 提交你的问题。
+You are also welcome to create [GitHub Issues](https://github.com/pingcap/tiflash/issues) or submit your questions on [AskTUG](https://asktug.com/).
 
-## 探索更多
+## What's next
 
-- 如果要查看 TiFlash 版本、TiFlash 重要日志及系统表，请参阅 [TiFlash 集群运维](/tiflash/maintain-tiflash.md)。
-- 如果需要移除某个 TiFlash 节点，请参阅[缩容 TiFlash 节点](/scale-tidb-using-tiup.md#缩容-tiflash-节点)。
+- To check the TiFlash version, critical logs, system tables, see [Maintain a TiFlash cluster](/tiflash/maintain-tiflash.md).
+- To remove a specific TiFlash node, see [Scale out a TiFlash cluster](/scale-tidb-using-tiup.md#scale-out-a-tiflash-cluster).

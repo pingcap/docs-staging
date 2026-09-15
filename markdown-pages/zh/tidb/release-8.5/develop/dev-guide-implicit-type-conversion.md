@@ -1,37 +1,36 @@
 ---
 title: 避免隐式类型转换
-summary: 介绍 TiDB 中隐式类型转换可能会带来的后果和避免方法。
-aliases: ['/zh/tidb/dev/implicit-type-conversion','/zh/tidb/stable/dev-guide-implicit-type-conversion/','/zh/tidb/dev/dev-guide-implicit-type-conversion/','/zh/tidbcloud/dev-guide-implicit-type-conversion/']
+summary: 介绍 TiDB 中隐式类型转换的可能后果及避免方法。
 ---
 
 # 避免隐式类型转换
 
-本章内容将介绍 TiDB 中的隐式类型转换规则、可能带来的后果及避免方法。
+本文介绍 TiDB 中隐式类型转换的规则及可能带来的后果，以及如何避免隐式类型转换。
 
 ## 转换规则
 
-当 SQL 中谓词两侧的数据类型不一致时，TiDB 将隐式地将一侧或两侧的数据类型进行转换，将其变为兼容的数据类型，以进行谓词运算。
+当 SQL 语句中谓词两边的数据类型不匹配时，TiDB 会隐式将一方或双方的数据类型转换为兼容的类型以进行谓词操作。
 
-TiDB 中隐式类型转换规则如下：
+TiDB 中隐式类型转换的规则如下：
 
-- 如果一个或两个参数都是 NULL，比较的结果是 NULL（NULL 安全的 `<=>` 相等比较运算符除外，对于 NULL `<=>` NULL，结果为 true，不需要转换）。
-- 如果比较操作中的两个参数都是字符串，则将它们作为字符串进行比较。
-- 如果两个参数都是整数，则将它们作为整数进行比较。
-- 如果不与数字进行比较，则将十六进制值视为二进制字符串。
-- 如果其中一个参数是十进制值，则比较取决于另一个参数。如果另一个参数是十进制或整数值，则将参数与十进制值进行比较，如果另一个参数是浮点值，则将参数与浮点值进行比较。
-- 如果其中一个参数是 TIMESTAMP 或 DATETIME 列，另一个参数是常量，则在执行比较之前将常量转换为时间戳。
-- 在所有其他情况下，参数都是作为浮点数（DOUBLE 类型）比较的。
+- 如果其中一个或两个参数为 `NULL`，比较的结果为 `NULL`。NULL-safe `<=>` 等价比较运算符不需要转换，因为 NULL `<=>` NULL 的结果为 `true`。
+- 如果比较的两个参数都是字符串，则作为字符串进行比较。
+- 如果两个参数都是整数，则作为整数进行比较。
+- 如果没有用数字进行比较，则十六进制值被视为二进制字符串。
+- 如果其中一个参数是十进制值，比较结果取决于另一个参数。如果另一个参数是十进制或整数值，则用十进制值进行比较；如果是浮点值，则用浮点值进行比较。
+- 如果其中一个参数是 `TIMESTAMP` 或 `DATETIME` 列，另一个参数是常量，则在比较前将常量转换为时间戳。
+- 在所有其他情况下，参数作为浮点数（`DOUBLE` 类型）进行比较。
 
-## 隐式类型转换引起的后果
+## 隐式类型转换引发的后果
 
-隐式类型转换增强了人机交互的易用性，但在应用代码中，应尽量避免隐式类型转换出现，这是由于隐式类型转换会导致：
+隐式类型转换提高了人机交互的易用性，但在应用代码中应避免使用隐式类型转换，因为可能导致以下问题：
 
 - 索引失效
 - 精度丢失
 
 ### 索引失效
 
-如下案例，account_id 为主键，其数据类型为 `varchar`。通过执行计划可见，该 SQL 发生了隐式类型转换，无法使用索引。
+在以下情况下，`account_id` 是主键，数据类型为 `varchar`。在执行计划中，该 SQL 语句存在隐式类型转换，无法使用索引。
 
 ```sql
 DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
@@ -45,11 +44,11 @@ DESC SELECT * FROM `account` WHERE `account_id`=6010000000009801;
 3 rows in set (0.00 sec)
 ```
 
-**运行结果简述**：从以上执行计划中，可见 Cast 算子。
+**简要说明运行结果**：从上述执行计划可以看到，存在 `Cast` 操作符。
 
 ### 精度丢失
 
-如下案例，字段 a 的数据类型为 `decimal(32,0)`，从执行计划可以得知，出现了隐式类型转换，decimal 字段和字符串常值都被转换为 double 类型，而 `double` 类型的精度没有 `decimal` 高，出现了精度丢失，在这个 case 中，造成了筛选出范围之外的结果集的错误。
+在以下情况下，`a` 字段的数据类型为 `decimal(32,0)`。在执行计划中发生隐式类型转换，decimal 字段和字符串常量都被转换为 `double` 类型。由于 `double` 类型的精度不如 decimal，导致精度丢失。在此情况下，SQL 语句会错误地过滤超出范围的结果集。
 
 ```sql
 DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
@@ -63,7 +62,7 @@ DESC SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000
 3 rows in set (0.00 sec)
 ```
 
-**运行结果简述**：从以上执行计划中，可见 Cast 算子。
+**简要说明运行结果**：从上述执行计划可以看到，存在 `Cast` 操作符。
 
 ```sql
 SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
@@ -73,7 +72,20 @@ SELECT * FROM `t1` WHERE `a` BETWEEN '12123123' AND '1111222211111111200000';
 | 1111222211111111222211 |
 +------------------------+
 1 row in set (0.01 sec)
-
 ```
 
-**运行结果简述**：以上执行出现了错误结果。
+**简要说明运行结果**：上述执行结果为错误的。
+
+## 需要帮助？
+
+<CustomContent platform="tidb">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

@@ -1,13 +1,17 @@
 ---
 title: INSPECTION_SUMMARY
-summary: 了解 TiDB 系统表 `INSPECTION_SUMMARY`。
+summary: Learn the `INSPECTION_SUMMARY` inspection summary table.
 ---
 
 # INSPECTION_SUMMARY
 
-在部分场景下，用户只需要关注特定链路或模块的监控汇总。例如当前 Coprocessor 配置的线程池为 8，如果 Coprocessor 的 CPU 使用率达到了 750%，就可以确定存在风险，或者可能提前成为瓶颈。但是部分监控会因为用户的 workload 不同而差异较大，所以难以定义确定的阈值。排查这部分场景的问题也非常重要，所以 TiDB 提供了 `inspection_summary` 来进行链路汇总。
+In some scenarios, you might need to pay attention only to the monitoring summary of specific links or modules. For example, the number of threads for Coprocessor in the thread pool is configured as 8. If the CPU usage of Coprocessor reaches 750%, you can determine that a risk exists and Coprocessor might become a bottleneck in advance. However, some monitoring metrics vary greatly due to different user workloads, so it is difficult to define specific thresholds. It is important to troubleshoot issues in this scenario, so TiDB provides the `inspection_summary` table for link summary.
 
-诊断汇总表 `information_schema.inspection_summary` 的表结构如下：
+> **Note:**
+>
+> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+
+The structure of the `information_schema.inspection_summary` inspection summary table is as follows:
 
 
 ```sql
@@ -32,26 +36,26 @@ DESC inspection_summary;
 9 rows in set (0.00 sec)
 ```
 
-字段解释：
+Field description:
 
-* `RULE`：汇总规则。由于规则在持续添加，最新的规则列表可以通过 `select * from inspection_rules where type='summary'` 查询。
-* `INSTANCE`：监控的具体实例。
-* `METRICS_NAME`：监控表的名字。
-* `QUANTILE`：对于包含 `QUANTILE` 的监控表有效，可以通过谓词下推指定多个百分位，例如 `select * from inspection_summary where rule='ddl' and quantile in (0.80, 0.90, 0.99, 0.999)` 来汇总 DDL 相关监控，查询百分位为 80/90/99/999 的结果。`AVG_VALUE`、`MIN_VALUE`、`MAX_VALUE` 分别表示聚合的平均值、最小值、最大值。
-* `COMMENT`：对应监控的解释。
+* `RULE`: Summary rules. Because new rules are being added continuously, you can execute the `select * from inspection_rules where type='summary'` statement to query the latest rule list.
+* `INSTANCE`: The monitored instance.
+* `METRICS_NAME`: The monitoring metrics name.
+* `QUANTILE`: Takes effect on monitoring tables that contain `QUANTILE`. You can specify multiple percentiles by pushing down predicates. For example, you can execute `select * from inspection_summary where rule='ddl' and quantile in (0.80, 0.90, 0.99, 0.999)` to summarize the DDL-related monitoring metrics and query the P80/P90/P99/P999 results. `AVG_VALUE`, `MIN_VALUE`, and `MAX_VALUE` respectively indicate the average value, minimum value, and maximum value of the aggregation.
+* `COMMENT`: The comment about the corresponding monitoring metric.
 
-> **注意：**
+> **Note:**
 >
-> 由于汇总所有结果有一定开销，建议在 SQL 的谓词中显示指定的 `rule` 以减小开销。例如 `select * from inspection_summary where rule in ('read-link', 'ddl')` 会汇总读链路和 DDL 相关的监控。
+> Because summarizing all results causes overhead, it is recommended to display the specific `rule` in the SQL predicate to reduce overhead. For example, executing `select * from inspection_summary where rule in ('read-link', 'ddl')` summarizes the read link and DDL-related monitoring metrics.
 
-使用示例:
+Usage example:
 
-诊断结果表和诊断监控汇总表都可以通过 `hint` 的方式指定诊断的时间范围，例如 `select /*+ time_range('2020-03-07 12:00:00','2020-03-07 13:00:00') */* from inspection_summary` 是对 2020-03-07 12:00:00 - 2020-03-07 13:00:00 时间段的监控汇总。和监控汇总表一样，`inspection_summary` 系统表也可以通过对比两个不同时间段的数据，快速发现差异较大的监控项。
+Both the diagnostic result table and the diagnostic monitoring summary table can specify the diagnostic time range using `hint`. `select /*+ time_range('2020-03-07 12:00:00','2020-03-07 13:00:00') */* from inspection_summary` is the monitoring summary for the `2020-03-07 12:00:00` to `2020-03-07 13:00:00` period. Like the monitoring summary table, you can use the `inspection_summary` table to quickly find the monitoring items with large differences by comparing the data of two different periods.
 
-以下为一个例子，对比以下两个时间段，读系统链路的监控项:
+The following example compares the monitoring metrics of read links in two time periods:
 
 * `(2020-01-16 16:00:54.933, 2020-01-16 16:10:54.933)`
-* `(2020-01-16 16:10:54.933, 2020-01-16 16:20:54.933)` 
+* `(2020-01-16 16:10:54.933, 2020-01-16 16:20:54.933)`
 
 
 ```sql

@@ -1,50 +1,53 @@
 ---
-title: TiDB 工具下载
-summary: 本文介绍如何下载 TiDB 工具包。TiDB 工具包包含常用工具如 Dumpling、TiDB Lightning、BR 等。如果部署环境能访问互联网，可直接通过 TiUP 命令一键部署所需的 TiDB 工具。操作系统需为 Linux，架构为 amd64 或 arm64。下载步骤包括访问 TiDB 社区版页面，找到 TiDB-community-toolkit 软件包并点击立即下载。注意，点击立即下载后默认下载当前 TiDB 的最新发布版本。根据要使用的工具选择安装对应的离线包。
+title: Download TiDB Tools
+summary: Download the most officially maintained versions of TiDB tools.
 ---
 
-# TiDB 工具下载
+# Download TiDB Tools
 
-本文介绍如何下载 TiDB 工具包。关于 TiDB 工具包的内容，请查看 [TiDB 离线包](/binary-package.md)。
+This document describes how to download the TiDB Toolkit.
 
-## TiDB 工具包下载
+TiDB Toolkit contains frequently used TiDB tools, such as data export tool Dumpling, data import tool TiDB Lightning, and backup and restore tool BR.
 
-TiDB 工具包中包含了一些常用的 TiDB 工具，例如数据导出工具 Dumpling、数据导入工具 TiDB Lightning、备份恢复工具 BR、数据一致性检查工具 sync-diff-inspector。
-
-> **建议：**
+> **Tip:**
 >
-> 对于 TiDB v8.5.6 及以上版本，包括 sync-diff-inspector 在内的大多数工具都可以直接通过 TiUP 使用。如果你的部署环境能访问互联网，无需单独下载 TiDB 工具包，可以直接通过使用 [TiUP 命令一键部署](/tiup/tiup-component-management.md)所需的 TiDB 工具。
+> - If your deployment environment has internet access, you can deploy a TiDB tool using a single [TiUP command](/tiup/tiup-component-management.md), so there is no need to download the TiDB Toolkit separately.
+> - If you need to deploy and maintain TiDB on Kubernetes, instead of downloading the TiDB Toolkit, follow the steps in [TiDB Operator offline installation](https://docs.pingcap.com/tidb-in-kubernetes/stable/deploy-tidb-operator#offline-installation).
 
-### 环境要求
+## Environment requirements
 
-- 操作系统：Linux
-- 架构：amd64 或 arm64
+- Operating system: Linux
+- Architecture: amd64 or arm64
 
-### 下载步骤
+## Download link
 
-1. 访问[软件下载中心](https://pingkai.cn/download#tidb-community)页面。
-2. 选择你所需的 TiDB 版本和架构，选择 **TiDB 工具集 TiDB-community-toolkit**，确认隐私政策，然后点击**立即下载**。
+You can download TiDB Toolkit from the following link:
 
-> **注意：**
+```
+https://download.pingcap.org/tidb-community-toolkit-{version}-linux-{arch}.tar.gz
+```
+
+`{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `8.5.8` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-toolkit-8.5.8-linux-amd64.tar.gz`.
+
+> **Note:**
 >
-> - 如需在 Kubernetes 上部署运维 TiDB，无需下载 TiDB-community-toolkit 软件包，请参考[离线安装 TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-tidb-operator#离线安装-tidb-operator)。
-> - 如需使用 [PD Control](/pd-control.md) 工具 `pd-ctl`，请下载 **TiDB-community-server 软件包**。
+> If you need to download the [PD Control](/pd-control.md) tool `pd-ctl`, download the TiDB installation package separately from `https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz`.
 
-### TiDB 工具包说明
+## TiDB Toolkit description
 
-在 TiDB 工具包中，你可以依据要使用的工具，选择安装对应的离线包。
+Depending on which tools you want to use, you can install the corresponding offline packages as follows:
 
-| 工具  | 离线包名称  |
+| Tool | Offline package name |
 |:------|:----------|
 | [TiUP](/tiup/tiup-overview.md)  | `tiup-linux-{arch}.tar.gz` <br/>`tiup-{tiup-version}-linux-{arch}.tar.gz` <br/>`dm-{tiup-version}-linux-{arch}.tar.gz` <br/> `server-{version}-linux-{arch}.tar.gz` |
 | [Dumpling](/dumpling-overview.md)  | `dumpling-{version}-linux-{arch}.tar.gz`  |
 | [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md)  | `tidb-lightning-ctl` <br/>`tidb-lightning-{version}-linux-{arch}.tar.gz`  |
-| [TiDB DM (Data Migration)](/dm/dm-overview.md)  | `dm-worker-{version}-linux-{arch}.tar.gz` <br/>`dm-master-{version}-linux-{arch}.tar.gz` <br/>`dmctl-{version}-linux-{arch}.tar.gz`  |
+| [TiDB Data Migration (DM)](/dm/dm-overview.md)  | `dm-worker-{version}-linux-{arch}.tar.gz` <br/>`dm-master-{version}-linux-{arch}.tar.gz` <br/>`dmctl-{version}-linux-{arch}.tar.gz`  |
 | [TiCDC](/ticdc/ticdc-overview.md)  | `cdc-{version}-linux-{arch}.tar.gz`  |
 | [Backup & Restore (BR)](/br/backup-and-restore-overview.md)  | `br-{version}-linux-{arch}.tar.gz`  |
-| [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md)  | TiDB v8.5.6 及以上版本：`tiflow-{version}-linux-{arch}.tar.gz`<br/>TiDB v8.5.6 之前的版本：`sync_diff_inspector` |
-| [PD Recover](/pd-recover.md)  | `pd-recover-{version}-linux-{arch}.tar.gz` |
+| [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md)  | `sync_diff_inspector`  |
+| [PD Recover](/pd-recover.md)  | `pd-recover-{version}-linux-{arch}.tar` |
 
-> **注意：**
+> **Note:**
 >
-> 以上离线包名称中，`{version}` 取决于离线包中工具的版本号，`{arch}` 取决于离线包对应的架构（amd64 或 arm64）。
+> `{version}` depends on the version of the tool you are installing. `{arch}` depends on the architecture of the system, which can be `amd64` or `arm64`.

@@ -1,512 +1,492 @@
 ---
-title: 使用 TiUP 扩容缩容 TiDB 集群
-summary: TiUP 可以在不中断线上服务的情况下扩容和缩容 TiDB 集群。使用 `tiup cluster list` 查看当前集群名称列表。扩容 TiDB/PD/TiKV 节点需要编写扩容拓扑配置，并执行扩容命令。扩容后，使用 `tiup cluster display <cluster-name>` 检查集群状态。缩容 TiDB/PD/TiKV 节点需要查看节点 ID 信息，执行缩容操作，然后检查集群状态。缩容 TiFlash/TiCDC 节点也需要执行相似的操作。
+title: Scale a TiDB Cluster Using TiUP
+summary: Learn how to scale the TiDB cluster using TiUP.
 ---
 
-# 使用 TiUP 扩容缩容 TiDB 集群
+# Scale a TiDB Cluster Using TiUP
 
-TiDB 集群可以在不中断线上服务的情况下进行扩容和缩容。
+The capacity of a TiDB cluster can be increased or decreased without interrupting the online services.
 
-本文介绍如何使用 TiUP 扩容缩容集群中的 TiDB、TiKV、PD、TiCDC 或者 TiFlash 节点。如未安装 TiUP，可参考[部署文档中的步骤](/production-deployment-using-tiup.md#第-2-步在中控机上部署-tiup-组件)。
+This document describes how to scale the TiDB, TiKV, PD, TiCDC, or TiFlash cluster using TiUP. If you have not installed TiUP, refer to the steps in [Step 2. Deploy TiUP on the control machine](/production-deployment-using-tiup.md#step-2-deploy-tiup-on-the-control-machine).
 
-你可以通过 `tiup cluster list` 查看当前的集群名称列表。
+To view the current cluster name list, run `tiup cluster list`.
 
-例如，集群原拓扑结构如下所示：
+For example, if the original topology of the cluster is as follows:
 
-| 主机 IP   | 服务   |
-|:----|:----|
-| 10.0.1.3   | TiDB + TiFlash  |
-| 10.0.1.4   | TiDB + PD   |
-| 10.0.1.5   | TiKV + Monitor   |
-| 10.0.1.1   | TiKV   |
-| 10.0.1.2   | TiKV   |
+| Host IP | Service |
+|:---|:----|
+| 10.0.1.3 | TiDB + TiFlash |
+| 10.0.1.4 | TiDB + PD |
+| 10.0.1.5 | TiKV + Monitor |
+| 10.0.1.1 | TiKV |
+| 10.0.1.2 | TiKV |
 
-## 扩容 TiDB/PD/TiKV 节点
+## Scale out a TiDB/PD/TiKV cluster
 
-如果要添加一个 TiDB 节点，IP 地址为 10.0.1.5，可以按照如下步骤进行操作。
+This section exemplifies how to add a TiDB node to the `10.0.1.5` host.
 
-> **注意：**
+> **Note:**
 >
-> 添加 PD 节点和添加 TiDB 节点的步骤类似。添加 TiKV 节点前，建议预先根据集群的负载情况调整 PD 调度参数。
+> You can take similar steps to add a PD node. Before you add a TiKV node, it is recommended that you adjust the PD scheduling parameters in advance according to the cluster load.
 
-### 1. 编写扩容拓扑配置
+1. Configure the scale-out topology:
 
-> **注意：**
->
-> - 默认情况下，可以不填写端口以及目录信息。但在单机多实例场景下，则需要分配不同的端口以及目录，如果有端口或目录冲突，会在部署或扩容时提醒。
->
-> - 从 TiUP v1.0.0 开始，扩容配置会继承原集群配置的 global 部分。
+    > **Note:**
+    >
+    > * The port and directory information is not required by default.
+    > * If multiple instances are deployed on a single machine, you need to allocate different ports and directories for them. If the ports or directories have conflicts, you will receive a notification during deployment or scaling.
+    > * Since TiUP v1.0.0, the scale-out configuration inherits the global configuration of the original cluster.
 
-在 scale-out.yml 文件添加扩容拓扑配置：
+    Add the scale-out topology configuration in the `scale-out.yml` file:
 
-```shell
-vi scale-out.yml
-```
-
-
-```ini
-tidb_servers:
-  - host: 10.0.1.5
-    ssh_port: 22
-    port: 4000
-    status_port: 10080
-    deploy_dir: /tidb-deploy/tidb-4000
-    log_dir: /tidb-deploy/tidb-4000/log
-```
-
-TiKV 配置文件参考：
-
-
-```ini
-tikv_servers:
-  - host: 10.0.1.5
-    ssh_port: 22
-    port: 20160
-    status_port: 20180
-    deploy_dir: /tidb-deploy/tikv-20160
-    data_dir: /tidb-data/tikv-20160
-    log_dir: /tidb-deploy/tikv-20160/log
-```
-
-PD 配置文件参考：
-
-
-```ini
-pd_servers:
-  - host: 10.0.1.5
-    ssh_port: 22
-    name: pd-1
-    client_port: 2379
-    peer_port: 2380
-    deploy_dir: /tidb-deploy/pd-2379
-    data_dir: /tidb-data/pd-2379
-    log_dir: /tidb-deploy/pd-2379/log
-```
-
-可以使用 `tiup cluster edit-config <cluster-name>` 查看当前集群的配置信息，因为其中的 `global` 和 `server_configs` 参数配置默认会被 `scale-out.yml` 继承，因此也会在 `scale-out.yml` 中生效。
-
-### 2. 执行扩容命令
-
-执行 scale-out 命令前，先使用 `check` 及 `check --apply` 命令，检查和自动修复集群存在的潜在风险：
-
-> **注意：**
->
-> 针对 scale-out 命令的检查功能在 tiup cluster v1.9.3 及后续版本中支持，请操作前先升级 tiup cluster 版本。
-
-（1）检查集群存在的潜在风险：
-
-  
-  ```shell
-  tiup cluster check <cluster-name> scale-out.yml --cluster --user root [-p] [-i /home/root/.ssh/gcp_rsa]
-  ```
-
-（2）自动修复集群存在的潜在风险：
-
-  
-  ```shell
-  tiup cluster check <cluster-name> scale-out.yml --cluster --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
-  ```
-
-（3）执行 scale-out 命令扩容 TiDB 集群：
-
-  
-  ```shell
-  tiup cluster scale-out <cluster-name> scale-out.yml [-p] [-i /home/root/.ssh/gcp_rsa]
-  ```
-
-以上操作示例中：
-
-- 扩容配置文件为 `scale-out.yml`。
-- `--user root` 表示通过 root 用户登录到目标主机完成集群部署，该用户需要有 ssh 到目标机器的权限，并且在目标机器有 sudo 权限。也可以用其他有 ssh 和 sudo 权限的用户完成部署。
-- [-i] 及 [-p] 为可选项，如果已经配置免密登录目标机，则不需填写。否则选择其一即可，[-i] 为可登录到目标机的 root 用户（或 --user 指定的其他用户）的私钥，也可使用 [-p] 交互式输入该用户的密码。
-
-预期日志结尾输出 ```Scaled cluster `<cluster-name>` out successfully``` 信息，表示扩容操作成功。
-
-### 3. 刷新集群配置
-
-> **注意：**
->
-> - 刷新集群配置仅适用于扩容 PD 节点，扩容 TiDB 或 TiKV 节点时无需执行此操作。
-> - 如果你使用的是 TiUP v1.15.0 或之后版本，请跳过该操作，因为 TiUP 会完成相应操作；如果你使用的是 TiUP v1.15.0 之前的版本，则需执行以下步骤。
-
-1. 更新集群配置：
-
+    
     ```shell
-    tiup cluster reload <cluster-name> --skip-restart
+    vi scale-out.yml
     ```
 
-2. 更新 Prometheus 配置并重启：
-
-    ```shell
-    tiup cluster reload <cluster-name> -R prometheus
+    
+    ```ini
+    tidb_servers:
+    - host: 10.0.1.5
+      ssh_port: 22
+      port: 4000
+      status_port: 10080
+      deploy_dir: /tidb-deploy/tidb-4000
+      log_dir: /tidb-deploy/tidb-4000/log
     ```
 
-### 4. 查看集群状态
+    Here is a TiKV configuration file template:
 
+    
+    ```ini
+    tikv_servers:
+    - host: 10.0.1.5
+      ssh_port: 22
+      port: 20160
+      status_port: 20180
+      deploy_dir: /tidb-deploy/tikv-20160
+      data_dir: /tidb-data/tikv-20160
+      log_dir: /tidb-deploy/tikv-20160/log
+    ```
 
-```shell
-tiup cluster display <cluster-name>
-```
+    Here is a PD configuration file template:
 
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群和新增节点的状态。
+    
+    ```ini
+    pd_servers:
+    - host: 10.0.1.5
+      ssh_port: 22
+      name: pd-1
+      client_port: 2379
+      peer_port: 2380
+      deploy_dir: /tidb-deploy/pd-2379
+      data_dir: /tidb-data/pd-2379
+      log_dir: /tidb-deploy/pd-2379/log
+    ```
 
-扩容后，集群拓扑结构如下所示：
+    To view the configuration of the current cluster, run `tiup cluster edit-config <cluster-name>`. Because the parameter configuration of `global` and `server_configs` is inherited by `scale-out.yml` and thus also takes effect in `scale-out.yml`.
 
-| 主机 IP   | 服务   |
+2. Run the scale-out command:
+
+    Before you run the `scale-out` command, use the `check` and `check --apply` commands to detect and automatically repair potential risks in the cluster:
+
+    1. Check for potential risks:
+
+        
+        ```shell
+        tiup cluster check <cluster-name> scale-out.yml --cluster --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+        ```
+
+    2. Enable automatic repair:
+
+        
+        ```shell
+        tiup cluster check <cluster-name> scale-out.yml --cluster --apply --user root [-p] [-i /home/root/.ssh/gcp_rsa]
+        ```
+
+    3. Run the `scale-out` command:
+
+        
+        ```shell
+        tiup cluster scale-out <cluster-name> scale-out.yml [-p] [-i /home/root/.ssh/gcp_rsa]
+        ```
+
+    In the preceding commands:
+
+    - `scale-out.yml` is the scale-out configuration file.
+    - `--user root` indicates logging in to the target machine as the `root` user to complete the cluster scale out. The `root` user is expected to have `ssh` and `sudo` privileges to the target machine. Alternatively, you can use other users with `ssh` and `sudo` privileges to complete the deployment.
+    - `[-i]` and `[-p]` are optional. If you have configured login to the target machine without password, these parameters are not required. If not, choose one of the two parameters. `[-i]` is the private key of the root user (or other users specified by `--user`) that has access to the target machine. `[-p]` is used to input the user password interactively.
+
+    If you see `Scaled cluster <cluster-name> out successfully`, the scale-out operation succeeds.
+
+3. Refresh the cluster configuration.
+
+    > **Note:**
+    >
+    > - Refreshing cluster configuration is only required after you add PD nodes. If you only add TiDB or TiKV nodes, skip this step.
+    > - If you are using TiUP v1.15.0 or a later version, skip this step because TiUP does it. If you are using a TiUP version earlier than v1.15.0, perform the following sub-steps.
+
+    1. Refresh the cluster configuration:
+
+        ```shell
+        tiup cluster reload <cluster-name> --skip-restart
+        ```
+
+    2. Refresh the Prometheus configuration and restart Prometheus:
+
+        ```shell
+        tiup cluster reload <cluster-name> -R prometheus
+        ```
+
+4. Check the cluster status:
+
+    
+    ```shell
+    tiup cluster display <cluster-name>
+    ```
+
+    Access the monitoring platform at <http://10.0.1.5:3000> using your browser to monitor the status of the cluster and the new node.
+
+After the scale-out, the cluster topology is as follows:
+
+| Host IP   | Service   |
 |:----|:----|
-| 10.0.1.3   | TiDB + TiFlash  |
+| 10.0.1.3   | TiDB + TiFlash   |
 | 10.0.1.4   | TiDB + PD   |
 | 10.0.1.5   | **TiDB** + TiKV + Monitor   |
-| 10.0.1.1   | TiKV   |
-| 10.0.1.2   | TiKV   |
+| 10.0.1.1   | TiKV    |
+| 10.0.1.2   | TiKV    |
 
-## 扩容 TiFlash 节点
+## Scale out a TiFlash cluster
 
-如果要添加一个 TiFlash 节点，其 IP 地址为 `10.0.1.4`，可以按照如下步骤进行操作。
+This section exemplifies how to add a TiFlash node to the `10.0.1.4` host.
 
-> **注意：**
+> **Note:**
 >
-> 在原有 TiDB 集群上新增 TiFlash 组件需要注意：
+> When adding a TiFlash node to an existing TiDB cluster, note the following:
 >
-> 1. 首先确认当前 TiDB 的版本支持 TiFlash，否则需要先升级 TiDB 集群至 v5.0 以上版本。
-> 2. 执行 `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> config set enable-placement-rules true` 命令，以开启 PD 的 Placement Rules 功能。或通过 [pd-ctl](/pd-control.md) 执行对应的命令。
+> - Confirm that the current TiDB version supports using TiFlash. Otherwise, upgrade your TiDB cluster to v5.0 or later versions.
+> - Run the `tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> config set enable-placement-rules true` command to enable the Placement Rules feature. Or run the corresponding command in [pd-ctl](/pd-control.md).
 
-### 1. 添加节点信息到 scale-out.yml 文件
+1. Add the node information to the `scale-out.yml` file:
 
-编写 scale-out.yml 文件，添加该 TiFlash 节点信息（目前只支持 ip，不支持域名）：
+    Create the `scale-out.yml` file to add the TiFlash node information.
 
+    
+    ```ini
+    tiflash_servers:
+    - host: 10.0.1.4
+    ```
 
-```ini
-tiflash_servers:
-  - host: 10.0.1.4
-```
+    Currently, you can only add IP addresses but not domain names.
 
-### 2. 运行扩容命令
+2. Run the scale-out command:
 
+    
+    ```shell
+    tiup cluster scale-out <cluster-name> scale-out.yml
+    ```
 
-```shell
-tiup cluster scale-out <cluster-name> scale-out.yml
-```
+    > **Note:**
+    >
+    > The preceding command is based on the assumption that the mutual trust has been configured for the user to run the command and the new machine. If the mutual trust cannot be configured, use the `-p` option to enter the password of the new machine, or use the `-i` option to specify the private key file.
 
-> **注意：**
->
-> 此处假设当前执行命令的用户和新增的机器打通了互信，如果不满足已打通互信的条件，需要通过 `-p` 来输入新机器的密码，或通过 `-i` 指定私钥文件。
+3. View the cluster status:
 
-### 3. 查看集群状态
+    
+    ```shell
+    tiup cluster display <cluster-name>
+    ```
 
+    Access the monitoring platform at <http://10.0.1.5:3000> using your browser, and view the status of the cluster and the new node.
 
-```shell
-tiup cluster display <cluster-name>
-```
+After the scale-out, the cluster topology is as follows:
 
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群和新增节点的状态。
-
-扩容后，集群拓扑结构如下所示：
-
-| 主机 IP   | 服务   |
+| Host IP   | Service   |
 |:----|:----|
-| 10.0.1.3   | TiDB + TiFlash  |
+| 10.0.1.3   | TiDB + TiFlash   |
 | 10.0.1.4   | TiDB + PD + **TiFlash**    |
 | 10.0.1.5   | TiDB+ TiKV + Monitor   |
-| 10.0.1.1   | TiKV   |
-| 10.0.1.2   | TiKV   |
+| 10.0.1.1   | TiKV    |
+| 10.0.1.2   | TiKV    |
 
-## 扩容 TiCDC 节点
+## Scale out a TiCDC cluster
 
-如果要添加 TiCDC 节点，IP 地址为 10.0.1.3、10.0.1.4，可以按照如下步骤进行操作。
+This section exemplifies how to add two TiCDC nodes to the `10.0.1.3` and `10.0.1.4` hosts.
 
-### 1. 添加节点信息到 scale-out.yml 文件
+1. Add the node information to the `scale-out.yml` file:
 
-编写 scale-out.yml 文件：
+    Create the `scale-out.yml` file to add the TiCDC node information.
 
+    
+    ```ini
+    cdc_servers:
+      - host: 10.0.1.3
+        gc-ttl: 86400
+        data_dir: /tidb-data/cdc-8300
+      - host: 10.0.1.4
+        gc-ttl: 86400
+        data_dir: /tidb-data/cdc-8300
+    ```
 
-```ini
-cdc_servers:
-  - host: 10.0.1.3
-    gc-ttl: 86400
-    data_dir: /tidb-data/cdc-8300
-  - host: 10.0.1.4
-    gc-ttl: 86400
-    data_dir: /tidb-data/cdc-8300
-```
+2. Run the scale-out command:
 
-### 2. 运行扩容命令
+    
+    ```shell
+    tiup cluster scale-out <cluster-name> scale-out.yml
+    ```
 
+    > **Note:**
+    >
+    > The preceding command is based on the assumption that the mutual trust has been configured for the user to run the command and the new machine. If the mutual trust cannot be configured, use the `-p` option to enter the password of the new machine, or use the `-i` option to specify the private key file.
 
-```shell
-tiup cluster scale-out <cluster-name> scale-out.yml
-```
+3. View the cluster status:
 
-> **注意：**
->
-> 此处假设当前执行命令的用户和新增的机器打通了互信，如果不满足已打通互信的条件，需要通过 `-p` 来输入新机器的密码，或通过 `-i` 指定私钥文件。
+    
+    ```shell
+    tiup cluster display <cluster-name>
+    ```
 
-### 3. 查看集群状态
+    Access the monitoring platform at <http://10.0.1.5:3000> using your browser, and view the status of the cluster and the new nodes.
 
+After the scale-out, the cluster topology is as follows:
 
-```shell
-tiup cluster display <cluster-name>
-```
-
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群和新增节点的状态。
-
-扩容后，集群拓扑结构如下所示：
-
-| 主机 IP   | 服务   |
+| Host IP   | Service   |
 |:----|:----|
 | 10.0.1.3   | TiDB + TiFlash + **TiCDC**  |
 | 10.0.1.4   | TiDB + PD + TiFlash + **TiCDC**  |
 | 10.0.1.5   | TiDB+ TiKV + Monitor   |
-| 10.0.1.1   | TiKV   |
-| 10.0.1.2   | TiKV   |
+| 10.0.1.1   | TiKV    |
+| 10.0.1.2   | TiKV    |
 
-## 缩容 TiDB/PD/TiKV 节点
+## Scale in a TiDB/PD/TiKV cluster
 
-如果要移除 IP 地址为 10.0.1.5 的一个 TiKV 节点，可以按照如下步骤进行操作。
+This section exemplifies how to remove a TiKV node from the `10.0.1.5` host.
 
-> **注意：**
+> **Note:**
 >
-> - 移除 TiDB、PD 节点和移除 TiKV 节点的步骤类似。
-> - 由于 TiKV 和 TiFlash 组件是异步下线的，且下线过程耗时较长，所以 TiUP 对 TiKV 和 TiFlash 组件做了特殊处理，详情参考[下线特殊处理](/tiup/tiup-component-cluster-scale-in.md#下线特殊处理)。
-> - TiKV 中的 PD Client 会缓存 PD 节点的列表。当前版本的 TiKV 有定期自动更新 PD 节点的机制，可以降低 TiKV 缓存的 PD 节点列表过旧这一问题出现的概率。但你应尽量避免在扩容新 PD 后直接一次性缩容所有扩容前就已经存在的 PD 节点。如果需要，请确保在下线所有之前存在的 PD 节点前将 PD 的 leader 切换至新扩容的 PD 节点。
+> - You can take similar steps to remove a TiDB or PD node.
+> - Because the TiKV and TiFlash components are taken offline asynchronously and the stopping process takes a long time, TiUP takes them offline in different methods. For details, see [Particular handling of components' offline process](/tiup/tiup-component-cluster-scale-in.md#particular-handling-of-components-offline-process).
+> - The PD Client in TiKV caches the list of PD nodes. The current version of TiKV has a mechanism to automatically and regularly update PD nodes, which can help mitigate the issue of an expired list of PD nodes cached by TiKV. However, after scaling out PD, you should try to avoid directly removing all PD nodes at once that exist before the scaling. If necessary, before making all the previously existing PD nodes offline, make sure to switch the PD leader to a newly added PD node.
 
-### 1. 查看节点 ID 信息
+1. View the node ID information:
 
-
-```shell
-tiup cluster display <cluster-name>
-```
-
-```
-Starting /root/.tiup/components/cluster/v1.12.3/cluster display <cluster-name>
-
-TiDB Cluster: <cluster-name>
-
-TiDB Version: v8.5.8
-
-ID       Role         Host    Ports                            Status  Data Dir        Deploy Dir
-
---       ----         ----      -----                            ------  --------        ----------
-
-10.0.1.3:8300  cdc          10.0.1.3    8300                            Up      data/cdc-8300      deploy/cdc-8300
-
-10.0.1.4:8300  cdc          10.0.1.4    8300                            Up      data/cdc-8300      deploy/cdc-8300
-
-10.0.1.4:2379  pd           10.0.1.4    2379/2380                        Healthy data/pd-2379      deploy/pd-2379
-
-10.0.1.1:20160 tikv         10.0.1.1    20160/20180                      Up      data/tikv-20160     deploy/tikv-20160
-
-10.0.1.2:20160 tikv         10.0.1.2    20160/20180                      Up      data/tikv-20160     deploy/tikv-20160
-
-10.0.1.5:20160 tikv        10.0.1.5    20160/20180                     Up      data/tikv-20160     deploy/tikv-20160
-
-10.0.1.3:4000  tidb        10.0.1.3    4000/10080                      Up      -                 deploy/tidb-4000
-
-10.0.1.4:4000  tidb        10.0.1.4    4000/10080                      Up      -                 deploy/tidb-4000
-
-10.0.1.5:4000  tidb         10.0.1.5    4000/10080                       Up      -            deploy/tidb-4000
-
-10.0.1.3:9000   tiflash      10.0.1.3    9000/8123/3930/20170/20292/8234  Up      data/tiflash-9000       deploy/tiflash-9000
-
-10.0.1.4:9000   tiflash      10.0.1.4    9000/8123/3930/20170/20292/8234  Up      data/tiflash-9000       deploy/tiflash-9000
-
-10.0.1.5:9090  prometheus   10.0.1.5    9090                             Up      data/prometheus-9090  deploy/prometheus-9090
-
-10.0.1.5:3000  grafana      10.0.1.5    3000                             Up      -            deploy/grafana-3000
-
-10.0.1.5:9093  alertmanager 10.0.1.5    9093/9094                        Up      data/alertmanager-9093 deploy/alertmanager-9093
-```
-
-### 2. 执行缩容操作
-
-
-```shell
-tiup cluster scale-in <cluster-name> --node 10.0.1.5:20160
-```
-
-其中 `--node` 参数为需要下线节点的 ID。
-
-预期输出 Scaled cluster `<cluster-name>` in successfully 信息，表示缩容操作成功。
-
-### 3. 刷新集群配置
-
-> **注意：**
->
-> - 刷新集群配置仅适用于缩容 PD 节点，缩容 TiDB 或 TiKV 节点时无需执行此操作。
-> - 如果你使用的是 TiUP v1.15.0 或之后版本，请跳过该操作，因为 TiUP 会完成相应操作；如果你使用的是 TiUP v1.15.0 之前的版本，则需执行以下步骤。
-
-1. 更新集群配置：
-
+    
     ```shell
-    tiup cluster reload <cluster-name> --skip-restart
+    tiup cluster display <cluster-name>
     ```
 
-2. 更新 Prometheus 配置并重启：
-
-    ```shell
-    tiup cluster reload <cluster-name> -R prometheus
+    ```
+    Starting /root/.tiup/components/cluster/v1.12.3/cluster display <cluster-name>
+    TiDB Cluster: <cluster-name>
+    TiDB Version: 8.5.8
+    ID              Role         Host        Ports                            Status  Data Dir                Deploy Dir
+    --              ----         ----        -----                            ------  --------                ----------
+    10.0.1.3:8300   cdc          10.0.1.3    8300                             Up      data/cdc-8300           deploy/cdc-8300
+    10.0.1.4:8300   cdc          10.0.1.4    8300                             Up      data/cdc-8300           deploy/cdc-8300
+    10.0.1.4:2379   pd           10.0.1.4    2379/2380                        Healthy data/pd-2379            deploy/pd-2379
+    10.0.1.1:20160  tikv         10.0.1.1    20160/20180                      Up      data/tikv-20160         deploy/tikv-20160
+    10.0.1.2:20160  tikv         10.0.1.2    20160/20180                      Up      data/tikv-20160         deploy/tikv-20160
+    10.0.1.5:20160  tikv         10.0.1.5    20160/20180                      Up      data/tikv-20160         deploy/tikv-20160
+    10.0.1.3:4000   tidb         10.0.1.3    4000/10080                       Up      -                       deploy/tidb-4000
+    10.0.1.4:4000   tidb         10.0.1.4    4000/10080                       Up      -                       deploy/tidb-4000
+    10.0.1.5:4000   tidb         10.0.1.5    4000/10080                       Up      -                       deploy/tidb-4000
+    10.0.1.3:9000   tiflash      10.0.1.3    9000/8123/3930/20170/20292/8234  Up      data/tiflash-9000       deploy/tiflash-9000
+    10.0.1.4:9000   tiflash      10.0.1.4    9000/8123/3930/20170/20292/8234  Up      data/tiflash-9000       deploy/tiflash-9000
+    10.0.1.5:9090   prometheus   10.0.1.5    9090                             Up      data/prometheus-9090    deploy/prometheus-9090
+    10.0.1.5:3000   grafana      10.0.1.5    3000                             Up      -                       deploy/grafana-3000
+    10.0.1.5:9093   alertmanager 10.0.1.5    9093/9294                        Up      data/alertmanager-9093  deploy/alertmanager-9093
     ```
 
-### 4. 查看集群状态
+2. Run the scale-in command:
 
-下线需要一定时间，下线节点的状态变为 Tombstone 就说明下线成功。
+    
+    ```shell
+    tiup cluster scale-in <cluster-name> --node 10.0.1.5:20160
+    ```
 
-执行如下命令检查节点是否下线成功：
+    The `--node` parameter is the ID of the node to be taken offline.
 
+    If you see `Scaled cluster <cluster-name> in successfully`, the scale-in operation succeeds.
 
-```shell
-tiup cluster display <cluster-name>
-```
+3. Refresh the cluster configuration.
 
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群的状态。
+    > **Note:**
+    >
+    > - Refreshing cluster configuration is only required after you remove PD nodes. If you only remove TiDB or TiKV nodes, skip this step.
+    > - If you are using TiUP v1.15.0 or a later version, skip this step because TiUP does it. If you are using a TiUP version earlier than v1.15.0, perform the following sub-steps.
 
-调整后，拓扑结构如下：
+    1. Refresh the cluster configuration:
+
+        ```shell
+        tiup cluster reload <cluster-name> --skip-restart
+        ```
+
+    2. Refresh the Prometheus configuration and restart Prometheus:
+
+        ```shell
+        tiup cluster reload <cluster-name> -R prometheus
+        ```
+
+4. Check the cluster status:
+
+    The scale-in process takes some time. You can run the following command to check the scale-in status:
+
+    
+    ```shell
+    tiup cluster display <cluster-name>
+    ```
+
+    If the node to be scaled in becomes `Tombstone`, the scale-in operation succeeds.
+
+    Access the monitoring platform at <http://10.0.1.5:3000> using your browser, and view the status of the cluster.
+
+The current topology is as follows:
 
 | Host IP   | Service   |
 |:----|:----|
 | 10.0.1.3   | TiDB + TiFlash + TiCDC  |
 | 10.0.1.4   | TiDB + PD + TiFlash + TiCDC |
-| 10.0.1.5   | TiDB + Monitor**（TiKV 已删除）**   |
+| 10.0.1.5   | TiDB + Monitor **(TiKV is deleted)**   |
 | 10.0.1.1   | TiKV    |
 | 10.0.1.2   | TiKV    |
 
-## 缩容 TiFlash 节点
+## Scale in a TiFlash cluster
 
-如果要缩容 IP 地址为 10.0.1.4 的一个 TiFlash 节点，可以按照如下步骤进行操作。
+This section exemplifies how to remove a TiFlash node from the `10.0.1.4` host.
 
-### 1. 根据 TiFlash 剩余节点数调整数据表的副本数
+### 1. Adjust the number of replicas of the tables according to the number of remaining TiFlash nodes
 
-1. 查询是否有数据表的 TiFlash 副本数大于缩容后的 TiFlash 节点数。`tobe_left_nodes` 表示缩容后的 TiFlash 节点数。如果查询结果为空，可以开始执行缩容。如果查询结果不为空，则需要修改相关表的 TiFlash 副本数。
+1. Query whether any table has TiFlash replicas more than the number of TiFlash nodes after scale-in. `tobe_left_nodes` means the number of TiFlash nodes after scale-in. If the query result is empty, you can start scaling in TiFlash. If the query result is not empty, you need to modify the number of TiFlash replicas of the related table(s).
 
     ```sql
     SELECT * FROM information_schema.tiflash_replica WHERE REPLICA_COUNT >  'tobe_left_nodes';
     ```
 
-2. 对所有 TiFlash 副本数大于缩容后的 TiFlash 节点数的表执行以下语句，`new_replica_num` 必须小于等于 `tobe_left_nodes`：
+2. Execute the following statement for all tables with TiFlash replicas more than the number of TiFlash nodes after scale-in. `new_replica_num` must be less than or equal to `tobe_left_nodes`:
 
     ```sql
     ALTER TABLE <db-name>.<table-name> SET tiflash replica 'new_replica_num';
     ```
 
-    在执行该语句之后，TiDB 会相应地修改或删除 PD 的 [Placement Rules](/configure-placement-rules.md)，PD 再根据 Placement Rules 进行数据调度。
+    After executing this statement, TiDB modifies or deletes PD [placement rules](/configure-placement-rules.md) accordingly. Then, PD schedules data based on the updated placement rules.
 
-3. 重新执行步骤 1，确保没有数据表的 TiFlash 副本数大于缩容后的 TiFlash 节点数。
+3. Perform step 1 again and make sure that there is no table with TiFlash replicas more than the number of TiFlash nodes after scale-in.
 
-### 2. 执行缩容操作
+### 2. Perform the scale-in operation
 
-接下来，请任选下列方案其一进行缩容。
+Perform the scale-in operation with one of the following solutions.
 
-#### 方案一：通过 TiUP 缩容 TiFlash 节点
+#### Solution 1. Use TiUP to remove a TiFlash node
 
-1. 通过以下命令确定需要下线的节点名称：
+1. Confirm the name of the node to be taken down:
 
     ```shell
     tiup cluster display <cluster-name>
     ```
 
-2. 执行 scale-in 命令来下线节点，假设步骤 1 中获得该节点名为 `10.0.1.4:9000`
+2. Remove the TiFlash node (assume that the node name is `10.0.1.4:9000` from Step 1):
 
     ```shell
     tiup cluster scale-in <cluster-name> --node 10.0.1.4:9000
     ```
 
-3. 查看下线 TiFlash 节点的状态：
+3. View the status of the removed TiFlash node:
 
     ```shell
     tiup cluster display <cluster-name>
     ```
 
-4. 等待下线 TiFlash 节点的状态变为 `Tombstone` 后，删除 TiUP 拓扑信息中已下线节点的信息（TiUP 会自动清理 `Tombstone` 状态节点的相关数据文件）：
+4. After the status of the removed TiFlash node becomes `Tombstone`, delete the information of the removed node from the TiUP topology (TiUP will automatically clean up the related data files of the `Tombstone` node):
 
     ```shell
     tiup cluster prune <cluster-name>
     ```
 
-#### 方案二：手动缩容 TiFlash 节点
+#### Solution 2. Manually remove a TiFlash node
 
-在特殊情况下（比如需要强制下线节点），或者 TiUP 操作失败的情况下，可以使用以下方法手动下线 TiFlash 节点。
+In special cases (such as when a node needs to be forcibly taken down), or if the TiUP scale-in operation fails, you can manually remove a TiFlash node with the following steps.
 
-1. 使用 pd-ctl 的 store 命令在 PD 中查看该 TiFlash 节点对应的 store id。
+1. Use the store command of pd-ctl to view the store ID corresponding to this TiFlash node.
 
-    * 在 [pd-ctl](/pd-control.md)（tidb-ansible 目录下的 `resources/bin` 包含对应的二进制文件）中输入 store 命令。
+    * Enter the store command in [pd-ctl](/pd-control.md) (the binary file is under `resources/bin` in the tidb-ansible directory).
 
-    * 若使用 TiUP 部署，可以调用以下命令代替 `pd-ctl`：
+    * If you use TiUP deployment, replace `pd-ctl` with `tiup ctl:v<CLUSTER_VERSION> pd`:
 
-        ```shell
-        tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> store
-        ```
+    ```shell
+    tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> store
+    ```
 
-        > **注意：**
-        >
-        > 如果集群中有多个 PD 实例，只需在以上命令中指定一个活跃 PD 实例的 `IP:端口`即可。
+    > **Note:**
+    >
+    > If multiple PD instances exist in the cluster, you only need to specify the IP address:port of an active PD instance in the above command.
 
-2. 在 pd-ctl 中下线该 TiFlash 节点。
+2. Remove the TiFlash node in pd-ctl:
 
-    * 在 pd-ctl 中输入 `store delete <store_id>`，其中 `<store_id>` 为上一步查到的该 TiFlash 节点对应的 store id。
+    * Enter `store delete <store_id>` in pd-ctl (`<store_id>` is the store ID of the TiFlash node found in the previous step.
 
-    * 若通过 TiUP 部署，可以调用以下命令代替 `pd-ctl`：
+    * If you use TiUP deployment, replace `pd-ctl` with `tiup ctl:v<CLUSTER_VERSION> pd`:
 
         ```shell
         tiup ctl:v<CLUSTER_VERSION> pd -u http://<pd_ip>:<pd_port> store delete <store_id>
         ```
 
-        > **注意：**
-        >
-        > 如果集群中有多个 PD 实例，只需在以上命令中指定一个活跃 PD 实例的 `IP:端口`即可。
+    > **Note:**
+    >
+    > If multiple PD instances exist in the cluster, you only need to specify the IP address:port of an active PD instance in the above command.
 
-3. 等待该 TiFlash 节点对应的 store 消失或者 state_name 变成 Tombstone 再关闭 TiFlash 进程。
+3. Wait for the store of the TiFlash node to disappear or for the `state_name` to become `Tombstone` before you stop the TiFlash process.
 
-4. 删除 TiUP 拓扑信息中已下线节点的信息（TiUP 会自动清理 `Tombstone` 状态节点的相关数据文件）：
+4. Delete the information of the removed node from the TiUP topology (TiUP will automatically clean up the related data files of the `Tombstone` node):
 
     ```shell
     tiup cluster prune <cluster-name>
     ```
 
-### 3. 查看集群状态
-
+### 3. View the cluster status
 
 ```shell
 tiup cluster display <cluster-name>
 ```
 
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群的状态。
+Access the monitoring platform at <http://10.0.1.5:3000> using your browser, and view the status of the cluster and the new nodes.
 
-调整后，拓扑结构如下：
+After the scaling, the cluster topology is as follows:
 
 | Host IP   | Service   |
 |:----|:----|
 | 10.0.1.3   | TiDB + TiFlash + TiCDC  |
-| 10.0.1.4   | TiDB + PD + TiCDC **（TiFlash 已删除）**  |
-| 10.0.1.5   | TiDB + Monitor  |
+| 10.0.1.4   | TiDB + PD + TiCDC **(TiFlash is deleted)**  |
+| 10.0.1.5   | TiDB+ Monitor  |
 | 10.0.1.1   | TiKV    |
 | 10.0.1.2   | TiKV    |
 
-## 缩容 TiCDC 节点
+## Scale in a TiCDC cluster
 
-如果要缩容 IP 地址为 10.0.1.4 的一个 TiCDC 节点，可以按照如下步骤进行操作。
+ This section exemplifies how to remove the TiCDC node from the `10.0.1.4` host.
 
-### 1. 下线该 TiCDC 节点
+1. Take the node offline:
 
+    
+    ```shell
+    tiup cluster scale-in <cluster-name> --node 10.0.1.4:8300
+    ```
 
-```shell
-tiup cluster scale-in <cluster-name> --node 10.0.1.4:8300
-```
+2. View the cluster status:
 
-### 2. 查看集群状态
+    
+    ```shell
+    tiup cluster display <cluster-name>
+    ```
 
+    Access the monitoring platform at <http://10.0.1.5:3000> using your browser, and view the status of the cluster.
 
-```shell
-tiup cluster display <cluster-name>
-```
-
-打开浏览器访问监控平台 <http://10.0.1.5:3000>，监控整个集群的状态。
-
-调整后，拓扑结构如下：
+The current topology is as follows:
 
 | Host IP   | Service   |
 |:----|:----|
 | 10.0.1.3   | TiDB + TiFlash + TiCDC  |
-| 10.0.1.4   | TiDB + PD + **(TiCDC 已删除）**  |
+| 10.0.1.4   | TiDB + PD + **(TiCDC is deleted）**  |
 | 10.0.1.5   | TiDB + Monitor  |
 | 10.0.1.1   | TiKV    |
 | 10.0.1.2   | TiKV    |

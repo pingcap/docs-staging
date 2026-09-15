@@ -1,38 +1,38 @@
 ---
 title: tiup dm list
-summary: tiup-dm 支持使用同一个中控机部署多套集群。命令 `tiup dm list` 可以查看当前登录的用户使用该中控机部署了哪些集群。部署的集群数据默认放在 `~/.tiup/storage/dm/clusters/` 目录下。在同一台中控机上，当前登录用户无法查看其他用户部署的集群。该命令输出含有集群名字、部署用户、集群版本、集群部署数据在中控机上的路径、连接集群的私钥所在路径的表格。
+summary: tiup-dm supports deploying multiple clusters using the same control machine. The "tiup dm list" command checks which clusters are deployed by the currently logged-in user. The data is stored in the ~/.tiup/storage/dm/clusters/ directory. The user can view the cluster name, deploying user, version, path, and private key.
 ---
 
 # tiup dm list
 
-tiup-dm 支持使用同一个中控机部署多套集群，而命令 `tiup dm list` 可以查看当前登录的用户使用该中控机部署了哪些集群。
+`tiup-dm` supports deploying multiple clusters using the same control machine. You can use the `tiup dm list` command to check which clusters are deployed using the control machine by the currently logged-in user.
 
-> **注意：**
-> 
-> 部署的集群数据默认放在 `~/.tiup/storage/dm/clusters/` 目录下，因此在同一台中控机上，当前登录用户无法查看其他用户部署的集群。
+> **Note:**
+>
+> By default, the data of the deployed clusters is stored in the `~/.tiup/storage/dm/clusters/` directory. The currently logged-in user cannot view the clusters deployed by other users on the same control machine.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm list [flags]
 ```
 
-## 选项
+## Options
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-## 输出
+## Output
 
-输出含有以下字段的表格：
+A table consisting of the following fields:
 
-- Name：集群名字
-- User：部署用户
-- Version：集群版本
-- Path：集群部署数据在中控机上的路径
-- PrivateKey：连接集群的私钥所在路径
+- `Name`: the cluster name.
+- `User`: the user who deployed the cluster.
+- `Version`: the cluster version.
+- `Path`: the path of the cluster deployment data on the control machine.
+- `PrivateKey`: the path of the private key to the cluster.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

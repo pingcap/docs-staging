@@ -1,41 +1,13 @@
 ---
-title: 不同库名或表名的数据校验
-summary: TiDB DM 等同步工具可以使用 route-rules 设置数据同步到下游指定表中。sync-diff-inspector 通过设置 rules 提供了校验不同库名、表名的表的功能。可以通过 rules 设置映射关系来简化配置，校验大量的不同库名或者表名的表。表路由的初始化和示例包括规则中存在 target-schema/target-table 表名为 schema.table 的行为，规则中只存在 target-schema 的行为，以及规则中不存在 target-schema.target-table 的行为。
+title: Data Check for Tables with Different Schema or Table Names
+summary: Learn the data check for different database names or table names.
 ---
 
-# 不同库名或表名的数据校验
+# Data Check for Tables with Different Schema or Table Names
 
-当你在使用 [TiDB DM](/dm/dm-overview.md) 等同步工具时，可以设置 `route-rules` 将数据同步到下游指定表中。sync-diff-inspector 通过设置 `rules` 提供了校验不同库名、表名的表的功能。
+When using replication tools such as [TiDB Data Migration](/dm/dm-overview.md), you can set `route-rules` to replicate data to a specified table in the downstream. sync-diff-inspector enables you to verify tables with different schema names or table names by setting `rules`.
 
-下面是一个简单的配置文件说明，要了解完整配置，请参考 [sync-diff-inspector 用户文档](/sync-diff-inspector/sync-diff-inspector-overview.md)。
-
-```toml
-######################### Datasource config #########################
-[data-sources.mysql1]
-    host = "127.0.0.1"
-    port = 3306
-    user = "root"
-    password = ""
-
-    route-rules = ["rule1"]
-    
-[data-sources.tidb0]
-    host = "127.0.0.1"
-    port = 4000
-    user = "root"
-    password = ""
-
-########################### Routes ###########################
-[routes.rule1]
-schema-pattern = "test_1"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "t_1"          # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test_2"         # 目标库名
-target-table = "t_2" # 目标表名
-```
-
-使用该配置会对下游的 `test_2.t_2` 与实例 `mysql1` 中的 `test_1.t_1` 进行校验。
-
-如果需要校验大量的不同库名或者表名的表，也可以通过 `rules` 设置映射关系来简化配置。可以只配置 schema 或者 table 的映射关系，也可以都配置。例如上游库 `test_1` 中的所有表都同步到了下游的 `test_2` 库中，可以使用如下配置进行校验：
+The following is a simple configuration example. To learn the complete configuration, refer to [sync-diff-inspector User Guide](/sync-diff-inspector/sync-diff-inspector-overview.md).
 
 ```toml
 ######################### Datasource config #########################
@@ -44,49 +16,73 @@ target-table = "t_2" # 目标表名
     port = 3306
     user = "root"
     password = ""
-
     route-rules = ["rule1"]
-    
+
 [data-sources.tidb0]
     host = "127.0.0.1"
     port = 4000
     user = "root"
     password = ""
-
 ########################### Routes ###########################
 [routes.rule1]
-schema-pattern = "test_1"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "*"            # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test_2"       # 目标库名
-target-table = "t_2"           # 目标表名
+schema-pattern = "test_1"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "t_1"          # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test_2"       # The name of the schema in the target database
+target-table = "t_2"           # The name of the target table
 ```
 
-## Table Router 的初始化和示例
+This configuration can be used to check `test_2.t_2` in the downstream and `test_1.t_1` in the `mysql1` instance.
 
-### Table Router 的初始化
+To check a large number of tables with different schema names or table names, you can simplify the configuration by setting the mapping relationship by using `rules`. You can configure the mapping relationship of either schema or table, or of both. For example, all the tables in the upstream `test_1` database are replicated to the downstream `test_2` database, which can be checked through the following configuration:
 
-- 如果规则中存在 `target-schema/target-table` 表名为 `schema.table`，sync-diff-inspector 的行为如下：
+```toml
+######################### Datasource config #########################
+[data-sources.mysql1]
+    host = "127.0.0.1"
+    port = 3306
+    user = "root"
+    password = ""
+    route-rules = ["rule1"]
 
-    - 如果存在一条规则将 `schema.table` 匹配到 `schema.table`，sync-diff-inspector 不做任何处理。
-    - 如果不存在将 `schema.table` 匹配到 `schema.table` 的规则，sync-diff-inspector 会在表路由中添加一条新的规则 `schema.table -> _no__exists__db_._no__exists__table_`。之后，sync-diff-inspector 会将表 `schema.table` 视为表 `_no__exists__db_._no__exists__table_`。
+[data-sources.tidb0]
+    host = "127.0.0.1"
+    port = 4000
+    user = "root"
+    password = ""
+########################### Routes ###########################
+[routes.rule1]
+schema-pattern = "test_1"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "*"            # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test_2"       # The name of the schema in the target database
+target-table = "t_2"           # The name of the target table
+```
 
-- 如果规则中只存在 `target-schema`，如下所示：
+## The initialization of table routers and some examples
+
+### The initialization of table routers
+
+- If a `target-schema/target-table` table named `schema.table` exists in the rules, the behavior of sync-diff-inspector is as follows:
+
+    - If there is a rule that matches `schema.table` to `schema.table`, sync-diff-inspector does nothing.
+    - If there is no rule that matches `schema.table` to `schema.table`, sync-diff-inspector will add a new rule `schema.table -> _no__exists__db_._no__exists__table_` to the table router. After that, sync-diff-inspector will treat the table `schema.table` as the table `_no__exists__db_._no__exists__table_`.
+
+- If `target-schema` exists only in the rules as follows:
 
     ```toml
     [routes.rule1]
-    schema-pattern = "schema_2"  # 匹配数据源的库名，支持通配符 "*" 和 "?"
-    target-schema = "schema"     # 目标库名 
+    schema-pattern = "schema_2"  # the schema to match. Support wildcard characters * and ?
+    target-schema = "schema"     # the target schema
     ```
 
-    - 如果上游中不存在库 `schema`，sync-diff-inspector 不做任何处理。
-    - 如果上游中存在库 `schema`，且存在一条规则将该库匹配到其他库，sync-diff-inspector 不做任何处理。
-    - 如果上游中存在库 `schema`，但不存在将该库匹配到其他库的规则，sync-diff-inspector 会在表路由中添加一条新的规则 `schema -> _no__exists__db_`。之后，sync-diff-inspector 会将库 `schema` 视为库 `_no__exists__db_`。
+    - If there is no schema `schema` in the upstream, sync-diff-inspector does nothing.
+    - If there is a schema `schema` in the upstream, and a rule matches the schema, sync-diff-inspector does nothing.
+    - If there is a schema `schema` in the upstream, but no rule matches the schema, sync-diff-inspector will add a new rule `schema -> _no__exists__db_` to the table router. After that, sync-diff-inspector will treat the table `schema` as the table `_no__exists__db_`.
 
-- 如果规则中不存在 `target-schema.target-table`，sync-diff-inspector 会添加一条规则将 `target-schema.target-table` 匹配到 `target-schema.target-table`，使其大小写不敏感，因为表路由是大小写不敏感的。
+- If `target-schema.target-table` does not exist in the rules, sync-diff-inspector will add a rule to match `target-schema.target-table` to `target-schema.target-table` to make it case-insensitive, because the table router is case-insensitive.
 
-### 示例
+### Examples
 
-假设在上游集群中有下列七张表：
+Suppose there are seven tables in the upstream cluster:
 
 - `inspector_mysql_0.tb_emp1`
 - `Inspector_mysql_0.tb_emp1`
@@ -96,11 +92,11 @@ target-table = "t_2"           # 目标表名
 - `inspector_mysql_1.Tb_emp1`
 - `Inspector_mysql_1.Tb_emp1`
 
-在配置示例中，上游集群有一条规则 `Source.rule1`，目标表为 `inspector_mysql_1.tb_emp1`。
+In the configuration example, the upstream cluster has a rule `Source.rule1`, and the target table is `inspector_mysql_1.tb_emp1`.
 
-#### 示例 1
+#### Example 1
 
-如果配置如下：
+If the configuration is as follows:
 
 ```toml
 [Source.rule1]
@@ -110,19 +106,19 @@ target-schema = "inspector_mysql_1"
 target-table = "tb_emp1"
 ```
 
-那么路由结果如下：
+The routing results will be as follows:
 
-- `inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_0.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_1.tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `Inspector_mysql_1.tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `inspector_mysql_1.Tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `Inspector_mysql_1.Tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
+- `inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_1.tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `Inspector_mysql_1.tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `inspector_mysql_1.Tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `Inspector_mysql_1.Tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
 
-#### 示例 2
+#### Example 2
 
-如果配置如下：
+If the configuration is as follows:
 
 ```toml
 [Source.rule1]
@@ -130,19 +126,19 @@ schema-pattern = "inspector_mysql_0"
 target-schema = "inspector_mysql_1"
 ```
 
-那么路由结果如下：
+The routing results will be as follows:
 
-- `inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_0.Tb_emp1` 将被路由到 `inspector_mysql_1.Tb_emp1`
-- `inspector_mysql_1.tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `Inspector_mysql_1.tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `inspector_mysql_1.Tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
-- `Inspector_mysql_1.Tb_emp1` 将被路由到 `_no__exists__db_._no__exists__table_`
+- `inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.Tb_emp1` is routed to `inspector_mysql_1.Tb_emp1`
+- `inspector_mysql_1.tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `Inspector_mysql_1.tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `inspector_mysql_1.Tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
+- `Inspector_mysql_1.Tb_emp1` is routed to `_no__exists__db_._no__exists__table_`
 
-#### 示例 3
+#### Example 3
 
-如果配置如下：
+If the configuration is as follows:
 
 ```toml
 [Source.rule1]
@@ -150,19 +146,19 @@ schema-pattern = "other_schema"
 target-schema = "other_schema"
 ```
 
-那么路由结果如下：
+The routing results will be as follows:
 
-- `inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_0.tb_emp1`
-- `Inspector_mysql_0.tb_emp1` 将被路由到 `Inspector_mysql_0.tb_emp1`
-- `inspector_mysql_0.Tb_emp1` 将被路由到 `inspector_mysql_0.Tb_emp1`
-- `inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_0.tb_emp1`
+- `Inspector_mysql_0.tb_emp1` is routed to `Inspector_mysql_0.tb_emp1`
+- `inspector_mysql_0.Tb_emp1` is routed to `inspector_mysql_0.Tb_emp1`
+- `inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
 
-#### 示例 4
+#### Example 4
 
-如果配置如下：
+If the configuration is as follows:
 
 ```toml
 [Source.rule1]
@@ -172,24 +168,24 @@ target-schema = "inspector_mysql_1"
 target-table = "tb_emp1"
 ```
 
-那么路由结果如下：
+The routing results will be as follows:
 
-- `inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_0.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
 
-#### 示例 5
+#### Example 5
 
-如果你不设置任何规则，那么路由结果如下：
+If you do not set any rules, the routing results will be as follows:
 
-- `inspector_mysql_0.tb_emp1` 将被路由到 `inspector_mysql_0.tb_emp1`
-- `Inspector_mysql_0.tb_emp1` 将被路由到 `Inspector_mysql_0.tb_emp1`
-- `inspector_mysql_0.Tb_emp1` 将被路由到 `inspector_mysql_0.Tb_emp1`
-- `inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
-- `Inspector_mysql_1.Tb_emp1` 将被路由到 `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_0.tb_emp1` is routed to `inspector_mysql_0.tb_emp1`
+- `Inspector_mysql_0.tb_emp1` is routed to `Inspector_mysql_0.tb_emp1`
+- `inspector_mysql_0.Tb_emp1` is routed to `inspector_mysql_0.Tb_emp1`
+- `inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`
+- `Inspector_mysql_1.Tb_emp1` is routed to `inspector_mysql_1.tb_emp1`

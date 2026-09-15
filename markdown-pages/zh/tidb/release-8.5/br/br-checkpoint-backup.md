@@ -1,37 +1,37 @@
 ---
-title: 断点备份
-summary: 了解断点备份功能，包括它的使用场景、实现原理以及使用方法。
+title: Checkpoint Backup
+summary: TiDB v6.5.0 introduces checkpoint backup feature to continue interrupted backups, reducing the need to start from scratch. It records backed up shards to resume backup progress, but relies on GC mechanism and may require some data to be backed up again. The `br` tool periodically updates `gc-safepoint` to avoid data being garbage collected, and can extend retention period if needed.
 ---
 
-# 断点备份
+# Checkpoint Backup
 
-快照备份会因为一些可恢复性错误导致提前结束，例如硬盘空间占满、节点宕机等等一些突发情况。在 TiDB v6.5.0 之前，在错误被处理之后，之前备份的数据会作废，你需要重新进行备份。对大规模集群来说，会造成大量额外成本。
+Snapshot backup might be interrupted due to recoverable errors, such as disk exhaustion and node crash. Before TiDB v6.5.0, data that is backed up before the interruption would be invalidated even after the error is addressed, and you need to start the backup from scratch. For large clusters, this incurs considerable extra cost.
 
-为了尽可能继续上一次的备份，从 TiDB v6.5.0 起，备份恢复特性引入了断点备份的功能。该功能可以在备份意外中断后保留上一次备份的大部分进度。
+In TiDB v6.5.0, Backup & Restore (BR) introduces the checkpoint backup feature to allow continuing an interrupted backup. This feature can retain most data of the interrupted backup.
 
-## 使用场景
+## Application scenarios
 
-如果你的 TiDB 集群规模很大，无法接受备份失败后需要重新备份的情况，那么，你可以使用断点备份功能重试备份。br 工具会定期记录已备份的分片，使得在下一次重试备份时回到离上一次退出时较近的进度。
+If your TiDB cluster is large and cannot afford to back up again after a failure, you can use the checkpoint backup feature. The br command-line tool (hereinafter referred to as `br`) periodically records the shards that have been backed up. In this way, the next backup retry can use the backup progress close to the abnormal exit.
 
-## 实现原理
+## Implementation details
 
-在快照备份过程中，br 工具将表编码成对应的键空间，并生成备份的 RPC 请求发送给所有 TiKV 节点。接收到备份请求后，TiKV 节点会选择请求范围内的数据进行备份。每当 TiKV 节点备份完一个 Region 级别的数据，就会返回给 br 工具这段范围相关的备份信息。
+During a snapshot backup, `br` encodes the tables into the corresponding key space, and generates backup RPC requests before sending them to TiKV nodes. After receiving the backup request, TiKV nodes back up the data within the requested range. Every time a TiKV node finishes backing up data of a Region, it returns the backup information of this range to `br`.
 
-通过记录这些返回的备份信息，br 工具能够及时获知已备份完成的键范围。断点备份功能会定期将这些新增的相关备份信息上传至外部存储中，从而持久化存储该备份任务已完成的键范围。
+`br` records the information returned by TiKV nodes, which helps `br` get the key ranges that have been backed up. The checkpoint backup feature periodically uploads the new backup information to external storage so that the key ranges that have been backed up can be persisted.
 
-在重试备份时，br 工具会从外部存储读取已经备份的键范围，再与所需备份的键范围做比较，获得一个差集，从而得出断点备份还需要备份的键范围。
+When `br` retries the backup, it reads the key ranges that have been backed up from external storage, and compares them with the key ranges of the backup task. The differential data helps `br` to determine the key range that still needs to be backed up in checkpoint backup.
 
-## 使用限制
+## Usage limitations
 
-断点备份功能依赖于 GC 机制，且无法恢复所有已备份的数据，具体描述如下。
+Checkpoint backup relies on the GC mechanism and cannot recover all data that has been backed up. The following sections provide the details.
 
-### 确保在 GC 前重试
+### Backup retry must be prior to GC
 
-在备份过程中，br 命令行工具会定期向 PD 更新备份 snapshot 的 `gc-safepoint`，从而避免在备份过程中数据被 GC。当 br 工具退出后，PD 中备份 snapshot 的 `gc-safepoint` 将无法及时更新。因此，在下一次重试备份前，数据有可能已经被 GC。
+During the backup, `br` periodically updates the `gc-safepoint` of the backup snapshot in PD to avoid data being garbage collected. When `br` exits, the `gc-safepoint` cannot be updated in time. As a result, before the next backup retry, the data might have been garbage collected.
 
-为了避免数据被 GC，当 br 工具没有指定具体的 `gcttl` 时，br 工具在默认情况下会让 `gc-safepoint` 保留大约 1 小时。如果你需要延长这个时间，可以设置参数 `gcttl`。
+To avoid this situation, `br` keeps the `gc-safepoint` for about one hour by default when `gcttl` is not specified. You can set the `gcttl` parameter to extend the retention period if needed .
 
-例如，设置 `gcttl` 为 15 小时（54000 秒）来延长 `gc-safepoint` 的保留时间：
+The following example sets `gcttl` to 15 hours (54000 seconds) to extend the retention period of `gc-safepoint`:
 
 ```shell
 tiup br backup full \
@@ -39,14 +39,14 @@ tiup br backup full \
 --gcttl 54000
 ```
 
-> **注意：**
+> **Note:**
 >
-> 快照备份结束后会将备份前创建的 `gc-safepoint` 删除，不需要手动删除。
+> The `gc-safepoint` created before backup is deleted after the snapshot backup is completed. You do not need to delete it manually.
 
-### 部分数据需要重新备份
+### Some data needs to be backed up again
 
-在重试备份时，部分已备份的数据可能需要重新备份，包括正在备份的数据和还未被断点记录的数据。
+When `br` retries backup, some data that has been backed up might need to be backed up again, including the data being backed up and the data not recorded by the checkpoint.
 
-- 由错误引起的退出，br 工具会在退出前将已备份的数据元信息持久化到外部存储中，因此只有正在备份的数据需要在下一次重试中重新备份。
+- If the interruption is caused by an error, `br` will persist the meta information of the data backed up before exit. In this case, only the data being backed up needs to be backed up again in the next retry.
 
-- 如果 br 工具进程被系统中断，那么 br 将无法把已备份的数据元信息持久化到外部存储中。br 工具持久化已备份的数据元信息的周期为 30 秒，因此大约最近 30 秒内的已完成备份的数据无法持久化到外部存储，在下次重试时需要重新备份。
+- If the `br` process is interrupted by the system, `br` cannot persist the meta information of the data backed up to the external storage. Since `br` persists the meta information every 30 seconds, data backed up in the last 30 seconds before interruption cannot be persisted and needs to be backed up again in the next retry.

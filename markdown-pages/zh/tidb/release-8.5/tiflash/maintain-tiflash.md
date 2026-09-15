@@ -1,53 +1,53 @@
 ---
-title: TiFlash 集群运维
-summary: TiFlash 集群运维包括查看版本、重要日志和系统表。查看版本有两种方法：通过命令或在日志中查看。重要日志包括数据同步和处理请求的信息。系统表包括数据库名、表名、副本数、位置标签、可用性和同步进度。
+title: Maintain a TiFlash Cluster
+summary: Learn common operations when you maintain a TiFlash cluster.
 ---
 
-# TiFlash 集群运维
+# Maintain a TiFlash Cluster
 
-本文介绍 [TiFlash](/tiflash/tiflash-overview.md) 集群运维的一些常见操作，包括查看 TiFlash 版本、TiFlash 重要日志及系统表。
+This document describes how to perform common operations when you maintain a [TiFlash](/tiflash/tiflash-overview.md) cluster, including checking the TiFlash version. This document also introduces critical logs and a system table of TiFlash.
 
-## 查看 TiFlash 版本
+## Check the TiFlash version
 
-查看 TiFlash 版本有以下两种方法：
+There are two ways to check the TiFlash version:
 
-- 假设 TiFlash 的二进制文件名为 `tiflash`，则可以通过 `./tiflash version` 方式获取 TiFlash 版本。
+- If the binary file name of TiFlash is `tiflash`, you can check the version by executing the `./tiflash version` command.
 
-    但是由于 TiFlash 的运行依赖于动态库 `libtiflash_proxy.so`，因此需要将包含动态库 `libtiflash_proxy.so` 的目录路径添加到环境变量 `LD_LIBRARY_PATH` 后，上述命令才能正常执行。
+    However, to execute the above command, you need to add the directory path which includes the `libtiflash_proxy.so` dynamic library to the `LD_LIBRARY_PATH` environment variable. This is because the running of TiFlash relies on the `libtiflash_proxy.so` dynamic library.
 
-    例如，当 `tiflash` 和 `libtiflash_proxy.so` 在同一个目录下时，切换到该目录后，可以通过如下命令查看 TiFlash 版本：
+    For example, when `tiflash` and `libtiflash_proxy.so` are in the same directory, you can first switch to this directory, and then use the following command to check the TiFlash version:
 
     
     ```shell
     LD_LIBRARY_PATH=./ ./tiflash version
     ```
 
-- 在 TiFlash 日志（日志路径见[配置文件 tiflash.toml [logger] 部分](/tiflash/tiflash-configuration.md#配置文件-tiflashtoml)）中查看 TiFlash 版本，例如：
+- Check the TiFlash version by referring to the TiFlash log. For the log path, see the `[logger]` part in [the `tiflash.toml` file](/tiflash/tiflash-configuration.md#configure-the-tiflashtoml-file). For example:
 
     ```
     <information>: TiFlash version: TiFlash 0.2.0 master-375035282451103999f3863c691e2fc2
     ```
 
-## TiFlash 重要日志介绍
+## TiFlash critical logs
 
-| 日志信息 | 日志含义 |
+| Log Information | Log Description |
 |---------------|-------------------|
-| `[INFO] [<unknown>] ["KVStore: Start to persist [region 47, applied: term 6 index 10]"] [thread_id=23]` | 在 TiFlash 中看到类似日志代表数据开始同步 |
-| `[DEBUG] [<unknown>] ["CoprocessorHandler: grpc::Status DB::CoprocessorHandler::execute(): Handling DAG request"] [thread_id=30]` | 该日志代表 TiFlash 开始处理一个 Coprocessor 请求 |
-| `[DEBUG] [<unknown>] ["CoprocessorHandler: grpc::Status DB::CoprocessorHandler::execute(): Handle DAG request done"] [thread_id=30]` | 该日志代表 TiFlash 完成 Coprocessor 请求的处理 |
+| `[INFO] [<unknown>] ["KVStore: Start to persist [region 47, applied: term 6 index 10]"] [thread_id=23]` | Data starts to be replicated (the number in the square brackets at the start of the log refers to the thread ID |
+| `[DEBUG] [<unknown>] ["CoprocessorHandler: grpc::Status DB::CoprocessorHandler::execute(): Handling DAG request"] [thread_id=30]` | Handling DAG request, that is, TiFlash starts to handle a Coprocessor request |
+| `[DEBUG] [<unknown>] ["CoprocessorHandler: grpc::Status DB::CoprocessorHandler::execute(): Handle DAG request done"] [thread_id=30]` | Handling DAG request done, that is, TiFlash finishes handling a Coprocessor request |
 
-你可以找到一个 Coprocessor 请求的开始或结束，然后通过日志前面打印的线程号找到该 Coprocessor 请求的其他相关日志。
+You can find the beginning or the end of a Coprocessor request, and then locate the related logs of the Coprocessor request through the thread ID printed at the start of the log.
 
-## TiFlash 系统表
+## TiFlash system table
 
-`information_schema.tiflash_replica` 系统表的列名及含义如下：
+The column names and their descriptions of the `information_schema.tiflash_replica` system table are as follows:
 
-| 列名            | 含义                                                                     |
-|-----------------|-------------------------------------------------------------------------|
-| TABLE_SCHEMA    | 数据库名                                                                 |
-| TABLE_NAME      | 表名                                                                     |
-| TABLE_ID        | 表 ID                                                                    |
-| REPLICA_COUNT   | TiFlash 副本数                                                           |
-| LOCATION_LABELS | 给 PD 的 hint，让 Region 的多个副本尽可能按照 LOCATION_LABELS 里的设置分散  |
-| AVAILABLE       | 是否可用（0/1）                                                          |
-| PROGRESS        | 同步进度 [0.0~1.0]                                                       |
+| Column Name | Description |
+|---------------|-----------|
+| TABLE_SCHEMA | Database name |
+| TABLE_NAME | Table name |
+| TABLE_ID | Table ID |
+| REPLICA_COUNT | Number of TiFlash replicas |
+|LOCATION_LABELS | The hint for PD, based on which multiple replicas in a Region are scattered |
+| AVAILABLE | Available or not (0/1)|
+| PROGRESS | Replication progress [0.0~1.0] |

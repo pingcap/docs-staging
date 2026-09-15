@@ -1,116 +1,126 @@
 ---
-title: Optimizer Fix Controls
-summary: 了解 Optimizer Fix Controls 以及如何使用 `tidb_opt_fix_control` 细粒度地控制 TiDB 优化器的行为。
+title: 优化器修复控制
+summary: 了解优化器修复控制功能，以及如何使用 `tidb_opt_fix_control` 以更细粒度地控制 TiDB 优化器。
 ---
 
-# Optimizer Fix Controls
+# 优化器修复控制
 
-随着产品迭代演进，TiDB 优化器的行为会发生变化，进而生成更加合理的执行计划。但在某些特定场景下，新的行为可能会导致非预期结果。例如：
+随着产品的迭代演进，TiDB 优化器的行为也在不断变化，从而生成更合理的执行计划。但在某些特定场景下，新的行为可能会导致意外的结果。例如：
 
-- 部分行为的效果和场景相关。有的行为改变，能在大多数场景下带来改进，但可能在极少数场景下导致回退。
-- 有时，行为细节的变化和其导致的结果之间的关系十分复杂。即使是对某处行为细节的改进，也可能在整体上导致执行计划回退。
+- 某些行为的效果依赖于特定场景，对大多数场景带来提升的变更，可能会对其他场景造成回退。
+- 有时，行为细节的变更与其后果之间的关系非常复杂，对某一行为的改进可能导致整体回退。
 
-因此，TiDB 提供了 Optimizer Fix Controls 功能，允许用户通过设置一系列 Fix 控制 TiDB 优化器的行为细节。本文档介绍了 Optimizer Fix Controls 及其使用方法，并列举了当前 TiDB 支持调整的所有 Fix。
+因此，TiDB 提供了优化器修复控制功能，允许你通过为一组修复项设置值，对 TiDB 优化器的行为进行细粒度控制。本文档介绍了优化器修复控制功能及其使用方法，并列出了 TiDB 当前支持的所有优化器修复控制项。
 
-## `tidb_opt_fix_control` 介绍
+## `tidb_opt_fix_control` 简介
 
-从 TiDB v6.5.3 和 v7.1.0 开始，提供了 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-从-v653-和-v710-版本开始引入) 系统变量来更细粒度地控制优化器的行为。
+自 v6.5.3 和 v7.1.0 起，TiDB 提供了 [`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710) 系统变量，用于以更细粒度的方式控制优化器的行为。
 
-一个 Fix 是用于调整 TiDB 优化器中一处行为的控制项。它以一个数字编号表示，该数字编号对应一个 GitHub Issue，在 Issue 中会有对技术细节的描述。例如 Fix `44262` 对应 [Issue 44262](https://github.com/pingcap/tidb/issues/44262)。
+每个修复项都是用于调整 TiDB 优化器某一特定行为的控制项。它以一个数字表示，该数字对应一个包含行为变更技术细节的 GitHub Issue。例如，对于修复项 `44262`，你可以在 [Issue 44262](https://github.com/pingcap/tidb/issues/44262) 中查看其控制内容。
 
-`tidb_opt_fix_control` 支持设置多个 Fix，不同 Fix 之间使用逗号 (`,`) 分隔。格式形如 `"<#issue1>:<value1>,<#issue2>:<value2>,...,<#issueN>:<valueN>"`，其中 `<#issueN>` 代表 Fix 编号。例如：
+[`tidb_opt_fix_control`](/system-variables.md#tidb_opt_fix_control-new-in-v653-and-v710) 系统变量可以同时接受多个修复项，使用英文逗号（`,`）分隔。格式为 `"<#issue1>:<value1>,<#issue2>:<value2>,...,<#issueN>:<valueN>"`，其中 `<#issueN>` 为修复项编号。例如：
 
 ```sql
 SET SESSION tidb_opt_fix_control = '44262:ON,44389:ON';
 ```
 
-## Optimizer Fix Controls 参考
+## 优化器修复控制项参考
 
-### [`33031`](https://github.com/pingcap/tidb/issues/33031) <span class="version-mark">从 v8.0.0 版本开始引入</span>
-
-- 默认值：`OFF`
-- 可选值：`ON`、`OFF`
-- 是否允许对分区表进行计划缓存。如果设置为 `ON`，则 [Prepared 语句计划缓存](/sql-prepared-plan-cache.md)和[非 Prepared 语句计划缓存](/sql-non-prepared-plan-cache.md)都不会对[分区表](/partitioned-table.md)启用。
-
-### [`44262`](https://github.com/pingcap/tidb/issues/44262) <span class="version-mark">从 v6.5.3 和 v7.2.0 版本开始引入</span>
+### [`33031`](https://github.com/pingcap/tidb/issues/33031) <span class="version-mark">v8.0.0 新增</span>
 
 - 默认值：`OFF`
 - 可选值：`ON`、`OFF`
-- 在分区表缺少[全局统计信息](/statistics.md#收集动态裁剪模式下的分区表统计信息)的情况下，是否允许使用[动态裁剪模式](/partitioned-table.md#动态裁剪模式)访问该表。
+- 该变量控制是否允许分区表使用计划缓存。如果设置为 `ON`，则 [预处理语句计划缓存](/sql-prepared-plan-cache.md) 和 [非预处理语句计划缓存](/sql-non-prepared-plan-cache.md) 都不会对 [分区表](/partitioned-table.md) 生效。
 
-### [`44389`](https://github.com/pingcap/tidb/issues/44389) <span class="version-mark">从 v6.5.3 和 v7.2.0 版本开始引入</span>
+### [`44262`](https://github.com/pingcap/tidb/issues/44262) <span class="version-mark">v6.5.3 和 v7.2.0 新增</span>
 
 - 默认值：`OFF`
 - 可选值：`ON`、`OFF`
-- 对形如 `c = 10 and (a = 'xx' or (a = 'kk' and b = 1))` 的过滤条件，是否尝试为 `IndexRangeScan` 更加完整地构造扫描范围，即 `range`。
+- 该变量控制当 [全局统计信息](/statistics.md#collect-statistics-of-partitioned-tables-in-dynamic-pruning-mode) 缺失时，是否允许使用 [动态裁剪模式](/partitioned-table.md#dynamic-pruning-mode) 访问分区表。
 
-### [`44823`](https://github.com/pingcap/tidb/issues/44823) <span class="version-mark">从 v7.3.0 版本开始引入</span>
+### [`44389`](https://github.com/pingcap/tidb/issues/44389) <span class="version-mark">v6.5.3 和 v7.2.0 新增</span>
+
+- 默认值：`OFF`
+- 可选值：`ON`、`OFF`
+- 对于如 `c = 10 and (a = 'xx' or (a = 'kk' and b = 1))` 这样的过滤条件，该变量控制是否尝试为 `IndexRangeScan` 构建更全面的扫描范围。
+
+### [`44823`](https://github.com/pingcap/tidb/issues/44823) <span class="version-mark">v7.3.0 新增</span>
 
 - 默认值：`200`
 - 可选值：`[0, 2147483647]`
-- 为了节省内存，对于参数个数超过此开关指定个数的查询，Plan Cache 将不会缓存。`0` 表示无限制。
+- 为了节省内存，计划缓存不会缓存参数数量超过该变量指定值的查询。`0` 表示不限制。
 
-### [`44830`](https://github.com/pingcap/tidb/issues/44830) <span class="version-mark">从 v6.5.7 和 v7.3.0 版本开始引入</span>
-
-- 默认值：`OFF`
-- 可选值：`ON`、`OFF`
-- 此开关控制是否让 Plan Cache 对在物理优化阶段形成的 `PointGet` 计划进行缓存。
-
-### [`44855`](https://github.com/pingcap/tidb/issues/44855) <span class="version-mark">从 v6.5.4 和 v7.3.0 版本开始引入</span>
+### [`44830`](https://github.com/pingcap/tidb/issues/44830) <span class="version-mark">v6.5.7 和 v7.3.0 新增</span>
 
 - 默认值：`OFF`
 - 可选值：`ON`、`OFF`
-- 在某些场景下，当 `IndexJoin` 算子的 `Probe` 端包含 `Selection` 算子时，TiDB 会严重高估 `IndexScan` 的行数，导致在 `IndexJoin` 更好的时候选择了其它的执行计划。
-- TiDB 已经引入了缓解这类问题的改进逻辑。但是由于潜在的计划回退风险，该改进并没有被默认启用。
-- 此开关控制是否启用这个改进。
+- 该变量控制计划缓存是否允许缓存物理优化阶段生成的包含 `PointGet` 算子的执行计划。
 
-### [`45132`](https://github.com/pingcap/tidb/issues/45132) <span class="version-mark">从 v7.4.0 版本开始引入</span>
+### [`44855`](https://github.com/pingcap/tidb/issues/44855) <span class="version-mark">v6.5.4 和 v7.3.0 新增</span>
+
+- 默认值：`OFF`
+- 可选值：`ON`、`OFF`
+- 在某些场景下，当 `IndexJoin` 算子的 `Probe` 端包含 `Selection` 算子时，TiDB 会严重高估 `IndexScan` 的行数。这可能导致选择了次优的查询计划而不是 `IndexJoin`。
+- 为缓解该问题，TiDB 引入了相关改进。但由于存在查询计划回退的风险，该改进默认关闭。
+- 该变量用于控制是否启用上述改进。
+
+### [`45132`](https://github.com/pingcap/tidb/issues/45132) <span class="version-mark">v7.4.0 新增</span>
 
 - 默认值：`1000`
 - 可选值：`[0, 2147483647]`
-- 此开关控制优化器进行启发式访问路径选择的阈值。当某个访问路径（如 `Index_A`）的估算行数远小于其他访问路径时（默认为 `1000` 倍），优化器会跳过代价比较直接选择 `Index_A`。
-- `0` 表示关闭此启发式访问路径选择策略。
+- 该变量用于设置优化器启发式选择访问路径的阈值。如果某个访问路径（如 `Index_A`）的预估行数远小于其他访问路径（默认相差 `1000` 倍），优化器会跳过成本比较，直接选择 `Index_A`。
+- `0` 表示关闭该启发式策略。
 
-### [`45798`](https://github.com/pingcap/tidb/issues/45798) <span class="version-mark">从 v7.5.0 版本开始引入</span>
-
-- 默认值：`ON`
-- 可选值：`ON`、`OFF`
-- 此开关控制是否允许 Plan Cache 缓存访问[生成列](/generated-columns.md)的执行计划。
-
-### [`46177`](https://github.com/pingcap/tidb/issues/46177) <span class="version-mark">从 v6.5.6、v7.1.3 和 v7.5.0 版本开始引入</span>
-
-- 默认值：`ON`。在 v8.5.0 之前，默认值为 `OFF`。
-- 可选值：`ON`、`OFF`
-- 此开关控制优化器在查询优化的过程中，找到非强制执行计划后，是否继续查找强制执行计划进行查询优化。
-
-### [`47400`](https://github.com/pingcap/tidb/issues/47400) <span class="version-mark">从 v8.4.0 版本开始引入</span>
+### [`45798`](https://github.com/pingcap/tidb/issues/45798) <span class="version-mark">v7.5.0 新增</span>
 
 - 默认值：`ON`
 - 可选值：`ON`、`OFF`
-- 由于查询计划中每个步骤符合条件的行数难以精确估算，优化器有可能会为 `estRows` 估算出一个较小的值。此开关控制是否限制 `estRows` 的最小值。
-- `ON`：将 `estRows` 的最小值限制为 1。这是 v8.4.0 中引入的新行为，与 Oracle 和 Db2 等数据库一致。
-- `OFF`：不限制 `estRows` 的最小值，与 v8.4.0 之前版本的行为保持一致。此时，`estRows` 可能为 0。
+- 该变量控制计划缓存是否允许缓存访问 [生成列](/generated-columns.md) 的执行计划。
 
-### [`52592`](https://github.com/pingcap/tidb/issues/52592) <span class="version-mark">从 v8.4.0 版本开始引入</span>
+### [`46177`](https://github.com/pingcap/tidb/issues/46177) <span class="version-mark">v6.5.6、v7.1.3 和 v7.5.0 新增</span>
+
+- 默认值：`ON`。v8.5.0 之前默认值为 `OFF`。
+- 可选值：`ON`、`OFF`
+- 该变量控制在查询优化过程中，优化器在找到未强制的计划后，是否继续探索强制计划。
+
+### [`47400`](https://github.com/pingcap/tidb/issues/47400) <span class="version-mark">v8.4.0 新增</span>
+
+- 默认值：`ON`
+- 可选值：`ON`、`OFF`
+- 由于在查询计划中难以准确估算每一步的合格行数，优化器可能会对 `estRows` 估算出较小的值。该变量用于控制是否限制 `estRows` 的最小值。
+- `ON`：将 `estRows` 的最小值限制为 1，这是 v8.4.0 引入的新行为，并与 Oracle、Db2 等其他数据库保持一致。
+- `OFF`：不限制最小行数估算，行为与 v8.4.0 之前版本一致，此时 `estRows` 可能为 0。
+
+### [`52592`](https://github.com/pingcap/tidb/issues/52592) <span class="version-mark">v8.4.0 新增</span>
 
 - 默认值：`OFF`
 - 可选值：`ON`、`OFF`
-- 此开关控制是否禁用 `Point Get` 和 `Batch Point Get` 算子执行查询。默认值 `OFF` 代表允许通过 `Point Get` 和 `Batch Point Get` 执行查询。如果设置为 `ON`，优化器会禁用 `Point Get` 和 `Batch Point Get`，强制选择 Coprocessor 执行查询。
-- `Point Get` 和 `Batch Point Get` 不支持列投影（即无法只返回部分列的数据），这意味着在某些场景中其执行效率可能低于 Coprocessor，此时设置为 `ON` 可以提高查询性能。以下是推荐设置为 `ON` 的场景：
+- 该变量控制是否禁用查询执行中的 `Point Get` 和 `Batch Point Get` 算子。默认值 `OFF` 表示允许使用 `Point Get` 和 `Batch Point Get` 执行查询。如果设置为 `ON`，优化器会禁用 `Point Get` 和 `Batch Point Get`，强制选择 Coprocessor 执行查询。
+- `Point Get` 和 `Batch Point Get` 不支持列裁剪（即无法只返回部分列），因此在某些场景下，其执行效率可能低于 Coprocessor，将该变量设置为 `ON` 可以提升查询性能。推荐在以下场景下设置为 `ON`：
 
-    - 查询具有多列的宽表，且仅涉及表中的少量列。
-    - 查询包含大型 JSON 值的表，且不需要检索整个 JSON 列，或仅需提取 JSON 列中的小部分数据。
+    - 宽表，包含大量列，但只查询少量列。
+    - 表中包含大体积 JSON 字段，但查询时不涉及该 JSON 字段，或只查询 JSON 字段的一小部分。
 
-### [`52869`](https://github.com/pingcap/tidb/issues/52869) <span class="version-mark">从 v8.1.0 版本开始引入</span>
+### [`52869`](https://github.com/pingcap/tidb/issues/52869) <span class="version-mark">v8.1.0 新增</span>
 
-- 默认值：`ON`。在 v8.5.7 之前的版本中，默认值为 `OFF`。
+- 默认值：`ON`。在 v8.5.7 之前，默认值为 `OFF`。
 - 可选值：`ON`、`OFF`
-- 当该开关为 `OFF` 时，如果查询有除了全表扫描以外的单索引扫描方式可以选择，优化器不会自动选择索引合并。详情请参考[用 EXPLAIN 查看索引合并的 SQL 执行计划](/explain-index-merge.md#示例)中的**注意**部分。
-- 当该开关为 `ON` 时，上述限制会被解除，优化器可以在更多查询中自动选择索引合并。但由于代价估算等原因，优化器有可能错过原本最优的执行计划。
+- 当该修复控制项设置为 `OFF` 时，如果优化器能够为查询计划选择单一索引扫描方式（非全表扫描），则不会自动选择索引合并。更多信息，参见 [Explain Statements Using Index Merge](/explain-index-merge.md#examples) 中的 **Note**。
+- 当该修复控制项设置为 `ON` 时，将移除上述限制，优化器可以在更多查询中自动选择索引合并。但是，由于成本估算不准确等因素，优化器可能会错过原本最优的执行计划。
 
-### [`54337`](https://github.com/pingcap/tidb/issues/54337) <span class="version-mark">从 v8.3.0 版本开始引入</span>
+### [`54337`](https://github.com/pingcap/tidb/issues/54337) <span class="version-mark">v8.3.0 新增</span>
 
 - 默认值：`OFF`
 - 可选值：`ON`、`OFF`
-- 目前，TiDB 优化器在处理每个子句包含范围列表的复杂连接条件时，推导索引范围存在一定限制。此问题可以通过应用通用范围交集来解决。
-- 打开此开关后，这个限制会被解除。解除此限制能让优化器处理复杂范围交集。然而，对于子句数量较多（超过 10 个）的条件，可能会有略微增加优化时间的风险。
+- 目前，TiDB 优化器在推导每个合取条件均为范围列表的复杂合取条件的索引范围时存在一定限制。通过应用通用范围交集可以解决该问题。
+- 你可以通过开启该修复控制项移除此限制，使优化器能够处理复杂的范围交集。但对于合取条件数量较多（超过 10 个）的情况，优化时间可能会略有增加。
+
+### [`56318`](https://github.com/pingcap/tidb/issues/56318)
+
+> **Note:**
+>
+> 仅适用于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter)。
+
+- 默认值：`ON`
+- 可选值：`ON`、`OFF`
+- 该变量控制是否避免在 `ORDER BY` 语句中对复杂表达式进行两次计算。

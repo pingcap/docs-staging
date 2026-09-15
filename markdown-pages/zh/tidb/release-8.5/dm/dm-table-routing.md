@@ -1,20 +1,18 @@
 ---
-title: TiDB Data Migration 表路由
-summary: 了解 DM 的关键特性表路由 (Table Routing) 的使用方法和注意事项。
+title: TiDB Data Migration Table Routing
+summary: Learn the usage and precautions of table routing in DM.
 ---
 
-# TiDB Data Migration 表路由
+# TiDB Data Migration Table Routing
 
-使用 TiDB Data Migration (DM) 迁移数据时，你可以配置表路由 (Table Routing) 规则，指定将上游 MySQL/MariaDB 实例的特定表迁移到下游的特定表。
+When you migrate data using TiDB Data Migration (DM), you can configure the table routing to migrate a certain table of the upstream MySQL or MariaDB instance to the specified table in the downstream.
 
-> **注意：**
+> **Note:**
 >
-> - 不支持对同一个表设置多个不同的路由规则。
-> - Schema 的匹配规则需要单独设置，用来迁移 `CREATE/DROP SCHEMA ...`，例如下面[配置表路由](#配置表路由)中的 rule-2。
+> - Configuring multiple different routing rules for a single table is not supported.
+> - The match rule of schema needs to be configured separately, which is used to migrate `CREATE/DROP SCHEMA xx`, as shown in `rule-2` of the [Configure table routing](#configure-table-routing) section.
 
-## 配置表路由
-
-在迁移任务配置文件中，添加如下配置：
+## Configure table routing
 
 ```yaml
 routes:
@@ -23,7 +21,9 @@ routes:
     table-pattern: "t_*"
     target-schema: "test"
     target-table: "t"
-    # extract-table、extract-schema 和 extract-source 为可选配置，仅在需要提取分表、分库和数据源信息时填写
+    # extract-table, extract-schema, and extract-source are optional and
+    # are required only when you need to extract information about sharded
+    # tables, sharded schemas, and source datatabase information.
     extract-table:
       table-regexp: "t_(.*)"
       target-column: "c_table"
@@ -38,34 +38,38 @@ routes:
     target-schema: "test"
 ```
 
-支持正则表达式和通配符来匹配库表名，在简单任务场景下，推荐使用通配符匹配库表名，但需注意以下几点：
+Regular expressions and wildcards are supported to match database and table names. In simple scenarios, it is recommended that you use the wildcard for matching schemas and tables. However, note the following:
 
-+ 支持的通配符包括 `*`、`?` 以及 `[]`。注意通配符匹配中的 `*` 符号只能有一个，且必须在末尾。例如用 `table-pattern: "t_*"` 中的 `"t_*"` 表示 `t_` 开头的表。详情请参考[通配符匹配](https://en.wikipedia.org/wiki/Glob_(programming)#Syntax)。
-+ `table-regexp`、`schema-regexp` 和 `source-regexp` 仅支持配置正则表达式，但不能以 `~` 符号开头。
-+ `schema-pattern` 和 `table-pattern` 同时支持通配符和正则表达式。正则表达式必须以 `~` 符号开头。
+- Wildcards including `*`, `?`, and `[]` are supported. There can only be one `*` symbol in a wildcard match, and it must be at the end. For example, in `table-pattern: "t_*"`, `"t_*"` indicates all tables starting with `t_`. See [wildcard matching](https://en.wikipedia.org/wiki/Glob_(programming)#Syntax) for details.
 
-## 参数解释
+- `table-regexp`, `schema-regexp`, and `source-regexp` only support regular expressions and cannot start with the `~` symbol.
 
-- 对于匹配上 [`schema-pattern`/`table-pattern`](/dm/table-selector.md) 规则的上游 MySQL/MariaDB 实例的表，DM 将它们迁移到下游的 `target-schema`/`target-table`。
-- 对于匹配上 `schema-pattern`/`table-pattern` 规则的分表，DM 通过 `extract-table`.`table-regexp` 提取分表信息，通过 `extract-schema`.`schema-regexp` 提取分库信息，通过 `extract-source`.`source-regexp` 提取数据来源信息，然后写入到下游合表对应的 `target-column` 中。
+- `schema-pattern` and `table-pattern` support both wildcards and regular expressions. Regular expressions must begin with the `~` symbol.
 
-## 使用示例
+## Parameter descriptions
 
-下面展示了四个不同场景下的配置示例。如果你需要从小数据量分库分表 MySQL 合并迁移数据到 TiDB，请参考[这篇文档](/migrate-small-mysql-shards-to-tidb.md)
+- DM migrates the upstream MySQL or MariaDB instance tables that match the [`schema-pattern`/`table-pattern` rule provided by Table selector](/dm/table-selector.md) to the downstream `target-schema`/`target-table`.
+- For sharded tables that match the `schema-pattern`/`table-pattern` rules, DM extracts the table name by using the `extract-table`.`table-regexp` regular expression, the schema name by using the `extract-schema`.`schema-regexp` regular expression, and source information by using the `extract-source`.`source-regexp` regular expression. Then DM writes the extracted information to the corresponding `target-column` in the merged table in the downstream.
 
-### 分库分表合并
+## Usage examples
 
-假设存在分库分表场景，需要将上游两个 MySQL 实例的表 `test_{1,2,3...}`.`t_{1,2,3...}` 迁移到下游 TiDB 的一张表 `test`.`t`。
+This section shows the usage examples in four different scenarios.
 
-为了迁移到下游实例的表 `test`.`t`，需要创建以下表路由规则：
+If you need to migrate and merge MySQL shards of small datasets to TiDB, refer to [this tutorial](/migrate-small-mysql-shards-to-tidb.md).
 
-- `rule-1` 用来迁移匹配上 `schema-pattern: "test_*"` 和 `table-pattern: "t_*"` 的表的 DML/DDL 语句到下游的 `test`.`t`。
-- `rule-2` 用来迁移匹配上 `schema-pattern: "test_*"` 的库的 DDL 语句，例如 `CREATE/DROP SCHEMA xx`。
+### Merge sharded schemas and tables
 
-> **注意：**
+Assuming in the scenario of sharded schemas and tables, you want to migrate the `test_{1,2,3...}`.`t_{1,2,3...}` tables in two upstream MySQL instances to the `test`.`t` table in the downstream TiDB instance.
+
+To migrate the upstream instances to the downstream `test`.`t`, you must create the following routing rules:
+
+- `rule-1` is used to migrate DML or DDL statements of the table that matches `schema-pattern: "test_*"` and `table-pattern: "t_*"` to the downstream `test`.`t`.
+- `rule-2` is used to migrate DDL statements of the schema that matches `schema-pattern: "test_*"`, such as `CREATE/DROP SCHEMA xx`.
+
+> **Note:**
 >
-> - 如果下游 TiDB `schema: test` 已经存在，并且不会被删除，则可以省略 `rule-2`。
-> - 如果下游 TiDB `schema: test` 不存在，只设置了 `rule_1`，则迁移会报错 `schema test doesn't exist`。
+> - If the downstream `schema: test` already exists and is not to be deleted, you can omit `rule-2`.
+> - If the downstream `schema: test` does not exist and only `rule-1` is configured, then it reports the `schema test doesn't exist` error during migration.
 
 ```yaml
   rule-1:
@@ -78,15 +82,15 @@ routes:
     target-schema: "test"
 ```
 
-### 提取分库分表数据源信息写入合表
+### Extract table, schema, and source information and write into the merged table
 
-假设存在分库分表场景，需要将上游两个 MySQL 实例的表 `test_{11,12,13...}`.`t_{1,2,3...}` 迁移到下游 TiDB 的一张表 `test`.`t`，同时需要提取分库分表的源信息写入下游合表中，用于标识合表中各行数据的来源。
+Assuming in the scenario of sharded schemas and tables, you want to migrate the `test_{1,2,3...}`.`t_{1,2,3...}` tables in two upstream MySQL instances to the `test`.`t` table in the downstream TiDB instance. At the same time, you want to extract the source information of the sharded tables and write it to the downstream merged table.
 
-为了迁移到下游实例的表 `test`.`t`，需要创建和[分库分表合并场景](#分库分表合并)类似的表路由规则，并在其中增加 `extract-table`、`extract-schema`、`extract-source` 配置用于提取分库分表源数据信息：
+To migrate the upstream instances to the downstream `test`.`t`, you must create routing rules similar to the previous section [Merge sharded schemas and tables](#merge-sharded-schemas-and-tables). In addition, you need to add the `extract-table`, `extract-schema`, and `extract-source` configurations:
 
-- `extract-table`：对于匹配上 `schema-pattern` 和 `table-pattern` 的分表，DM 根据 `table-regexp` 提取分表，并将去除 `t_` 后的后缀信息写入合表的 `target-column`，即 `c_table` 列中。
-- `extract-schema`：对于匹配上 `schema-pattern`和 `table-pattern` 的分库，DM 根据 `schema-regexp` 提取分库，并将去除 `test_` 后的后缀信息写入合表的 `target-column`，即 `c_schema` 列中。
-- `extract-source`：对于匹配上 `schema-pattern` 和 `table-pattern` 的分表，DM 将其数据源信息写入合表的 `target-column`，即 `c_source` 列中。
+- `extract-table`: For a sharded table matching `schema-pattern` and `table-pattern`, DM extracts the sharded table name by using `table-regexp` and writes the name suffix without the `t_` part to `target-column` of the merged table, that is, the `c_table` column.
+- `extract-schema`: For a sharded schema matching `schema-pattern` and `table-pattern`, DM extracts the sharded schema name by using `schema-regexp` and writes the name suffix without the `test_` part to `target-column` of the merged table, that is, the `c_schema` column.
+- `extract-source`: For a sharded table matching `schema-pattern` and `table-pattern`, DM writes the source instance information to the `target-column` of the merged table, that is, the `c_source` column.
 
 ```yaml
   rule-1:
@@ -108,7 +112,7 @@ routes:
     target-schema: "test"
 ```
 
-为了提取上游分表来源信息数据以写入到下游合表，**必须在启动迁移任务前手动**在下游创建好对应合表，合表需要包含用于存放分表源数据信息的三个扩展列 `target-column` （表名列、库名列、数据源列），扩展列**必须为表末尾列且必须为[字符串类型](/data-type-string.md)**。
+To extract the source information of upstream sharded tables to the merged table in the downstream, you **must manually create a merged table in the downstream before starting the migration**. The merged table must contain the three `target-columns` (`c_table`, `c_schema`, and `c_source`) used for specifying the source information. In addition, these columns **must be the last columns and be [string types](/data-type-string.md)**.
 
 ```sql
 CREATE TABLE `test`.`t` (
@@ -119,9 +123,9 @@ CREATE TABLE `test`.`t` (
 );
 ```
 
-例如，上游源数据为：
+Assume that the upstream has the following two data sources:
 
-数据源 `mysql-01`:
+Data source `mysql-01`:
 
 ```sql
 mysql> select * from test_11.t_1;
@@ -144,7 +148,7 @@ mysql> select * from test_12.t_1;
 +---+
 ```
 
-数据源 `mysql-02`:
+Data source `mysql-02`:
 
 ```sql
 mysql> select * from test_13.t_3;
@@ -155,7 +159,7 @@ mysql> select * from test_13.t_3;
 +---+
 ```
 
-则 DM 同步后合表中的数据将为：
+After migration using DM, data in the merged table will be as follows:
 
 ```sql
 mysql> select * from test.t;
@@ -169,13 +173,13 @@ mysql> select * from test.t;
 +---+---------+----------+----------+
 ```
 
-**错误的合表建表示例：**
+#### Incorrect examples of creating merged tables
 
-> **注意：**
+> **Note:**
 >
-> 以下错误都可能导致分库分表数据源信息写入合表失败。
+> If any of the following errors occur, source information of sharded tables and schemas might fail to be written to the merged table.
 
-- `c-table` 列不在末尾
+- `c-table` is not in the last three columns:
 
 ```sql
 CREATE TABLE `test`.`t` (
@@ -186,7 +190,7 @@ CREATE TABLE `test`.`t` (
 );
 ```
 
-- `c-source` 列缺失
+- `c-source` is absent:
 
 ```sql
 CREATE TABLE `test`.`t` (
@@ -196,7 +200,7 @@ CREATE TABLE `test`.`t` (
 );
 ```
 
-- `c_schema` 列为非 string 类型
+- `c_schema` is not a string type:
 
 ```sql
 CREATE TABLE `test`.`t` (
@@ -207,9 +211,11 @@ CREATE TABLE `test`.`t` (
 );
 ```
 
-### 分库合并
+### Merge sharded schemas
 
-假设存在分库场景，将上游两个 MySQL 实例 `test_{1,2,3...}`.`t_{1,2,3...}` 迁移到下游 TiDB 的 `test`.`t_{1,2,3...}`，创建一条路由规则即可：
+Assuming in the scenario of sharded schemas, you want to migrate the `test_{1,2,3...}`.`t_{1,2,3...}` tables in the two upstream MySQL instances to the `test`.`t_{1,2,3...}` tables in the downstream TiDB instance.
+
+To migrate the upstream schemas to the downstream `test`.`t_[1,2,3]`, you only need to create one routing rule.
 
 ```yaml
   rule-1:
@@ -217,14 +223,11 @@ CREATE TABLE `test`.`t` (
     target-schema: "test"
 ```
 
-### 错误的表路由
+### Incorrect table routing
 
-假设存在下面两个路由规则，`test_1_bak`.`t_1_bak` 可以匹配上 `rule-1` 和 `rule-2`，违反 table 路由的限制而报错。
+Assuming that the following two routing rules are configured and `test_1_bak`.`t_1_bak` matches both `rule-1` and `rule-2`, an error is reported because the table routing configuration violates the number limitation.
 
 ```yaml
-  rule-0:
-    schema-pattern: "test_*"
-    target-schema: "test"
   rule-1:
     schema-pattern: "test_*"
     table-pattern: "t_*"

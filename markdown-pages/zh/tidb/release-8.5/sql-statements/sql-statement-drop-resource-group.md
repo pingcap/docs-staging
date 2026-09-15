@@ -1,13 +1,17 @@
 ---
 title: DROP RESOURCE GROUP
-summary: TiDB 数据库中 DROP RESOURCE GROUP 的使用概况。
+summary: 了解在 TiDB 中 DROP RESOURCE GROUP 的用法。
 ---
 
 # DROP RESOURCE GROUP
 
-`DROP RESOURCE GROUP` 语句用于在当前所选数据库中删除资源组。
+你可以使用 `DROP RESOURCE GROUP` 语句来删除一个资源组。
 
-## 语法图
+> **Note:**
+>
+> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+
+## 语法
 
 ```ebnf+diagram
 DropResourceGroupStmt ::=
@@ -21,14 +25,14 @@ ResourceGroupName ::=
 |   "DEFAULT"
 ```
 
-> **注意：**
+> **Note:**
 >
-> - `DROP RESOURCE GROUP` 语句只能在全局变量 [`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-从-v660-版本开始引入) 设置为 `ON` 时才能执行。
-> - `default` 资源组为系统保留的资源组，不支持删除。
+> - 只有当全局变量 [`tidb_enable_resource_control`](/system-variables.md#tidb_enable_resource_control-new-in-v660) 设置为 `ON` 时，才能执行 `DROP RESOURCE GROUP` 语句。
+> - `default` 资源组为保留资源组，无法被删除。
 
 ## 示例
 
-删除名为 `rg1` 的资源组：
+删除名为 `rg1` 的资源组。
 
 ```sql
 DROP RESOURCE GROUP IF EXISTS rg1;
@@ -67,7 +71,7 @@ DROP RESOURCE GROUP IF EXISTS rg1;
 Query OK, 1 rows affected (0.09 sec)
 ```
 
-```sql
+```
 SELECT * FROM information_schema.resource_groups WHERE NAME ='rg1';
 ```
 
@@ -83,4 +87,4 @@ MySQL 也支持 [DROP RESOURCE GROUP](https://dev.mysql.com/doc/refman/8.0/en/dr
 
 * [ALTER RESOURCE GROUP](/sql-statements/sql-statement-alter-resource-group.md)
 * [CREATE RESOURCE GROUP](/sql-statements/sql-statement-create-resource-group.md)
-* [RU](/tidb-resource-control-ru-groups.md#什么是-request-unit-ru)
+* [Request Unit (RU)](/tidb-resource-control-ru-groups.md#what-is-request-unit-ru)

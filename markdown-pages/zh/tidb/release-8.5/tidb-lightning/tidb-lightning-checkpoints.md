@@ -1,113 +1,111 @@
 ---
-title: TiDB Lightning 断点续传
-summary: TiDB Lightning 提供了“断点续传”的功能，即使 `tidb-lightning` 崩溃，在重启时仍然接着之前的进度继续工作。断点续传可通过配置启用，存储方式包括本地文件和 MySQL 数据库。在出现不可恢复的错误时，可以使用 `tidb-lightning-ctl` 工具来控制断点的处理，包括重置断点状态、清除出错状态和移除断点。
+title: TiDB Lightning Checkpoints
+summary: Use checkpoints to avoid redoing the previously completed tasks before the crash.
 ---
 
-# TiDB Lightning 断点续传
+# TiDB Lightning Checkpoints
 
-大量的数据导入一般耗时数小时至数天，长时间运行的进程会有一定机率发生非正常中断。如果每次重启都从头开始，就会浪费掉之前已成功导入的数据。为此，TiDB Lightning 提供了“断点续传”的功能，即使 `tidb-lightning` 崩溃，在重启时仍然接着之前的进度继续工作。
+Importing a large database usually takes hours or days, and if such long running processes spuriously crashes, it can be very time-wasting to redo the previously completed tasks. To solve this, TiDB Lightning uses *checkpoints* to store the import progress, so that `tidb-lightning` continues importing from where it lefts off after restarting.
 
-本文主要介绍 TiDB Lightning 断点续传的启用与配置、断点的存储，以及断点续传的控制。
+This document describes how to enable, configure, store, and control *checkpoints*.
 
-## 断点续传的启用与配置
+## Enable and configure checkpoints
 
 ```toml
 [checkpoint]
-# 启用断点续传。
-# 导入时，TiDB Lightning 会记录当前进度。
-# 若 TiDB Lightning 或其他组件异常退出，在重启时可以避免重复再导入已完成的数据。
+# Whether to enable checkpoints.
+# While importing data, TiDB Lightning records which tables have been imported, so
+# even if TiDB Lightning or some other component crashes, you can start from a known
+# good state instead of restarting from scratch.
 enable = true
 
-# 存储断点的方式
-#  - file：存放在本地文件系统（要求 v2.1.1 或以上）
-#  - mysql：存放在兼容 MySQL 的数据库服务器
+# Where to store the checkpoints.
+#  - file:  store as a local file (requires v2.1.1 or later)
+#  - mysql: store into a remote MySQL-compatible database
 driver = "file"
 
-# 存储断点的架构名称（数据库名称）
-# 仅在 driver = "mysql" 时生效
+# The schema name (database name) to store the checkpoints
+# Enabled only when `driver = "mysql"`.
 # schema = "tidb_lightning_checkpoint"
 
-# 断点的存放位置
+# The data source name (DSN) indicating the location of the checkpoint storage.
 #
-# 若 driver = "file"，此参数为断点信息存放的文件路径。
-# 如果不设置该参数则默认为 `/tmp/CHECKPOINT_SCHEMA.pb`
+# For the "file" driver, the DSN is a path. If the path is not specified, Lightning would
+# default to "/tmp/CHECKPOINT_SCHEMA.pb".
 #
-# 若 driver = "mysql"，此参数为数据库连接参数 (DSN)，格式为“用户:密码@tcp(地址:端口)/”。
-# 默认会重用 [tidb] 设置目标数据库来存储断点。
-# 为避免加重目标集群的压力，建议另外使用一个兼容 MySQL 的数据库服务器。
-# dsn = "/tmp/tidb_lightning_checkpoint.pb"
+# For the "mysql" driver, the DSN is a URL in the form of "USER:PASS@tcp(HOST:PORT)/".
+# If the URL is not specified, the TiDB server from the [tidb] section is used to
+# store the checkpoints. You should specify a different MySQL-compatible
+# database server to reduce the load of the target TiDB cluster.
+#dsn = "/tmp/tidb_lightning_checkpoint.pb"
 
-# 导入成功后是否保留断点。默认为删除。
-# 保留断点可用于调试，但有可能泄漏数据源的元数据。
+# Whether to keep the checkpoints after all data are imported. If false, the
+# checkpoints are deleted. Keeping the checkpoints can aid debugging but
+# might leak metadata about the data source.
 # keep-after-success = false
 ```
 
-## 断点的存储
+## Checkpoints storage
 
-TiDB Lightning 支持两种存储方式：本地文件或 MySQL 数据库。
+TiDB Lightning supports two kinds of checkpoint storage: a local file or a remote MySQL-compatible database.
 
-* 若 `driver = "file"`，断点会存放在一个本地文件，其路径由 `dsn` 参数指定。由于断点会频繁更新，建议将这个文件放到写入次数不受限制的盘上，例如 RAM disk。
+* With `driver = "file"`, checkpoints are stored in a local file at the path given by the `dsn` setting. Checkpoints are updated rapidly, so we highly recommend placing the checkpoint file on a drive with very high write endurance, such as a RAM disk.
 
-* 若 `driver = "mysql"`，断点可以存放在任何兼容 MySQL 5.7 或以上的数据库中，包括 MariaDB 和 TiDB。在没有选择的情况下，默认会存在目标数据库里。
+* With `driver = "mysql"`, checkpoints can be saved in any databases compatible with MySQL 5.7 or later, including MariaDB and TiDB. By default, the checkpoints are saved in the target database.
 
-目标数据库在导入期间会有大量的操作，若使用目标数据库来存储断点会加重其负担，甚至有可能造成通信超时丢失数据。因此，**强烈建议另外部署一台兼容 MySQL 的临时数据库服务器**。此数据库也可以安装在 `tidb-lightning` 的主机上。导入完毕后可以删除。
+While using the target database as the checkpoints storage, Lightning is importing large amounts of data at the same time. This puts extra stress on the target database and sometimes leads to communication timeout. Therefore, **it is strongly recommended to install a temporary MySQL server to store these checkpoints**. This server can be installed on the same host as `tidb-lightning` and can be uninstalled after the importer progress is completed.
 
-## 断点续传的控制
+## Checkpoints control
 
-若 `tidb-lightning` 因不可恢复的错误而退出（例如数据出错），重启时不会使用断点，而是直接报错离开。为保证已导入的数据安全，这些错误必须先解决掉才能继续。使用 `tidb-lightning-ctl` 工具可以标示已经恢复。
+If `tidb-lightning` exits abnormally due to unrecoverable errors (for example, data corruption), it refuses to reuse the checkpoints until the errors are resolved. This is to prevent worsening the situation. The checkpoint errors can be resolved using the `tidb-lightning-ctl` program.
 
 ### `--checkpoint-error-destroy`
 
-
-```shell
+```sh
 tidb-lightning-ctl --checkpoint-error-destroy='`schema`.`table`'
 ```
 
-该命令会让失败的表从头开始整个导入过程。选项中的架构和表名必须以反引号 (`` ` ``) 包裹，而且区分大小写。
+This option allows you to restart importing the table from scratch. The schema and table names must be quoted with backquotes and are case-sensitive.
 
-- 如果导入 `` `schema`.`table` `` 这个表曾经出错，这条命令会：
+- If importing the table `` `schema`.`table` `` failed previously, this option executes the following operations:
 
-    1. 从目标数据库移除 (DROP) 这个表，清除已导入的数据。
-    2. 将断点重设到“未开始”的状态。
+    1. DROPs the table `` `schema`.`table` `` from the target database, which means removing all imported data.
+    2. Resets the checkpoints record of this table to be "not yet started".
 
-- 如果 `` `schema`.`table` `` 没有出错，则无操作。
+- If there is no errors involving the table `` `schema`.`table` ``, this operation does nothing.
 
-传入 "all" 会对所有表进行上述操作。这是最方便、安全但保守的断点错误解决方法：
+It is the same as applying the above on every table. This is the most convenient, safe and conservative solution to fix the checkpoint error problem:
 
-
-```shell
+```sh
 tidb-lightning-ctl --checkpoint-error-destroy=all
 ```
 
 ### `--checkpoint-error-ignore`
 
-
-```shell
-tidb-lightning-ctl --checkpoint-error-ignore='`schema`.`table`' &&
+```sh
+tidb-lightning-ctl --checkpoint-error-ignore='`schema`.`table`'
 tidb-lightning-ctl --checkpoint-error-ignore=all
 ```
 
-如果导入 `` `schema`.`table` `` 这个表曾经出错，这条命令会清除出错状态，如同没事发生过一样。传入 "all" 会对所有表进行上述操作。
+If importing the table `` `schema`.`table` `` failed previously, this clears the error status as if nothing ever happened. The `all` variant applies this operation to all tables.
 
-> **注意：**
+> **Note:**
 >
-> 除非确定错误可以忽略，否则不要使用这个选项。如果错误是真实的话，可能会导致数据不完全。启用校验和 (CHECKSUM) 可以防止数据出错被忽略。
+> Use this option only when you are sure that the error can indeed be ignored. If not, some imported data can be lost. The only safety net is the final "checksum" check, and thus you need to keep the "checksum" option always enabled when using `--checkpoint-error-ignore`.
 
 ### `--checkpoint-remove`
 
-
-```shell
-tidb-lightning-ctl --checkpoint-remove='`schema`.`table`' &&
+```sh
+tidb-lightning-ctl --checkpoint-remove='`schema`.`table`'
 tidb-lightning-ctl --checkpoint-remove=all
 ```
 
-无论是否有出错，把表的断点清除。
+This option simply removes all checkpoint information about one table or all tables, regardless of their status.
 
 ### `--checkpoint-dump`
 
-
-```shell
+```sh
 tidb-lightning-ctl --checkpoint-dump=output/directory
 ```
 
-将所有断点备份到传入的文件夹，主要用于技术支持。此选项仅于 `driver = "mysql"` 时有效。
+This option dumps the content of the checkpoint into the given directory, which is mainly used for debugging by the technical staff. This option is only enabled when `driver = "mysql"`.

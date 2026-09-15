@@ -1,56 +1,58 @@
 ---
-title: DM 增量数据校验
-summary: 了解增量数据校验的原理，以及如何使用增量数据校验功能。
+title: Continuous Data Validation in DM
+summary: Learn how to use continuous data validation and the working principles of continuous data validation.
 ---
 
-# DM 增量数据校验
+# Continuous Data Validation in DM
 
-本文介绍了如何使用 DM 增量数据校验功能、DM 增量数据校验的原理以及相关的使用限制。
+This document describes how to use continuous data validation in DM, its working principles, and its limitations.
 
-## 使用场景
+## User scenario
 
-在将增量数据从上游迁移到下游数据库的过程中，数据的流转有小概率导致错误或者丢失的情况。对于需要依赖于强数据一致的场景，如信贷、证券等业务，你可以在数据迁移完成之后对数据进行全量校验，确保数据的一致性。然而，在某些增量复制的业务场景下，上游和下游的写入是持续的、不会中断的，因为上下游的数据在不断变化，导致用户难以对表里面的全部数据进行一致性校验（例如使用 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md)）。
+In the process of incrementally migrating data from the upstream database to the downstream database, there is a small probability that the flow of data leads to data corruption or data loss. For scenarios where data consistency is required, such as the credit and securities industries, after the migration is complete, you can perform full data validation to ensure data consistency.
 
-在增量数据复制的场景下，你可以使用 DM 的增量校验功能，**在数据持续写入下游的增量复制过程中确保迁移数据的完整性、一致性**。
+However, in incremental migration scenarios, the upstream and downstream are continuously writing data. Because data is constantly changing in the upstream and downstream, it is difficult to perform full data validation (for example, use [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md)) to all data in the tables.
 
-## 开启增量数据校验
+In incremental migration scenarios, you can use the continuous data validation feature in DM. This feature ensures data integrity and consistency during incremental migration where data is continuously written into the downstream.
 
-你可以使用下面任意方法开启增量数据校验：
+## Enable continuous data validation
 
-- 在任务配置中开启
-- 通过 dmctl 开启
+You can enable continuous data validation using either of the following methods:
 
-### 方法 1：在任务配置中开启
+- Enable in the task configuration file.
+- Enable using dmctl.
 
-你可以在任务配置文件中加入以下内容来开启增量数据校验：
+### Method 1: Enable in the task configuration file
+
+To enable continuous data validation, add the following configuration items to the task configuration file:
 
 ```yaml
-# 给需要开启增量校验功能的上游数据库添加增量校验配置
+# Add the following configuration items to the upstream database that needs to be validated:
 mysql-instances:
   - source-id: "mysql1"
     block-allow-list: "bw-rule-1"
     validator-config-name: "global"
 validators:
   global:
-    mode: full # 也可以是 fast，默认是 none，即不开启校验
-    worker-count: 4 # 后台校验的 validation worker 数量，默认是 4 个
-    row-error-delay: 30m # 某一行多久没有验证通过会被标记为 error row，默认是 30m，即 30 分钟
+    mode: full # "fast" is also allowed. "none" is the default mode, which means no validation is performed.
+    worker-count: 4 # The number of validation workers in the background. The default value is 4.
+    row-error-delay: 30m # If a row cannot pass the validation within the specified time, it will be marked as an error row. The default value is 30m, which means 30 minutes.
 ```
 
-示例中各配置项的含义如下：
+The configuration items are described as follows:
 
-* `mode`：校验模式，可以是 `none`、`full`、`fast`。
-    * `none`：默认值，即不开启校验。
-    * `full`：将变动行和下游数据库中获取的行数据进行每列对比。
-    * `fast`：只判断这一行在下游数据库是否存在。
-* `worker-count`：增量校验功能使用的 worker 数量（每个 worker 都是一个 goroutine）。
-* `row-error-delay`：某一行多久没有验证通过会被标记为 error row，默认是 30 分钟。
+* `mode`: validation mode. The possible values are `none`, `full`, and `fast`.
+    * `none`: the default value, which means no validation is performed.
+    * `full`: compares the changed row and the row obtained in the downstream database.
+    * `fast`: only checks if the changed row exists in the downstream database.
+* `worker-count`: the number of validation workers in the background. Each worker is a goroutine.
+* `row-error-delay`: if a row cannot pass the validation within the specified time, it will be marked as an error row. The default value is 30 minutes.
 
-完整配置请查阅 [DM 任务完整配置文件](/dm/task-configuration-file-full.md)。
+For the complete configuration, refer to [DM Advanced Task Configuration File](/dm/task-configuration-file-full.md).
 
-### 方法 2：通过 dmctl 开启
+### Method 2: Enable using dmctl
 
-你可以使用 `dmctl validation start` 命令来开启增量数据校验：
+To enable continuous data validation, run the `dmctl validation start` command:
 
 ```
 Usage:
@@ -63,25 +65,25 @@ Flags:
       --start-time string   specify the start time of binlog for validation, e.g. '2021-10-21 00:01:00' or 2021-10-21T00:01:00
 ```
 
-* `--mode`：指定开启的模式，可以是 fast 或者 full。
-* `--start-time`：指定 validator 开启校验的位置，格式是：2021-10-21 00:01:00 或者 2021-10-21T00:01:00。
-* `task-name`：需要开启增量数据校验的任务名，你也可以用 `--all-task` 来为当前所有任务开启增量数据校验。
+* `--mode`: specify the validation mode. The possible values are `fast` and `full`.
+* `--start-time`: specify the start time for validation. The format follows `2021-10-21 00:01:00` or `2021-10-21T00:01:00`.
+* `task`: specify the name of the task to enable continuous validation for. You can use `--all-task` to enable validation for all tasks.
 
-示例：
+For example:
 
 ```shell
 dmctl --master-addr=127.0.0.1:8261 validation start --start-time 2021-10-21T00:01:00 --mode full my_dm_task
 ```
 
-## 使用增量数据校验
+## Use continuous data validation
 
-在使用增量数据校验时，通过 dmctl 工具，你可以查询到增量校验当前的校验状态，也可以对校验出的错误行（error row）进行及时处理。所谓的错误行，就是在增量校验过程中，被检查出上下游数据不一致的行。
+When you use continuous data validation, you can use dmctl to view the status of the validation and to handle the error rows. "Error rows" refers to the rows that are found to be inconsistent between the upstream and downstream databases.
 
-### 查看增量校验的状态
+### View the validation status
 
-你可以使用两种方式查看增量校验的状态。
+You can view the validation status using either of the following methods:
 
-方式 1：用 `dmctl query-status <task-name>` 命令查看任务状态，如果开启了增量校验，校验结果会显示在每个 subtask 的 validation 字段里面。示例输出：
+Method 1: run the `dmctl query-status <task-name>` command. If continuous data validation is enabled, the validation result is displayed in the `validation` field of each subtask. Example output:
 
 ```json
 "subTaskStatus": [
@@ -95,24 +97,24 @@ dmctl --master-addr=127.0.0.1:8261 validation start --start-time 2021-10-21T00:0
             ...
         },
         "validation": {
-            "task": "test", // 任务名
-            "source": "mysql-01", // source id
-            "mode": "full", // 校验模式
-            "stage": "Running", // 当前状态，Running 或者 Stopped
-            "validatorBinlog": "(mysql-bin.000001, 5989)", // 校验到的 binlog 位置
-            "validatorBinlogGtid": "1642618e-cf65-11ec-9e3d-0242ac110002:1-30", // 同上，用 GTID 表示
-            "cutoverBinlogPos": "", // 设置的 cutover binlog 位置
-            "cutoverBinlogGTID": "1642618e-cf65-11ec-9e3d-0242ac110002:1-30", // 同上，用 GTID 表示
-            "result": null, // 当增量校验异常时，显示异常信息
-            "processedRowsStatus": "insert/update/delete: 0/0/0", // 已经处理的 binlog 数据行的统计信息
-            "pendingRowsStatus": "insert/update/delete: 0/0/0", // 还未校验或者校验失败，但还没标记为`错误行`的数据行统计信息
-            "errorRowsStatus": "new/ignored/resolved: 0/0/0" // `错误行`统计信息，三种状态的错误会在下文讲解
+            "task": "test", // Task name
+            "source": "mysql-01", // Source id
+            "mode": "full", // Validation mode
+            "stage": "Running", // Current stage. "Running" or "Stopped".
+            "validatorBinlog": "(mysql-bin.000001, 5989)", // The binlog position of the validation
+            "validatorBinlogGtid": "1642618e-cf65-11ec-9e3d-0242ac110002:1-30", // The GTID position of the validation
+            "cutoverBinlogPos": "", // The specified binlog position for cutover
+            "cutoverBinlogGTID": "1642618e-cf65-11ec-9e3d-0242ac110002:1-30", // The specified GTID position for cutover
+            "result": null, // When the validation is abnormal, show the error message
+            "processedRowsStatus": "insert/update/delete: 0/0/0", // Statistics of the processed binlog rows.
+            "pendingRowsStatus": "insert/update/delete: 0/0/0", // Statistics of the binlog rows that are not validated yet or that fail to be validated but are not marked as "error rows"
+            "errorRowsStatus": "new/ignored/resolved: 0/0/0" // Statistics of the error rows. The three statuses are explained in the next section.
         }
     }
 ]
 ```
 
-方式 2：使用 `dmctl validation status <taskname>` 来查询增量校验的状态：
+Method 2: run the `dmctl validation status <taskname>` command.
 
 ```
 dmctl validation status [--table-stage stage] <task-name> [flags]
@@ -121,7 +123,7 @@ Flags:
       --table-stage string   filter validation tables by stage: running/stopped
 ```
 
-在上述命令中，你可以设置 `--table-stage` 来过滤正在校验或者已经停止校验的表。示例输出：
+In the preceding command, you can use `--table-stage` to filter the tables that are being validated or stop validation. Example output:
 
 ```json
 {
@@ -145,17 +147,17 @@ Flags:
     ],
     "tableStatuses": [
         {
-            "source": "mysql-01", // source id
-            "srcTable": "`db`.`test1`", // 源表名
-            "dstTable": "`db`.`test1`", // 目标表名
-            "stage": "Running", // 校验状态
-            "message": "" // 具体错误信息显示
+            "source": "mysql-01", // Source id
+            "srcTable": "`db`.`test1`", // Source table name
+            "dstTable": "`db`.`test1`", // Target table name
+            "stage": "Running", // Validation status
+            "message": "" // Error message
         }
     ]
 }
 ```
 
-如果你想要查询错误行的详细信息，比如错误原因、错误时间等，可以使用 `dmctl validation show-error` 命令：
+If you want to view the details of the error rows, such as error types and error time, run the `dmctl validation show-error` command:
 
 ```
 Usage:
@@ -166,7 +168,7 @@ Flags:
   -h, --help           help for show-error
 ```
 
-示例输出：
+Example output:
 
 ```json
 {
@@ -174,32 +176,32 @@ Flags:
     "msg": "",
     "error": [
         {
-            "id": "1", // 错误行标识符，在后续的处理错误行中用到
-            "source": "mysql-replica-01", // source id
-            "srcTable": "`validator_basic`.`test`", // 错误行源表
-            "srcData": "[0, 0]", // 错误行具体数据
-            "dstTable": "`validator_basic`.`test`", // 错误行目标表
-            "dstData": "[]", // 错误行在下游的数据
-            "errorType": "Expected rows not exist", // 错误原因
-            "status": "NewErr", // 错误状态
-            "time": "2022-07-04 13:33:02", // 错误行发现时间
-            "message": "" // 额外信息
+            "id": "1", // Error row id, which will be used in processing error rows
+            "source": "mysql-replica-01", // Source id
+            "srcTable": "`validator_basic`.`test`", // Source table of the error row
+            "srcData": "[0, 0]", // Data of the error row in the source table
+            "dstTable": "`validator_basic`.`test`", // Target table of the error row
+            "dstData": "[]", // Data of the error row in the target table
+            "errorType": "Expected rows not exist", // Error type
+            "status": "NewErr", // Error status
+            "time": "2022-07-04 13:33:02", // Discovery time of the error row
+            "message": "" // Additional information
         }
     ]
 }
 ```
 
-### 处理增量校验错误行
+### Handle error rows
 
-当增量数据校验发现错误行后，你需要手动处理这些错误行。
+After continuous data validation returns error rows, you need to manually handle the error rows.
 
-在增量校验出现错误行时，增量校验不会停下，而是会把这些错误行记录下来，让用户自己去发现处理。错误行没有被处理时，默认状态是 `unprocessed`。如果你在下游手动矫正了该错误行的错误，增量校验也不会去自动获取矫正后的信息，仍会将该错误行记录在 error 中。
+When continuous data validation finds error rows, the validation does not stop immediately. Instead, it records the error rows for you to handle. Before the error rows are processed, the default status is `unprocessed`. If you manually correct the error rows in the downstream, the validation does not automatically retrieve the latest status of the corrected data. The error rows are still recorded in the `error` field.
 
-如果你不想在 validation status 中再看到这个错误行、或者你需要给已经解决的错误行打上标记，你可以使用 `validation show-error` 找到错误行的 id，然后使用错误处理命令来对这些错误行进行处理或者标记。
+If you do not want to see an error row in the validation status, or if you want to mark an error row as resolved, you can locate the error row id using the `validation show-error` command and subsequently handle it with the given error id:
 
-dmctl 提供了三种错误处理命令：
+dmctl provides three error handling commands:
 
-- `clear-error`：清理掉错误行，`show-error`命令将不再展示该`error row`。
+- `clear-error`: clear the error row. The `show-error` command does not show the error row anymore.
 
     ```
     Usage:
@@ -210,7 +212,7 @@ dmctl 提供了三种错误处理命令：
       -h, --help   help for clear-error
     ```
 
-- `ignore-error`：忽略该错误行，将这个错误行标记为 ignored。
+- `ignore-error`: ignore the error row. This error row is marked as "ignored".
 
     ```
     Usage:
@@ -221,7 +223,7 @@ dmctl 提供了三种错误处理命令：
       -h, --help   help for ignore-error
     ```
 
-- `resolve-error`：已手动解决该错误行，将这个错误行标记为 resolved。
+- `resolve-error`: the error row is manually handled and marked as "resolved".
 
     ```
     Usage:
@@ -232,9 +234,9 @@ dmctl 提供了三种错误处理命令：
       -h, --help   help for resolve-error
     ```
 
-## 停止增量数据校验
+## Stop continuous data validation
 
-如果你需要停止增量数据校验，可以使用 `validation stop` 命令：
+To stop the continuous data validation, run the `validation stop` command:
 
 ```
 Usage:
@@ -245,13 +247,13 @@ Flags:
   -h, --help       help for stop
 ```
 
-用法可参考 [`dmctl validation start` 命令](#方法-2通过-dmctl-开启)。
+For detailed usage, refer to [`dmctl validation start`](#method-2-enable-using-dmctl).
 
-## 设置增量校验切换点
+## Set the cutover point for continuous data validation
 
-在将后续业务切换到另一个数据库前，有时需要在数据同步到特定位置后立即进行增量数据校验，以确保数据完整性。此时，你可以将这个特定位置设置为增量校验的切换点。
+Before switching the application to another database, you might need to perform continuous data validation immediately after the data is replicated to a specific position to ensure data integrity. To achieve this, you can set this specific position as the cutover point for continuous validation.
 
-要设置增量校验的切换点，使用 `validation update` 命令：
+To set the cutover point for continuous data validation, use the `validation update` command:
 
 ```
 Usage:
@@ -263,41 +265,41 @@ Flags:
   -h, --help                         help for update
 ```
 
-* `--cutover-binlog-gtid`：指定希望 validator 立即校验的位置，格式是：`1642618e-cf65-11ec-9e3d-0242ac110002:1-30`。仅在上游开启 GTID 时生效。
-* `--cutover-binlog-pos`：指定希望 validator 立即校验的位置，格式是：`(mysql-bin.000001, 5989)`。
-* `task-name`：需要更新的增量数据校验的任务名，该项**必须**填写。
+* `--cutover-binlog-gtid`: specifies the cutover position for validation, in the format of `1642618e-cf65-11ec-9e3d-0242ac110002:1-30`. Only valid when GTID is enabled in the upstream cluster.
+* `--cutover-binlog-pos`: specifies the cutover position for validation, in the format of `(mysql-bin.000001, 5989)`.
+* `task-name`: the name of the task for continuous data validation. This parameter is **required**.
 
-## 原理
+## Implementation
 
-DM 增量校验（validator）的简要架构如下所示：
+The architecture of continuous data validation (validator) in DM is as follows:
 
-![validator summary](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-validator-summary.jpg)
+![validator summary](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-summary.jpeg)
 
-增量数据校验的工作生命周期如下所示：
+The lifecycle of continuous data validation is as follows:
 
-![validator lifecycle](https://docs-download.pingcap.com/media/images/docs-cn/dm/dm-validator-lifecycle.jpg)
+![validator lifecycle](https://docs-download.pingcap.com/media/images/docs/dm/dm-validator-lifecycle.jpeg)
 
-增量数据校验的具体处理流程如下：
+The detailed implementation of continuous data validation is as follows:
 
-1. validator 从上游拉取 binlog 事件，获取到发生变更的数据行：
-    - validator 只会校验增量复制 (syncer) 完成的事件，如果该事件还没有被 syncer 处理，则 validator 会暂停，等待 syncer 处理完成。
-    - 如果该事件已被 syncer 处理完成，则进行下面的步骤。
-2. validator 将 binlog 解析，并通过黑白名单、过滤器的筛选，表路由的重定向（和 syncer 保持一致）之后，将这些行变动交给在后台运行的 validation worker。
-3. validation worker 合并相同表、相同主键的行变动，避免进行“过期”的校验，并将这些行先缓存到内存中。
-4. 当 validation worker 积攒了一定数量的行或者到了某个时间间隔之后，validation worker 根据这些行的主键信息在下游数据库中查询当下的数据，并和变动行期望的数据进行对比。
-5. validation worker 进行数据校验。如果当前配置是 full mode，会将变动行和下游数据库中获取的行数据进行每列对比；如果当前配置是 fast mode，则只会判断这一行是否还存在。
-    - 如果校验成功，则将该行从内存中删除。
-    - 如果校验失败，不会马上报错，而是在一定间隔之后继续校验。
-    - 对于某些已经在很长时间（由用户定义）内都没有校验成功的行，则将这些行定义为错误行（error row），写入到下游的 meta 库中。你可以通过查询迁移任务信息来获取错误行的数量等信息，详见[查看增量校验的状态](#查看增量校验的状态)以及[处理增量校验错误行](#处理增量校验错误行)。
+1. The validator pulls a binlog event from the upstream and gets the changed rows:
+    - The validator only checks an event that has been incrementally migrated by the syncer. If the event has not been processed by the syncer, the validator pauses and waits for the syncer to complete processing.
+    - If the event has been processed by the syncer, the validator moves on to the following steps.
+2. The validator parses the binlog event and filters out the rows based on the block and allow lists, the table filters, and table routing. After that, the validator submits the changed rows to the validation worker that runs in the background.
+3. The validation worker merges the changed rows that affect the same table and the same primary key to avoid validating "expired" data. The changed rows are cached in memory.
+4. When the validation worker has accumulated a certain number of changed rows or when a certain time interval is passed, the validation worker queries the downstream database using the primary keys to get the current data and compares it with the changed rows.
+5. The validation worker performs the data validation. If the validation mode is `full`, the validation worker compares data of the changed rows with data of the downstream database. if the validation mode is `fast`, the validation worker only checks the existence of the changed rows.
+    - If the changed rows pass the validation, the changed row is removed from the memory.
+    - If the changed rows fail the validation, the validator does not report an error immediately but waits for a certain time interval before validating the row again.
+    - If a changed row cannot pass the validation within the specified time (specified by the user), the validator marks the row as an error row and writes it to the meta database in the downstream. You can view the information of error rows by querying the migration task. For details, refer to [View the validation status](#view-the-validation-status) and [Handle error rows](#handle-error-rows).
 
-## 使用限制
+## Limitations
 
-- 校验目标表必须有主键或者 not null 的唯一键。
-- 上游迁移 DDL 时有以下限制：
-    - DDL 不能变更主键，不能调整列顺序，不能删除已有列。
-    - 该表不能被 DROP。
-- 不支持按照 expression 过滤事件的任务。
-- 由于 TiDB 和 MySQL 的浮点数精度有差异，精度范围内误差也会判断为相等（即绝对误差小于 10^-6)。
-- 不支持校验的数据类型：
+- The source table to be validated must have a primary key or a not-null unique key.
+- When DM migrates DDL from the upstream database, the following limitations apply:
+    - The DDL must not change the primary key, or change the order of columns, or delete existing columns.
+    - The table must not be dropped.
+- Does not support tasks that use expressions to filter events.
+- The precision of floating-point numbers is different between TiDB and MySQL. Differences smaller than 10^-6 are considered equal.
+- Does not support the following data types:
     - JSON
-    - 二进制数据
+    - Binary data

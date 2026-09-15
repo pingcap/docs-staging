@@ -1,22 +1,22 @@
 ---
-title: TiDB Lightning 前置检查
-summary: 本文档介绍了 TiDB Lightning 前置检查功能，确保 TiDB Lightning 能够顺利执行任务。
+title: TiDB Lightning Prechecks
+summary: This document describes the checks that TiDB Lightning performs before performing a data migration task. These precheckes ensure that TiDB Lightning can perform the task smoothly.
 ---
 
-# TiDB Lightning 前置检查
+# TiDB Lightning Prechecks
 
-从 TiDB 5.3.0 开始，TiDB Lightning 增加了前置检查功能，可以在执行迁移前检查配置。默认开启。该功能会自动进行一些磁盘空间和执行配置的常规检查，主要目的是确保后续的整个导入过程顺利。
+Starting from TiDB 5.3.0, TiDB Lightning provides the ability to check the configuration before running a migration task. It is enabled by default. This feature automatically performs some routine checks for disk space and execution configuration. The main purpose is to ensure that the whole subsequent import process goes smoothly.
 
-下表介绍了各检查项和详细解释。
+The following table describes each check item and detailed explanation.
 
-|  检查项 | 支持版本 | 解释 |
-|  ----  |  --- | ----  |
-| 集群版本/状态是否正常| >= 5.3.0 | 检查配置中集群是否可以连接，物理导入模式还会检查 TiKV/PD/TiFlash 版本是否支持。|
-| 是否有权限读取数据 | >= 5.3.0 | 检查当从云存储（Amazon S3）读取数据的时候，是否有对应的权限，确保不会因权限缺失导致导入中断。|
-| 导入空间是否足够 | >= 5.3.0 | 检查 TiKV 集群是否有足够空间导入数据。检查时会对数据源进行采样，通过采样结果预估索引大小占比。由于估算中考虑了索引，因此可能会出现尽管数据源大小低于本地盘可用空间，但依然无法通过检测的情况。物理导入模式因为需要在本地进行外部排序，所以还会检查本地存储是否足够。有关 TiKV 集群空间和本地存储（即 `sort-kv-dir` 配置）空间大小的详细说明，参考 [TiDB Lightning 下游数据库所需空间](/tidb-lightning/tidb-lightning-requirements.md#目标数据库所需空间)和 [TiDB Lightning 运行时资源要求](/tidb-lightning/tidb-lightning-physical-import-mode.md#运行环境需求)|
-| Region 分布状态 | >= 5.3.0 | 检查 TiKV 集群的 Region 分布是否均匀，以及是否存在大量空 Region，如果空 Region 的数量大于 `max(1000, 表的数量 * 3)`，即大于 "1000" 和 "3 倍表数量"二者中的较大者，TiDB Lightning 无法执行导入。 |
-| 数据文件是否有大 CSV 文件 | >= 5.3.0 | 当备份文件中出现大于 10 GiB 的 CSV 文件且无法进行自动切分 (StrictFormat=false) 的时候，会导致导入性能下降。该检查的目的是提醒用户确保数据格式的情况下，开启自动切分 CSV 功能。 |
-| 是否可以从断点恢复 | >= 5.3.0 | 该检查是确保断点恢复过程中，不会出现对源文件和数据库中 schema 进行修改，导致导入错误数据的情况。|
-| 是否可以导入数据到已存在的数据表中 | >= 5.3.0 | 当导入到已创建好的数据表中时，该检查尽可能的检查此次导入的源文件是否和已存在的数据表匹配。检查列数是否匹配，如果源文件存在列名，则检查列名是否匹配。当源文件存在缺省列，则检查缺省列在数据表中是否存在 Default Value，如果存在，则检查通过。|
-| 导入的目标表是否为空 | >= 5.3.1 | 如果导入的目标表不为空，则 TiDB Lightning 会自动报错退出；如果开启了并行导入模式 (parallel-import = true)，则会跳过此检查项。 |
-| 集群是否开启了 PITR 或有 Changefeed 任务 | >= 6.5.0 | TiDB Lightning 物理导入模式不兼容 PITR 和 Changefeed，如果集群开启了 PITR，或者有运行中的 Changefeed，则 TiDB Lightning 会自动报错退出；如果你确定要导入的表不需要使用 PITR 或者 Changefeed 进行同步，则可跳过此检查项来使用 TiDB Lightning 物理导入模式导入数据。 |
+|  Check Items | Supported Version| Description |
+|  ----  | ----  |----  |
+| Cluster version and status| >= 5.3.0 | Check whether the cluster can be connected in the configuration, and whether the TiKV/PD/TiFlash version supports the physical import mode. |
+| Permissions | >= 5.3.0 | When the data source is cloud storage (Amazon S3), check whether TiDB Lightning has the necessary permissions and make sure that the import will not fail due to lack of permissions. |
+| Disk space | >= 5.3.0 | Check whether there is enough space on the local disk and on the TiKV cluster for importing data. TiDB Lightning samples the data sources and estimates the percentage of the index size from the sample result. Because indexes are included in the estimation, there might be cases where the size of the source data is less than the available space on the local disk, but still, the check fails. In the physical import mode, TiDB Lightning also checks whether the local storage is sufficient because external sorting needs to be done locally. For more details about the TiKV cluster space and local storage space (controlled by `sort-kv-dir`), see [Downstream storage space requirements](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database) and [Resource requirements](/tidb-lightning/tidb-lightning-physical-import-mode.md#environment-requirements). |
+| Region distribution status | >= 5.3.0 | Check whether the Regions in the TiKV cluster are distributed evenly and whether there are too many empty Regions. If the number of empty Regions exceeds max(1000, number of tables * 3), i.e. greater than the bigger one of "1000" or "3 times the number of tables", then the import cannot be executed. |
+| Exceedingly Large CSV files in the data file | >= 5.3.0 | When there are CSV files larger than 10 GiB in the backup file and auto-slicing is not enabled (StrictFormat=false), it will impact the import performance. The purpose of this check is to remind you to ensure the data is in the right format and to enable auto-slicing. |
+| Recovery from breakpoints | >= 5.3.0 | This check ensures that no changes are made to the source file or schema in the database during the breakpoint recovery process that would result in importing the wrong data. |
+| Import into an existing table | >= 5.3.0 | When importing into an already created table, it checks, as much as possible, whether the source file matches the existing table. Check if the number of columns matches. If the source file has column names, check if the column names match. When there are default columns in the source file, it checks if the default columns have Default Value, and if they have, the check passes. |
+| Whether the target table is empty | >= 5.3.1 | TiDB Lightning automatically exits with an error if the target table is not empty. If parallel import mode is enabled (`parallel-import = true`), this check item will be skipped. |
+| Whether PITR is enabled or any changefeed task is running in the cluster | >= 6.5.0 | The TiDB Lightning physical import mode is incompatible with PITR and changefeed. If PITR is enabled or a changefeed task is running, TiDB Lightning automatically exits with an error. If you are certain that the tables to be imported do not require PITR or changefeed for replication, you can skip this check to proceed with the TiDB Lightning physical import mode. |

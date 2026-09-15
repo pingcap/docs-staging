@@ -1,92 +1,91 @@
 ---
 title: TiDB 3.0.1 Release Notes
-summary: TiDB 3.0.1 发布，新增多项功能和修复了多个问题。TiKV 新增了对 Blob 文件大小的统计和死锁检测性能的提升。PD 优化了热点 Region 调度策略和 Region Merge 处理逻辑。TiDB Binlog 优化了 Pump GC 策略。TiDB Lightning 修正了导入错误的问题。TiDB Ansible 新增了预检查功能和更新了监控信息。
-aliases: ['/zh/tidb/dev/release-3.0.1/','/zh/tidb/v3.0/release-3.0.1','/docs-cn/dev/releases/release-3.0.1/','/docs-cn/dev/releases/3.0.1/','/zh/tidb/v5.4/release-3.0.1','/zh/tidb/v6.1/release-3.0.1','/zh/tidb/v6.5/release-3.0.1','/zh/tidb/v7.1/release-3.0.1','/zh/tidb/v7.5/release-3.0.1','/zh/tidb/v8.1/release-3.0.1']
+summary: "TiDB 3.0.1 Release Notes July 16, 2019. TiDB version 3.0.1. Add support for MAX_EXECUTION_TIME feature. Support auto-adjustment of incremental gap for auto-increment IDs. Add ADMIN PLUGINS ENABLE/DISABLE SQL statement. Prohibit Window Functions from being cached in Prepare Plan Cache. Fix various bugs and issues. TiKV: Add statistics of blob file size. Fix core dump issue. PD: Add enable-grpc-gateway configuration option. Optimize hot Region scheduling strategy. Tools: TiDB Binlog - Optimize Pump GC strategy. TiDB Lightning - Fix import error. TiDB Ansible - Add precheck feature, update monitoring information."
 ---
 
 # TiDB 3.0.1 Release Notes
 
-发版日期：2019 年 7 月 16 日
+Release date: July 16, 2019
 
-TiDB 版本：3.0.1
+TiDB version: 3.0.1
 
-TiDB Ansible 版本：3.0.1
+TiDB Ansible version: 3.0.1
 
 ## TiDB
 
-+ 新增对 `MAX_EXECUTION_TIME` 特性的支持 [#11026](https://github.com/pingcap/tidb/pull/11026)
-+ 新增 `tidb_wait_split_region_finish_backoff` Session 变量，用于控制 Region 打散的 Backoff 时间 [#11166](https://github.com/pingcap/tidb/pull/11166)
-+ 新增根据负载情况自动调整 Auto ID 分配的步长功能，步长自动调整范围最小 1000，最大 2000000 [#11006](https://github.com/pingcap/tidb/pull/11006)
-+ 新增 `ADMIN PLUGINS ENABLE`/`ADMIN PLUGINS DISABLE` SQL 语句，管理 Plugin 的动态开启或关闭 [#11157](https://github.com/pingcap/tidb/pull/11157)
-+ Audit Plugin 新增审计连接功能 [#11013](https://github.com/pingcap/tidb/pull/11013)
-+ 修改 Region 打散时的默认行为为等待 PD 调度完成 [#11166](https://github.com/pingcap/tidb/pull/11166)
-+ 禁止 Window Function 在 Prepare Plan Cache 中被缓存，避免某些情况下出现结果不正确的问题 [#11048](https://github.com/pingcap/tidb/pull/11048)
-+ 禁止使用 Alter 语句修改 Stored Generated Column 的定义 [#11068](https://github.com/pingcap/tidb/pull/11068)
-+ 禁止将 Virtual Generated Column 更改为 Stored Generated Column [#11068](https://github.com/pingcap/tidb/pull/11068)
-+ 禁止改变带有索引的 Generated Column 的表达式 [#11068](https://github.com/pingcap/tidb/pull/11068)
-+ 支持 TiDB 在 ARM64 架构下的编译 [#11150](https://github.com/pingcap/tidb/pull/11150)
-+ 支持修改 Database/Table 的 Collate，条件限制为 Database/Table 字符集必须是 UTF8/UTF8MB4 [#11086](https://github.com/pingcap/tidb/pull/11086)
-+ 修复 `UPDATE … SELECT` 语句中，`SELECT` 子查询没有解析到 `UPDATE` 表达式中的列而被误裁剪，导致报错的问题 [#11252](https://github.com/pingcap/tidb/pull/11252)
-+ 修复点查时，某列被查询多次而且结果为 NULL 时会 Panic 的问题 [#11226](https://github.com/pingcap/tidb/pull/11226)
-+ 修复 `RAND` 函数由于非线程安全的 `rand.Rand` 导致的 Data Race 问题 [#11169](https://github.com/pingcap/tidb/pull/11169)
-+ 修复 `oom-action="cancel"` 时，某些情况下 SQL 内存使用超阈值没有被取消执行，返回结果不正确的问题 [#11004](https://github.com/pingcap/tidb/pull/11004)
-+ 修复 MemTracker 未正确清理统计的内存使用值导致 `SHOW PROCESSLIST` 显示内存使用不为 0 的问题 [#10970](https://github.com/pingcap/tidb/pull/10970)
-+ 修复某些情况下整数和非整数比较结果不正确的问题 [#11194](https://github.com/pingcap/tidb/pull/11194)
-+ 修复在显式事务中查询对 Table Partition 的查询包含谓词时，查询结果不正确的问题 [#11196](https://github.com/pingcap/tidb/pull/11196)
-+ 修复 DDL Job 由于 `infoHandle` 可能为 `NULL` 导致 Panic 的问题 [#11022](https://github.com/pingcap/tidb/pull/11022)
-+ 修复嵌套聚合查询时，由于被查询列在子查询中没有引用而被误裁剪导致查询结果错误的问题 [#11020](https://github.com/pingcap/tidb/pull/11020)
-+ 修复 `Sleep` 函数响应 Kill 命令不及时的问题 [#11028](https://github.com/pingcap/tidb/pull/11028)
-+ 修复 `SHOW PROCESSLIST` 命令显示的 `DB` 和 `INFO` 列与 MySQL 不兼容的问题 [#11003](https://github.com/pingcap/tidb/pull/11003)
-+ 修复 `skip-grant-table=true` 时，`FLUSH PRIVILEGES` 语句导致系统 Panic 的问题 [#11027](https://github.com/pingcap/tidb/pull/11027)
-+ 修复表主键为 `UNSIGNED` 整数时，`FAST ANALYZE` 收集主键的统计信息不正确的问题 [#11099](https://github.com/pingcap/tidb/pull/11099)
-+ 修复某些情况下 `FAST ANALYZE` 语句报 “invalid key” Error 的问题 [#11098](https://github.com/pingcap/tidb/pull/11098)
-+ 修复 `CURRENT_TIMESTAMP` 作为列的默认值且指定浮点精度时，`SHOW CREATE TABLE` 等语句显示精度不完整的问题 [#11088](https://github.com/pingcap/tidb/pull/11088)
-+ 修复窗口函数报错时函数名没有小写的问题，兼容 MySQL [#11118](https://github.com/pingcap/tidb/pull/11118)
-+ 修复 TiKV Client Batch gRPC 的后台线程 panic 后导致 TiDB 无法正常连接 TiKV 进而无法提供服务的问题 [#11101](https://github.com/pingcap/tidb/pull/11101)
-+ 修复 `SetVar` 方法由于字符串浅拷贝导致设置的变量不正确的问题 [#11044](https://github.com/pingcap/tidb/pull/11044)
-+ 修复 `INSERT … ON DUPLICATE` 语句作用在 Table Partition 时执行失败报错的问题 [#11231](https://github.com/pingcap/tidb/pull/11231)
-+ 悲观锁（实验性特性）
-    - 修复悲观锁进行点查且数据为空时，由于行锁未生效导致结果不正确的问题 [#10976](https://github.com/pingcap/tidb/pull/10976)
-    - 修复使用悲观锁查询时由于没有使用 `SELECT … FOR UPDATE` 的 TSO 导致查询结果不正确的问题 [#11015](https://github.com/pingcap/tidb/pull/11015)
-    - 修改乐观锁与悲观锁同时使用时，乐观事务遇到悲观锁冲突时，检测行为由立即检测冲突修改为等待，防止锁冲突进一步恶化 [#11051](https://github.com/pingcap/tidb/pull/11051)
++ Add support for the `MAX_EXECUTION_TIME` feature [#11026](https://github.com/pingcap/tidb/pull/11026)
++ Add the `tidb_wait_split_region_finish_backoff` session variable to control the backoff time of splitting Regions [#11166](https://github.com/pingcap/tidb/pull/11166)
++ Support automatically adjusting the incremental gap allocated by auto-increment IDs based on the load, and the auto-adjustment scope of the incremental gap is 1000~2000000 [#11006](https://github.com/pingcap/tidb/pull/11006)
++ Add the `ADMIN PLUGINS ENABLE`/`ADMIN PLUGINS DISABLE` SQL statement to dynamically enable or disable plugins [#11157](https://github.com/pingcap/tidb/pull/11157)
++ Add the session connection information in the Audit plugin [#11013](https://github.com/pingcap/tidb/pull/11013)
++ Change the default behavior during the period of splitting Regions to wait for PD to finish scheduling [#11166](https://github.com/pingcap/tidb/pull/11166)
++ Prohibit Window Functions from being cached in Prepare Plan Cache to avoid incorrect results in some cases [#11048](https://github.com/pingcap/tidb/pull/11048)
++ Prohibit `ALTER` statements from modifying the definition of stored generated columns [#11068](https://github.com/pingcap/tidb/pull/11068)
++ Disallow changing virtual generated columns to stored generated columns [#11068](https://github.com/pingcap/tidb/pull/11068)
++ Disallow changing the generated column expression with indexes [#11068](https://github.com/pingcap/tidb/pull/11068)
++ Support compiling TiDB on the ARM64 architecture [#11150](https://github.com/pingcap/tidb/pull/11150)
++ Support modifying the collation of a database or a table, but the character set of the database/table has to be UTF-8 or utf8mb4 [#11086](https://github.com/pingcap/tidb/pull/11086)
++ Fix the issue that an error is reported when the `SELECT` subquery in the `UPDATE … SELECT` statement fails to parse the column in the `UPDATE` expression and the column is wrongly pruned [#11252](https://github.com/pingcap/tidb/pull/11252)
++ Fix the panic issue that happens when a column is queried on multiple times and the returned result is NULL during point queries [#11226](https://github.com/pingcap/tidb/pull/11226)
++ Fix the data race issue caused by non-thread safe `rand.Rand` when using the `RAND` function [#11169](https://github.com/pingcap/tidb/pull/11169)
++ Fix the bug that the memory usage of a SQL statement exceeds the threshold but the execution of this statement is not canceled in some cases when `oom-action="cancel"` is configured, and the returned result is incorrect [#11004](https://github.com/pingcap/tidb/pull/11004)
++ Fix the issue that `SHOW PROCESSLIST` shows that the memory usage is not `0` because the memory usage of MemTracker was not correctly cleaned [#10970](https://github.com/pingcap/tidb/pull/10970)
++ Fix the bug that the result of comparing integers and non-integers is not correct in some cases [#11194](https://github.com/pingcap/tidb/pull/11194)
++ Fix the bug that the query result is not correct when the query on table partitions contains a predicate in explicit transactions [#11196](https://github.com/pingcap/tidb/pull/11196)
++ Fix the DDL job panic issue because `infoHandle` might be `NULL` [#11022](https://github.com/pingcap/tidb/pull/11022)
++ Fix the issue that the query result is not correct because the queried column is not referenced in the subquery and is then wrongly pruned when running a nested aggregation query [#11020](https://github.com/pingcap/tidb/pull/11020)
++ Fix the issue that the `Sleep` function does not respond to the `KILL` statement in time [#11028](https://github.com/pingcap/tidb/pull/11028)
++ Fix the issue that the `DB` and `INFO` columns shown by the `SHOW PROCESSLIST` command are incompatible with MySQL [#11003](https://github.com/pingcap/tidb/pull/11003)
++ Fix the system panic issue caused by the `FLUSH PRIVILEGES` statement when `skip-grant-table=true` is configured [#11027](https://github.com/pingcap/tidb/pull/11027)
++ Fix the issue that the primary key statistics collected by `FAST ANALYZE` are not correct when the table primary key is an `UNSIGNED` integer [#11099](https://github.com/pingcap/tidb/pull/11099)
++ Fix the issue that the "invalid key" error is reported by the `FAST ANALYZE` statement in some cases [#11098](https://github.com/pingcap/tidb/pull/11098)
++ Fix the issue that the precision shown by the `SHOW CREATE TABLE` statement is incomplete when `CURRENT_TIMESTAMP` is used as the default value of the column and the float precision is specified [#11088](https://github.com/pingcap/tidb/pull/11088)
++ Fix the issue that the function name is not in lowercase when window functions report an error to make it compatible with MySQL [#11118](https://github.com/pingcap/tidb/pull/11118)
++ Fix the issue that TiDB fails to connect to TiKV and thus cannot provide service after the background thread of TiKV Client Batch gRPC panics [#11101](https://github.com/pingcap/tidb/pull/11101)
++ Fix the issue that the variable is set incorrectly by `SetVar` because of the shallow copy of the string [#11044](https://github.com/pingcap/tidb/pull/11044)
++ Fix the issue that the execution fails and an error is reported when the `INSERT … ON DUPLICATE` statement is applied on table partitions [#11231](https://github.com/pingcap/tidb/pull/11231)
++ Pessimistic locking (experimental feature)
+    - Fix the issue that an incorrect result is returned because of the invalid lock on the row when point queries are run using the pessimistic locking and the returned data is empty [#10976](https://github.com/pingcap/tidb/pull/10976)
+    - Fix the issue that the query result is not correct because `SELECT … FOR UPDATE` does not use the correct TSO when using the pessimistic locking in the query [#11015](https://github.com/pingcap/tidb/pull/11015)
+    - Change the detection behavior from immediate conflict detection to waiting when an optimistic transaction meets a pessimistic lock to avoid worsening the lock conflict [#11051](https://github.com/pingcap/tidb/pull/11051)
 
 ## TiKV
 
-- 统计信息中新增对 Blob 文件大小的统计 [#5060](https://github.com/tikv/tikv/pull/5060)
-- 修复由于进程退出未正确清理内存资源导致进程在退出时 core dump 问题 [#5053](https://github.com/tikv/tikv/pull/5053)
-- 新增与 Titan 引擎相关的所有监控指标 [#4772](https://github.com/tikv/tikv/pull/4772)，[#4836](https://github.com/tikv/tikv/pull/4836)
-- 统计打开文件句柄数量时，新增 Titan 引擎打开文件句柄数量，防止因文件句柄数统计不准确导致系统无文件句柄可用的问题 [#5026](https://github.com/tikv/tikv/pull/5026)
-- 通过设置 `blob_run_mode` 来决定是否在某个 CF 上启动 Titan 引擎 [#4991](https://github.com/tikv/tikv/pull/4991)
-- 修复读操作读不到悲观事务 commit 信息的问题 [#5067](https://github.com/tikv/tikv/pull/5067)
-- 新增 `blob-run-mode` 配置参数控制 Titan 引擎的运行模式，取值：normal、read-only、fallback [#4865](https://github.com/tikv/tikv/pull/4865)
-- 提升死锁检测的性能 [#5089](https://github.com/tikv/tikv/pull/5089)
+- Add the statistics of the size of blob files in statistics information [#5060](https://github.com/tikv/tikv/pull/5060)
+- Fix the core dump issue caused by the incorrectly cleaned memory resources when the process exits [#5053](https://github.com/tikv/tikv/pull/5053)
+- Add all monitoring metrics related to the Titan engine [#4772](https://github.com/tikv/tikv/pull/4772), [#4836](https://github.com/tikv/tikv/pull/4836)
+- Add the number of open file handles for Titan when counting the number of open file handles to avoid the issue that no file handle is available because of inaccurate statistics of file handles [#5026](https://github.com/tikv/tikv/pull/5026)
+- Set `blob_run_mode` to decide whether to enable the Titan engine on a specific CF [#4991](https://github.com/tikv/tikv/pull/4991)
+- Fix the issue that the read operations cannot get the commit information of pessimistic transactions [#5067](https://github.com/tikv/tikv/pull/5067)
+- Add the `blob-run-mode` configuration parameter to control the running mode of the Titan engine, and its value can be `normal`, `read-only` or `fallback` [#4865](https://github.com/tikv/tikv/pull/4865)
+- Improve the performance of detecting deadlocks [#5089](https://github.com/tikv/tikv/pull/5089)
 
 ## PD
 
-- 修复热点 Region 调度时，调度限制会自动调整为 0 的问题 [#1552](https://github.com/pingcap/pd/pull/1552)
-- 新增 `enable-grpc-gateway` 的配置选项，用于开启 etcd 的 grpc gateway 功能 [#1596](https://github.com/pingcap/pd/pull/1596)
-- 新增 `store-balance-rate`、`hot-region-schedule-limit` 等与调度器配置相关的统计信息 [#1601](https://github.com/pingcap/pd/pull/1601)
-- 优化热点 Region 调度策略，调度时跳过缺失副本的 Region，防止多个副本调度到同一个机房 [#1609](https://github.com/pingcap/pd/pull/1609)
-- 优化 Region Merge 处理逻辑，优先 Merge Region Size 较小的 Region，提升 Region Merge 的速度 [#1613](https://github.com/pingcap/pd/pull/1613)
-- 优化单次调度热点 Region 的限制值为 64，防止调度任务过多占用系统资源，影响性能 [#1616](https://github.com/pingcap/pd/pull/1616)
-- 优化 Region 调度策略，新增优先调度 Pending 状态的 Region 功能 [#1617](https://github.com/pingcap/pd/pull/1617)
-- 修复无法添加 `random-merge` 和 `admin-merge-region` operator 的问题 [#1634](https://github.com/pingcap/pd/pull/1634)
-- 调整日志中输出 Region 中 Key 的格式为 16 进制，方便用户查看 [#1639](https://github.com/pingcap/pd/pull/1639)
+- Fix the issue that the scheduling limit is automatically adjusted to 0 when PD schedules hot Regions [#1552](https://github.com/pingcap/pd/pull/1552)
+- Add the `enable-grpc-gateway` configuration option to enable the gRPC gateway feature of etcd [#1596](https://github.com/pingcap/pd/pull/1596)
+- Add `store-balance-rate`, `hot-region-schedule-limit` and other statistics related to scheduler configuration [#1601](https://github.com/pingcap/pd/pull/1601)
+- Optimize the hot Region scheduling strategy and skip the Regions that lack replicas during scheduling to prevent multiple replicas from being scheduled to the same IDC [#1609](https://github.com/pingcap/pd/pull/1609)
+- Optimize the Region merge processing logic and support giving priority to merging the Regions with smaller sizes to speed up Region merging [#1613](https://github.com/pingcap/pd/pull/1613)
+- Adjust the default limit of hot Region scheduling in a single time to 64 to prevent too many scheduling tasks from occupying system resources and impacting performance [#1616](https://github.com/pingcap/pd/pull/1616)
+- Optimize the Region scheduling strategy and support giving high priority to scheduling Regions in the `Pending` status [#1617](https://github.com/pingcap/pd/pull/1617)
+- Fix the issue that `random-merge` and `admin-merge-region` operators cannot be added [#1634](https://github.com/pingcap/pd/pull/1634)
+- Adjust the format of the Region key in the log to hexadecimal notation to make it easier to view [#1639](https://github.com/pingcap/pd/pull/1639)
 
 ## Tools
 
 TiDB Binlog
 
-- 优化 Pump GC 策略，删除保证未被消费的 Binlog 不被清理的限制，确保资源不会长期占用 [#646](https://github.com/pingcap/tidb-binlog/pull/646)
+- Optimize the Pump GC strategy and remove the restriction that the unconsumed binlog cannot be cleaned to make sure that the resources are not occupied for a long time [#646](https://github.com/pingcap/tidb-binlog/pull/646)
 
 TiDB Lightning
 
-- 修正 SQL dump 指明的列名不是小写时导入错误的问题 [#210](https://github.com/pingcap/tidb-lightning/pull/210)
+- Fix the import error that happens when the column names specified by the SQL dump are not in lowercase [#210](https://github.com/pingcap/tidb-lightning/pull/210)
 
 ## TiDB Ansible
 
-- 新增 `ansible` 命令及其 `jmespath`、`Jinja2` 依赖包的预检查功能 [#803](https://github.com/pingcap/tidb-ansible/pull/803)，[#813](https://github.com/pingcap/tidb-ansible/pull/813)
-- Pump 新增 `stop-write-at-available-space` 参数，控制当磁盘剩余空间小于该值（默认 10 GiB）时，Pump 停止写入 Binlog [#806](https://github.com/pingcap/tidb-ansible/pull/806)
-- 更新 TiKV 监控中的 IO 监控项，兼容新版本监控组件 [#820](https://github.com/pingcap/tidb-ansible/pull/820)
-- 更新 PD 监控信息，并修复 Disk Performance Dashboard 中 Disk Latency 显示为空的异常 [#817](https://github.com/pingcap/tidb-ansible/pull/817)
-- TiKV Details Dashboard 新增 Titan 监控项 [#824](https://github.com/pingcap/tidb-ansible/pull/824)
+- Add the precheck feature for the ansible command and its `jmespath` and `jinja2` dependency packages [#803](https://github.com/pingcap/tidb-ansible/pull/803), [#813](https://github.com/pingcap/tidb-ansible/pull/813)
+- Add the `stop-write-at-available-space` parameter (10 GiB by default) in Pump to stop writing binlog files in Pump when the available disk space is less than the parameter value [#806](https://github.com/pingcap/tidb-ansible/pull/806)
+- Update the I/O monitoring items in the TiKV monitoring information and make them compatible with the monitoring components of the new version [#820](https://github.com/pingcap/tidb-ansible/pull/820)
+- Update the PD monitoring information, and fix the anomaly that Disk Latency is empty in the disk performance dashboard [#817](https://github.com/pingcap/tidb-ansible/pull/817)
+- Add monitoring items for Titan in the TiKV details dashboard [#824](https://github.com/pingcap/tidb-ansible/pull/824)

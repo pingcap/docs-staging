@@ -1,24 +1,25 @@
 ---
 title: SESSION_CONNECT_ATTRS
-summary: 了解 performance_schema 表 `SESSION_CONNECT_ATTRS`。
+summary: 了解 `SESSION_CONNECT_ATTRS` performance_schema 表。
 ---
 
 # SESSION\_CONNECT\_ATTRS
 
-`SESSION_CONNECT_ATTRS` 表提供了关于连接属性的信息。会话属性是在建立连接时由客户端发送的键值对。
+`SESSION_CONNECT_ATTRS` 表提供了关于连接属性的信息。会话属性是客户端在建立连接时发送的键值对。
 
 常见属性：
 
-| 属性名 | 示例 | 描述 |
-|-------|-----|------|
-| `_client_name` | `libmysql` | 客户端库名 |
-| `_client_version` | `8.0.33` | 客户端库版本|
-| `_os` | `Linux` | 操作系统 |
-| `_pid` | `712927` | 进程 ID |
-| `_platform` | `x86_64` | CPU 架构 |
-| `program_name` | `mysqlsh` | 程序名  |
+| 属性名            | 示例           | 描述                   |
+|-------------------|---------------|------------------------|
+| `_client_name`    | `libmysql`    | 客户端库名称           |
+| `_client_version` | `8.0.33`      | 客户端库版本           |
+| `_os`             | `Linux`       | 操作系统               |
+| `_pid`            | `712927`      | 进程 ID                |
+| `_platform`       | `x86_64`      | CPU 架构               |
+| `program_name`    | `mysqlsh`     | 程序名称               |
 
 你可以通过以下方式查看 `SESSION_CONNECT_ATTRS` 表的列信息：
+
 
 ```sql
 USE performance_schema;
@@ -36,7 +37,8 @@ DESCRIBE session_connect_attrs;
 +------------------+-----------------+------+------+---------+-------+
 ```
 
-你可以通过以下方式查看 `SESSION_CONNECT_ATTRS` 表中存储的会话属性信息：
+你可以通过以下方式查看存储在 `SESSION_CONNECT_ATTRS` 表中的会话属性信息：
+
 
 ```sql
 USE performance_schema;
@@ -56,24 +58,24 @@ TABLE SESSION_CONNECT_ATTRS;
 +----------------+-----------------+------------+------------------+
 ```
 
-`SESSION_CONNECT_ATTRS` 表的字段描述如下：
+`SESSION_CONNECT_ATTRS` 表中的字段说明如下：
 
 * `PROCESSLIST_ID`：会话的 Processlist ID。
-* `ATTR_NAME`：属性名。
+* `ATTR_NAME`：属性名称。
 * `ATTR_VALUE`：属性值。
-* `ORDINAL_POSITION`：属性名/属性值对的序号。
+* `ORDINAL_POSITION`：名称/值对的顺序位置。
 
-## 大小限制与截断
+## 大小限制与截断 {#size-limit-and-truncation}
 
-TiDB 使用全局系统变量 [`performance_schema_session_connect_attrs_size`](/system-variables.md#performance_schema_session_connect_attrs_size-从-v857-版本开始引入) 来控制每个会话连接属性的最大总大小。
+TiDB 使用全局系统变量 [`performance_schema_session_connect_attrs_size`](/system-variables.md#performance_schema_session_connect_attrs_size-new-in-v857) 来控制每个会话的连接属性总大小上限。
 
 - 默认值：`4096` 字节
 - 取值范围：`[-1, 65536]`
-- `-1` 表示不配置限制，TiDB 会将其视为最大 `65536` 字节。
-- `0` 表示 TiDB 不会保留客户端提供的会话连接属性，禁用会话属性记录。
+- `-1` 表示未配置限制，TiDB 会将其视为最大 `65536` 字节。
+- `0` 表示 TiDB 不保留客户端提供的会话连接属性，这实际上会禁用会话属性记录。
 
-当总大小超过该限制时，TiDB 会截断超出的属性，并添加 `_truncated` 来表示被截断的字节数。
+当总大小超过此限制时，TiDB 会截断超出的属性，并添加 `_truncated` 以指示被截断的字节数。
 
-已接受的连接属性也会写入慢日志中的 `Session_connect_attrs` 字段，并可通过 [`INFORMATION_SCHEMA.SLOW_QUERY`](/information-schema/information-schema-slow-query.md) 和 `INFORMATION_SCHEMA.CLUSTER_SLOW_QUERY` 查询。若要控制写入慢日志的负载大小，可调整 `performance_schema_session_connect_attrs_size`。
+已接受的连接属性也会写入慢日志中的 `Session_connect_attrs` 字段，并且可以从 [`INFORMATION_SCHEMA.SLOW_QUERY`](/information-schema/information-schema-slow-query.md) 和 `INFORMATION_SCHEMA.CLUSTER_SLOW_QUERY` 中查询。要控制写入慢日志的负载大小，请调整 `performance_schema_session_connect_attrs_size`。
 
-此外，TiDB 还会对握手包中的连接属性负载强制施加 1 MiB 的硬性限制。若超过该硬性限制，连接将被拒绝。
+TiDB 还会对握手包中的连接属性负载强制实施 1 MiB 的硬限制。如果超过此硬限制，连接将被拒绝。

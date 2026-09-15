@@ -1,19 +1,19 @@
 ---
-title: 搜索 JSON 值的 JSON 函数
-summary: 了解搜索 JSON 值的 JSON 函数。
+title: JSON Functions That Search JSON Values
+summary: Learn about JSON functions that search JSON values.
 ---
 
-# 搜索 JSON 值的 JSON 函数
+# 用于搜索 JSON 值的 JSON 函数
 
-TiDB 支持使用 MySQL 8.0 中提供的大部分[用于搜索 JSON 值的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html)。
+TiDB 支持大多数 MySQL 8.0 中 [用于搜索 JSON 值的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-search-functions.html)。
 
 ## `JSON_CONTAINS()`
 
-通过返回 `1` 或 `0`，`JSON_CONTAINS(json_doc, candidate [,path])` 函数用于确认指定的 JSON 文档 `candidate` 是否包含在目标 JSON 文档中。
+`JSON_CONTAINS(json_doc, candidate [,path])` 函数通过返回 `1` 或 `0`，表示给定的 `candidate` JSON 文档是否包含在目标 JSON 文档中。
 
 示例：
 
-下面示例中，`a` 包含在了目标文档中。
+此处 `a` 被包含在目标文档中。
 
 ```sql
 SELECT JSON_CONTAINS('["a","b","c"]','"a"');
@@ -28,7 +28,7 @@ SELECT JSON_CONTAINS('["a","b","c"]','"a"');
 1 row in set (0.00 sec)
 ```
 
-下面示例中，`a` 没有包含在目标文档中。
+此处 `e` 未被包含在目标文档中。
 
 ```sql
 SELECT JSON_CONTAINS('["a","b","c"]','"e"');
@@ -43,7 +43,7 @@ SELECT JSON_CONTAINS('["a","b","c"]','"e"');
 1 row in set (0.00 sec)
 ```
 
-下面示例中，`{"foo": "bar"}` 包含在了目标文档中。
+此处 `{"foo": "bar"}` 被包含在目标文档中。
 
 ```sql
 SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','{"foo": "bar"}');
@@ -58,7 +58,7 @@ SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','{"foo": "bar"}');
 1 row in set (0.00 sec)
 ```
 
-下面示例中，`"bar"` 没有包含在目标文档的根目录中。
+此处 `"bar"` 未被包含在目标文档的根节点中。
 
 ```sql
 SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"');
@@ -73,7 +73,7 @@ SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"');
 1 row in set (0.00 sec)
 ```
 
-下面示例中，`"bar"` 包含在了目标文档的 `$.foo` 属性中。
+此处 `"bar"` 被包含在目标文档的 `$.foo` 属性中。
 
 ```sql
 SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"', '$.foo');
@@ -90,11 +90,11 @@ SELECT JSON_CONTAINS('{"foo": "bar", "aaa": 5}','"bar"', '$.foo');
 
 ## `JSON_CONTAINS_PATH()`
 
-`JSON_CONTAINS_PATH(json_doc,all_or_one,path [,path, ...])` 函数返回 `0` 或 `1`，表示 JSON 文档是否包含指定路径下的数据。
+`JSON_CONTAINS_PATH(json_doc, all_or_one, path [,path, ...])` 函数通过返回 `0` 或 `1`，表示 JSON 文档在给定路径或多个路径上是否包含数据。
 
 示例：
 
-下面的示例文档中包含 `$.foo`。
+此处文档包含 `$.foo`。
 
 ```sql
 SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.foo');
@@ -109,7 +109,7 @@ SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.foo');
 1 row in set (0.00 sec)
 ```
 
-下面的示例文档中没有包含 `$.bar`。
+此处文档不包含 `$.bar`。
 
 ```sql
 SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.bar');
@@ -124,7 +124,7 @@ SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.bar');
 1 row in set (0.00 sec)
 ```
 
-下面的示例文档中包含了 `$.foo` 和 `$.aaa`。
+此处文档同时包含 `$.foo` 和 `$.aaa`。
 
 ```sql
 SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.foo', '$.aaa');
@@ -141,7 +141,7 @@ SELECT JSON_CONTAINS_PATH('{"foo": "bar", "aaa": 5}','all','$.foo', '$.aaa');
 
 ## `JSON_EXTRACT()`
 
-`JSON_EXTRACT(json_doc, path[, path] ...)` 函数从 JSON 文档中提取与 `path` 参数匹配的数据。
+`JSON_EXTRACT(json_doc, path[, path] ...)` 函数用于从 JSON 文档中提取数据，提取的部分由 `path` 参数指定。
 
 ```sql
 SELECT JSON_EXTRACT('{"foo": "bar", "aaa": 5}', '$.foo');
@@ -158,7 +158,7 @@ SELECT JSON_EXTRACT('{"foo": "bar", "aaa": 5}', '$.foo');
 
 ## `->`
 
-`column->path` 函数返回 `column` 中与 `path` 参数匹配的数据。该函数是 [`JSON_EXTRACT()`](#json_extract) 的别名。
+`column->path` 函数返回 `column` 中与 `path` 参数匹配的数据。它是 [`JSON_EXTRACT()`](#json_extract) 的别名。
 
 ```sql
 SELECT
@@ -181,7 +181,7 @@ FROM (
 
 ## `->>`
 
-`column->>path` 函数去掉 `column` 中与 `path` 参数匹配的数据的引号。它是 `JSON_UNQUOTE(JSON_EXTRACT(doc,path_literal))` 的别名。
+`column->>path` 函数会对 `column` 中与 `path` 参数匹配的数据进行去引号操作。它等价于 `JSON_UNQUOTE(JSON_EXTRACT(doc, path_literal))`。
 
 ```sql
 SELECT
@@ -206,11 +206,11 @@ FROM (
 
 ## `JSON_KEYS()`
 
-`JSON_KEYS(json_doc [,path])` 函数以 JSON 数组的形式返回 JSON 对象的顶层键 (key)。如果指定了 `path` 参数，则返回所选路径的顶层键 (key)。
+`JSON_KEYS(json_doc [,path])` 函数以 JSON 数组的形式返回 JSON 对象的顶层键名。如果指定了 `path` 参数，则返回选定路径下的顶层键名。
 
 示例：
 
-下面示例返回了 JSON 文档中的两个顶层键。
+以下示例返回 JSON 文档中的两个顶层键名。
 
 ```sql
 SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}');
@@ -225,7 +225,7 @@ SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}')
 1 row in set (0.00 sec)
 ```
 
-下面示例返回了 JSON 文档的 `$.name` 路径中的顶层键。
+以下示例返回 JSON 文档中 `$.name` 路径下的顶层键名。
 
 ```sql
 SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}', '$.name');
@@ -242,11 +242,11 @@ SELECT JSON_KEYS('{"name": {"first": "John", "last": "Doe"}, "type": "Person"}',
 
 ## `JSON_SEARCH()`
 
-`JSON_SEARCH(json_doc,one_or_all,str)` 函数会在 JSON 文档中搜索与字符串匹配的一个或所有的匹配项。
+`JSON_SEARCH(json_doc, one_or_all, str)` 函数在 JSON 文档中查找字符串的一个或所有匹配项。
 
 示例：
 
-在下面的示例中，搜索 `cc` 的第一个结果，它在 `a` 数组中索引为 2 的位置。
+在以下示例中，你可以查找 `cc` 的第一个结果，它位于 `a` 数组的索引 2 位置。
 
 ```sql
 SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','one','cc');
@@ -261,9 +261,9 @@ SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','one','cc');
 1 row in set (0.00 sec)
 ```
 
-现在执行和上个示例类似的操作，但将 `one_or_all` 设置为 `all`。这将获取全部搜索结果，而不仅仅是第一个结果。
+现在你将 `one_or_all` 设置为 `all`，可以获取所有结果，而不仅仅是第一个结果。
 
-```json
+```sql
 SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','all','cc');
 ```
 
@@ -278,7 +278,7 @@ SELECT JSON_SEARCH('{"a": ["aa", "bb", "cc"], "b": ["cc", "dd"]}','all','cc');
 
 ## `MEMBER OF()`
 
-`str MEMBER OF (json_array)` 函数测试传入的 `str` 值是否是 `json_array` 的元素，如果是则返回 `1`，否则返回 `0`。如果任一参数为 `NULL`，则返回 `NULL`。
+`str MEMBER OF (json_array)` 函数用于判断传入的值 `str` 是否为 `json_array` 的元素，如果是则返回 `1`，否则返回 `0`。如果任一参数为 `NULL`，则返回 `NULL`。
 
 ```
 SELECT '🍍' MEMBER OF ('["🍍","🥥","🥭"]') AS 'Contains pineapple';
@@ -296,11 +296,11 @@ SELECT '🍍' MEMBER OF ('["🍍","🥥","🥭"]') AS 'Contains pineapple';
 
 ## `JSON_OVERLAPS()`
 
-`JSON_OVERLAPS(json_doc, json_doc)` 函数检查两个 JSON 文档是否有重叠部分。如果有重叠，则返回 `1`，如果没有重叠，则返回 `0`。如果任一参数为 `NULL`，则返回 `NULL`。
+`JSON_OVERLAPS(json_doc, json_doc)` 函数用于判断两个 JSON 文档是否有重叠部分。如果有重叠，则返回 `1`；否则返回 `0`。如果任一参数为 `NULL`，则返回 `NULL`。
 
 示例：
 
-下面的示例显示没有重叠，因为数组值的元素数量不一样。
+以下示例显示没有重叠，因为数组值的元素数量不同。
 
 ```sql
 SELECT JSON_OVERLAPS(
@@ -318,7 +318,7 @@ SELECT JSON_OVERLAPS(
 1 row in set (0.00 sec)
 ```
 
-下面的示例显示两个 JSON 文档重叠，因为它们完全相同。
+以下示例显示两个 JSON 文档完全相同，因此有重叠。
 
 ```sql
 SELECT JSON_OVERLAPS(
@@ -336,7 +336,7 @@ SELECT JSON_OVERLAPS(
 1 row in set (0.00 sec)
 ```
 
-下面的示例显示存在重叠，而第二个文件有一个额外的属性。
+以下示例显示存在重叠，尽管第二个文档有额外的属性。
 
 ```sql
 SELECT JSON_OVERLAPS(
@@ -354,7 +354,7 @@ SELECT JSON_OVERLAPS(
 1 row in set (0.00 sec)
 ```
 
-## 另请参阅
+## 参见
 
-- [JSON 函数](/functions-and-operators/json-functions.md)
+- [JSON 函数总览](/functions-and-operators/json-functions.md)
 - [JSON 数据类型](/data-type-json.md)

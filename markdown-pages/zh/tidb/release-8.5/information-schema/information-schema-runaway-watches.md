@@ -1,11 +1,15 @@
 ---
 title: RUNAWAY_WATCHES
-summary: 了解 INFORMATION_SCHEMA 表 `RUNAWAY_WATCHES`。
+summary: 了解 `RUNAWAY_WATCHES` INFORMATION_SCHEMA 表。
 ---
 
 # RUNAWAY_WATCHES
 
-`RUNAWAY_WATCHES` 表展示资源消耗超出预期的查询 Runaway Queries 监控列表，见[管理资源消耗超出预期的查询 (Runaway Queries)](/tidb-resource-control-runaway-queries.md)。
+`RUNAWAY_WATCHES` 表展示了消耗资源超出预期的 runaway 查询的监控列表。更多信息，参见 [Runaway Queries](/tidb-resource-control-runaway-queries.md)。
+
+> **Note:**
+>
+> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
 
 ```sql
 USE INFORMATION_SCHEMA;
@@ -31,13 +35,13 @@ DESC RUNAWAY_WATCHES;
 
 ## 示例
 
-查询 Runaway Queries 识别名单：
+查询 runaway 查询的监控列表：
 
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.RUNAWAY_WATCHES ORDER BY id\G
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 *************************** 1. row ***************************
@@ -73,19 +77,19 @@ RESOURCE_GROUP_NAME: default
 3 rows in set (0.00 sec)
 ```
 
-添加一个识别项到资源组 `rg1`：
+向资源组 `rg1` 添加一个监控项：
 
 ```sql
 QUERY WATCH ADD RESOURCE GROUP rg1 SQL TEXT EXACT TO 'select * from sbtest.sbtest1';
 ```
 
-再次查询 Runaway Queries 识别名单：
+再次查询 runaway 查询的监控列表：
 
 ```sql
 SELECT * FROM INFORMATION_SCHEMA.RUNAWAY_WATCHES\G
 ```
 
-输出结果如下：
+输出如下：
 
 ```sql
 *************************** 1. row ***************************
@@ -131,16 +135,16 @@ RESOURCE_GROUP_NAME: default
 3 row in set (0.00 sec)
 ```
 
-`RUNAWAY_WATCHES` 表中列的含义如下：
+`RUNAWAY_WATCHES` 表中每个字段的含义如下：
 
-* `ID`：识别项 ID。
-* `RESOURCE_GROUP_NAME`：资源组名称。
-* `START_TIME`：开始时间。
-* `END_TIME`：结束时间。`UNLIMITED` 表示识别项的有效时间无限长。
-* `WATCH`：识别匹配类型，其值如下：
-    - `Plan` 表示按照 Plan Digest 匹配，此时列 `WATCH_TEXT` 显示 Plan Digest。
-    - `Similar` 表示按照 SQL Digest 匹配，此时列 `WATCH_TEXT` 显示 SQL Digest。
-    - `Exact` 表示按照 SQL 文本匹配，此时列 `WATCH_TEXT` 显示 SQL 文本。
-* `SOURCE`：识别项来源，如果是被 `QUERY_LIMIT` 规则识别，则显示识别到的 TiDB IP；如果是手动添加，则显示 `manual`。
-* `ACTION`：识别后的对应操作。
-* `RULE`：识别规则。目前包括 `ElapsedTime`、`ProcessedKeys` 和 `RequestUnit` 这三种规则。格式为 `ProcessedKeys = 666(10)`，其中 `666` 为实际值，`10` 为阈值。
+- `ID`：监控项的 ID。
+- `RESOURCE_GROUP_NAME`：资源组名称。
+- `START_TIME`：开始时间。
+- `END_TIME`：结束时间。`UNLIMITED` 表示该监控项有效期无限。
+- `WATCH`：快速识别的匹配类型。取值如下：
+    - `Plan` 表示匹配 Plan Digest，此时 `WATCH_TEXT` 列显示 Plan Digest。
+    - `Similar` 表示匹配 SQL Digest，此时 `WATCH_TEXT` 列显示 SQL Digest。
+    - `Exact` 表示匹配 SQL 文本，此时 `WATCH_TEXT` 列显示 SQL 文本。
+- `SOURCE`：监控项的来源。如果是通过 `QUERY_LIMIT` 规则识别，则显示被识别的 TiDB IP 地址；如果是手动添加，则显示 `manual`。
+- `ACTION`：识别后对应的操作。
+- `RULE`：识别规则。目前有三种规则：`ElapsedTime`、`ProcessedKeys` 和 `RequestUnit`。格式为 `ProcessedKeys = 666(10)`，其中 `666` 为实际值，`10` 为阈值。

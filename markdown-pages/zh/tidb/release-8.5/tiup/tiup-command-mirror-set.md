@@ -1,47 +1,50 @@
 ---
 title: tiup mirror set
-summary: tiup mirror set 命令用于切换当前镜像，支持本地文件系统和远程网络两种镜像。命令语法为 tiup mirror set <mirror-addr> [flags]，其中 <mirror-addr> 为镜像地址，可以是网络地址或本地文件路径。选项 -r, --root 用于指定根证书。输出为无。
+summary: The `tiup mirror set` command switches the current mirror between local file system and remote network address. The official mirror address is `https://tiup-mirrors.pingcap.com`. Use `tiup mirror set <mirror-addr>` to set the mirror address. Use `-r, --root` option to specify the root certificate for network mirrors to prevent man-in-the-middle attacks. No output is generated.
 ---
 
 # tiup mirror set
 
-命令 `tiup mirror set` 用于切换当前镜像，支持本地文件系统和远程网络两种镜像。
+The `tiup mirror set` command is used to switch the current mirror and supports two forms of mirrors: local file system and remote network address.
 
-官方镜像为 `https://tiup-mirrors.pingcap.com`。
+The address of the official mirror is `https://tiup-mirrors.pingcap.com`.
 
-## 语法
+## Syntax
 
 ```shell
 tiup mirror set <mirror-addr> [flags]
 ```
 
-`<mirror-addr>` 为镜像地址，可以有两种形式：
+`<mirror-addr>` is the mirror address, which has two forms:
 
-- 网络地址：以 http 或者 https 开头，如 `http://172.16.5.5:8080`，`https://tiup-mirrors.pingcap.com` 等
-- 本地文件路径：镜像目录的绝对路径，比如 `/path/to/local-tiup-mirror`
+- Network address: starts with `http` or `https`. For example, `http://172.16.5.5:8080`, `https://tiup-mirrors.pingcap.com`.
+- Local file path: the absolute path of the mirror directory. For example, `/path/to/local-tiup-mirror`.
 
-## 选项
+## Option
 
-### -r, --root（string，默认 `{mirror-dir}/root.json`）
+### -r, --root
 
-指定根证书。
+This option specifies the root certificate.
 
-每个镜像的根证书不相同，而根证书是镜像安全性最关键的一环，在使用网络镜像时，可能遭受中间人攻击，为了避免此类攻击，推荐手动将根网络镜像的根证书下载到本地：
+As the most critical part of mirror security, the root certificate of each mirror is different from one another. When you use the network mirror, it might suffer from man-in-the-middle attacks. To avoid such attacks, it is recommended to manually download the root certificate of the root network mirror to the local:
 
 ```
 wget <mirror-addr>/root.json -O /path/to/local/root.json
 ```
 
-然后进行人工查验，认定无误之后，再通过手工指定根证书的方式切换镜像：
+Perform a manual check to ensure that the root certificate is correct, and then switch the mirror by manually specifying the root certificate:
 
 ```
 tiup mirror set <mirror-addr> -r /path/to/local/root.json
 ```
 
-在这种操作方式下，如果中间人在 `wget` 之前攻击了镜像，用户可发现根证书不正确。如果在 `wget` 之后攻击了镜像，TiUP 会发现镜像和根证书不符。
+In the steps above, if the mirror is attacked before the `wget` command, you can find that the root certificate is incorrect. If the mirror is attacked after the `wget` command, TiUP will find that the mirror does not match the root certificate.
 
-## 输出
+- Data type: `String`
+- Default: `{mirror-dir}/root.json`
 
-无
+## Output
 
-[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)
+None
+
+[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)

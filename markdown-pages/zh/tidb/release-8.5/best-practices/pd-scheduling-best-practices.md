@@ -1,304 +1,301 @@
 ---
-title: PD 调度策略最佳实践
-summary: 了解 PD 调度策略的最佳实践和调优方式
-aliases: ['/docs-cn/dev/best-practices/pd-scheduling-best-practices/','/docs-cn/dev/reference/best-practices/pd-scheduling/','/zh/tidb/stable/pd-scheduling-best-practices/','/zh/tidb/dev/pd-scheduling-best-practices/']
+title: Best Practices for PD Scheduling
+summary: This document summarizes PD scheduling best practices, including scheduling process, load balancing, hot regions scheduling, cluster topology awareness, scale-down and failure recovery, region merge, query scheduling status, and control scheduling strategy. It also covers common scenarios such as uneven distribution of leaders/regions, slow node recovery, and troubleshooting TiKV nodes.
 ---
 
-# PD 调度策略最佳实践
+# Best Practices for PD Scheduling
 
-本文将详细介绍 PD 调度系统的原理，并通过几个典型场景的分析和处理方式，分享调度策略的最佳实践和调优方式，帮助大家在使用过程中快速定位问题。本文假定你对 TiDB，TiKV 以及 PD 已经有一定的了解，相关核心概念如下：
+This document details the principles and strategies of PD scheduling through common scenarios to facilitate your application. This document assumes that you have a basic understanding of TiDB, TiKV and PD with the following core concepts:
 
-- [Leader/Follower/Learner](/glossary.md#leaderfollowerlearner)
-- [Operator](/glossary.md#operator)
-- [Operator Step](/glossary.md#operator-step)
-- [Pending/Down](/glossary.md#pendingdown)
-- [Region/Peer/Raft Group](/glossary.md#regionpeerraft-group)
-- [Region Split](/glossary.md#region-split)
-- [Scheduler](/glossary.md#scheduler)
-- [Store](/glossary.md#store)
+- [leader/follower/learner](/glossary.md#leaderfollowerlearner)
+- [operator](/glossary.md#operator)
+- [operator step](/glossary.md#operator-step)
+- [pending/down](/glossary.md#pendingdown)
+- [region/peer/Raft group](/glossary.md#regionpeerraft-group)
+- [region split](/glossary.md#region-split)
+- [scheduler](/glossary.md#scheduler)
+- [store](/glossary.md#store)
 
-> **注意：**
+> **Note:**
 >
-> 本文内容基于 TiDB 3.0 版本，更早的版本 (2.x) 缺少部分功能的支持，但是基本原理类似，也可以以本文作为参考。
+> This document initially targets TiDB 3.0. Although some features are not supported in earlier versions (2.x), the underlying mechanisms are similar and this document can still be used as a reference.
 
-## PD 调度原理
+## PD scheduling policies
 
-该部分介绍调度系统涉及到的相关原理和流程。
+This section introduces the principles and processes involved in the scheduling system.
 
-### 调度流程
+### Scheduling process
 
-宏观上来看，调度流程大体可划分为 3 个部分：
+The scheduling process generally has three steps:
 
-1. 信息收集
+1. Collect information
 
-    TiKV 节点周期性地向 PD 上报 `StoreHeartbeat` 和 `RegionHeartbeat` 两种心跳消息：
+    Each TiKV node periodically reports two types of heartbeats to PD:
 
-    * `StoreHeartbeat` 包含 Store 的基本信息、容量、剩余空间和读写流量等数据。
-    * `RegionHeartbeat` 包含 Region 的范围、副本分布、副本状态、数据量和读写流量等数据。
+    - `StoreHeartbeat`: Contains the overall information of stores, including disk capacity, available storage, and read/write traffic
+    - `RegionHeartbeat`: Contains the overall information of regions, including the range of each region, peer distribution, peer status, data volume, and read/write traffic
 
-    PD 梳理并转存这些信息供调度进行决策。
+    PD collects and restores this information for scheduling decisions.
 
-2. 生成调度
+2. Generate operators
 
-    不同的调度器从自身的逻辑和需求出发，考虑各种限制和约束后生成待执行的 Operator。这里所说的限制和约束包括但不限于：
+    Different schedulers generate the operators based on their own logic and requirements, with the following considerations:
 
-     - 不往处于异常状态中（如断连、下线、繁忙、空间不足或在大量收发 snapshot 等）的 Store 添加副本
-     - Balance 时不选择状态异常的 Region
-     - 不尝试把 Leader 转移给 Pending Peer
-     - 不尝试直接移除 Leader
-     - 不破坏 Region 各种副本的物理隔离
-     - 不破坏 Label property 等约束
+     - Do not add peers to a store in abnormal states (disconnected, down, busy, low space)
+     - Do not balance regions in abnormal states
+     - Do not transfer a leader to a pending peer
+     - Do not remove a leader directly
+     - Do not break the physical isolation of various region peers
+     - Do not violate constraints such as label property
 
-3. 执行调度
+3. Execute operators
 
-    调度执行的步骤为：
+    To execute the operators, the general procedure is:
 
-    a. Operator 先进入一个由 `OperatorController` 管理的等待队列。
+    1. The generated operator first joins a queue managed by `OperatorController`.
 
-    b. `OperatorController` 会根据配置以一定的并发量从等待队列中取出 Operator 并执行。执行的过程就是依次把每个 Operator Step 下发给对应 Region 的 Leader。
+    2. `OperatorController` takes the operator out of the queue and executes it with a certain amount of concurrency based on the configuration. This step is to assign each operator step to the corresponding region leader.
 
-    c. 标记 Operator 为 "finish" 或 "timeout" 状态，然后从执行列表中移除。
+    3. The operator is marked as "finish" or "timeout" and removed from the queue.
 
-### 负载均衡
+### Load balancing
 
-Region 负载均衡调度主要依赖 `balance-leader` 和 `balance-region` 两个调度器。二者的调度目标是将 Region 均匀地分散在集群中的所有 Store 上，但它们各有侧重：`balance-leader` 关注 Region 的 Leader，目的是分散处理客户端请求的压力；`balance-region` 关注 Region 的各个 Peer，目的是分散存储的压力，同时避免出现爆盘等状况。
+Region primarily relies on `balance-leader` and `balance-region` schedulers to achieve load balance. Both schedulers target distributing regions evenly across all stores in the cluster but with separate focuses: `balance-leader` deals with region leader to balance incoming client requests, whereas `balance-region` concerns itself with each region peer to redistribute the pressure of storage and avoid exceptions like out of storage space.
 
-`balance-leader` 与 `balance-region` 有着相似的调度流程：
+`balance-leader` and `balance-region` share a similar scheduling process:
 
-1. 根据不同 Store 的对应资源量的情况分别打分。
-2. 不断从得分较高的 Store 选择 Leader 或 Peer 迁移到得分较低的 Store 上。
+1. Rate stores according to their resource availability.
+2. `balance-leader` or `balance-region` constantly transfer leaders or peers from stores with high scores to those with low scores.
 
-两者的分数计算上也有一定差异：`balance-leader` 比较简单，使用 Store 上所有 Leader 所对应的 Region Size 加和作为得分。因为不同节点存储容量可能不一致，计算 `balance-region` 得分会分以下三种情况：
+However, their rating methods are different. `balance-leader` uses the sum of all region sizes corresponding to leaders in a store, whereas the way of `balance-region` is relatively complicated. Depending on the specific storage capacity of each node, the rating method of `balance-region` might:
 
-- 当空间富余时使用数据量计算得分（使不同节点数据量基本上均衡）
-- 当空间不足时由使用剩余空间计算得分（使不同节点剩余空间基本均衡）
-- 处于中间态时则同时考虑两个因素做加权和当作得分
+- based on the amount of data when there is sufficient storage (to balance data distribution among nodes).
+- based on the available storage when there is insufficient storage (to balance the storage availability on different nodes).
+- based on the weighted sum of the two factors above when neither of the situations applies.
 
-此外，为了应对不同节点可能在性能等方面存在差异的问题，还可为 Store 设置负载均衡的权重。`leader-weight` 和 `region-weight` 分别用于控制 Leader 权重以及 Region 权重（默认值都为 “1”）。假如把某个 Store 的 `leader-weight` 设为 “2”，调度稳定后，则该节点的 Leader 数量约为普通节点的 2 倍；假如把某个 Store 的 `region-weight` 设为 “0.5”，那么调度稳定后该节点的 Region 数量约为其他节点的一半。
+Because different nodes might differ in performance, you can also set the weight of load balancing for different stores. `leader-weight` and `region-weight` are used to control the leader weight and region weight respectively ("1" by default for both). For example, when the `leader-weight` of a store is set to "2", the number of leaders on the node is about twice as many as that of other nodes after the scheduling stabilizes. Similarly, when the `leader-weight` of a store is set to "0.5", the number of leaders on the node is about half as many as that of other nodes.
 
-### 热点调度
+### Hot regions scheduling
 
-热点调度对应的调度器是 `hot-region-scheduler`。从 TiDB v3.0 版本开始，统计热点 Region 的方式为：
+For hot regions scheduling, use `hot-region-scheduler`. Since TiDB v3.0, the process is performed as follows:
 
-1. 根据 Store 上报的信息，统计出持续一段时间读或写流量超过一定阈值的 Region。
-2. 用与负载均衡类似的方式把这些 Region 分散开来。
+1. Count hot regions by determining read/write traffic that exceeds a certain threshold for a certain period based on the information reported by stores.
 
-对于写热点，热点调度会同时尝试打散热点 Region 的 Peer 和 Leader；对于读热点，由于只有 Leader 承载读压力，热点调度会尝试将热点 Region 的 Leader 打散。
+2. Redistribute these regions in a similar way to load balancing.
 
-### 集群拓扑感知
+For hot write regions, `hot-region-scheduler` attempts to redistribute both region peers and leaders; for hot read regions, `hot-region-scheduler` only redistributes region leaders.
 
-让 PD 感知不同节点分布的拓扑是为了通过调度使不同 Region 的各个副本尽可能分散，保证高可用和容灾。PD 会在后台不断扫描所有 Region，当发现 Region 的分布不是当前的最优化状态时，会生成调度以替换 Peer，将 Region 调整至最佳状态。
+### Cluster topology awareness
 
-负责这个检查的组件叫 `replicaChecker`（跟 Scheduler 类似，但是不可关闭）。它依赖于 `location-labels` 配置项来进行调度。比如配置 `[zone,rack,host]` 定义了三层的拓扑结构：集群分为多个 zone（可用区），每个 zone 下有多个 rack（机架），每个 rack 下有多个 host（主机）。PD 在调度时首先会尝试将 Region 的 Peer 放置在不同的 zone，假如无法满足（比如配置 3 副本但总共只有 2 个 zone）则保证放置在不同的 rack；假如 rack 的数量也不足以保证隔离，那么再尝试 host 级别的隔离，以此类推。
+Cluster topology awareness enables PD to distribute replicas of a region as much as possible. This is how TiKV ensures high availability and disaster recovery capability. PD continuously scans all regions in the background. When PD finds that the distribution of regions is not optimal, it generates an operator to replace peers and redistribute regions.
 
-### 缩容及故障恢复
+The component to check region distribution is `replicaChecker`, which is similar to a scheduler except that it cannot be disabled. `replicaChecker` schedules based on the configuration of `location-labels`. For example, `[zone,rack,host]` defines a three-tier topology for a cluster. PD attempts to schedule region peers to different zones first, or to different racks when zones are insufficient (for example, 2 zones for 3 replicas), or to different hosts when racks are insufficient.
 
-缩容是指预备将某个 Store 下线，通过命令将该 Store 标记为 "Offline" 状态，此时 PD 通过调度将待下线节点上的 Region 迁移至其他节点。
+### Scale-down and failure recovery
 
-故障恢复是指当有 Store 发生故障且无法恢复时，有 Peer 分布在对应 Store 上的 Region 会产生缺少副本的状况，此时 PD 需要在其他节点上为这些 Region 补副本。
+Scale-down refers to the process when you take a store offline and mark it as "offline" using a command. PD replicates the regions on the offline node to other nodes by scheduling. Failure recovery applies when stores failed and cannot be recovered. In this case, regions with peers distributed on the corresponding store might lose replicas, which requires PD to replenish on other nodes.
 
-这两种情况的处理过程基本上是一样的。`replicaChecker` 检查到 Region 存在异常状态的 Peer 后，生成调度在健康的 Store 上创建新副本替换异常的副本。
+The processes of scale-down and failure recovery are basically the same. `replicaChecker` finds a region peer in abnormal states, and then generates an operator to replace the abnormal peer with a new one on a healthy store.
 
 ### Region merge
 
-Region merge 指的是为了避免删除数据后大量小甚至空的 Region 消耗系统资源，通过调度把相邻的小 Region 合并的过程。Region merge 由 `mergeChecker` 负责，其过程与 `replicaChecker` 类似：PD 在后台遍历，发现连续的小 Region 后发起调度。
+Region merge refers to the process of merging adjacent small regions. It serves to avoid unnecessary resource consumption by a large number of small or even empty regions after data deletion. Region merge is performed by `mergeChecker`, which processes in a similar way to `replicaChecker`: PD continuously scans all regions in the background, and generates an operator when contiguous small regions are found.
 
-具体来说，当某个新分裂出来的 Region 存在的时间超过配置项 [`split-merge-interval`](/pd-configuration-file.md#split-merge-interval) 的值（默认 1h）后，如果同时满足以下情况，该 Region 会触发 Region merge 调度：
+Specifically, when a newly split Region exists for more than the value of [`split-merge-interval`](/pd-configuration-file.md#split-merge-interval) (`1h` by default), if the following conditions occur at the same time, this Region triggers the Region merge scheduling:
 
-- 该 Region 大小小于配置项 [`max-merge-region-size`](/pd-configuration-file.md#max-merge-region-size) 的值。从 v8.4.0 开始，该配置项的默认值从 20 MiB 调整为 54 MiB。该变更仅对新集群生效，已有集群不受影响。
-- 该 Region 中 key 的数量小于配置项 [`max-merge-region-keys`](/pd-configuration-file.md#max-merge-region-keys) 的值。从 v8.4.0 开始，该配置项的默认值从 200000 调整为 540000。该变更仅对新集群生效，已有集群不受影响。
+- The size of this Region is smaller than the value of the [`max-merge-region-size`](/pd-configuration-file.md#max-merge-region-size). Starting from v8.4.0, the default value is changed from 20 MiB to 54 MiB. The new default value is automatically applied only to newly created clusters. Existing clusters are not affected.
 
-## 查询调度状态
+- The number of keys in this Region is smaller than the value of [`max-merge-region-keys`](/pd-configuration-file.md#max-merge-region-keys). Starting from v8.4.0, the default value is changed from 200000 to 540000. The new default value is automatically applied only to newly created clusters. Existing clusters are not affected.
 
-你可以通过观察 PD 相关的 Metrics 或使用 pd-ctl 工具等方式查看调度系统状态。更具体的信息可以参考 [PD 监控](/grafana-pd-dashboard.md)和 [PD Control](/pd-control.md)。
+## Query scheduling status
 
-### Operator 状态
+You can check the status of scheduling system through metrics, pd-ctl and logs. This section briefly introduces the methods of metrics and pd-ctl. Refer to [PD Monitoring Metrics](/grafana-pd-dashboard.md) and [PD Control](/pd-control.md) for details.
 
-**Grafana PD/Operator** 页面展示了 Operator 的相关统计信息。其中比较重要的有：
+### Operator status
 
-- Schedule Operator Create：Operator 的创建情况
-- Operator finish duration：Operator 执行耗时的情况
-- Operator Step duration：不同 Operator Step 执行耗时的情况
+The **Grafana PD/Operator** page shows the metrics about operators, among which:
 
-查询 Operator 的 pd-ctl 命令有：
+- Schedule operator create: Operator creating information
+- Operator finish duration: Execution time consumed by each operator
+- Operator step duration: Execution time consumed by the operator step
 
-- `operator show`：查询当前调度生成的所有 Operator
-- `operator show [admin | leader | region]`：按照类型查询 Operator
+You can query operators using pd-ctl with the following commands:
 
-### Balance 状态
+- `operator show`: Queries all operators generated in the current scheduling task
+- `operator show [admin | leader | region]`: Queries operators by type
 
-**Grafana PD/Statistics - Balance** 页面展示了负载均衡的相关统计信息，其中比较重要的有：
+### Balance status
 
-- Store Leader/Region score：每个 Store 的得分
-- Store Leader/Region count：每个 Store 的 Leader/Region 数量
-- Store available：每个 Store 的剩余空间
+The **Grafana PD/Statistics - Balance** page shows the metrics about load balancing, among which:
 
-使用 pd-ctl 的 `store` 命令可以查询 Store 的得分、数量、剩余空间和 weight 等信息。
+- Store leader/region score: Score of each store
+- Store leader/region count: The number of leaders/regions in each store
+- Store available: Available storage on each store
 
-### 热点调度状态
+You can use store commands of pd-ctl to query balance status of each store.
 
-**Grafana PD/Statistics - hotspot** 页面展示了热点 Region 的相关统计信息，其中比较重要的有：
+### Hot Region status
 
-- Hot write Region’s leader/peer distribution：写热点 Region 的 Leader/Peer 分布情况
-- Hot read Region’s leader distribution：读热点 Region 的 Leader 分布情况
+The **Grafana PD/Statistics - hotspot** page shows the metrics about hot regions, among which:
 
-使用 pd-ctl 同样可以查询上述信息，可以使用的命令有：
+- Hot write region's leader/peer distribution: the leader/peer distribution in hot write regions
+- Hot read region's leader distribution: the leader distribution in hot read regions
 
-- `hot read`：查询读热点 Region 信息
-- `hot write`：查询写热点 Region 信息
-- `hot store`：按 Store 统计热点分布情况
-- `region topread [limit]`：查询当前读流量最大的 Region
-- `region topwrite [limit]`：查询当前写流量最大的 Region
+You can also query the status of hot regions using pd-ctl with the following commands:
 
-### Region 健康度
+- `hot read`: Queries hot read regions
+- `hot write`: Queries hot write regions
+- `hot store`: Queries the distribution of hot regions by store
+- `region topread [limit]`: Queries the region with top read traffic
+- `region topwrite [limit]`: Queries the region with top write traffic
 
-**Grafana PD/Cluster/Region health** 面板展示了异常 Region 的相关统计信息，包括 Pending Peer、Down Peer、Offline Peer，以及副本数过多或过少的 Region。
+### Region health
 
-通过 pd-ctl 的 `region check` 命令可以查看具体异常的 Region 列表：
+The **Grafana PD/Cluster/Region health** panel shows the metrics about regions in abnormal states.
 
-- `region check miss-peer`：缺副本的 Region
-- `region check extra-peer`：多副本的 Region
-- `region check down-peer`：有副本状态为 Down 的 Region
-- `region check pending-peer`：有副本状态为 Pending 的 Region
+You can query the list of regions in abnormal states using pd-ctl with region check commands:
 
-## 调度策略控制
+- `region check miss-peer`: Queries regions without enough peers
+- `region check extra-peer`: Queries regions with extra peers
+- `region check down-peer`: Queries regions with down peers
+- `region check pending-peer`: Queries regions with pending peers
 
-使用 pd-ctl 可以从以下三个方面来调整 PD 的调度策略。更具体的信息可以参考 [PD Control](/pd-control.md)。
+## Control scheduling strategy
 
-### 启停调度器
+You can use pd-ctl to adjust the scheduling strategy from the following three aspects. Refer to [PD Control](/pd-control.md) for more details.
 
-pd-ctl 支持动态创建和删除 Scheduler，你可以通过这些操作来控制 PD 的调度行为，如：
+### Add/delete scheduler manually
 
-- `scheduler show`：显示当前系统中的 Scheduler
-- `scheduler remove balance-leader-scheduler`：删除（停用）balance region 调度器
-- `scheduler add evict-leader-scheduler 1`：添加移除 Store 1 的所有 Leader 的调度器
+PD supports dynamically adding and removing schedulers directly through pd-ctl. For example:
 
-### 手动添加 Operator
+- `scheduler show`: Shows currently running schedulers in the system
+- `scheduler remove balance-leader-scheduler`: Removes (disable) balance-leader-scheduler
+- `scheduler add evict-leader-scheduler 1`: Adds a scheduler to remove all leaders in Store 1
 
-PD 支持直接通过 pd-ctl 来创建或删除 Operator，如：
+### Add/delete Operators manually
 
-- `operator add add-peer 2 5`：在 Store 5 上为 Region 2 添加 Peer
-- `operator add transfer-leader 2 5`：将 Region 2 的 Leader 迁移至 Store 5
-- `operator add split-region 2`：将 Region 2 拆分为 2 个大小相当的 Region
-- `operator remove 2`：取消 Region 2 当前待执行的 Operator
+PD also supports adding or removing operators directly through pd-ctl. For example:
 
-### 调度参数调整
+- `operator add add-peer 2 5`: Adds peers to Region 2 in Store 5
+- `operator add transfer-leader 2 5`: Migrates the leader of Region 2 to Store 5
+- `operator add split-region 2`: Splits Region 2 into two regions evenly in size
+- `operator remove 2`: Removes currently pending operator in Region 2
 
-使用 pd-ctl 执行 `config show` 命令可以查看所有的调度参数，执行 `config set {key} {value}` 可以调整对应参数的值。常见调整如下：
+### Adjust scheduling parameter
 
-- `leader-schedule-limit`：控制 Transfer Leader 调度的并发数
-- `region-schedule-limit`：控制增删 Peer 调度的并发数
-- `enable-replace-offline-replica`：开启节点下线的调度
-- `enable-location-replacement`：开启调整 Region 隔离级别相关的调度
-- `max-snapshot-count`：每个 Store 允许的最大收发 Snapshot 的并发数
+You can check the scheduling configuration using the `config show` command in pd-ctl, and adjust the values using `config set {key} {value}`. Common adjustments include:
 
-## 典型场景分析与处理
+- `leader-schedule-limit`: Controls the concurrency of transferring leader scheduling
+- `region-schedule-limit`: Controls the concurrency of adding/deleting peer scheduling
+- `enable-replace-offline-replica`: Determines whether to enable the scheduling to take nodes offline
+- `enable-location-replacement`: Determines whether to enable the scheduling that handles the isolation level of regions
+- `max-snapshot-count`: Controls the maximum concurrency of sending/receiving snapshots for each store
 
-该部分通过几个典型场景及其应对方式说明 PD 调度策略的最佳实践。
+## PD scheduling in common scenarios
 
-### Leader/Region 分布不均衡
+This section illustrates the best practices of PD scheduling strategies through several typical scenarios.
 
-PD 的打分机制决定了一般情况下，不同 Store 的 Leader Count 和 Region Count 不能完全说明负载均衡状态，所以需要从 TiKV 的实际负载或者存储空间占用来判断是否有负载不均衡的状况。
+### Leaders/regions are not evenly distributed
 
-确认 Leader/Region 分布不均衡后，首先观察不同 Store 的打分情况。
+The rating mechanism of PD determines that leader count and region count of different stores cannot fully reflect the load balancing status. Therefore, it is necessary to confirm whether there is load imbalancing from the actual load of TiKV or storage usage.
 
-如果不同 Store 的打分是接近的，说明 PD 认为此时已经是均衡状态了，可能的原因有：
+Once you have confirmed that leaders/region are not evenly distributed, you need to check the rating of different stores.
 
-- 存在热点导致负载不均衡。可以参考[热点分布不均匀](#热点分布不均匀)中的解决办法进行分析处理。
-- 存在大量空 Region 或小 Region，因此不同 Store 的 Leader 数量差别特别大，导致 Raftstore 负担过重。此时需要开启 [Region Merge](#region-merge) 并尽可能加速合并。
-- 不同 Store 的软硬件环境存在差异。可以参考[负载均衡](#负载均衡)一节视实际情况调整 `leader-weight` 和 `region-weight` 来控制 Leader/Region 的分布。
-- 其他不明原因。仍可以通过调整 `leader-weight` 和 `region-weight` 来控制 Leader/Region 的分布。
+If the scores of different stores are close, it means PD mistakenly believes that leaders/regions are evenly distributed. Possible reasons are:
 
-如果不同 Store 的分数差异较大，需要进一步检查 Operator 的相关 Metrics，特别关注 Operator 的生成和执行情况，这时大体上又分两种情况：
+- There are hot regions that cause load imbalancing. In this case, you need to analyze further based on [hot regions scheduling](#hot-regions-are-not-evenly-distributed).
+- There are a large number of empty regions or small regions, which leads to a great difference in the number of leaders in different stores and high pressure on Raft store. This is the time for a [region merge](#region-merge-is-slow) scheduling.
+- Hardware and software environment varies among stores. To control the distribution of leader/region, you can refer to [Load balancing](#load-balancing) and adjust the values of `leader-weight` and `region-weight`.
+- Other unknown reasons. Still you can adjust the values of `leader-weight` and `region-weight` to control the distribution of leader/region.
 
-- 生成的调度是正常的，但是调度的速度很慢。可能的原因有：
+If there is a big difference in the rating of different stores, you need to examine the operator-related metrics, with special focus on the generation and execution of operators. There are two main situations:
 
-    - 调度速度受限于 limit 配置。PD 默认配置的 limit 比较保守，在不对正常业务造成显著影响的前提下，可以酌情将 `leader-schedule-limit` 或 `region-schedule-limit` 调大一些。此外，`max-pending-peer-count` 以及 `max-snapshot-count` 限制也可以放宽。
-    - 系统中同时运行有其他的调度任务产生竞争，导致 balance 速度上不去。这种情况下如果 balance 调度的优先级更高，可以先停掉其他的调度或者限制其他调度的速度。例如 Region 没均衡的情况下做下线节点操作，下线的调度与 Region Balance 会抢占 `region-schedule-limit` 配额，此时你可以调小 `replica-schedule-limit` 以限制下线调度的速度，或者设置 `enable-replace-offline-replica = false` 来暂时关闭下线流程。
-    - 调度执行得太慢。可以通过 **Operator step duration** 进行判断。通常不涉及到收发 Snapshot 的 Step（比如 `TransferLeader`，`RemovePeer`，`PromoteLearner` 等）的完成时间应该在毫秒级，涉及到 Snapshot 的 Step（如 `AddLearner`，`AddPeer` 等）的完成时间为数十秒。如果耗时明显过高，可能是 TiKV 压力过大或者网络等方面的瓶颈导致的，需要具体情况具体分析。
+- When operators are generated normally but the scheduling process is slow, it is possible that:
 
-- 没能生成对应的 balance 调度。可能的原因有：
+    - The scheduling speed is limited by default for load balancing purpose. You can adjust `leader-schedule-limit` or `region-schedule-limit` to larger values without significantly impacting regular services. In addition, you can also properly ease the restrictions specified by `max-pending-peer-count` and `max-snapshot-count`.
+    - Other scheduling tasks are running concurrently, which slows down the balancing. In this case, if the balancing takes precedence over other scheduling tasks, you can stop other tasks or limit their speeds. For example, if you take some nodes offline when balancing is in progress, both operations consume the quota of `region-schedule-limit`. In this case, you can limit the speed of scheduler to remove nodes, or simply set `enable-replace-offline-replica = false` to temporarily disable it.
+    - The scheduling process is too slow. You can check the **Operator step duration** metric to confirm the cause. Generally, steps that do not involve sending and receiving snapshots (such as `TransferLeader`, `RemovePeer`, `PromoteLearner`) should be completed in milliseconds, while steps that involve snapshots (such as `AddLearner` and `AddPeer`) are expected to be completed in tens of seconds. If the duration is obviously too long, it could be caused by high pressure on TiKV or bottleneck in network, which needs specific analysis.
 
-    - 调度器未被启用。比如对应的 Scheduler 被删除了，或者 limit 被设置为 “0”。
-    - 由于其他约束无法进行调度。比如系统中有 `evict-leader-scheduler`，此时无法把 Leader 迁移至对应的 Store。再比如设置了 Label property，也会导致部分 Store 不接受 Leader。
-    - 集群拓扑的限制导致无法均衡。比如 3 副本 3 数据中心的集群，由于副本隔离的限制，每个 Region 的 3 个副本都分别分布在不同的数据中心，假如这 3 个数据中心的 Store 数不一样，最后调度就会收敛在每个数据中心均衡，但是全局不均衡的状态。
+- PD fails to generate the corresponding balancing scheduler. Possible reasons include:
 
-### 节点下线速度慢
+    - The scheduler is not activated. For example, the corresponding scheduler is deleted, or its limit it set to "0".
+    - Other constraints. For example, `evict-leader-scheduler` in the system prevents leaders from being migrating to the corresponding store. Or label property is set, which makes some stores reject leaders.
+    - Restrictions from the cluster topology. For example, in a cluster of 3 replicas across 3 data centers, 3 replicas of each region are distributed in different data centers due to replica isolation. If the number of stores is different among these data centers, the scheduling can only reach a balanced state within each data center, but not balanced globally.
 
-这个场景需要从 Operator 相关的 Metrics 入手，分析 Operator 的生成执行情况。
+### Taking nodes offline is slow
 
-如果调度在正常生成，只是速度很慢，可能的原因有：
+This scenario requires examining the generation and execution of operators through related metrics.
 
-- 调度速度受限于 limit 配置。可以适当调大 `replica-schedule-limit`，`max-pending-peer-count` 以及 `max-snapshot-count` 限制也可以放宽。
-- 系统中同时运行有其他的调度任务产生竞争。处理方法参考[Leader/Region 分布不均衡](#leaderregion-分布不均衡)。
-- 下线单个节点时，由于待操作的 Region 有很大一部分（3 副本配置下约 1/3）的 Leader 都集中在下线的节点上，下线速度会受限于这个单点生成 Snapshot 的速度。你可以通过手动给该节点添加一个 `evict-leader-scheduler` 调度器迁走 Leader 来加速。
+If operators are successfully generated but the scheduling process is slow, possible reasons are:
 
-如果没有对应的 Operator 调度生成，可能的原因有：
+- The scheduling speed is limited by default. You can adjust `leader-schedule-limit` or `replica-schedule-limit` to larger values. Similarly, you can consider loosening the limits on `max-pending-peer-count` and `max-snapshot-count`.
+- Other scheduling tasks are running concurrently and racing for resources in the system. You can refer to the solution in [Leaders/regions are not evenly distributed](#leadersregions-are-not-evenly-distributed).
+- When you take a single node offline, a number of region leaders to be processed (around 1/3 under the configuration of 3 replicas) are distributed on the node to remove. Therefore, the speed is limited by the speed at which snapshots are generated by this single node. You can speed it up by manually adding an `evict-leader-scheduler` to migrate leaders.
 
-- 下线调度被关闭，或者 `replica-schedule-limit` 被设为 “0”。
-- 找不到节点来转移 Region。例如相同 Label 的替代节点可用容量都不足 20%，PD 为了避免爆盘的风险会停止调度。这种情况需要添加更多节点，或者删除一些数据释放空间。
+If the corresponding operator fails to generate, possible reasons are:
 
-### 节点上线速度慢
+- The operator is stopped, or `replica-schedule-limit` is set to "0".
+- There is no proper node for region migration. For example, if the available capacity size of the replacing node (of the same label) is less than 20%, PD will stop scheduling to avoid running out of storage on that node. In such case, you need to add more nodes or delete some data to free the space.
 
-目前 PD 没有对节点上线特殊处理。节点上线实际上是依靠 balance region 机制来调度的，所以参考[Leader/Region 分布不均衡](#leaderregion-分布不均衡)中的排查步骤即可。
+### Bringing nodes online is slow
 
-### 热点分布不均匀
+Currently, bringing nodes online is scheduled through the balance region mechanism. You can refer to [Leaders/regions are not evenly distributed](#leadersregions-are-not-evenly-distributed) for troubleshooting.
 
-热点调度的问题大体上可以分为以下几种情况：
+### Hot regions are not evenly distributed
 
-- 从 PD 的 Metrics 能看出来有不少 hot Region，但是调度速度跟不上，不能及时地把热点 Region 分散开来。
+Hot regions scheduling issues generally fall into the following categories:
 
-   **解决方法**：调大 `hot-region-schedule-limit` 并减少其他调度器的 limit 配额，从而加快热点调度的速度。还可调小 `hot-region-cache-hits-threshold` 使 PD 对更快响应流量的变化。
+- Hot regions can be observed via PD metrics, but the scheduling speed cannot keep up to redistribute hot regions in time.
 
-- 单一 Region 形成热点，比如大量请求频繁 scan 一个小表，这个可以从业务角度或者 Metrics 统计的热点信息看出来。由于单 Region 热点现阶段无法使用打散的手段来消除，需要确认热点 Region 后手动添加 `split-region` 调度将这样的 Region 拆开。
+    **Solution**: adjust `hot-region-schedule-limit` to a larger value, and reduce the limit quota of other schedulers to speed up hot regions scheduling. Or you can adjust `hot-region-cache-hits-threshold` to a smaller value to make PD more sensitive to traffic changes.
 
-- 从 PD 的统计来看没有热点，但是从 TiKV 的相关 Metrics 可以看出部分节点负载明显高于其他节点，成为整个系统的瓶颈。这是因为目前 PD 统计热点 Region 的维度比较单一，仅针对流量进行分析，在某些场景下无法准确定位热点。例如部分 Region 有大量的点查请求，从流量上来看并不显著，但是过高的 QPS 导致关键模块达到瓶颈。
+- Hotspot formed on a single region. For example, a small table is intensively scanned by a massive amount of requests. This can also be detected from PD metrics. Because you cannot actually distribute a single hotspot, you need to manually add a `split-region` operator to split such a region.
 
-    **解决方法**：首先从业务层面确定形成热点的 table，然后添加 `scatter-range-scheduler` 调度器使这个 table 的所有 Region 均匀分布。TiDB 也在其 HTTP API 中提供了相关接口来简化这个操作，具体可以参考 [TiDB HTTP API](https://github.com/pingcap/tidb/blob/release-8.5/docs/tidb_http_api.md) 文档。
+- The load of some nodes is significantly higher than that of other nodes from TiKV-related metrics, which becomes the bottleneck of the whole system. Currently, PD counts hotspots through traffic analysis only, so it is possible that PD fails to identify hotspots in certain scenarios. For example, when there are intensive point lookup requests for some regions, it might not be obvious to detect in traffic, but still the high QPS might lead to bottlenecks in key modules.
 
-### Region Merge 速度慢
+    **Solutions**: Firstly, locate the table where hot regions are formed based on the specific business. Then add a `scatter-range-scheduler` scheduler to make all regions of this table evenly distributed. TiDB also provides an interface in its HTTP API to simplify this operation. Refer to [TiDB HTTP API](https://github.com/pingcap/tidb/blob/release-8.5/docs/tidb_http_api.md) for more details.
 
-Region Merge 速度慢也很有可能是受到 limit 配置的限制（`merge-schedule-limit` 及 `region-schedule-limit`），或者是与其他调度器产生了竞争。具体来说，可有如下处理方式：
+### Region merge is slow
 
-- 假如已经从相关 Metrics 得知系统中有大量的空 Region，这时可以通过把 `max-merge-region-size` 和 `max-merge-region-keys` 调整为较小值来加快 Merge 速度。这是因为 Merge 的过程涉及到副本迁移，所以 Merge 的 Region 越小，速度就越快。如果生成 Merge Operator 的速度很快，想进一步加快 Region Merge 过程，还可以把 `patrol-region-interval` 调整为 "10ms" (从 v5.3.0 起，此配置项默认值为 "10ms")，这个能加快巡检 Region 的速度，但是会消耗更多的 CPU 资源。
+Similar to slow scheduling, the speed of region merge is most likely limited by the configurations of `merge-schedule-limit` and `region-schedule-limit`, or the region merge scheduler is competing with other schedulers. Specifically, the solutions are:
 
-- 创建过大量表后（包括执行 `Truncate Table` 操作）又清空了。此时如果开启了 split table 特性，这些空 Region 是无法合并的，此时需要调整以下参数关闭这个特性：
+- If it is known from metrics that there are a large number of empty regions in the system, you can adjust `max-merge-region-size` and `max-merge-region-keys` to smaller values to speed up the merge. This is because the merge process involves replica migration, so the smaller the region to be merged, the faster the merge is. If the merge operators are already generated rapidly, to further speed up the process, you can set `patrol-region-interval` to `10ms` (the default value of this configuration item is `10ms` in v5.3.0 and later versions of TiDB). This makes region scanning faster at the cost of more CPU consumption.
 
-    - TiKV: 将 `split-region-on-table` 设为 `false`，该参数不支持动态修改。
-    - PD: 使用 PD Control，根据集群情况选择性地设置以下参数。
+- A lot of tables have been created and then emptied (including truncated tables). These empty Regions cannot be merged if the split table attribute is enabled. You can disable this attribute by adjusting the following parameters:
 
-        * 如果集群中不存在 TiDB 实例，将 [`key-type`](/pd-control.md#config-show--set-option-value--placement-rules) 的值设置为 `raw` 或 `txn`。此时，无论 `enable-cross-table-merge` 设置如何，PD 均可以跨表合并 Region。该参数支持动态修改。
+    - TiKV: Set `split-region-on-table` to `false`. You cannot modify the parameter dynamically.
+    - PD: Use PD Control to set the parameters required by your cluster situation.
+
+        - Suppose that your cluster has no TiDB instance, and the value of [`key-type`](/pd-control.md#config-show--set-option-value--placement-rules) is set to `raw` or `txn`. In this case, PD can merge Regions across tables, regardless of the value of `enable-cross-table-merge setting`. You can modify the `key-type` parameter dynamically.
 
         
         ```bash
         config set key-type txn
         ```
 
-        * 如果集群中存在 TiDB 实例，将 `key-type` 的值设置为 `table`。此时将 `enable-cross-table-merge` 设置为 `true`，可以使 PD 跨表合并 Region。该参数支持动态修改。
+        - Suppose that your cluster has a TiDB instance, and the value of `key-type` is set to `table`. In this case, PD can merge Regions across tables only if the value of `enable-cross-table-merge` is set to `true`. You can modify the `key-type` parameter dynamically.
 
         
         ```bash
         config set enable-cross-table-merge true
         ```
 
-        如果修改未生效，请参阅 [FAQ - 修改 TiKV/PD 的 toml 配置文件后没有生效](/faq/deploy-and-maintain-faq.md#为什么修改了-tikvpd-的-toml-配置文件却没有生效)。
+        If the modification does not take effect, refer to [FAQ - Why the modified `toml` configuration for TiKV/PD does not take effect?](/faq/deploy-and-maintain-faq.md#why-the-modified-toml-configuration-for-tikvpd-does-not-take-effect).
 
-        > **注意：**
+        > **Note:**
         >
-        > 在开启 `placement-rules` 后，请合理切换 `key-type`，避免无法正常解码 key。
+        > After enabling Placement Rules, properly switch the value of `key-type` to avoid the failure of decoding.
 
-- 对于 3.0.4 和 2.1.16 以前的版本，Region 中 Key 的个数 (`approximate_keys`) 在特定情况下（大部分发生在删表之后）统计不准确，造成 keys 的统计值很大，无法满足 `max-merge-region-keys` 的约束。你可以通过调大 `max-merge-region-keys` 来避免这个问题。
+For v3.0.4 and v2.1.16 or earlier, the `approximate_keys` of regions are inaccurate in specific circumstances (most of which occur after dropping tables), which makes the number of keys break the constraints of `max-merge-region-keys`. To avoid this problem, you can adjust `max-merge-region-keys` to a larger value.
 
-### TiKV 节点故障处理策略
+### Troubleshoot TiKV node
 
-没有人工介入时，PD 处理 TiKV 节点故障的默认行为是，等待半小时之后（可通过 `max-store-down-time` 配置调整），将此节点设置为 Down 状态，并开始为涉及到的 Region 补充副本。
+If a TiKV node fails, PD defaults to setting the corresponding node to the **down** state after 30 minutes (customizable by configuration item `max-store-down-time`), and rebalancing replicas for regions involved.
 
-实践中，如果能确定这个节点的故障是不可恢复的，可以立即做下线处理，这样 PD 能尽快补齐副本，降低数据丢失的风险。与之相对，如果确定这个节点是能恢复的，但可能半小时之内来不及，则可以把 `max-store-down-time` 临时调整为比较大的值，这样能避免超时之后产生不必要的副本补充，造成资源浪费。
+Practically, if a node failure is considered unrecoverable, you can immediately take it offline. This makes PD replenish replicas soon in another node and reduces the risk of data loss. In contrast, if a node is considered recoverable, but the recovery cannot be done in 30 minutes, you can temporarily adjust `max-store-down-time` to a larger value to avoid unnecessary replenishment of the replicas and resources waste after the timeout.
 
-自 v5.2.0 起，TiKV 引入了磁盘的慢节点检测机制。通过对 TiKV 中的请求进行采样，计算出一个范围在 1~100 的分数。当分数大于等于 80 时，该 TiKV 节点会被设置为 slow 状态。可以通过添加 [`evict-slow-store-scheduler`](/pd-control.md#scheduler-show--add--remove--pause--resume--config--describe) 来针对慢节点进行对应的调度。当检测到有且只有一个 TiKV 节点为慢节点，并且该 TiKV 的 slow score 到达限定值（默认 80）时，将节点上的 Leader 驱逐（其作用类似于 `evict-leader-scheduler`）。
+In TiDB v5.2.0, TiKV introduces the mechanism of slow TiKV node detection. By sampling the requests in TiKV, this mechanism works out a score ranging from 1 to 100. A TiKV node with a score higher than or equal to 80 is marked as slow. You can add [`evict-slow-store-scheduler`](/pd-control.md#scheduler-show--add--remove--pause--resume--config--describe) to detect and schedule slow nodes. If only one TiKV is detected as slow, and the slow score reaches the limit (80 by default), the Leader in this node will be evicted (similar to the effect of `evict-leader-scheduler`).
 
-自 v8.5.5 起，TiKV 引入了网络的慢节点检测机制。与磁盘慢节点检测类似，该机制通过在 TiKV 节点之间进行网络延时探测并计算分数，来判断节点的网络是否出现异常。可以通过 [`enable-network-slow-store`](/pd-control.md#scheduler-config-evict-slow-store-scheduler) 来开启该机制（默认关闭）。
-
-> **注意：**
+> **Note:**
 >
-> **Leader 驱逐**是通过 PD 向 TiKV 慢节点发送调度请求，然后 TiKV 按时间顺序执行收到的调度请求来完成的。受 **I/O 慢**或者其他因素的影响，慢节点可能存在请求堆积的情况，使得部分 Leader 需要等待滞后的请求处理完后才能处理 **Leader 驱逐**的请求，造成 **Leader 驱逐**的整体时间过长。因此，在开启 `evict-slow-store-scheduler` 时，建议同步配置[`store-io-pool-size`](/tikv-configuration-file.md#store-io-pool-size-从-v530-版本开始引入) 以缓解该情况。
+> **Leader eviction** is accomplished by PD sending scheduling requests to TiKV slow nodes and then TiKV executing the received scheduling requests sequentially. Due to factors such as **slow I/O**, slow nodes might experience request accumulation, causing some Leaders to wait until the delayed requests are processed before handling **Leader eviction** requests. This results in an overall extended time for **Leader eviction**. Therefore, when you enable `evict-slow-store-scheduler`, it is recommended to enable [`store-io-pool-size`](/tikv-configuration-file.md#store-io-pool-size-new-in-v530) as well to mitigate this situation.

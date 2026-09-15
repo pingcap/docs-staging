@@ -1,51 +1,53 @@
 ---
-title: 从窗口函数中推导 TopN 或 Limit
-summary: 介绍从窗口函数中推导 TopN 或 Limit 的优化规则，以及如何开启该规则。
+title: 从 Window Functions 派生 TopN 或 Limit
+summary: 介绍从 window functions 派生 TopN 或 Limit 的优化规则以及如何启用该规则。
 ---
 
-# 从窗口函数中推导 TopN 或 Limit
+# 从 Window Functions 派生 TopN 或 Limit
 
-[窗口函数](/functions-and-operators/window-functions.md)是一种常见的 SQL 函数。对于 `ROW_NUMBER()` 或者 `RANK()` 等编号相关的窗口函数，一种常见的用法是在进行窗口函数求值之后，对求值的结果进行过滤，例如：
+[Window Functions](/functions-and-operators/window-functions.md) 是一种常见的 SQL 函数类型。当你使用 window function 进行行编号，例如 `ROW_NUMBER()` 或 `RANK()` 时，通常会在 window function 计算完成后对结果进行过滤。例如：
 
 ```sql
 SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY a) AS rownumber FROM t) dt WHERE rownumber <= 3
 ```
 
-按照正常的 SQL 执行流程，TiDB 需要先对 `t` 表的所有数据进行排序，然后为每一行都求得相应的 `ROW_NUMBER()` 结果，最后再进行 `rownumber <= 3` 的过滤。 
+在典型的 SQL 执行过程中，TiDB 首先对表 `t` 中的所有数据进行排序，然后为每一行计算 `ROW_NUMBER()` 结果，最后再进行 `rownumber <= 3` 的过滤。
 
-从 v7.0.0 开始，TiDB 支持从窗口函数中推导 TopN 或 Limit 算子。通过该优化规则，TiDB 可以将原始 SQL 等价改写成以下形式：
+从 v7.0.0 版本开始，TiDB 支持将从 window functions 派生的 TopN 或 Limit 操作符进行优化。借助此规则，TiDB 可以将原始 SQL 重写为等价的形式，例如：
 
 ```sql
 WITH t_topN AS (SELECT a FROM t1 ORDER BY a LIMIT 3) SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY a) AS rownumber FROM t_topN) dt WHERE rownumber <= 3
 ```
 
-可以看出，改写后，TiDB 可以从窗口函数与后续的过滤条件中推导出一个 TopN 算子，相比于原始 SQL 中的 Sort 算子（对应 `ORDER BY`），TopN 算子的运行效率远高于 Sort 算子，而且 TiKV 和 TiFlash 均支持 TopN 算子的下推，因此能进一步提升改写后的 SQL 的性能。
+重写后，TiDB 可以从 window function 和后续的过滤条件中推导出 TopN 操作符。与原始 SQL 中的 Sort 操作（`ORDER BY`）相比，TopN 操作符具有更高的执行效率。此外，TiKV 和 TiFlash 也支持将 TopN 操作下推，从而进一步提升重写 SQL 的性能。
 
-从窗口函数中推导 TopN 或 Limit 默认关闭。你可以通过将 session 变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-从-v700-版本开始引入) 设置为 `ON` 开启该功能。
+从 window functions 派生 TopN 或 Limit 默认是关闭的。你可以通过将会话变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-new-in-v700) 设置为 `ON` 来启用此功能。
 
-开启后，如需关闭，可以进行以下操作之一：
+启用后，你可以通过以下操作之一禁用该功能：
 
-* 设置 session 变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-从-v700-版本开始引入) 为 `false`。
-* 可参照[优化规则及表达式下推的黑名单](/blocklist-control-plan.md)中的关闭方法。
+* 将会话变量 [tidb_opt_derive_topn](/system-variables.md#tidb_opt_derive_topn-new-in-v700) 设置为 `OFF`。
+* 按照 [The blocklist of optimization rules and expression pushdown](/blocklist-control-plan.md) 中的步骤操作。
 
-## 限制
+## 限制条件
 
-* 目前仅 `ROW_NUMBER()` 窗口函数支持 SQL 语句改写。
-* 只有当 SQL 语句的过滤条件是针对 `ROW_NUMBER()` 结果而且过滤条件为 `<` 或者 `<=` 时，TiDB 才支持改写 SQL 语句。
+* 目前仅支持对 `ROW_NUMBER()` window function 进行 SQL 重写。
+* TiDB 仅在过滤条件为 `<` 或 `<=` 时，才能将 SQL 重写为包含推导的 TopN。
 
-## 示例
+## 使用示例
 
-以下通过一些例子对该优化规则进行说明。
+以下示例演示如何使用该优化规则。
 
-### 不包含 PARTITION BY 的窗口函数
+### 不含 PARTITION BY 的 window functions
 
-#### 示例 1：不包含 ORDER BY 的窗口函数
+#### 示例 1：不含 ORDER BY 的 window functions
 
 ```sql
 CREATE TABLE t(id int, value int);
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER () AS rownumber FROM t) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
@@ -61,15 +63,17 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER () AS rownumber FROM t) dt WHERE
 +----------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------+
 ```
 
-在该查询中，优化器从窗口函数中推导出来了 Limit 并将它下推给了 TiKV。
+在此查询中，优化器从 window function 派生出 Limit 操作符，并将其下推到 TiKV。
 
-#### 示例 2：包含 ORDER BY 的窗口函数
+#### 示例 2：含 ORDER BY 的 window functions
 
 ```sql
 CREATE TABLE t(id int, value int);
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY value) AS rownumber FROM t) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
@@ -85,21 +89,23 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY value) AS rownumber FR
 +----------------------------------+----------+-----------+---------------+---------------------------------------------------------------------------------------------+
 ```
 
-在该查询中，优化器从窗口函数中推导出来了 TopN 并将它下推给了 TiKV。
+在此查询中，优化器从 window function 派生出 TopN 操作符，并将其下推到 TiKV。
 
-### 包含 PARTITION BY 的窗口函数
+### 含 PARTITION BY 的 window functions
 
 > **注意：**
 >
-> 当窗口函数包含 PARTITION BY 时，该优化规则仅在 partition 列是主键的前缀且主键是聚簇索引的时候才能生效。
+> 对于包含 `PARTITION BY` 的 window function，只有当分区列是主键的前缀且主键为聚簇索引时，此优化规则才生效。
 
-#### 示例 3：不包含 ORDER BY 的窗口函数
+#### 示例 3：不含 ORDER BY 的 window functions
 
 ```sql
 CREATE TABLE t(id1 int, id2 int, value1 int, value2 int, primary key(id1,id2) clustered);
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber FROM t) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
@@ -116,15 +122,17 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber 
 +------------------------------------+---------+-----------+---------------+-----------------------------------------------------------------------------------------------+
 ```
 
-在该查询中，优化器从窗口函数中推导出来了 Limit 并将它下推给了 TiKV。值得一提的是这个 Limit 其实是 partition Limit，也就是说对于每个相同 `id1` 值组成的一组数据上都会进行一次 Limit。
+在此查询中，优化器从 window function 派生出 Limit 操作符，并将其下推到 TiKV。注意，此 Limit 实际上是分区 Limit，即对每个具有相同 `id1` 值的分组应用 Limit。
 
-#### 示例 4：包含 ORDER BY 的窗口函数
+#### 示例 4：含 ORDER BY 的 window functions
 
 ```sql
 CREATE TABLE t(id1 int, id2 int, value1 int, value2 int, primary key(id1,id2) clustered);
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1 ORDER BY value1) AS rownumber FROM t) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
@@ -141,7 +149,7 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1 ORDER BY value
 +------------------------------------+----------+-----------+---------------+----------------------------------------------------------------------------------------------------------------------+
 ```
 
-在该查询中，优化器从窗口函数中推导出来了 TopN 并将它下推给了 TiKV。需要注意的是，这个 TopN 其实是 partition 的 TopN, 也就是说对于每个相同 `id1` 值组成的一组数据上都会进行一次 TopN。
+在此查询中，优化器从 window function 派生出 TopN 操作符，并将其下推到 TiKV。注意，此 TopN 实际上是分区 TopN，即对每个具有相同 `id1` 值的分组应用。
 
 #### 示例 5：PARTITION BY 列不是主键的前缀
 
@@ -150,6 +158,8 @@ CREATE TABLE t(id1 int, id2 int, value1 int, value2 int, primary key(id1,id2) cl
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY value1) AS rownumber FROM t) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
@@ -165,15 +175,17 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY value1) AS rownumb
 +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------+
 ```
 
-在该查询中，因为 partition 的列不是主键的前缀，所以 SQL 没有被改写。
+在此查询中，由于 `PARTITION BY` 列不是主键的前缀，SQL 不会被重写。
 
-#### 示例 6：PARTITION BY 列是主键的前缀，但主键不是聚簇索引
+#### 示例 6：PARTITION BY 列是主键的前缀但不是聚簇索引
 
 ```sql
 CREATE TABLE t(id1 int, id2 int, value1 int, value2 int, primary key(id1,id2) nonclustered);
 SET tidb_opt_derive_topn=on;
 EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber FROM t use index()) dt WHERE rownumber <= 3;
 ```
+
+结果如下：
 
 ```
 +----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
@@ -189,4 +201,4 @@ EXPLAIN SELECT * FROM (SELECT ROW_NUMBER() OVER (PARTITION BY id1) AS rownumber 
 +----------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------------------------------+
 ```
 
-在该查询中，即使 PARTITION 的列是主键的前缀，但是因为主键不是聚簇索引，所以 SQL 没被改写。
+在此查询中，虽然 `PARTITION BY` 列是主键的前缀，但由于主键不是聚簇索引，SQL 不会被重写。

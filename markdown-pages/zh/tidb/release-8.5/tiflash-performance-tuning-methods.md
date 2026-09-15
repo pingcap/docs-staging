@@ -1,113 +1,113 @@
 ---
-title: TiFlash 性能分析和优化方法
-summary: 本文介绍了 Performance Overview 面板中 TiFlash 部分，帮助你了解和监控 TiFlash 的工作负载。
+title: TiFlash Performance Analysis and Tuning Methods
+summary: Introduces the TiFlash metrics on the Performance Overview dashboard to help you better understand and monitor TiFlash workloads.
 ---
 
-# TiFlash 性能分析和优化方法
+# TiFlash Performance Analysis and Tuning Methods
 
-本文介绍 TiFlash 资源使用率和关键的性能指标。你可以通过 Performance Overview 面板中的 [TiFlash 面板](/grafana-performance-overview-dashboard.md#tiflash)，来监控和评估 TiFlash 集群的性能。
+This document introduces TiFlash resource utilization and key performance metrics. You can monitor and evaluate the TiFlash cluster performance through the [TiFlash panel](/grafana-performance-overview-dashboard.md#tiflash) on the Performance Overview dashboard.
 
-## TiFlash 集群资源利用率
+## Resource utilization of a TiFlash cluster
 
-通过以下三个指标，你可以快速判断 TiFlash 集群的资源使用率：
+With the following three metrics, you can quickly get the resource utilization of a TiFlash cluster:
 
-- CPU：每个 TiFlash 实例的 CPU 使用率
-- Memory：每个 TiFlash 实例内存的使用情况
-- IO utilization：每个 TiFlash 实例的 IO 使用率
+- CPU: the CPU utilization per TiFlash instance.
+- Memory: the memory usage per TiFlash instance.
+- IO utilization: the IO utilization per TiFlash instance.
 
-示例：[CH-benCHmark 负载](/benchmark/benchmark-tidb-using-ch.md)资源使用率
+Example: Resource utilization during [CH-benCHmark workload](/benchmark/benchmark-tidb-using-ch.md)
 
-该 TiFlash 集群包含两个节点，每个节点配置均为 16 核、48G 内存。当 CH-benCHmark 负载运行时，CPU 利用率最高可达到 1500%，内存占用最大可达 20 GB，IO 利用率达到 91%。这表明 TiFlash 节点资源接近饱和状态。
+This TiFlash cluster consists of two nodes, each node configured with 16 cores and 48 GB of memory. During the CH-benCHmark workload, CPU utilization can reach up to 1500%, memory usage can reach up to 20 GB, and IO utilization can reach up to 91%. These metrics indicate that TiFlash node resources are approaching saturation.
 
-![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/tiflash-resource-usage.png) 
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/tiflash-resource-usage.png)  
 
-## TiFlash 关键性能指标
+## Key metrics for TiFlash performance
 
-### 吞吐指标
+### Throughput metrics
 
-通过以下指标，你可以了解 TiFlash 的吞吐情况：
+With the following metrics, you can get the throughput of TiFlash:
 
-- MPP Query count：每个 TiFlash 实例 MPP 查询数量的瞬时值，表示当前 TiFlash 实例需要处理的 MPP 查询数量（包括正在处理的以及还没被调度到的）。
-- Request QPS：所有 TiFlash 实例收到的 coprocessor 请求数量。
-    - `run_mpp_task`、`dispatch_mpp_task` 和 `mpp_establish_conn` 为 MPP 请求。
-    - `batch`：batch 请求数量。
-    - `cop`：直接通过 coprocessor 接口发送的 coprocessor 请求数量。
-    - `cop_execution`：正在执行的 coprocessor 请求数量。
-    - `remote_read`、`remote_read_constructed` 和 `remote_read_sent` 为 remote read 相关指标，remote read 增多一般意味着系统出现了问题。
-- Executor QPS：所有 TiFlash 实例收到的请求中，每种 dag 算子的数量，其中 `table_scan` 是扫表算子，`selection` 是过滤算子，`aggregation` 是聚合算子，`top_n` 是 TopN 算子，`limit` 是 limit 算子，`join` 为关联算子，`exchange_sender` 和 `exchange_receiver` 为数据发送和接收算子。
+- MPP Query count: the instant value of MPP query count for each TiFlash instance, reflecting the current number of MPP queries that need to be processed by the TiFlash instance (including those being processed and those awaiting scheduling).
+- Request QPS: the number of coprocessor requests received by all TiFlash instances.
+    - `run_mpp_task`, `dispatch_mpp_task`, and `mpp_establish_conn` are MPP requests.
+    - `batch`: the number of batch requests.
+    - `cop`: the number of coprocessor requests that are sent directly via the coprocessor interface.
+    - `cop_execution`: the number of coprocessor requests currently being executed.
+    - `remote_read`, `remote_read_constructed`, and `remote_read_sent` are remote read-related metrics. An increase in remote reads usually indicates an issue in the system.
+- Executor QPS: the number of each type of dag operators in the requests received by all TiFlash instances, where `table_scan` is the table scan operator, `selection` is the selection operator, `aggregation` is the aggregation operator, `top_n` is the TopN operator, `limit` is the limit operator, `join` is a join operator, `exchange_sender` is a data sending operator, and `exchange_receiver` is a data receiving operator.
 
-### 延迟指标
+### Latency metrics
 
-通过以下指标，你可以了解 TiFlash 的延迟处理情况：
+With the following metrics, you can get the latency of TiFlash:
 
-- Request Duration Overview：每秒所有 TiFlash 实例处理所有请求类型的总时长堆叠图。
+- Request Duration Overview: provides a stacked chart of the total processing duration for all request types in all TiFlash instances per second.
 
-    - 如果请求类型为 `run_mpp_task`、`dispatch_mpp_task` 或 `mpp_establish_conn`，说明 SQL 语句的执行已经部分或者完全下推到 TiFlash 上进行，通常包含 join 和数据分发的操作，这是 TiFlash 最常见的请求类型。
-    - 如果请求类型为 `cop`，说明整个语句并没有完全下推到 TiFlash，通常 TiDB 会将全表扫描算子下推到 TiFlash 上进行数据访问和过滤。在堆叠图中，如果 `cop` 占据主导地位，需要仔细权衡是否合理。
+    - If the type of a request is `run_mpp_task`, `dispatch_mpp_task`, or `mpp_establish_conn`, it indicates that the SQL statement execution has been partially or fully pushed down to TiFlash, typically involving join and data distribution operations. This is the most common request type in TiFlash.
+    - If the type of a request is `cop`, it indicates that the statement related to this request has not been fully pushed down to TiFlash. Typically, TiDB pushes down the table full scan operator to TiFlash for data access and filtering. If `cop` becomes the most common request type in the stacked chart, you need to check if it is reasonable.
 
-        - 如果 SQL 访问的数据量很大，优化器可能根据成本模型估算 TiFlash 全表扫描的成本更低。
-        - 如果表结构缺少合适的索引，即使访问的数据量很少，优化器也只能将查询下推到 TiFlash 进行全表扫描。在这种情况下，创建合适的索引，通过 TiKV 访问数据更加高效。
+        - If the amount of data queried by a SQL statement is large, the optimizer might estimate that TiFlash full table scans are more cost-effective according to the cost model.
+        - If the schema of a queried table lacks suitable indexes, the optimizer can only push the query down to TiFlash for a full table scan, even if the amount of data to be queried is small. In this case, it is more efficient to create proper indexes and access the data through TiKV.
 
-- Request Duration：所有 TiFlash 实例每种 MPP 和 coprocessor 请求类型的总处理时间，包含平均和 P99 处理延迟。
-- Request Handle Duration：指 `cop` 和 `batch cop` 从开始执行到执行结束的时间，不包括等待时间，只包含 `cop` 和 `batch cop` 两种类型，包含平均和 P99 延迟。
+- Request Duration: the total processing duration for each MPP and coprocessor request type in all TiFlash instances, which includes the average latency and p99 latency.
+- Request Handle Duration: the time from the start of executing the `cop` and `batch cop` requests to the completion of the execution, excluding waiting time. This metric is only applicable to the `cop` and `batch cop` types of requests, including average and P99 latency.
 
-示例 1 ：TiFlash MPP 请求处理时间概览
+Example 1: Processing duration overview of TiFlash MPP requests
 
-如下图所示，在此负载中，`run_mpp_task` 和 `mpp_establish_conn` 请求的处理时间占比最高，表明大部分请求都是完全下推到 TiFlash 上执行的 MPP 任务。
+In the workload of the following diagram, `run_mpp_task` and `mpp_establish_conn` requests constitute the majority of the total processing duration, indicating that most of the requests are MPP tasks that are fully pushed down to TiFlash for execution.
 
-而 `cop` 请求处理时间占比较小，说明存在一部分请求是通过 coprocessor 下推到 TiFlash 上进行数据访问和过滤的。
+The processing duration of `cop` requests is relatively small, indicating that some of the requests are pushed down to TiFlash for data access and filtering through the coprocessor.
 
-![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/ch-2tiflash-op.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-2tiflash-op.png)
 
-示例 2 ：TiFlash `cop` 请求处理时间占比高
+Example 2: TiFlash `cop` requests constitute the majority of the total processing duration
 
-如下图所示，在此负载中，`cop` 请求的处理时间占比最高，可以通过查看 SQL 执行计划来确认 `cop` 请求产生的原因。
+In the workload of the following diagram, `cop` requests constitute the majority of the total processing duration. In this case, you can check the SQL execution plan to see why these `cop` requests are generated.
 
-![Cop](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/tiflash_request_duration_by_type.png)
+![Cop](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/tiflash_request_duration_by_type.png)
 
-### Raft 相关指标
+### Raft-related metrics
 
-通过以下指标，你可以了解 TiFlash 的 Raft 同步情况：
+With the following metrics, you can get the Raft replication status of TiFlash:
 
-- Raft Wait Index Duration：所有 TiFlash 实例等待本地 Region index >= read_index 所花费的时间，即进行 wait_index 操作的延迟。如果 Wait Index 延迟过高，说明 TiKV 和 TiFlash 之间数据同步存在明显的延迟，可能的原因包括：
+- Raft Wait Index Duration: the duration of waiting until the local Region index >= `read_index` for all TiFlash instances, which represents the latency of the `wait_index` operation. If this metric is too high, it indicates that data replication from TiKV to TiFlash has a significant latency. Possible reasons include the following:
 
-    - TiKV 资源过载
-    - TiFlash 资源过载，特别是 IO 资源
-    - TiKV 和 TiFlash 之间存在网络瓶颈
+    - TiKV resource is overloaded.
+    - TiFlash resource is overloaded, especially IO resources.
+    - There is a network bottleneck between TiKV and TiFlash.
 
-- Raft Batch Read Index Duration：所有 TiFlash 实例 `read_index` 的延迟。如果该指标过高，说明 TiFlash 和 TiKV 之间的交互速度较慢，可能的原因包括：
+- Raft Batch Read Index Duration: the latency of `read_index` for all TiFlash instances. If this metric is too high, it indicates that the interaction between TiFlash and TiKV is slow. Possible reasons include the following:
 
-    - TiFlash 资源过载
-    - TiKV 资源过载
-    - TiFlash 和 TiKV 之间存在网络瓶颈
+    - TiFlash resource is overloaded.
+    - TiKV resource is overloaded.
+    - There is a network bottleneck between TiFlash and TiKV.
 
-### IO 流量指标
+### IO throughput metrics
 
-通过以下指标，你可以了解 TiFlash 的 IO 流量情况：
+With the following metrics, you can get the IO throughput of TiFlash:
 
-- Write Throughput By Instance：每个 TiFlash 实例写入数据的吞吐量，包括 apply Raft 数据日志以及 Raft 快照的写入吞吐量。
-- Write flow：所有 TiFlash 实例磁盘写操作的流量。
+- Write Throughput By Instance: the throughput of data written by each TiFlash instance. It includes the throughput by applying the Raft data logs and Raft snapshots.
+- Write flow: the traffic of disk writes by all TiFlash instances.
 
-    - File Descriptor：TiFlash 所使用的 DeltaTree 存储引擎的稳定层。
-    - Page：指 Pagestore，TiFlash 所使用的 DeltaTree 存储引擎的 Delta 变更层。
+    - File Descriptor: the stable layer of the DeltaTree storage engine used by TiFlash.
+    - Page: refers to Pagestore, the Delta change layer of the DeltaTree storage engine used by TiFlash.
 
-- Read flow：所有 TiFlash 实例磁盘读操作的流量。
+- Read flow: traffic of disk read operations for all TiFlash instances.
 
-    - File Descriptor：TiFlash 所使用的 DeltaTree 存储引擎的稳定层。
-    - Page：指 Pagestore，TiFlash 所使用的 DeltaTree 存储引擎的 Delta 变更层。
+    - File Descriptor: the stable layer of the DeltaTree storage engine used by TiFlash.
+    - Page: refers to Pagestore, the Delta change layer of the DeltaTree storage engine used by TiFlash.
 
-你可以通过 `(Read flow + Write flow) ÷ 总的 Write Throughput By Instance` 计算出整个 TiFlash 集群的写放大倍数。
+You can calculate the write amplification factor of the entire TiFlash cluster using the `(Read flow + Write flow) ÷ total Write Throughput By Instance` formula.
 
-示例 1 ：[CH-benCHmark 负载](/benchmark/benchmark-tidb-using-ch.md)本地部署环境 Raft 和 IO 指标
+Example 1: Raft and IO metrics of the [CH-benCHmark workload](/benchmark/benchmark-tidb-using-ch.md) in a self-hosted environment
 
-如下图所示，该 TiFlash 集群的 Raft Wait Index Duration 和 Raft Batch Read Index Duration 的 99 分位数较高，分别为 3.24 秒和 753 毫秒。这是因为该集群的 TiFlash 负载较高，数据同步存在延迟。
+As shown in the following diagram, the `Raft Wait Index Duration` and the 99th percentile of `Raft Batch Read Index Duration` for this TiFlash cluster are relatively high, at 3.24 seconds and 753 milliseconds respectively. This is because the TiFlash workload in this cluster is high and latency occurs in data replication.
 
-该集群包含两个 TiFlash 节点，每秒 TiKV 同步到 TiFlash 的增量数据约为 28 MB。稳定层 (File Descriptor) 的文件描述符最大写流量为 939 MB/s，最大读流量为 1.1 GiB/s，而 Delta 层 (Page) 最大写流量为 74 MB/s，最大读流量为 111 MB/s。该环境中的 TiFlash 使用独立的 NVME 盘，具有较强的 IO 吞吐能力。
+In this cluster, there are two TiFlash nodes. The incremental data replication speed from TiKV to TiFlash is approximately 28 MB per second. The maximum write throughput of the stable layer (File Descriptor) is 939 MB/s, and the maximum read throughput is 1.1 GiB/s. Meanwhile, the maximum write throughput of the Delta layer (Page) is 74 MB/s, and the maximum read throughput is 111 MB/s. In this environment, TiFlash uses dedicated NVME disks, which have strong IO throughput capabilities.
 
-![CH-2TiFlash-OP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/ch-2tiflash-raft-io-flow.png)
+![CH-2TiFlash-OP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-2tiflash-raft-io-flow.png)
 
-示例 2 ：[CH-benCHmark 负载](/benchmark/benchmark-tidb-using-ch.md)公有云环境 Raft 和 IO 指标
+Example 2: Raft and IO metrics of the [CH-benCHmark workload](/benchmark/benchmark-tidb-using-ch.md) in a public cloud deployment environment
 
-如下图所示，Raft Wait Index Duration 等待时间 99 分位数最高为 438 毫秒，Raft Batch Read Index Duration 等待时间 99 分位数最高为 125 毫秒。该集群只有一个 TiFlash 节点，每秒 TiKV 同步到 TiFlash 的增量数据约为 5 MB。稳定层 (File Descriptor) 的最大写入流量为 78 MB/s，最大读取流量为 221 MB/s，Delta 层 (Page) 最大写入流量为 8 MB/s，最大读取流量为 18 MB/s。这个环境中的 TiFlash 使用的是 AWS EBS 云盘，其 IO 吞吐能力相对较弱。
+As shown in the following diagram, the 99th percentile of `Raft Wait Index Duration` is up to 438 milliseconds, and 99th percentile of the `Raft Batch Read Index Duration` is up to 125 milliseconds. This cluster has only one TiFlash node. TiKV replicates about 5 MB of incremental data to TiFlash per second. The maximum write traffic of the stable layer (File Descriptor) is 78 MB/s and the maximum read traffic is 221 MB/s. In the meantime, the maximum write traffic of the Delta layer (Page) is 8 MB/s and the maximum read traffic is 18 MB/s. In this environment, TiFlash uses an AWS EBS cloud disk, which has relatively weak IO throughput.
 
-![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs-cn/performance/tiflash/ch-1tiflash-raft-io-flow-cloud.png)
+![CH-TiFlash-MPP](https://docs-download.pingcap.com/media/images/docs/performance/tiflash/ch-1tiflash-raft-io-flow-cloud.png)

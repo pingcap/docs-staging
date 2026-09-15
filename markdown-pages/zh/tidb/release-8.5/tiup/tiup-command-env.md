@@ -1,29 +1,29 @@
 ---
 title: tiup env
-summary: TiUP 提供灵活的定制化接口，使用环境变量实现。命令 `tiup env` 用于查询 TiUP 支持的用户自定义环境变量及其值。若未指定环境变量，则输出"{key}"="{value}"列表。若指定了环境变量，则按顺序输出"{value}"列表。若值为空，则代表未设置环境变量的值，TiUP 会使用默认值。
+summary: TiUP provides flexible and customized interfaces using environment variables. The `tiup env` command queries user-defined environment variables and their values. Use `tiup env [name1...N]` to view specified variables, or all by default. No options. Output is a list of "{key}"="{value}" if not specified, or the "{value}" list in order if specified. Empty value means TiUP uses default.
 ---
 
 # tiup env
 
-TiUP 为用户提供了灵活的定制化接口，其中一部分是使用环境变量来实现的，命令 `tiup env` 用于查询 TiUP 支持用户自定义的环境变量以及它们此时的值。
+TiUP provides users with flexible and customized interfaces, some of which are implemented using environment variables. The `tiup env` command is used to query the user-defined environment variables that TiUP supports and their values.
 
-## 语法
+## Syntax
 
 ```shell
 tiup env [name1...N]
 ```
 
-`[name1...N]` 用于查看指定的环境变量，若不指定，则默认查看所有支持的环境变量。
+`[name1...N]` is used to view the specified environment variables. If it is not specified, all supported environment variables are viewed by default.
 
-## 选项
+## Option
 
-无
+None
 
-## 输出
+## Output
 
-- 若未指定 `[name1...N]`，则输出 "{key}"="{value}" 列表
-- 若指定了 `[name1...N]`，则按顺序输出 "{value}" 列表
+- If `[name1...N]` is not specified, a list of "{key}"="{value}" is output.
+- If `[name1...N]` is specified, the "{value}" list is output in order.
 
-以上输出中若 `value` 为空则代表未设置环境变量的值，此时 TiUP 会使用默认值。
+In the above output, if `value` is empty, it means that the value of the environment variable is not set. In this case, TiUP uses the default value.
 
-[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)
+[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)

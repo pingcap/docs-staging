@@ -1,54 +1,56 @@
 ---
-title: 定位消耗系统资源多的查询
-summary: TiDB 会将执行时间超过 tidb_expensive_query_time_threshold 限制（默认值为 60s），或使用内存超过 tidb_mem_quota_query 限制（默认值为 1 GB）的语句输出到 tidb-server 日志文件中，用于定位消耗系统资源多的查询语句。expensive query 日志和慢查询日志的区别在于，expensive query 日志可以将正在执行的语句的相关信息打印出来。当一条语句在执行过程中达到资源使用阈值时，TiDB 会即时将这条语句的相关信息写入日志。
+title: Identify Expensive Queries
+summary: TiDB helps identify expensive queries by printing information about statements that exceed the execution time or memory usage threshold. This allows for diagnosing and improving SQL performance. The expensive query log includes details such as execution time, memory usage, user, database, and TiKV Coprocessor task information. This log differs from the slow query log as it prints information as soon as the statement exceeds the resource threshold.
 ---
 
-# 定位消耗系统资源多的查询
+# Identify Expensive Queries
 
-TiDB 会将执行时间超过 [`tidb_expensive_query_time_threshold`](/system-variables.md#tidb_expensive_query_time_threshold) 限制（默认值为 60s），或使用内存超过 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 限制（默认值为 1 GB）的语句输出到 [tidb-server 日志文件](/tidb-configuration-file.md#logfile)（默认文件为 "tidb.log"）中，用于在语句执行结束前定位消耗系统资源多的查询语句（以下简称为 expensive query），帮助用户分析和解决语句执行的性能问题。
+TiDB allows you to identify expensive queries during SQL execution, so you can diagnose and improve the performance of SQL execution. Specifically, TiDB prints the information about statements whose execution time exceeds [`tidb_expensive_query_time_threshold`](/system-variables.md#tidb_expensive_query_time_threshold) (60 seconds by default) or memory usage exceeds [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) (1 GB by default) to the [tidb-server log file](/tidb-configuration-file.md#logfile) ("tidb.log" by default).
 
-注意，expensive query 日志和[慢查询日志](/identify-slow-queries.md)的区别是，慢查询日志是在语句执行完后才打印，expensive query 日志可以将正在执行的语句的相关信息打印出来。当一条语句在执行过程中达到资源使用阈值时（执行时间/使用内存量），TiDB 会即时将这条语句的相关信息写入日志。
+> **Note:**
+>
+> The expensive query log differs from the [slow query log](/identify-slow-queries.md) in this way: TiDB prints statement information to the expensive query log **as soon as** the statement exceeds the threshold of resource usage (execution time or memory usage); while TiDB prints statement information to the slow query log **after** the statement execution.
 
-## Expensive query 日志示例
+## Expensive query log example
 
 ```sql
 [expensivequery.go:145] [expensive_query] [cost_time=60.021998785s] [cop_time=0.022540151s] [process_time=28.448316643s] [wait_time=0.045507163s] [request_count=430] [total_keys=3538276] [process_keys=3537846] [num_cop_tasks=430] [process_avg_time=0.066158875s] [process_p90_time=0.140427865s] [process_max_time=0.27903656s] [process_max_addr=tikv-1-peer:20160] [wait_avg_time=0.00010583s] [wait_p90_time=0.000358794s] [wait_max_time=0.001218721s] [wait_max_addr=tikv-1-peer:20160] [stats=usertable:451469035823955972] [conn=1621098504] [user=root] [database=test] [table_ids="[104]"] [txn_start_ts=451469037501677571] [mem_max="621043469 Bytes (592.3 MB)"] [sql="insert /*+ SET_VAR(tidb_dml_type=bulk) */ into usertable_2 select * from usertable limit 5000000"] [session_alias=] ["affected rows"=3505282]]
 ```
 
-## 字段含义说明
+## Fields description
 
-基本字段：
+Basic fields:
 
-* `cost_time`：日志打印时语句已经花费的执行时间。
-* `stats`：语句涉及到的表或索引使用的统计信息版本。值为 `pseudo` 时表示无可用统计信息，需要对表或索引进行 analyze。
-* `table_ids`：语句涉及到的表的 ID。
-* `txn_start_ts`：事务的开始时间戳，也是事务的唯一 ID，可以用这个值在 TiDB 日志中查找事务相关的其他日志。
-* `sql`：SQL 语句。
-* `session_alias`：当前连接的别名。
-* `affected rows`：语句当前影响的行数。
+* `cost_time`: The execution time of a statement when the log is printed.
+* `stats`: The version of statistics used by the tables or indexes involved in a statement. If the value is `pseudo`, it means that there are no available statistics. In this case, you need to analyze the tables or indexes.
+* `table_ids`: The IDs of the tables involved in a statement.
+* `txn_start_ts`: The start timestamp and the unique ID of a transaction. You can use this value to search for the transaction-related logs.
+* `sql`: The sql statement.
+* `session_alias`: The alias of the current session.
+* `affected rows`: The number of rows currently affected by the statement.
 
-和内存使用相关的字段：
+Memory usage related fields:
 
-* `mem_max`：日志打印时语句已经使用的内存空间。该项使用两种单位标识内存使用量，分别为 Bytes 以及易于阅读的自适应单位（比如 MB、GB 等）。
+* `mem_max`: Memory usage of a statement when the log is printed. This field has two kinds of units to measure memory usage: byte and other readable and adaptable units (such as MB and GB).
 
-和 SQL 执行的用户相关的字段：
+User related fields:
 
-* `user`：执行语句的用户名。
-* `conn_id`：用户的连接 ID，可以用类似 `con:60026` 的关键字在 TiDB 日志中查找该连接相关的其他日志。
-* `database`：执行语句时使用的 database。
+* `user`: The name of the user who executes the statement.
+* `conn_id`: The connection ID (session ID). For example, you can use the keyword `con:60026` to search for the log whose session ID is `60026`.
+* `database`: The database where the statement is executed.
 
-和 TiKV Coprocessor Task 相关的字段：
+TiKV Coprocessor task related fields:
 
-* `wait_time`：该语句在 TiKV 的等待时间之和，因为 TiKV 的 Coprocessor 线程数是有限的，当所有的 Coprocessor 线程都在工作的时候，请求会排队；当队列中有某些请求耗时很长的时候，后面的请求的等待时间都会增加。
-* `request_count`：该语句发送的 Coprocessor 请求的数量。
-* `total_keys`：Coprocessor 扫过的 key 的数量。
-* `processed_keys`：Coprocessor 处理的 key 的数量。与 total_keys 相比，processed_keys 不包含 MVCC 的旧版本。如果 processed_keys 和 total_keys 相差很大，说明旧版本比较多。
-* `num_cop_tasks`：该语句发送的 Coprocessor 请求的数量。
-* `process_avg_time`：Coprocessor 执行 task 的平均执行时间。
-* `process_p90_time`：Coprocessor 执行 task 的 P90 分位执行时间。
-* `process_max_time`：Coprocessor 执行 task 的最长执行时间。
-* `process_max_addr`：task 执行时间最长的 Coprocessor 所在地址。
-* `wait_avg_time`：Coprocessor 上 task 的等待时间。
-* `wait_p90_time`：Coprocessor 上 task 的 P90 分位等待时间。
-* `wait_max_time`：Coprocessor 上 task 的最长等待时间。
-* `wait_max_addr`：task 等待时间最长的 Coprocessor 所在地址。
+* `wait_time`: The total waiting time of all Coprocessor requests of a statement in TiKV. Because the Coprocessor of TiKV runs a limited number of threads, requests might queue up when all threads of Coprocessor are working. When a request in the queue takes a long time to process, the waiting time of the subsequent requests increases.
+* `request_count`: The number of Coprocessor requests that a statement sends.
+* `total_keys`: The number of keys that Coprocessor has scanned.
+* `processed_keys`: The number of keys that Coprocessor has processed. Compared with `total_keys`, `processed_keys` does not include the old versions of MVCC. A great difference between `processed_keys` and `total_keys` indicates that many old versions exist.
+* `num_cop_tasks`: The number of Coprocessor requests that a statement sends.
+* `process_avg_time`: The average execution time of Coprocessor tasks.
+* `process_p90_time`: The P90 execution time of Coprocessor tasks.
+* `process_max_time`: The maximum execution time of Coprocessor tasks.
+* `process_max_addr`: The address of the Coprocessor task with the longest execution time.
+* `wait_avg_time`: The average waiting time of Coprocessor tasks.
+* `wait_p90_time`: The P90 waiting time of Coprocessor tasks.
+* `wait_max_time`: The maximum waiting time of Coprocessor tasks.
+* `wait_max_addr`: The address of the Coprocessor task with the longest waiting time.

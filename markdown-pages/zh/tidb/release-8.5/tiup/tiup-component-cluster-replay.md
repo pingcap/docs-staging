@@ -1,28 +1,28 @@
 ---
 title: tiup cluster replay
-summary: tiup cluster replay 命令用于重试集群操作中失败的命令，并跳过已成功的步骤。使用 `tiup cluster audit` 查看历史命令及其 audit-id。执行命令：tiup cluster replay <audit-id>。选项：-h, --help。输出为对应命令的输出。
+summary: The `tiup cluster replay` command allows you to retry failed cluster operations and skip successfully performed steps. Use `tiup cluster replay <audit-id>` to retry the command with the specified audit ID. View audit IDs with `tiup cluster audit` command. The output is the result of the specified audit ID.
 ---
 
 # tiup cluster replay
 
-对集群进行升级或重启等操作时，操作有可能因为环境的原因而偶然失败。这时如果重新进行操作，需要从头开始执行所有步骤。如果集群规模较大，会耗费较长时间。此时可以使用 `tiup cluster replay` 命令重试刚才失败的命令，并且跳过已经成功的步骤。
+When you perform a cluster operation such as upgrade or restart, the operation might fail due to cluster environment issues. If you re-perform the operation, you need to perform all the steps from the very beginning. If the cluster is large, re-performing these steps will take a long time. In this case, you can use the `tiup cluster replay` command to retry the failed commands and skip the successfully performed steps.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster replay <audit-id> [flags]
 ```
 
-- `<audit-id>` 代表要重试的命令对应的 `audit-id`。使用 [`tiup cluster audit`](/tiup/tiup-component-cluster-audit.md) 可查看历史命令及其 `audit-id`。
+- `<audit-id>`: the `audit-id` of the command to be retried. You can view the historical commands and their `audit-id`s using the [`tiup cluster audit`](/tiup/tiup-component-cluster-audit.md) command.
 
-## 选项
+## Option
 
 ### -h, --help
 
-输出帮助信息。
+Prints the help information.
 
-## 输出
+## Output
 
-`<audit-id>` 对应的命令的输出。
+The output of the command corresponding to `<audit-id>`.
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

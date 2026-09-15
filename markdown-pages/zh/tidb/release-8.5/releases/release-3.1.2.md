@@ -1,28 +1,27 @@
 ---
 title: TiDB 3.1.2 Release Notes
-summary: TiDB 3.1.2 发布日期为 2020 年 6 月 4 日。此版本修复了 TiKV 和 Tools 中的一些错误，包括 S3 和 GCS 备份恢复时的错误处理问题，备份过程中的 DefaultNotFound 错误，以及 BR 在备份恢复到 S3 和 GCS 存储时的稳定性提升等问题。同时还修复了 BR 在恢复数据时出现的一些错误，并增加了备份恢复 S3 时的 AWS KMS 服务端加密支持。
-aliases: ['/zh/tidb/dev/release-3.1.2/','/zh/tidb/v3.1/release-3.1.2','/docs-cn/dev/releases/release-3.1.2/','/zh/tidb/v5.4/release-3.1.2','/zh/tidb/v6.1/release-3.1.2','/zh/tidb/v6.5/release-3.1.2','/zh/tidb/v7.1/release-3.1.2','/zh/tidb/v7.5/release-3.1.2','/zh/tidb/v8.1/release-3.1.2']
+summary: TiDB 3.1.2 was released on June 4, 2020. Bug fixes include error handling during backup and restoration with S3 and GCS, and a `DefaultNotFound` error during restoration. Tools like Backup & Restore (BR) now automatically retry on poor network, fix restoration failures, data loss issues, and support AWS KMS for server-side encryption with S3 storage.
 ---
 
 # TiDB 3.1.2 Release Notes
 
-发版日期：2020 年 6 月 4 日
+Release date: June 4, 2020
 
-TiDB 版本：3.1.2
+TiDB version: 3.1.2
 
-## Bug 修复
+## Bug Fixes
 
 + TiKV
 
-    - 修复 S3 和 GCS 备份恢复时的错误处理问题 [#7965](https://github.com/tikv/tikv/pull/7965)
-    - 修复备份过程中的 `DefaultNotFound` 错误 [#7838](https://github.com/tikv/tikv/pull/7938)
+    - Fix the error handling issue during backup and restoration with S3 and GCS [#7965](https://github.com/tikv/tikv/pull/7965)
+    - Fix the `DefaultNotFound` error that occurs during restoration [#7838](https://github.com/tikv/tikv/pull/7938)
 
 + Tools
 
     - Backup & Restore (BR)
 
-        - 提升备份恢复到 S3 和 GCS 存储的稳定性，在网络较差时会自动重试 [#314](https://github.com/pingcap/br/pull/314) [#7965](https://github.com/tikv/tikv/pull/7965)
-        - 修复恢复数据时因找不到 Region leader 出现的 `NotLeader` 错误，BR 会自动重试 [#303](https://github.com/pingcap/br/pull/303)
-        - 修复恢复数据时 `rowID` 大于 `2^(63)` 的数据丢失问题 [#323](https://github.com/pingcap/br/pull/323)
-        - 修复恢复数据时无法恢复空库空表的问题 [#318](https://github.com/pingcap/br/pull/318)
-        - 增加备份恢复 S3 时的 AWS KMS 服务端加密 (SSE) 支持 [#261](https://github.com/pingcap/br/pull/261)
+        - Retry automatically when the network is poor to improve stability with S3 and GCS storages [#314](https://github.com/pingcap/br/pull/314) [#7965](https://github.com/tikv/tikv/pull/7965)
+        - Fix a restoration failure that occurs because the Region leader cannot be found when restoring small tables [#303](https://github.com/pingcap/br/pull/303)
+        - Fix a data loss issue during restoration when a table's row ID exceeds `2^(63)` [#323](https://github.com/pingcap/br/pull/323)
+        - Fix the issue that empty databases and tables cannot be restored [#318](https://github.com/pingcap/br/pull/318)
+        - Support using AWS KMS for server-side encryption (SSE) when targeting the S3 storage [#261](https://github.com/pingcap/br/pull/261)

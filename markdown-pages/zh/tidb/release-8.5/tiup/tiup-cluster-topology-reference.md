@@ -1,73 +1,100 @@
 ---
-title: 通过 TiUP 部署 TiDB 集群的拓扑文件配置
-summary: 介绍通过 TiUP 部署或扩容 TiDB 集群时提供的拓扑文件配置和示例。
+title: Topology Configuration File for TiDB Deployment Using TiUP
+summary: TiUP uses a topology file to deploy or modify the cluster topology for TiDB. It also deploys monitoring servers like Prometheus, Grafana, and Alertmanager. The topology file contains sections for global configuration, monitoring services, component versions, and more. Each section specifies the machines to which the corresponding services are deployed and their configurations.
 ---
 
-# 通过 TiUP 部署 TiDB 集群的拓扑文件配置
+# Topology Configuration File for TiDB Deployment Using TiUP
 
-通过 TiUP 部署或扩容 TiDB 集群时，需要提供一份拓扑文件（[示例](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)）来描述集群拓扑。
+To deploy or scale TiDB using TiUP, you need to provide a topology file ([sample](https://github.com/pingcap/tiup/blob/master/embed/examples/cluster/topology.example.yaml)) to describe the cluster topology.
 
-同样，修改集群配置也是通过编辑拓扑文件来实现的，区别在于修改配置时仅允许修改部分字段。本文档介绍拓扑文件的各个区块以各区块中的各字段。
+Similarly, to modify the cluster topology, you need to modify the topology file. The difference is that, after the cluster is deployed, you can only modify a part of the fields in the topology file. This document introduces each section of the topology file and each field in each section.
 
-使用 TiUP 部署 TiDB 集群时，TiUP 会同时自动部署 Prometheus、Grafana 和 Alertmanager 等监控组件，并且在集群扩容中自动为新增节点添加监控配置。如果需要自定义 Prometheus、Grafana 和 Alertmanager 等监控组件的配置，请参考[自定义监控组件的配置](/tiup/customized-montior-in-tiup-environment.md)。
+When you deploy a TiDB cluster using TiUP, TiUP also deploys monitoring servers, such as Prometheus, Grafana, and Alertmanager. In the meantime, if you scale out this cluster, TiUP also adds the new nodes into monitoring scope. To customize the configurations of the preceding monitoring servers, you can follow the instructions in [Customize Configurations of Monitoring Servers](/tiup/customized-montior-in-tiup-environment.md).
 
-## 文件结构
+## File structure
 
-一个通过 TiUP 部署的 TiDB 集群拓扑文件可能包含以下区块：
+A topology configuration file for TiDB deployment using TiUP might contain the following sections:
 
-- [global](/tiup/tiup-cluster-topology-reference.md#global)：集群全局配置，其中一些是集群的默认值，可以在实例里面单独配置
-- [monitored](/tiup/tiup-cluster-topology-reference.md#monitored)：监控服务配置，即 blackbox exporter 和 node exporter，每台机器上都会部署一个 node exporter 和一个 blackbox exporter
-- [server_configs](/tiup/tiup-cluster-topology-reference.md#server_configs)：组件全局配置，可单独针对每个组件配置，若在实例中存在同名配置项，那么以实例中配置的为准
-- [component_versions](/tiup/tiup-cluster-topology-reference.md#component_versions)：组件版本号，当某个组件需要使用与集群不一致的版本时使用此配置。tiup-cluster v1.14.0 引入该配置
-- [pd_servers](/tiup/tiup-cluster-topology-reference.md#pd_servers)：PD 实例的配置，用来指定 PD 组件部署到哪些机器上
-- [tidb_servers](/tiup/tiup-cluster-topology-reference.md#tidb_servers)：TiDB 实例的配置，用来指定 TiDB 组件部署到哪些机器上
-- [tikv_servers](/tiup/tiup-cluster-topology-reference.md#tikv_servers)：TiKV 实例的配置，用来指定 TiKV 组件部署到哪些机器上
-- [tiflash_servers](/tiup/tiup-cluster-topology-reference.md#tiflash_servers)：TiFlash 实例的配置，用来指定 TiFlash 组件部署到哪些机器上
-- [tiproxy_servers](#tiproxy_servers)：TiProxy 实例的配置，用来指定 TiProxy 组件部署到哪些机器上
-- [kvcdc_servers](/tiup/tiup-cluster-topology-reference.md#kvcdc_servers)：[TiKV-CDC](https://tikv.org/docs/latest/concepts/explore-tikv-features/cdc/cdc-cn/) 实例的配置，用来指定 TiKV-CDC 组件部署到哪些机器上
-- [cdc_servers](/tiup/tiup-cluster-topology-reference.md#cdc_servers)：CDC 实例的配置，用来指定 CDC 组件部署到哪些机器上
-- [tso_servers](/tiup/tiup-cluster-topology-reference.md#tso_servers)：TSO 实例的配置，用来指定 `tso` 微服务部署在哪些机器上（需要在 [`global`](#global) 中配置 `pd_mode: "ms"` 开启 [PD 微服务](/pd-microservices.md)）
-- [scheduling_servers](/tiup/tiup-cluster-topology-reference.md#scheduling_servers)：Scheduling 实例的配置，用来指定 `scheduling` 微服务部署在哪些机器上（需要在 [`global`](#global) 中配置 `pd_mode: "ms"` 开启 [PD 微服务](/pd-microservices.md)）
-- [monitoring_servers](/tiup/tiup-cluster-topology-reference.md#monitoring_servers)：用来指定 Prometheus 和 NGMonitoring 部署在哪些机器上，TiUP 支持部署多台 Prometheus 实例，但真实投入使用的只有第一个
-- [grafana_servers](/tiup/tiup-cluster-topology-reference.md#grafana_servers)：Grafana 实例的配置，用来指定 Grafana 部署在哪台机器上
-- [alertmanager_servers](/tiup/tiup-cluster-topology-reference.md#alertmanager_servers)：Alertemanager 实例的配置，用来指定 Alertmanager 部署在哪些机器上
+- [global](#global): The cluster's global configuration. Some of the configuration items use the default values and you can configure them separately in each instance.
+- [monitored](#monitored): Configuration for monitoring services, namely, the blackbox_exporter and the `node_exporter`. On each machine, a `node_exporter` and a `blackbox_exporter` are deployed.
+- [server_configs](#server_configs): Components' global configuration. You can configure each component separately. If an instance has a configuration item with the same name, the instance's configuration item will take effect.
+- [component_versions](#component_versions): Component version. You can configure it when a component does not use the cluster version. This section is introduced in tiup-cluster v1.14.0.
+- [pd_servers](#pd_servers): The configuration of the PD instance. This configuration specifies the machines to which the PD component is deployed.
+- [tidb_servers](#tidb_servers): The configuration of the TiDB instance. This configuration specifies the machines to which the TiDB component is deployed.
+- [tikv_servers](#tikv_servers): The configuration of the TiKV instance. This configuration specifies the machines to which the TiKV component is deployed.
+- [tiflash_servers](#tiflash_servers): The configuration of the TiFlash instance. This configuration specifies the machines to which the TiFlash component is deployed.
+- [tiproxy_servers](#tiproxy_servers): The configuration of the TiProxy instance. This configuration specifies the machines to which the TiProxy component is deployed.
+- [kvcdc_servers](#kvcdc_servers): The configuration of the [TiKV-CDC](https://tikv.org/docs/7.1/concepts/explore-tikv-features/cdc/cdc/) instance. This configuration specifies the machines to which the TiKV-CDC component is deployed.
+- [cdc_servers](#cdc_servers): The configuration of the TiCDC instance. This configuration specifies the machines to which the TiCDC component is deployed.
+- [tispark_masters](#tispark_masters): The configuration of the TiSpark master instance. This configuration specifies the machines to which the TiSpark master component is deployed. Only one node of TiSpark master can be deployed.
+- [tispark_workers](#tispark_workers): The configuration of the TiSpark worker instance. This configuration specifies the machines to which the TiSpark worker component is deployed.
+- [tso_servers](/tiup/tiup-cluster-topology-reference.md#tso_servers): The configuration of the TSO instance. This configuration specifies the machines to which the `tso` microservice is deployed (requires configuring `pd_mode: "ms"` in [`global`](#global) to enable [PD microservices](/pd-microservices.md)).
+- [scheduling_servers](/tiup/tiup-cluster-topology-reference.md#scheduling_servers): The configuration of the Scheduling instance. This configuration specifies the machines to which the `scheduling` microservice is deployed (requires configuring `pd_mode: "ms"` in [`global`](#global) to enable [PD microservices](/pd-microservices.md)).
+- [monitoring_servers](#monitoring_servers): Specifies the machines to which Prometheus and NGMonitoring are deployed. TiUP supports deploying multiple Prometheus instances but only the first instance is used.
+- [grafana_servers](#grafana_servers): The configuration of the Grafana instance. This configuration specifies the machines to which Grafana is deployed.
+- [alertmanager_servers](#alertmanager_servers): The configuration of the Alertmanager instance. This configuration specifies the machines to which Alertmanager is deployed.
 
 ### `global`
 
-`global` 区块为集群的全局配置，包含以下字段：
+The `global` section corresponds to the cluster's global configuration and has the following fields:
 
-- `user`：以什么用户来启动部署的集群，默认值："tidb"，如果 `<user>` 字段指定的用户在目标机器上不存在，会自动尝试创建
-- `group`：自动创建用户时指定用户所属的用户组，默认和 `<user>` 字段值相同，若指定的组不存在，则自动创建
-- `systemd_mode`：部署集群过程中在目标机器上使用的 `systemd` 模式，默认值为 `system`。若设置为 `user`，则表示在目标机器上不使用 sudo 权限，即使用 [TiUP no-sudo 模式](/tiup/tiup-cluster-no-sudo-mode.md)。
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，默认值：22
-- `enable_tls`：是否对集群启用 TLS。启用之后，组件之间、客户端与组件之间都必须使用生成的 TLS 证书进行连接，默认值：false
-- `listen_host`：默认使用的监听 IP。如果为空，每个实例会根据其 `host` 字段是否包含 `:` 来自动设置为 `::` 或 `0.0.0.0`。tiup-cluster v1.14.0 引入该配置
-- `deploy_dir`：每个组件的部署目录，默认值："deploy"。其应用规则如下：
-    - 如果在实例级别配置了绝对路径的 `deploy_dir`，那么实际部署目录为该实例设定的 `deploy_dir`
-    - 对于每个实例，如果用户未配置 `deploy_dir`，其默认值为相对路径 `<component-name>-<component-port>`
-    - 如果 `global.deploy_dir` 为绝对路径，那么组件会部署到 `<global.deploy_dir>/<instance.deploy_dir>` 目录
-    - 如果 `global.deploy_dir` 为相对路径，那么组件会部署到 `/home/<global.user>/<global.deploy_dir>/<instance.deploy_dir>` 目录
-- `data_dir`：数据目录，默认值："data"。其应用规则如下：
-    - 如果在实例级别配置了绝对路径的 `data_dir`，那么实际数据目录为该实例设定的 `data_dir`
-    - 对于每个实例，如果用户未配置 `data_dir`，其默认值为 `<global.data_dir>`
-    - 如果 `data_dir` 为相对路径，那么组件数据将放到 `<deploy_dir>/<data_dir>` 中，其中 `<deploy_dir>` 的计算规则请参考 `deploy_dir` 字段的应用规则
-- `log_dir`：日志目录，默认值："log"。其应用规则如下：
-    - 如果在实例级别配置了绝对路径的 `log_dir`，那么实际日志目录为该实例设定的 `log_dir`
-    - 对于每个实例，如果用户未配置 `log_dir`，其默认值为 `<global.log_dir>`
-    - 如果 `log_dir` 为相对路径，那么组件日志将放到 `<deploy_dir>/<log_dir>` 中，其中 `<deploy_dir>` 的计算规则请参考 `deploy_dir` 字段的应用规则
-- `os`：目标机器的操作系统，该字段决定了向目标机器推送适配哪个操作系统的组件，默认值：linux
-- `arch`：目标机器的 CPU 架构，该字段决定了向目标机器推送哪个平台的二进制包，支持 amd64 和 arm64，默认值：amd64
-- `pd_mode`：PD 工作模式。该字段控制是否启用 [PD 微服务](/pd-microservices.md)。取值选项为 "ms"。指定该参数代表启用 PD 微服务模式。
-- `resource_control`：运行时资源控制，该字段下所有配置都将写入 systemd 的 service 文件中，默认无限制。支持控制的资源如下：
-    - `memory_limit`：限制运行时最大内存，例如 "2G" 表示最多使用 2GB 内存
-    - `cpu_quota`：限制运行时最大 CPU 占用率，例如 "200%"
-    - `io_read_bandwidth_max`：读磁盘 I/O 的最大带宽，例如："/dev/disk/by-path/pci-0000:00:1f.2-scsi-0:0:0:0 100M"
-    - `io_write_bandwidth_max`：写磁盘 I/O 的最大带宽，例如："/dev/disk/by-path/pci-0000:00:1f.2-scsi-0:0:0:0 100M"
-    - `limit_core`：控制 core dump 的大小
-    - `timeout_stop_sec`：控制 systemd 服务停止的超时时间
-    - `timeout_start_sec`：控制 systemd 服务启动的超时时间
+- `user`: The user used to start the deployed cluster. The default value is `"tidb"`. If the user specified in the `<user>` field does not exist on the target machine, this user is automatically created.
 
-`global` 配置示例：
+- `group`: The user group to which a user belongs. It is specified when the user is created. The value defaults to that of the `<user>` field. If the specified group does not exist, it is automatically created.
+
+- `systemd_mode`: Specifies the `systemd` mode used on the target machine during cluster deployment. The default value is `system`. If set to `user`, sudo permissions are not required on the target machine, meaning [TiUP no-sudo mode](/tiup/tiup-cluster-no-sudo-mode.md) is used.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. The default value is `22`.
+
+- `enable_tls`: Specifies whether to enable TLS for the cluster. After TLS is enabled, the generated TLS certificate must be used for connections between components or between the client and the component. The default value is `false`.
+
+- `listen_host`: Specifies the default listening IP address. If it is empty, each instance automatically sets it to `::` or `0.0.0.0` based on whether its `host` field contains `:`. This field is introduced in tiup-cluster v1.14.0. 
+
+- `deploy_dir`: The deployment directory of each component. The default value is `"deployed"`. Its application rules are as follows:
+
+    - If the absolute path of `deploy_dir` is configured at the instance level, the actual deployment directory is `deploy_dir` configured for the instance.
+
+    - For each instance, if you do not configure `deploy_dir`, its default value is the relative path `<component-name>-<component-port>`.
+
+    - If `global.deploy_dir` is an absolute path, the component is deployed to the `<global.deploy_dir>/<instance.deploy_dir>` directory.
+
+    - If `global.deploy_dir` is a relative path, the component is deployed to the `/home/<global.user>/<global.deploy_dir>/<instance.deploy_dir>` directory.
+
+- `data_dir`: The data directory. Default value: `"data"`. Its application rules are as follows:
+
+    - If the absolute path of `data_dir` is configured at the instance level, the actual deployment directory is `data_dir` configured for the instance.
+
+    - For each instance, if you do not configure `data_dir`, its default value is `<global.data_dir>`.
+
+    - If `data_dir` is a relative path, the component data is placed in `<deploy_dir>/<data_dir>`. For the calculation rules of `<deploy_dir>`, see the application rules of the `deploy_dir` field.
+
+- `log_dir`: The log directory. Default value: `"log"`. Its application rules are as follows:
+
+    - If the absolute path `log_dir` is configured at the instance level, the actual log directory is the `log_dir` configured for the instance.
+
+    - For each instance, if you not configure `log_dir`, its default value is `<global.log_dir>`.
+
+    - If `log_dir` is a relative path, the component log is placed in `<deploy_dir>/<log_dir>`. For the calculation rules of `<deploy_dir>`, see the application rules of the `deploy_dir` field.
+
+- `os`: The operating system of the target machine. The field controls which operating system to adapt to for the components pushed to the target machine. The default value is "linux".
+
+- `arch`: The CPU architecture of the target machine. The field controls which platform to adapt to for the binary packages pushed to the target machine. The supported values are "amd64" and "arm64". The default value is "amd64".
+
+- `pd_mode`: The PD working mode. The field controls whether to enable [PD microservices](/pd-microservices.md). The supported value is "ms". Specifying this field means enabling PD microservices.
+
+- `resource_control`: Runtime resource control. All configurations in this field are written into the service file of systemd. There is no limit by default. The resources that can be controlled are as follows:
+
+    - `memory_limit`: Limits the maximum runtime memory. For example, "2G" means that the maximum memory of 2 GB can be used.
+
+    - `cpu_quota`: Limits the maximum CPU usage at runtime. For example, "200%".
+
+    - `io_read_bandwidth_max`: Limits the maximum I/O bandwidth for disk reads. For example, `"/dev/disk/by-path/pci-0000:00:1f.2-scsi-0:0:0:0 100M"`.
+
+    - `io_write_bandwidth_max`: Limits maximum I/O bandwidth for disk writes. For example, `/dev/disk/by-path/pci-0000:00:1f.2-scsi-0:0:0:0 100M`.
+
+    - `limit_core`: Controls the size of core dump.
+
+A `global` configuration example is as follows:
 
 ```yaml
 global:
@@ -76,19 +103,23 @@ global:
     memory_limit: "2G"
 ```
 
-上述配置指定使用 `tidb` 用户启动集群，同时限制每个组件运行时最多只能使用 2GB 内存。
+In the above configuration, the `tidb` user is used to start the cluster. At the same time, each component is restricted to a maximum of 2 GB of memory when it is running.
 
 ### `monitored`
 
-`monitored` 用于配置目标机上的监控服务：[node_exporter](https://github.com/prometheus/node_exporter) 和 [blackbox_exporter](https://github.com/prometheus/blackbox_exporter)。包含以下字段：
+`monitored` is used to configure the monitoring service on the target machine: [`node_exporter`](https://github.com/prometheus/node_exporter) and [`blackbox_exporter`](https://github.com/prometheus/blackbox_exporter). The following fields are included:
 
-- `node_exporter_port`：node_exporter 的服务端口，默认值：9100
-- `blackbox_exporter_port`：blackbox_exporter 的服务端口，默认值：9115
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
+- `node_exporter_port`: The service port of `node_exporter`. The default value is `9100`.
 
-`monitored` 配置示例：
+- `blackbox_exporter_port`: The service port of `blackbox_exporter`. The default value is `9115`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+A `monitored` configuration example is as follows:
 
 ```yaml
 monitored:
@@ -96,23 +127,31 @@ monitored:
   blackbox_exporter_port: 9115
 ```
 
-上述配置指定了 node_exporter 使用 9100 端口，blackbox_exporter 使用 9115 端口。
+The above configuration specifies that `node_exporter` uses the `9100` port and `blackbox_exporter` uses the `9115` port.
 
 ### `server_configs`
 
-`server_configs` 用于配置服务，生成各组件的配置文件，类似 `global` 区块，该区块内的配置可以在具体的实例中被覆盖。主要包含以下字段：
+`server_configs` is used to configure services and to generate configuration files for each component. Similar to the `global` section, the configuration of this section can be overwritten by the configurations with the same names in an instance. `server_configs` mainly includes the following fields:
 
-- `tidb`：TiDB 服务的相关配置，支持的完整配置请参考 [TiDB 配置文件描述](/tidb-configuration-file.md)
-- `tikv`：TiKV 服务的相关配置，支持的完整配置请参考 [TiKV 配置文件描述](/tikv-configuration-file.md)
-- `pd`：PD 服务的相关配置，支持的完整配置请参考 [PD 配置文件描述](/pd-configuration-file.md)
-- `tiflash`：TiFlash 服务的相关配置，支持的完整配置请参考 [TiFlash 配置参数](/tiflash/tiflash-configuration.md)
-- `tiflash_learner`：每个 TiFlash 中内置了一个特殊的 TiKV，该配置项用于配置这个特殊的 TiKV，一般不建议修改这个配置项下的内容
-- `tiproxy`：TiProxy 服务的相关配置，支持的完整配置请参考 [TiProxy 参数配置](/tiproxy/tiproxy-configuration.md)
-- `cdc`：CDC 服务的相关配置，支持的完整配置请参考 [TiCDC 安装部署](/ticdc/deploy-ticdc.md)
-- `tso`：`tso` 微服务的相关配置，支持的完整配置请参考 [TSO 配置文件描述](/tso-configuration-file.md)
-- `scheduling`：`scheduling` 微服务的相关配置，支持的完整配置请参考 [Scheduling 配置文件描述](/scheduling-configuration-file.md)
+- `tidb`: TiDB service-related configuration. For the complete configuration, see [TiDB configuration file](/tidb-configuration-file.md).
 
-`server_configs` 配置示例：
+- `tikv`: TiKV service-related configuration. For the complete configuration, see [TiKV configuration file](/tikv-configuration-file.md).
+
+- `pd`: PD service-related configuration. For the complete configuration, see [PD configuration file](/pd-configuration-file.md).
+
+- `tiflash`: TiFlash service-related configuration. For the complete configuration, see [TiFlash configuration file](/tiflash/tiflash-configuration.md).
+
+- `tiflash_learner`: Each TiFlash node has a special built-in TiKV. This configuration item is used to configure this special TiKV. It is generally not recommended to modify the content under this configuration item.
+
+- `tiproxy`: TiProxy service-related configuration. For the complete configuration, see [TiProxy configuration file](/tiproxy/tiproxy-configuration.md).
+
+- `cdc`: TiCDC service-related configuration. For the complete configuration, see [Deploy TiCDC](/ticdc/deploy-ticdc.md).
+
+- `tso`: `tso` microservice-related configuration. For the complete configuration, see [TSO configuration file](/tso-configuration-file.md).
+
+- `scheduling`: `scheduling` microservice-related configuration. For the complete configuration, see [Scheduling configuration file](/scheduling-configuration-file.md).
+
+A `server_configs` configuration example is as follows:
 
 ```yaml
 server_configs:
@@ -126,65 +165,78 @@ server_configs:
     readpool.unified.min-thread-count: 1
 ```
 
-上述配置指定了 TiDB 和 TiKV 的全局配置。
+The above configuration specifies the global configuration of TiDB and TiKV.
 
 ### `component_versions`
 
-> **注意：**
+> **Note:**
 >
-> 对于 TiDB、TiKV、PD、TiCDC 等共用版本号的组件，尚未有完整的测试保证它们在跨版本混合部署的场景下能正常工作。请仅在测试场景或在[获取支持](/support.md)的情况下使用此配置。
+> For components that share a version number, such as TiDB, TiKV, PD, and TiCDC, there are no complete tests to ensure that they work properly in a mixed-version deployment scenario. Ensure that you use this section only in test environments, or with the help of [technical support](/support.md).
 
-`component_versions` 用于指定某个组件的版本号。
+`component_versions` is used to specify the version number of a certain component. 
 
-- 如果没有配置 `component_versions`，各个组件默认使用与 TiDB 集群相同的版本号（如 PD、TiKV），或使用组件的最新版本号（如 Alertmanager）。
-- 如果配置了该字段，对应的组件将会固定使用对应的版本，并且在后续的扩容和升级集群操作中都使用该版本。
+- When `component_versions` is not configured, each component either uses the same version number as the TiDB cluster (such as PD and TiKV), or uses the latest version (such as Alertmanager). 
+- When `component_versions` is configured, the corresponding component will use the specified version, and this version will be used in subsequent cluster scaling and upgrade operations. 
 
-请仅在需要使用某个固定组件的版本号时配置该参数。
+Make sure you only configure it when you need to use a specific version of a component. 
 
-`component_versions` 区块主要包含以下字段：
+`component_versions` contains the following fields:
 
-- `tikv`：TiKV 组件的版本
-- `tiflash`：TiFlash 组件的版本
-- `pd`：PD 组件的版本
-- `tidb_dashboard`：独立部署的 TiDB Dashboard 组件的版本
-- `cdc`：CDC 组件的版本
-- `kvcdc`：TiKV-CDC 组件的版本
-- `tiproxy`：TiProxy 组件的版本
-- `prometheus`：Prometheus 组件的版本
-- `grafana`：Grafana 组件的版本
-- `alertmanager`：Alertmanager 组件的版本
-- `tso`：TSO 组件的版本
-- `scheduling`：Scheduling 组件的版本
+- `tikv`: The version of the TiKV component
+- `tiflash`: The version of the TiFlash component
+- `pd`: The version of the PD component
+- `tidb_dashboard`: The version of the standalone TiDB Dashboard component
+- `cdc`: The version of the CDC component
+- `kvcdc`: The version of the TiKV-CDC component
+- `tiproxy`: The version of the TiProxy component
+- `prometheus`: The version of the Prometheus component
+- `grafana`: The version of the Grafana component
+- `alertmanager`: The version of the Alertmanager component
+- `tso`: The version of the TSO component
+- `scheduling`: The version of the Scheduling component
 
-`component_versions` 配置示例：
+The following is an example configuration for `component_versions`:
 
 ```yaml
 component_versions:
   kvcdc: "v1.1.1"
 ```
 
-上述配置指定了 TiKV-CDC 的版本号为 v1.1.1。
+The preceding configuration specifies the version number of TiKV-CDC to be `v1.1.1`.
 
 ### `pd_servers`
 
-`pd_servers` 指定了将 PD 的服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`pd_servers` 是一个数组，每个数组的元素包含以下字段：
+`pd_servers` specifies the machines to which PD services are deployed. It also specifies the service configuration on each machine. `pd_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `listen_host`：当机器上有多个 IP 时，可以指定服务的监听 IP，默认为 `0.0.0.0`
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `name`：指定该 PD 实例的名字，不同实例的名字必须唯一，否则无法部署
-- `client_port`：指定 PD 的客户端连接端口，默认值：2379
-- `peer_port`：指定 PD 之间互相通信的端口，默认值：2380
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)。在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：该字段配置规则和 `server_configs` 里的 `pd` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `pd` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制。如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
+- `host`: Specifies the machine to which the PD services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `listen_host`: When the machine has multiple IP addresses, `listen_host` specifies the listening IP address of the service. The default value is `0.0.0.0`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `name`: Specifies the name of the PD instance. Different instances must have unique names; otherwise, instances cannot be deployed.
+
+- `client_port`: Specifies the port that PD uses to connect to the client. The default value is `2379`.
+
+- `peer_port`: Specifies the port for communication between PDs. The default value is `2380`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The configuration rule of this field is the same as the `pd` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `pd` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `listen_host`
@@ -197,7 +249,7 @@ component_versions:
 - `arch`
 - `os`
 
-`pd_servers` 配置示例：
+A `pd_servers` configuration example is as follows:
 
 ```yaml
 pd_servers:
@@ -208,26 +260,37 @@ pd_servers:
   - host: 10.0.1.12
 ```
 
-上述配置指定了将 PD 部署到 `10.0.1.11` 和 `10.0.1.12`，并针对 `10.0.1.11` 的 PD 进行一些特殊配置。
+The above configuration specifies that PD will be deployed on `10.0.1.11` and `10.0.1.12`, and makes specific configurations for the PD of `10.0.1.11`.
 
 ### `tidb_servers`
 
-`tidb_servers` 指定了将 TiDB 服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`tidb_servers` 是一个数组，每个数组的元素包含以下字段：
+`tidb_servers` specifies the machines to which TiDB services are deployed. It also specifies the service configuration on each machine. `tidb_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `listen_host`：当机器上有多个 IP 时，可以指定服务的监听 IP，默认为 `0.0.0.0`
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `port`：TiDB 服务的监听端口，用于提供给 MySQL 客户端连接，默认值：4000
-- `status_port`：TiDB 状态服务的监听端口，用于外部通过 http 请求查看 TiDB 服务的状态，默认值：10080
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：该字段配置规则和 `server_configs` 里的 `tidb` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `tidb` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器
-- `os`：host 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：host 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
+- `host`: Specifies the machine to which the TiDB services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `listen_host`: When the machine has multiple IP addresses, `listen_host` specifies the listening IP address of the service. The default value is `0.0.0.0`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of TiDB services, which is used to provide connection to the MySQL client. The default value is `4000`.
+
+- `status_port`: The listening port of the TiDB status service, which is used to view the status of the TiDB services from the external via HTTP requests. The default value is `10080`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The configuration rule of this field is the same as the `tidb` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `tidb` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `listen_host`
@@ -238,7 +301,7 @@ pd_servers:
 - `arch`
 - `os`
 
-`tidb_servers` 配置示例：
+A `tidb_servers` configuration example is as follows:
 
 ```yaml
 tidb_servers:
@@ -251,23 +314,35 @@ tidb_servers:
 
 ### `tikv_servers`
 
-`tikv_servers` 约定了将 TiKV 服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`tikv_servers` 是一个数组，每个数组元素包含以下字段：
+`tikv_servers` specifies the machines to which TiKV services are deployed. It also specifies the service configuration on each machine. `tikv_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `listen_host`：当机器上有多个 IP 时，可以指定服务的监听 IP，默认为 `0.0.0.0`
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `port`：TiKV 服务的监听端口，默认值：20160
-- `status_port`：TiKV 状态服务的监听端口，默认值：20180
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：该字段配置规则和 server_configs 里的 tikv 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `tikv` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器
-- `os`：host 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：host 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
+- `host`: Specifies the machine to which the TiKV services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `listen_host`: When the machine has multiple IP addresses, `listen_host` specifies the listening IP address of the service. The default value is `0.0.0.0`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the TiKV services. The default value is `20160`.
+
+- `status_port`: The listening port of the TiKV status service. The default value is `20180`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The configuration rule of this field is the same as the `tikv` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `tikv` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `listen_host`
@@ -279,7 +354,7 @@ tidb_servers:
 - `arch`
 - `os`
 
-`tikv_servers` 配置示例：
+A `tikv_servers` configuration example is as follows:
 
 ```yaml
 tikv_servers:
@@ -293,27 +368,43 @@ tikv_servers:
 
 ### `tiflash_servers`
 
-`tiflash_servers` 约定了将 TiFlash 服务部署到哪些机器上，同时可以指定每台机器上的服务配置。该区块是一个数组，每个数组元素包含以下字段：
+`tiflash_servers` specifies the machines to which TiFlash services are deployed. It also specifies the service configuration on each machine. This section is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 global 区块中的 `ssh_port`
-- `tcp_port`：TiFlash TCP 服务的端口，用于执行内部测试，默认 9000。自 TiUP v1.12.5 起，如果部署的集群版本 >= v7.1.0，则该配置项不生效
-- `flash_service_port`：TiFlash 提供服务的端口，TiDB 通过该端口从 TiFlash 读数据，默认 3930
-- `metrics_port`：TiFlash 的状态端口，用于输出 metric 数据，默认 8234
-- `flash_proxy_port`：内置 TiKV 的端口，默认 20170
-- `flash_proxy_status_port`：内置 TiKV 的状态端口，默认为 20292
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成，TiFlash 的数据目录支持多个，采用逗号分割
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `tmp_path`：TiFlash 临时文件的存放路径，默认使用 [`path` 或者 `storage.latest.dir` 的第一个目录] + "/tmp"
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：该字段配置规则和 `server_configs` 里的 `tiflash` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `tiflash` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器
-- `learner_config`：每个 TiFlash 中内置了一个特殊的 TiKV 模块，该配置项用于配置这个特殊的 TiKV 模块，一般不建议修改这个配置项下的内容
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
+- `host`: Specifies the machine to which the TiFlash services are deployed. The field value is an IP address and is mandatory.
 
-以上字段中，`data_dir` 在部署完成之后只能新增目录，而下列字段部署完成之后不能再修改：
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `tcp_port`: The port of the TiFlash TCP service for internal testing purposes. The default value is `9000`. Starting from TiUP v1.12.5, this configuration item does not take effect on clusters that are v7.1.0 or later.
+
+- `flash_service_port`: The port via which TiFlash provides services. TiDB reads data from TiFlash via this port. The default value is `3930`.
+
+- `metrics_port`: TiFlash's status port, which is used to output metric data. The default value is `8234`.
+
+- `flash_proxy_port`: The port of the built-in TiKV. The default value is `20170`.
+
+- `flash_proxy_status_port`: The status port of the built-in TiKV. The default value is `20292`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`. TiFlash supports multiple `data_dir` directories separated by commas.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `tmp_path`: The storage path of TiFlash temporary files. The default value is [`path` or the first directory of `storage.latest.dir`] + "/tmp".
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The configuration rule of this field is the same as the `tiflash` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `tiflash` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `learner_config`: Each TiFlash node has a special built-in TiKV. This configuration item is used to configure this special TiKV. It is generally not recommended to modify the content under this configuration item.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+After the deployment, for the fields above, you can only add directories to `data_dir`; for the fields below, you cannot modify these fields:
 
 - `host`
 - `tcp_port`
@@ -327,7 +418,7 @@ tikv_servers:
 - `arch`
 - `os`
 
-`tiflash_servers` 配置示例：
+A `tiflash_servers` configuration example is as follows:
 
 ```yaml
 tiflash_servers:
@@ -337,19 +428,27 @@ tiflash_servers:
 
 ### `tiproxy_servers`
 
-`tiproxy_servers` 约定了将 TiProxy 服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`tiproxy_servers` 是一个数组，每个数组元素包含以下字段：
+`tiproxy_servers` specifies the machines to which the TiProxy services are deployed and the service configuration on each machine. `tiproxy_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略。
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`。
-- `port`：TiProxy SQL 服务的监听端口，默认值：`6000`。
-- `status_port`：TiProxy 状态服务的监听端口，用于外部通过 HTTP 请求查看 TiProxy 服务的状态，默认值：`3080`。
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成。
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 `"0,1"`。
-- `config`：该字段配置规则和 `server_configs` 里的 `tiproxy` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `tiproxy` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器。
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`。
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`。
+- `host`: Specifies the IP address of the machine to which the TiProxy services are deployed. This field is mandatory.
 
-在上述字段中，部分字段部署完成之后不能再修改。如下所示：
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the TiProxy SQL services. The default value is `6000`.
+
+- `status_port`: The listening port of the TiProxy status service. It is used to view the status of the TiProxy services from the external via HTTP requests. The default value is `3080`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated based on the `deploy_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is of string type. The value is the ID of the NUMA node, such as `"0,1"`.
+
+- `config`: The configuration rule of this field is the same as the `tiproxy` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `tiproxy` content in `server_configs`. If these two fields overlap, the content of this field takes effect. Subsequently, a configuration file is generated and sent to the machine specified in `host`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+Among the above fields, you cannot modify the following configured fields after the deployment:
 
 - `host`
 - `port`
@@ -357,7 +456,7 @@ tiflash_servers:
 - `arch`
 - `os`
 
-`tiproxy_servers` 配置示例：
+A `tiproxy_servers` configuration example is as follows:
 
 ```yaml
 tiproxy_servers:
@@ -373,27 +472,39 @@ tiproxy_servers:
       labels: { zone: "zone2" }
 ```
 
-关于更多配置示例，请参见 [TiProxy 部署拓扑](/tiproxy/tiproxy-deployment-topology.md)。
+For more configuration examples, see [TiProxy Deployment Topology](/tiproxy/tiproxy-deployment-topology.md).
 
 ### `kvcdc_servers`
 
-`kvcdc_servers` 约定了将 [TiKV-CDC](https://tikv.org/docs/latest/concepts/explore-tikv-features/cdc/cdc-cn/) 服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`kvcdc_servers` 是一个数组，每个数组元素包含以下字段：
+`kvcdc_servers` specifies the machines to which the [TiKV-CDC](https://tikv.org/docs/7.1/concepts/explore-tikv-features/cdc/cdc/) services are deployed. It also specifies the service configuration on each machine. `kvcdc_servers` is an array. Each array element contains the following fields:
 
-- `host`：指定 TiKV-CDC 部署到哪台机器，字段值填 IP 地址，不可省略。
-- `ssh_port`：指定连接目标机器进行操作时使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`。
-- `port`：TiKV-CDC 服务的监听端口，默认 8600。
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成。
-- `data-dir`：可选项，指定 TiKV-CDC 存储临时文件的目录，主要用于排序。建议确保该目录所在磁盘的可用空间大于等于 500 GiB。
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成。
-- `gc-ttl`：可选项，TiKV-CDC 在 PD 设置服务级别 GC safepoint 的 TTL (Time to Live) 时长。同时也是 TiKV-CDC 同步任务暂停的最大时长。单位为秒，默认值为 `86400`，即 24 小时。注意：TiKV-CDC 同步任务的暂停会影响集群 GC safepoint 的推进。`gc-ttl` 越大，同步任务可以暂停的时间越长，但同时会保留更多的过期数据，并占用更多的存储空间。反之亦然。
-- `tz`：TiKV-CDC 服务使用的时区。TiKV-CDC 在内部转换 timestamp 等时间数据类型和向下游同步数据时使用该时区，默认为进程运行本地时区。
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：可选项，指定 TiKV-CDC 使用的配置文件路径。
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`。
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`。
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`。
+- `host`: Specifies the machine to which the TiKV-CDC services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the TiKV-CDC services. The default value is `8600`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data-dir`: Specifies the directory that TiKV-CDC uses to store temporary files primarily for sorting (optional). The free disk space for this directory is recommended to be greater than or equal to 500 GiB.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `gc-ttl`: The TTL (Time to Live, in seconds) of the service-level GC safepoint in PD set by TiKV-CDC (optional). It is the duration that replication tasks can be suspended, defaulting to `86400`, which is 24 hours. Note that suspending replication tasks affects the progress of TiKV garbage collection safepoint. The longer the `gc-ttl`, the longer changefeeds can be suspended, but at the same time, more obsolete data will be kept and occupy more space. Vice versa.
+
+- `tz`: The time zone that the TiKV-CDC services use. TiKV-CDC uses this time zone when internally converting time data types such as timestamp and when replicating data to the downstream. The default value is the local time zone where the process runs.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The address of the configuration file that TiKV-CDC uses (optional).
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `port`
@@ -403,7 +514,7 @@ tiproxy_servers:
 - `arch`
 - `os`
 
-`kvcdc_servers` 配置示例：
+A `kvcdc_servers` configuration example is as follows:
 
 ```yaml
 kvcdc_servers:
@@ -413,24 +524,37 @@ kvcdc_servers:
 
 ### `cdc_servers`
 
-`cdc_servers` 约定了将 TiCDC 服务部署到哪些机器上，同时可以指定每台机器上的服务配置，`cdc_servers` 是一个数组，每个数组元素包含以下字段：
+`cdc_servers` specifies the machines to which the TiCDC services are deployed. It also specifies the service configuration on each machine. `cdc_servers` is an array. Each array element contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `port`：TiCDC 服务的监听端口，默认 8300
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录。若不指定该字段或指定为相对目录，数据目录则按照 `global` 中配置的 `data_dir` 生成。
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `gc-ttl`：TiCDC 在 PD 设置的服务级别 GC safepoint 的 TTL (Time To Live) 时长，单位为秒，默认值为 86400，即 24 小时
-- `tz`：TiCDC 服务使用的时区。TiCDC 在内部转换 timestamp 等时间数据类型和向下游同步数据时使用该时区，默认为进程运行本地时区。
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config`：该字段配置规则和 `server_configs` 里的 `cdc` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
-- `ticdc_cluster_id`：指定该服务器对应的 TiCDC 集群 ID。若不指定该字段，则自动加入默认 TiCDC 集群。该配置只在 v6.3.0 及以上 TiDB 版本中才生效。
+- `host`: Specifies the machine to which the TiCDC services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the TiCDC services. The default value is `8300`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `gc-ttl`: The Time To Live (TTL) duration of the service level GC safepoint set by TiCDC in PD, in seconds. The default value is `86400`, which is 24 hours.
+
+- `tz`: The time zone that the TiCDC services use. TiCDC uses this time zone when internally converting time data types such as timestamp and when replicating data to the downstream. The default value is the local time zone where the process runs.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config`: The field content is merged with the `cdc` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+- `ticdc_cluster_id`: Specifies the TiCDC cluster ID corresponding to the service. If this field is not specified, the service joins the default TiCDC cluster. This field only takes effect in TiDB v6.3.0 or later versions.
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `port`
@@ -441,7 +565,7 @@ kvcdc_servers:
 - `os`
 - `ticdc_cluster_id`
 
-`cdc_servers` 配置示例：
+A `cdc_servers` configuration example is as follows:
 
 ```yaml
 cdc_servers:
@@ -453,20 +577,117 @@ cdc_servers:
     data_dir: "/cdc-data"
 ```
 
+### `tispark_masters`
+
+`tispark_masters` specifies the machines to which the master node of TiSpark is deployed. It also specifies the service configuration on each machine. `tispark_masters` is an array. Each array element contains the following fields:
+
+- `host`: Specifies the machine to which the TiSpark master is deployed. The field value is an IP address and is mandatory.
+
+- `listen_host`: When the machine has multiple IP addresses, `listen_host` specifies the listening IP address of the service. The default value is `0.0.0.0`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: Spark's listening port, used for communication before the node. The default value is `7077`.
+
+- `web_port`: Spark's web port, which provides web services and the task status. The default value is `8080`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `java_home`: Specifies the path of the JRE environment to be used. This parameter corresponds to the `JAVA_HOME` system environment variable.
+
+- `spark_config`: Configures to configure the TiSpark services. Then, a configuration file is generated and sent to the machine specified in `host`.
+
+- `spark_env`: Configures the environment variables when Spark starts.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
+
+- `host`
+- `listen_host`
+- `port`
+- `web_port`
+- `deploy_dir`
+- `arch`
+- `os`
+
+A `tispark_masters` configuration example is as follows:
+
+```yaml
+tispark_masters:
+  - host: 10.0.1.21
+    spark_config:
+      spark.driver.memory: "2g"
+      spark.eventLog.enabled: "False"
+      spark.tispark.grpc.framesize: 2147483647
+      spark.tispark.grpc.timeout_in_sec: 100
+      spark.tispark.meta.reload_period_in_sec: 60
+      spark.tispark.request.command.priority: "Low"
+      spark.tispark.table.scan_concurrency: 256
+    spark_env:
+      SPARK_EXECUTOR_CORES: 5
+      SPARK_EXECUTOR_MEMORY: "10g"
+      SPARK_WORKER_CORES: 5
+      SPARK_WORKER_MEMORY: "10g"
+  - host: 10.0.1.22
+```
+
+### `tispark_workers`
+
+`tispark_workers` specifies the machines to which the worker nodes of TiSpark are deployed. It also specifies the service configuration on each machine. `tispark_workers` is an array. Each array element contains the following fields:
+
+- `host`: Specifies the machine to which the TiSpark workers are deployed. The field value is an IP address and is mandatory.
+
+- `listen_host`: When the machine has multiple IP addresses, `listen_host` specifies the listening IP address of the service. The default value is `0.0.0.0`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: Spark's listening port, used for communication before the node. The default value is `7077`.
+
+- `web_port`: Spark's web port, which provides web services and the task status. The default value is `8080`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `java_home`: Specifies the path in which the JRE environment to be used is located. This parameter corresponds to the `JAVA_HOME` system environment variable.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+For the above fields, you cannot modify these configured fields after the deployment:
+
+- `host`
+- `listen_host`
+- `port`
+- `web_port`
+- `deploy_dir`
+- `arch`
+- `os`
+
+A `tispark_workers` configuration example is as follows:
+
+```yaml
+tispark_workers:
+  - host: 10.0.1.22
+  - host: 10.0.1.23
+```
+
 ### `tso_servers`
 
-`tso_servers` 约定了将 `tso` 微服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`tso_servers` 是一个数组，每个数组元素包含以下字段：
+`tso_servers` specifies the machines to which the `tso` microservices are deployed. It also specifies the service configuration on each machine. `tso_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略。
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`。
-- `port`：`tso` 微服务的监听端口，默认值：`3379`。
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成。
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成。
-- `config`：该字段配置规则和 `server_configs` 里的 `tso` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `tso` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器。
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`。
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`。
+- `host`: Specifies the IP address of the machine to which the `tso` microservices are deployed. The field value is mandatory.
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+- `port`: Specifies the listening port of the `tso` microservices. The default value is `3379`.
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+- `config`: The configuration rule of this field is the same as the `tso` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `tso` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Subsequently, a configuration file is generated and sent to the machine specified in `host`.
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
 
-在上述字段中，部分字段部署完成之后不能再修改。如下所示：
+Among the preceding fields, you cannot modify these fields after the deployment:
 
 - `host`
 - `port`
@@ -475,7 +696,7 @@ cdc_servers:
 - `arch`
 - `os`
 
-`tso_servers` 配置示例：
+A `tso_servers` configuration example is as follows:
 
 ```yaml
 tso_servers:
@@ -485,18 +706,18 @@ tso_servers:
 
 ### `scheduling_servers`
 
-`scheduling_servers` 约定了将 `scheduling` 微服务部署到哪些机器上，同时可以指定每台机器上的服务配置。`scheduling_servers` 是一个数组，每个数组元素包含以下字段：
+`scheduling_servers` specifies the machines to which `scheduling` microservices are deployed. It also specifies the service configuration on each machine. `scheduling_servers` is an array, and each element of the array contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略。
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`。
-- `port`：`scheduling` 微服务的监听端口，默认值：`3379`。
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成。
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成。
-- `config`：该字段配置规则和 `server_configs` 里的 `scheduling` 配置规则相同，若配置了该字段，会将该字段内容和 `server_configs` 里的 `scheduling` 内容合并（若字段重叠，以本字段内容为准），然后生成配置文件并下发到 `host` 指定的机器。
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`。
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`。
+- `host`: Specifies the IP address of the machine to which the `scheduling` microservices are deployed. The field is mandatory.
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+- `port`: Specifies the listening port of the `scheduling` microservices. The default value is `3379`.
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+- `config`: The configuration rule of this field is the same as the `scheduling` configuration rule in `server_configs`. If this field is configured, the field content is merged with the `scheduling` content in `server_configs` (if the two fields overlap, the content of this field takes effect). Subsequently, a configuration file is generated and sent to the machine specified in `host`.
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
 
-在上述字段中，部分字段部署完成之后不能再修改。如下所示：
+Among the preceding fields, you cannot modify these fields after the deployment:
 
 - `host`
 - `port`
@@ -505,7 +726,7 @@ tso_servers:
 - `arch`
 - `os`
 
-`scheduling_servers` 配置示例：
+A `scheduling_servers` configuration example is as follows:
 
 ```yaml
 scheduling_servers:
@@ -515,30 +736,43 @@ scheduling_servers:
 
 ### `monitoring_servers`
 
-`monitoring_servers` 约定了将 Prometheus 服务部署到哪台机器上，同时可以指定这台机器上的服务配置，`monitoring_servers` 是一个数组，每个数组元素包含以下字段：
+`monitoring_servers` specifies the machines to which the Prometheus services are deployed. It also specifies the service configuration on each machine. `monitoring_servers` is an array. Each array element contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，必填项
-- `ng_port`：指定 NgMonitoring 组件监听的端口，在 TiUP v1.7.0 引入，用于支持 TiDB Dashboard 中[持续性能分析](/dashboard/continuous-profiling.md)和 [Top SQL](/dashboard/top-sql.md) 功能。默认值：12020
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 global 区块中的 `ssh_port`
-- `port`：指定 Prometheus 提供服务的端口，默认值：9090
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `storage_retention`：Prometheus 监控数据保留时间，默认 "30d"
-- `rule_dir`：该字段指定一个本地目录，该目录中应当含有完整的 `*.rules.yml` 文件，这些文件会在集群配置初始化阶段被传输到目标机器上，作为 Prometheus 的规则
-- `remote_config`：用于支持将 Prometheus 数据写到远端，或从远端读取数据，该字段下有两个配置：
-    - `remote_write`：参考 Prometheus [`<remote_write>`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write) 文档
-    - `remote_read`：参考 Prometheus [`<remote_read>`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read) 文档
-- `external_alertmanagers`：若配置了 `external_alertmanagers`，Prometheus 会将配置行为报警通知到集群外的 Alertmanager。该字段为一个数组，数组的元素为每个外部的 Alertmanager，由 `host` 和 `web_port` 字段构成
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
-- `additional_args`：从 TiUP v1.15.0 开始引入，用于配置 Prometheus 额外运行参数。该字段是一个数组，数组元素为 Prometheus 运行参数。例如，要开启 Prometheus 热加载功能，可以将该字段配置为 `--web.enable-lifecycle`
-- `external_labels`：从 TiUP v1.17.0 开始引入，该字段用于以键值对的形式配置 Prometheus 全局 `external_labels`。你可以使用该字段为 Prometheus 的 `remote_write`、联邦抓取 (federation) 和告警附加稳定元数据。TiUP 会自动管理并保留 `cluster` 和 `monitor` 标签，因此不要在该字段中配置这些标签。此外，以 `__` 开头的标签名称同样是保留的，所有标签名称都必须符合 Prometheus 标签命名规则。如果使用不支持该字段的早期版本 TiUP 读取拓扑配置文件，TiUP 不会忽略该字段，而是直接解析失败。
-- `additional_scrape_conf`：自定义 Prometheus scrape 配置。在集群进行 deploy/scale-out/scale-in/reload 操作时，TiUP 会将 `additional_scrape_conf` 字段的内容添加到 Prometheus 配置文件的对应参数中。更多信息，请参考[自定义监控组件的配置](/tiup/customized-montior-in-tiup-environment.md#自定义-prometheus-scrape-配置)
+- `host`: Specifies the machine to which the monitoring services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `ng_port`: Specifies the port that NgMonitoring listens to. Introduced in TiUP v1.7.0, this field supports [Continuous Profiling](/dashboard/dashboard-profiling.md) and [Top SQL](/dashboard/top-sql.md). The default value is `12020`.
+
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the Prometheus services. The default value is `9090`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `storage_retention`: The retention time of the Prometheus monitoring data. The default value is `"30d"`.
+
+- `rule_dir`: Specifies a local directory that should contain complete `*.rules.yml` files. These files are transferred to the target machine during the initialization phase of the cluster configuration as the rules for Prometheus.
+- `remote_config`: Supports writing Prometheus data to the remote, or reading data from the remote. This field has two configurations:
+    - `remote_write`: See the Prometheus document [`<remote_write>`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_write).
+    - `remote_read`: See the Prometheus document [`<remote_read>`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#remote_read).
+- `external_alertmanagers`: If the `external_alertmanagers` field is configured, Prometheus alerts the configuration behavior to the Alertmanager that is outside the cluster. This field is an array, each element of which is an external Alertmanager and consists of the `host` and `web_port` fields.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+- `additional_args`: Introduced in TiUP v1.15.0, this field configures additional parameters for running Prometheus. This field is an array, and each element of the array is a Prometheus running parameter. For example, to enable the Prometheus hot reload feature, you can set this field to `--web.enable-lifecycle`.
+
+- `additional_scrape_conf`: Customized Prometheus scrape configuration. When you deploy, scale out, scale in, or reload a TiDB cluster, TiUP adds the content of the `additional_scrape_conf` field to the corresponding parameters of the Prometheus configuration file. For more information, see [Customize Prometheus scrape configuration](/tiup/customized-montior-in-tiup-environment.md#customize-prometheus-scrape-configuration).
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `port`
@@ -548,7 +782,7 @@ scheduling_servers:
 - `arch`
 - `os`
 
-`monitoring_servers` 配置示例：
+A `monitoring_servers` configuration example is as follows:
 
 ```yaml
 monitoring_servers:
@@ -556,9 +790,6 @@ monitoring_servers:
     rule_dir: /local/rule/dir
     additional_args:
     - --web.enable-lifecycle
-    external_labels:
-      environment: production
-      region: us-east-1
     remote_config:
       remote_write:
       - queue_config:
@@ -569,37 +800,47 @@ monitoring_servers:
         url: http://127.0.0.1:8003/write
       remote_read:
       - url: http://127.0.0.1:8003/read
-    external_alertmanagers:
-    - host: 10.1.1.1
-      web_port: 9093
-    - host: 10.1.1.2
-      web_port: 9094
+      external_alertmanagers:
+      - host: 10.1.1.1
+        web_port: 9093
+      - host: 10.1.1.2
+        web_port: 9094
 ```
 
 ### `grafana_servers`
 
-`grafana_servers` 约定了将 Grafana 服务部署到哪台机器上，同时可以指定这台机器上的服务配置，`grafana_servers` 是一个数组，每个数组元素包含以下字段：
+`grafana_servers` specifies the machines to which the Grafana services are deployed. It also specifies the service configuration on each machine. `grafana_servers` is an array. Each array element contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `port`：指定 Grafana 提供服务的端口，默认值：3000
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `username`：Grafana 登录界面的用户名
-- `password`：Grafana 对应的密码
-- `dashboard_dir`：该字段指定一个本地目录，该目录中应当含有完整的 `dashboard(*.json)` 文件，这些文件会在集群配置初始化阶段被传输到目标机器上，作为 Grafana 的 dashboards
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
-- `config`：该字段用于添加 Grafana 自定义配置。在集群进行 deploy/scale-out/scale-in/reload 等操作时，TiUP 会将 `config` 字段的内容添加到 Grafana 的配置文件 `grafana.ini` 中。更多信息，请参考[自定义 Grafana 其他配置](/tiup/customized-montior-in-tiup-environment.md#自定义-grafana-其他配置)
+- `host`: Specifies the machine to which the Grafana services are deployed. The field value is an IP address and is mandatory.
 
-> **注意：**
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `port`: The listening port of the Grafana services. The default value is `3000`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `username`: The user name on the Grafana login interface.
+
+- `password`: The password corresponding to Grafana.
+
+- `dashboard_dir`: Specifies a local directory that should contain complete `dashboard(*.json)` files. These files are transferred to the target machine during the initialization phase of the cluster configuration as the dashboards for Grafana.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+- `config`: This field is used to add custom configurations to Grafana. When you deploy, scale out, scale in, or reload a TiDB cluster, TiUP adds the content of the `config` field to the Grafana configuration file `grafana.ini`. For more information, see [Customize other Grafana configurations](/tiup/customized-montior-in-tiup-environment.md#customize-other-grafana-configurations).
+
+> **Note:**
 >
-> 如果配置了 `grafana_servers` 的 `dashboard_dir` 字段，在执行 `tiup cluster rename` 命令进行集群重命名后，需要完成以下操作：
+> If the `dashboard_dir` field of `grafana_servers` is configured, after executing the `tiup cluster rename` command to rename the cluster, you need to perform the following operations:
 >
-> 1. 对于本地的 dashboards 目录中的 `*.json` 文件，将 `datasource` 字段的值更新为新的集群名（这是因为 `datasource` 是以集群名命名的）
-> 2. 执行 `tiup cluster reload -R grafana` 命令
+> 1. For the `*.json` files in the local dashboards directory, update the value of the `datasource` field to the new cluster name (because `datasource` is named after the cluster name).
+> 2. Execute the `tiup cluster reload -R grafana` command.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `port`
@@ -607,7 +848,7 @@ monitoring_servers:
 - `arch`
 - `os`
 
-`grafana_servers` 配置示例：
+A `grafana_servers` configuration example is as follows:
 
 ```yaml
 grafana_servers:
@@ -617,23 +858,35 @@ grafana_servers:
 
 ### `alertmanager_servers`
 
-`alertmanager_servers` 约定了将 Alertmanager 服务部署到哪些机器上，同时可以指定这台机器上的服务配置，`alertmanager_servers` 是一个数组，每个数组元素包含以下字段：
+`alertmanager_servers` specifies the machines to which the Alertmanager services are deployed. It also specifies the service configuration on each machine. `alertmanager_servers` is an array. Each array element contains the following fields:
 
-- `host`：指定部署到哪台机器，字段值填 IP 地址，不可省略
-- `ssh_port`：指定连接目标机器进行操作的时候使用的 SSH 端口，若不指定，则使用 `global` 区块中的 `ssh_port`
-- `web_port`：指定 Alertmanager 提供网页服务的端口，默认值：9093
-- `cluster_port`：指定 Alertmanger 和其他 Alertmanager 通讯的端口，默认值：9094
-- `deploy_dir`：指定部署目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `deploy_dir` 生成
-- `data_dir`：指定数据目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `data_dir` 生成
-- `log_dir`：指定日志目录，若不指定，或指定为相对目录，则按照 `global` 中配置的 `log_dir` 生成
-- `numa_node`：为该实例分配 NUMA 策略，如果指定了该参数，需要确保目标机装了 [numactl](https://linux.die.net/man/8/numactl)，在指定该参数的情况下会通过 [numactl](https://linux.die.net/man/8/numactl) 分配 cpubind 和 membind 策略。该字段参数为 string 类型，字段值填 NUMA 节点的 ID，例如 "0,1"
-- `config_file`：该字段指定一个本地文件，该文件会在集群配置初始化阶段被传输到目标机器上，作为 Alertmanager 的配置
-- `os`：`host` 字段所指定的机器的操作系统，若不指定该字段，则默认为 `global` 中的 `os`
-- `arch`：`host` 字段所指定的机器的架构，若不指定该字段，则默认为 `global` 中的 `arch`
-- `resource_control`：针对该服务的资源控制，如果配置了该字段，会将该字段和 `global` 中的 `resource_control` 内容合并（若字段重叠，以本字段内容为准），然后生成 systemd 配置文件并下发到 `host` 指定机器。`resource_control` 的配置规则同 `global` 中的 `resource_control`
-- `listen_host`：指定监听地址，从而可以通过代理访问 Alertmanager。推荐使用 `0.0.0.0`。更多信息，请参考[自定义 Alertmanager 配置](/tiup/customized-montior-in-tiup-environment.md#自定义-alertmanager-配置)
+- `host`: Specifies the machine to which the Alertmanager services are deployed. The field value is an IP address and is mandatory.
 
-以上所有字段中，部分字段部署完成之后不能再修改。如下所示：
+- `ssh_port`: Specifies the SSH port to connect to the target machine for operations. If it is not specified, the `ssh_port` of the `global` section is used.
+
+- `web_port`: Specifies the port used that Alertmanager uses to provide web services. The default value is `9093`.
+
+- `cluster_port`: Specifies the communication port between one Alertmanger and other Alertmanager. The default value is `9094`.
+
+- `deploy_dir`: Specifies the deployment directory. If it is not specified or specified as a relative directory, the directory is generated according to the `deploy_dir` directory configured in `global`.
+
+- `data_dir`: Specifies the data directory. If it is not specified or specified as a relative directory, the directory is generated according to the `data_dir` directory configured in `global`.
+
+- `log_dir`: Specifies the log directory. If it is not specified or specified as a relative directory, the log is generated according to the `log_dir` directory configured in `global`.
+
+- `numa_node`: Allocates the NUMA policy to the instance. Before specifying this field, you need to make sure that the target machine has [numactl](https://linux.die.net/man/8/numactl) installed. If this field is specified, cpubind and membind policies are allocated using [numactl](https://linux.die.net/man/8/numactl). This field is the string type. The field value is the ID of the NUMA node, such as "0,1".
+
+- `config_file`: Specifies a local file that is transferred to the target machine during the initialization phase of the cluster configuration as the configuration of Alertmanager.
+
+- `os`: The operating system of the machine specified in `host`. If this field is not specified, the default value is the `os` value in `global`.
+
+- `arch`: The architecture of the machine specified in `host`. If this field is not specified, the default value is the `arch` value in `global`.
+
+- `resource_control`: Resource control for the service. If this field is configured, the field content is merged with the `resource_control` content in `global` (if the two fields overlap, the content of this field takes effect). Then, a systemd configuration file is generated and sent to the machine specified in `host`. The configuration rules of `resource_control` are the same as the `resource_control` content in `global`.
+
+- `listen_host`: Specifies the listening address so that Alertmanager can be accessed through a proxy. It is recommended to configure it as `0.0.0.0`. For more information, see [Customize Alertmanager configurations](/tiup/customized-montior-in-tiup-environment.md#customize-alertmanager-configurations).
+
+For the above fields, you cannot modify these configured fields after the deployment:
 
 - `host`
 - `web_port`
@@ -644,7 +897,7 @@ grafana_servers:
 - `arch`
 - `os`
 
-`alertmanager_servers` 配置示例：
+A `alertmanager_servers` configuration example is as follows:
 
 ```yaml
 alertmanager_servers:

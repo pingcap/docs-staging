@@ -1,15 +1,15 @@
 ---
-title: 基于 Avro 的 TiCDC 行数据 Checksum 校验
-summary: 介绍 TiCDC 行数据 Checksum 校验的具体实现。
+title: TiCDC Row Data Checksum Verification Based on Avro
+summary: Introduce the detailed implementation of TiCDC row data checksum verification.
 ---
 
-# 基于 Avro 的 TiCDC 行数据 Checksum 校验
+# TiCDC Row Data Checksum Verification Based on Avro
 
-本文介绍如何使用 Golang 消费 TiCDC 发送到 Kafka、且由 Avro 协议编码的数据，以及如何基于[单行数据 Checksum 功能](/ticdc/ticdc-integrity-check.md)进行数据校验。
+This document introduces how to consume data sent to Kafka by TiCDC and encoded by Avro protocol using Golang, and how to perform data verification using the [Single-row data checksum feature](/ticdc/ticdc-integrity-check.md).
 
-本示例代码位于 [`avro-checksum-verification`](https://github.com/pingcap/tiflow/tree/release-8.5/examples/golang/avro-checksum-verification) 目录下。
+The source code of this example is available in the [`avro-checksum-verification`](https://github.com/pingcap/tiflow/tree/release-8.5/examples/golang/avro-checksum-verification) directory.
 
-本文使用 [kafka-go](https://github.com/segmentio/kafka-go) 实现一个简单的 Kafka Consumer 程序。该程序不断地从指定的 Topic 中读取数据、计算并校验 Checksum 值。
+The example in this document uses [kafka-go](https://github.com/segmentio/kafka-go) to create a simple Kafka consumer program. This program continuously reads data from a specified topic, calculates the checksum, and verifies its value.
 
 ```go
 package main
@@ -35,8 +35,8 @@ import (
 )
 
 const (
-    // confluent avro wire format, the first byte is always 0
-    // https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/index.html#wire-format
+    // The first byte of the Confluent Avro wire format is always 0.
+    // For more details, see https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/index.html#wire-format.
     magicByte = uint8(0)
 )
 
@@ -60,7 +60,7 @@ func main() {
     ctx := context.Background()
     log.Info("start consuming ...", zap.String("kafka", kafkaAddr), zap.String("topic", topic), zap.String("groupID", consumerGroupID))
     for {
-        // 1. 获取 kafka 消息
+        // 1. Fetch the kafka message.
         message, err := consumer.FetchMessage(ctx)
         if err != nil {
             log.Error("read kafka message failed", zap.Error(err))
@@ -71,19 +71,19 @@ func main() {
             log.Info("delete event does not have value, skip checksum verification", zap.String("topic", topic))
         }
 
-        // 2. 对 value 进行解码，得到对应的 value map 和 schema map
+        // 2. Decode the value to get the corresponding value map and schema map.
         valueMap, valueSchema, err := getValueMapAndSchema(value, schemaRegistryURL)
         if err != nil {
             log.Panic("decode kafka value failed", zap.String("topic", topic), zap.ByteString("value", value), zap.Error(err))
         }
 
-        // 3. 使用上一步得到的 value map 和 schema map，计算并且校验 checksum
+        // 3. Calculate and verify checksum value using the value map and schema map obtained in the previous step.
         err = CalculateAndVerifyChecksum(valueMap, valueSchema)
         if err != nil {
             log.Panic("calculate checksum failed", zap.String("topic", topic), zap.ByteString("value", value), zap.Error(err))
         }
 
-        // 4. 数据消费成功，提交 offset
+        // 4. Commit offset after the data is successfully consumed.
         if err := consumer.CommitMessages(ctx, message); err != nil {
             log.Error("commit kafka message failed", zap.Error(err))
             break
@@ -92,15 +92,15 @@ func main() {
 }
 ```
 
-从上面的代码可以看出，`getValueMapAndSchema()` 和 `CalculateAndVerifyChecksum()` 是计算 Checksum 的关键步骤，下面分别介绍这两个函数的实现。
+The key steps for calculating the checksum value are `getValueMapAndSchema()` and `CalculateAndVerifyChecksum()`. The following sections describe the implementation of these two functions.
 
-## 解码数据以及获取相应的 Schema
+## Decode data and get the corresponding schema
 
-`getValueMapAndSchema()` 方法的主要作用是解码数据以及获取相应的 schema，二者均以 `map[string]interface{}` 类型返回。
+The `getValueMapAndSchema()` method decodes data and gets the corresponding schema. This method returns both the data and schema as a `map[string]interface{}` type.
 
 ```go
-// data is received kafka message's key or value, url is the schema registry url.
-// return the decoded value and corresponding schema as map.
+// data is the key or value of the received kafka message, and url is the schema registry url.
+// This function returns the decoded value and corresponding schema as map.
 func getValueMapAndSchema(data []byte, url string) (map[string]interface{}, map[string]interface{}, error) {
     schemaID, binary, err := extractSchemaIDAndBinaryData(data)
     if err != nil {
@@ -141,8 +141,8 @@ func extractSchemaIDAndBinaryData(data []byte) (int, []byte, error) {
     return int(binary.BigEndian.Uint32(data[1:5])), data[5:], nil
 }
 
-// GetSchema query the schema registry to fetch the schema by the schema id.
-// return the goavro.Codec which can be used to encode and decode the data.
+// GetSchema fetches the schema from the schema registry by the schema ID.
+// This function returns a goavro.Codec that can be used to encode and decode the data.
 func GetSchema(url string, schemaID int) (*goavro.Codec, error) {
     requestURI := url + "/schemas/ids/" + strconv.Itoa(schemaID)
 
@@ -203,28 +203,28 @@ type lookupResponse struct {
 
 ```
 
-## 计算并校验 Checksum
+## Calculate and verify the checksum value
 
-上一步获取的 `valueMap` 和 `valueSchema` 包含了所有用于 Checksum 计算和校验的元素。
+The `valueMap` and `valueSchema` obtained in the previous step contain all the elements used for checksum calculation and verification.
 
-在消费端计算和校验 Checksum 的过程包含以下几个步骤：
+The checksum calculation and verification process on the consumer side includes the following steps:
 
-1. 获取期望的 Checksum 值。
-2. 遍历每一列，根据列的数据值和对应的 MySQL Type，生成字节切片，不断更新 Checksum 值。
-3. 将上一步计算得到的 Checksum 和从收到的消息里提取出来的 Checksum 做比较。如果不一致，则说明 Checksum 校验失败，数据可能发生损坏。
+1. Get the expected checksum value.
+2. Iterate over each column, generate a byte slice according to the column value and the corresponding MySQL type, and update the checksum value continuously.
+3. Compare the checksum value calculated in the previous step with the checksum value obtained from the received message. If they are not the same, the checksum verification fails and the data might be corrupted.
 
-示例代码如下：
+The sample code is as follows:
 
 ```go
 func CalculateAndVerifyChecksum(valueMap, valueSchema map[string]interface{}) error {
-    // fields 存放有数据变更事件的每一个列的类型信息，按照每一列的 ID 排序，该顺序和 Checksum 计算顺序相同
+    // The fields variable stores the column type information for each data change event. The column IDs are used to sort the fields, which is the same as the order in which the checksum is calculated.
     fields, ok := valueSchema["fields"].([]interface{})
     if !ok {
         return errors.New("schema fields should be a map")
     }
 
-    // 1. 从 valueMap 里面查找期望的 checksum 值，它被编码成 string 类型
-    // 如果找不到，说明 TiCDC 发送该条数据时，还没有开启 checksum 功能，直接返回即可
+    // 1. Get the expected checksum value from valueMap, which is encoded as a string.
+    // If the expected checksum value is not found, it means that the checksum feature is not enabled when TiCDC sends the data. In this case, this function returns directly.
     o, ok := valueMap["_tidb_row_level_checksum"]
     if !ok {
         return nil
@@ -234,15 +234,15 @@ func CalculateAndVerifyChecksum(valueMap, valueSchema map[string]interface{}) er
         return nil
     }
 
-    // expectedChecksum 即是从 TiCDC 传递而来的期望的 checksum 值
+    // expectedChecksum is the expected checksum value passed from TiCDC.
     expectedChecksum, err := strconv.ParseUint(expected, 10, 64)
     if err != nil {
         return errors.Trace(err)
     }
 
-    // 2. 遍历每一个 field，计算 checksum 值
+    // 2. Iterate over each field and calculate the checksum value.
     var actualChecksum uint32
-    // buf 用来存储每次更新 checksum 时使用的字节切片
+    // buf stores the byte slice used to update the checksum value each time.
     buf := make([]byte, 0)
     for _, item := range fields {
         field, ok := item.(map[string]interface{})
@@ -250,13 +250,13 @@ func CalculateAndVerifyChecksum(valueMap, valueSchema map[string]interface{}) er
             return errors.New("schema field should be a map")
         }
 
-        // `tidbOp` 及之后的列不参与到 checksum 计算中，因为它们是一些用于辅助数据消费的列，并非真实的 TiDB 列数据
+        // The tidbOp and subsequent columns are not involved in the checksum calculation, because they are used to assist data consumption and not real TiDB column data.
         colName := field["name"].(string)
         if colName == "_tidb_op" {
             break
         }
 
-        // holder 存放有列类型信息
+        // The holder variable stores the type information of each column.
         var holder map[string]interface{}
         switch ty := field["type"].(type) {
         case []interface{}:
@@ -275,7 +275,7 @@ func CalculateAndVerifyChecksum(valueMap, valueSchema map[string]interface{}) er
 
         mysqlType := mysqlTypeFromTiDBType(tidbType)
 
-        // 根据每一列的名字，从解码之后的 value map 里拿到该列的值
+        // Get the value of each column from the decoded value map according to the name of each column.
         value, ok := valueMap[colName]
         if !ok {
             return errors.New("value not found")
@@ -289,7 +289,7 @@ func CalculateAndVerifyChecksum(valueMap, valueSchema map[string]interface{}) er
             buf = buf[:0]
         }
 
-        // 根据每一列的 value 和 mysqlType，生成用于更新 checksum 的字节切片，然后更新 checksum
+        // Generate a byte slice used to update the checksum according to the value and mysqlType of each column, and then update the checksum value.
         buf, err = buildChecksumBytes(buf, value, mysqlType)
         if err != nil {
             return errors.Trace(err)
@@ -349,10 +349,10 @@ func mysqlTypeFromTiDBType(tidbType string) byte {
     return result
 }
 
-// value 是一个 interface 类型的值，需要根据 holder 提供的类型信息，做一次转换处理
+// The value is an interface type, which needs to be converted according to the type information provided by the holder.
 func getColumnValue(value interface{}, holder map[string]interface{}, mysqlType byte) (interface{}, error) {
     switch t := value.(type) {
-    // nullable 的列，其值被编码成一个 map，只有一个键值对，键是类型，值是真实的值，此处只关心真实的值
+    // The column with nullable is encoded as a map, and there is only one key-value pair. The key is the type, and the value is the real value. Only the real value is concerned here.
     case map[string]interface{}:
         for _, v := range t {
             value = v
@@ -361,7 +361,7 @@ func getColumnValue(value interface{}, holder map[string]interface{}, mysqlType 
 
     switch mysqlType {
     case mysql.TypeEnum:
-        // Enum 被编码成了 string，此处转换为对应于 Enum 定义的 int 值
+        // Enum is encoded as a string, which is converted to the int value corresponding to the Enum definition here.
         allowed := strings.Split(holder["allowed"].(string), ",")
         switch t := value.(type) {
         case string:
@@ -374,7 +374,7 @@ func getColumnValue(value interface{}, holder map[string]interface{}, mysqlType 
             value = nil
         }
     case mysql.TypeSet:
-        // Set 被编码成了 string，根据 set 定义的顺序，转换为对应的 int 值
+        // Set is encoded as a string, which is converted to the int value corresponding to the Set definition here.
         elems := strings.Split(holder["allowed"].(string), ",")
         switch t := value.(type) {
         case string:
@@ -390,17 +390,17 @@ func getColumnValue(value interface{}, holder map[string]interface{}, mysqlType 
     return value, nil
 }
 
-// buildChecksumBytes 生成用于更新 checksum 的字节切片, 参考 https://github.com/pingcap/tidb/blob/e3417913f58cdd5a136259b902bf177eaf3aa637/util/rowcodec/common.go#L308
+// buildChecksumBytes generates a byte slice used to update the checksum, refer to https://github.com/pingcap/tidb/blob/e3417913f58cdd5a136259b902bf177eaf3aa637/util/rowcodec/common.go#L308
 func buildChecksumBytes(buf []byte, value interface{}, mysqlType byte) ([]byte, error) {
     if value == nil {
         return buf, nil
     }
 
     switch mysqlType {
-    // TypeTiny, TypeShort, TypeInt32 被编码成 int32
-    // TypeLong 被编码成 int32 if signed, else int64
-    // TypeLongLong，如果是 signed，被编码成 int64，否则被编码成 uint64,
-    // 开启 checksum 功能，bigintUnsignedHandlingMode 必须设置为 string，被编码成 string.
+    // TypeTiny, TypeShort, and TypeInt32 are encoded as int32.
+    // TypeLong is encoded as int32 if signed, otherwise, it is encoded as int64.
+    // TypeLongLong is encoded as int64 if signed, otherwise, it is encoded as uint64.
+    // When the checksum feature is enabled, bigintUnsignedHandlingMode must be set to string, which is encoded as string.
     case mysql.TypeTiny, mysql.TypeShort, mysql.TypeLong, mysql.TypeLonglong, mysql.TypeInt24, mysql.TypeYear:
         switch a := value.(type) {
         case int32:
@@ -421,7 +421,7 @@ func buildChecksumBytes(buf []byte, value interface{}, mysqlType byte) ([]byte, 
             log.Panic("unknown golang type for the integral value",
                 zap.Any("value", value), zap.Any("mysqlType", mysqlType))
         }
-    // Float 类型编码为 float32，Double 编码为 float64
+    // Encode float type as float64 and encode double type as float64.
     case mysql.TypeFloat, mysql.TypeDouble:
         var v float64
         switch a := value.(type) {
@@ -434,17 +434,17 @@ func buildChecksumBytes(buf []byte, value interface{}, mysqlType byte) ([]byte, 
             v = 0
         }
         buf = binary.LittleEndian.AppendUint64(buf, math.Float64bits(v))
-    // getColumnValue 将 Enum 和 Set 转换为了 uint64 类型
+    // getColumnValue encodes Enum and Set to uint64 type.
     case mysql.TypeEnum, mysql.TypeSet:
         buf = binary.LittleEndian.AppendUint64(buf, value.(uint64))
     case mysql.TypeBit:
-        // bit 类型编码为 []bytes，需要进一步转换为 uint64
+        // Encode bit type as []byte and convert it to uint64.
         v, err := binaryLiteralToInt(value.([]byte))
         if err != nil {
             return nil, errors.Trace(err)
         }
         buf = binary.LittleEndian.AppendUint64(buf, v)
-    // 非二进制类型时，编码成 string， 反之则为 []byte
+    // Non-binary types are encoded as string, and binary types are encoded as []byte.
     case mysql.TypeVarchar, mysql.TypeVarString, mysql.TypeString, mysql.TypeTinyBlob, mysql.TypeMediumBlob, mysql.TypeLongBlob, mysql.TypeBlob:
         switch a := value.(type) {
         case string:
@@ -458,12 +458,12 @@ func buildChecksumBytes(buf []byte, value interface{}, mysqlType byte) ([]byte, 
     case mysql.TypeTimestamp, mysql.TypeDatetime, mysql.TypeDate, mysql.TypeDuration, mysql.TypeNewDate:
         v := value.(string)
         buf = appendLengthValue(buf, []byte(v))
-    // 开启 checksum 功能时，decimalHandlingMode 必须设置为 string
+    // When the checksum feature is enabled, decimalHandlingMode must be set to string.
     case mysql.TypeNewDecimal:
         buf = appendLengthValue(buf, []byte(value.(string)))
     case mysql.TypeJSON:
         buf = appendLengthValue(buf, []byte(value.(string)))
-    // Null 和 Geometry 不参与到 checksum 计算
+    // Null and Geometry are not involved in the checksum calculation.
     case mysql.TypeNull, mysql.TypeGeometry:
     // do nothing
     default:
@@ -478,7 +478,7 @@ func appendLengthValue(buf []byte, val []byte) []byte {
     return buf
 }
 
-// 将 []byte 转换为 uint64，参考 https://github.com/pingcap/tidb/blob/e3417913f58cdd5a136259b902bf177eaf3aa637/types/binary_literal.go#L105
+// Convert []byte to uint64, refer to https://github.com/pingcap/tidb/blob/e3417913f58cdd5a136259b902bf177eaf3aa637/types/binary_literal.go#L105
 func binaryLiteralToInt(bytes []byte) (uint64, error) {
     bytes = trimLeadingZeroBytes(bytes)
     length := len(bytes)

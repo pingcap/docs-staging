@@ -1,18 +1,17 @@
 ---
-title: 字符串类型
-summary: TiDB 支持 MySQL 所有字符串类型，包括 CHAR、VARCHAR、BINARY、VARBINARY、BLOB、TEXT、ENUM 和 SET。CHAR 是定长字符串，长度固定为创建表时声明的长度。VARCHAR 是变长字符串，空间占用大小不得超过 65535 字节。TEXT 是文本串，最大列长为 65535 字节。TINYTEXT 最大列长度为 255。MEDIUMTEXT 最大列长度为 16777215。LONGTEXT 最大列长度为 4294967295。BINARY 存储二进制字符串。VARBINARY 存储二进制字符串。BLOB 是二进制大文件，最大列长度为 65535 字节。TINYBLOB 最大列长度为 255。MEDIUMBLOB 最大列长度为 16777215。LONGBLOB 最大列长度为 4294967295。ENUM 是枚举类型，值必须从固定集合中选取。SET 是集合类型，包含零个或多个值的字符串。
+title: String types
+summary: 了解 TiDB 支持的字符串类型。
 ---
 
-# 字符串类型
+# String Types
 
-TiDB 支持 MySQL 所有的字符串类型，包括 `CHAR`、`VARCHAR`、`BINARY`、`VARBINARY`、`BLOB`、`TEXT`、`ENUM` 以及 `SET`，完整信息参考[这篇](https://dev.mysql.com/doc/refman/8.0/en/string-types.html)文档。
+TiDB 支持所有 MySQL 的字符串类型，包括 `CHAR`、`VARCHAR`、`BINARY`、`VARBINARY`、`BLOB`、`TEXT`、`ENUM` 和 `SET`。更多信息请参见 [String Types in MySQL](https://dev.mysql.com/doc/refman/8.0/en/string-types.html)。
 
-## 类型定义
+## 支持的类型
 
 ### `CHAR` 类型
 
-定长字符串。`CHAR` 列的长度固定为创建表时声明的长度。M 表示列长度（字符的个数，不是字节的个数）。长度可以为从 0 到 255 的任何值。和 `VARCHAR` 类型不同，`CHAR` 列在写入时会对数据末尾的空格进行截断。
-
+`CHAR` 是固定长度字符串。M 表示列的长度（以字符为单位，而非字节）。M 的取值范围为 0 到 255。与 `VARCHAR` 类型不同，当数据插入到 `CHAR` 列时，尾部空格会被截断。
 
 ```sql
 [NATIONAL] CHAR[(M)] [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -20,11 +19,11 @@ TiDB 支持 MySQL 所有的字符串类型，包括 `CHAR`、`VARCHAR`、`BINARY
 
 ### `VARCHAR` 类型
 
-变长字符串。M 表示最大列长度（字符的最大个数）。`VARCHAR` 的空间占用大小不得超过 65535 字节。在选择 `VARCHAR` 长度时，应当根据最长的行的大小和使用的字符集确定。
+`VARCHAR` 是可变长度字符串。M 表示最大列长度（以字符为单位，而非字节）。`VARCHAR` 的最大尺寸不能超过 65,535 字节。最大行长度和所使用的字符集共同决定 `VARCHAR` 的长度。
 
-对于不同的字符集，单个字符所占用的空间可能有所不同。以下表格是各个字符集下单个字符占用的字节数，以及 `VARCHAR` 列长度的取值范围：
+不同字符集的单个字符占用的字节数可能不同。下表显示了每个字符集中的单个字符所占的字节数，以及每个字符集中的 `VARCHAR` 列长度范围：
 
-| 字符集 | 单个字符字节数 | VARCHAR 最大列长度的取值范围 |
+| 字符集 | 每个字符的字节数 | 最大 `VARCHAR` 列长度范围 |
 | ----- | ---- | ---- |
 | ascii | 1 | (0, 65535] |
 | latin1 | 1 | (0, 65535] |
@@ -32,15 +31,13 @@ TiDB 支持 MySQL 所有的字符串类型，包括 `CHAR`、`VARCHAR`、`BINARY
 | utf8 | 3 | (0, 21845] |
 | utf8mb4 | 4 | (0, 16383] |
 
-
 ```sql
 [NATIONAL] VARCHAR(M) [CHARACTER SET charset_name] [COLLATE collation_name]
 ```
 
 ### `TEXT` 类型
 
-文本串。最大列长为 65,535 字节。可选的 M 参数以字符为单位，用于自动选择 `TEXT` 列的最合适类型。例如 `TEXT(60)` 会产生一个 `TINYTEXT` 数据类型，最多可容纳 255 字节，即容纳一个 60 字符的 UTF-8 字符串，每个字符最多包含 4 字节（即 4×60=240）。不推荐使用 M 参数。
-
+`TEXT` 是可变长度字符串。最大列长度为 65,535 字节。可选的 M 参数以字符为单位，用于自动选择最合适的 `TEXT` 类型。例如 `TEXT(60)` 会生成一个 `TINYTEXT` 类型，最多可存储 255 字节，适合存储最多 60 个字符（每个字符最多 4 字节，4×60=240）。不建议使用 M 参数。
 
 ```sql
 TEXT[(M)] [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -48,8 +45,7 @@ TEXT[(M)] [CHARACTER SET charset_name] [COLLATE collation_name]
 
 ### `TINYTEXT` 类型
 
-类似于 [`TEXT`](#text-类型)，区别在于最大列长度为 255。
-
+`TINYTEXT` 类型类似于 [`TEXT` 类型](#text-type)。区别在于 `TINYTEXT` 的最大列长度为 255。
 
 ```sql
 TINYTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -57,8 +53,16 @@ TINYTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
 
 ### `MEDIUMTEXT` 类型
 
-类似于 [`TEXT`](#text-类型)，区别在于最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 的限制，TiDB 中默认单行存储最大不超过 6 MiB，可通过配置项将该限制调整至 120 MiB。
+<CustomContent platform="tidb">
 
+`MEDIUMTEXT` 类型类似于 [`TEXT` 类型](#text-type)。区别在于 `MEDIUMTEXT` 的最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+`MEDIUMTEXT` 类型类似于 [`TEXT` 类型](#text-type)。区别在于 `MEDIUMTEXT` 的最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
 
 ```sql
 MEDIUMTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -66,8 +70,16 @@ MEDIUMTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
 
 ### `LONGTEXT` 类型
 
-类似于 [`TEXT`](#text-类型)，区别在于最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 的限制，TiDB 中默认单行存储最大不超过 6 MiB，可通过配置项将该限制调整至 120 MiB。
+<CustomContent platform="tidb">
 
+`LONGTEXT` 类型类似于 [`TEXT` 类型](#text-type)。区别在于 `LONGTEXT` 的最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+`LONGTEXT` 类型类似于 [`TEXT` 类型](#text-type)。区别在于 `LONGTEXT` 的最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
 
 ```sql
 LONGTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
@@ -75,8 +87,7 @@ LONGTEXT [CHARACTER SET charset_name] [COLLATE collation_name]
 
 ### `BINARY` 类型
 
-类似于 [`CHAR`](#char-类型)，区别在于 `BINARY` 存储的是二进制字符串。
-
+`BINARY` 类型类似于 [`CHAR` 类型](#char-type)。区别在于 `BINARY` 存储二进制字节字符串。
 
 ```sql
 BINARY(M)
@@ -84,8 +95,7 @@ BINARY(M)
 
 ### `VARBINARY` 类型
 
-类似于 [`VARCHAR`](#varchar-类型)，区别在于 `VARBINARY` 存储的是二进制字符串。
-
+`VARBINARY` 类型类似于 [`VARCHAR` 类型](#varchar-type)。区别在于 `VARBINARY` 存储二进制字节字符串。
 
 ```sql
 VARBINARY(M)
@@ -93,8 +103,7 @@ VARBINARY(M)
 
 ### `BLOB` 类型
 
-二进制大文件。M 表示最大列长度，单位是字节，范围是 0 到 65535。
-
+`BLOB` 是大型二进制文件。M 表示最大列长度（以字节为单位），范围为 0 到 65,535。
 
 ```sql
 BLOB[(M)]
@@ -102,8 +111,7 @@ BLOB[(M)]
 
 ### `TINYBLOB` 类型
 
-类似于 [`BLOB`](#blob-类型)，区别在于最大列长度为 255。
-
+`TINYBLOB` 类型类似于 [`BLOB` 类型](#blob-type)。区别在于 `TINYBLOB` 的最大列长度为 255。
 
 ```sql
 TINYBLOB
@@ -111,8 +119,16 @@ TINYBLOB
 
 ### `MEDIUMBLOB` 类型
 
-类似于 [`BLOB`](#blob-类型)，区别在于最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 的限制，TiDB 中默认单行存储最大不超过 6 MiB，可通过配置项将该限制调整至 120 MiB。
+<CustomContent platform="tidb">
 
+`MEDIUMBLOB` 类型类似于 [`BLOB` 类型](#blob-type)。区别在于 `MEDIUMBLOB` 的最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+`MEDIUMBLOB` 类型类似于 [`BLOB` 类型](#blob-type)。区别在于 `MEDIUMBLOB` 的最大列长度为 16,777,215。但由于 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
 
 ```sql
 MEDIUMBLOB
@@ -120,8 +136,16 @@ MEDIUMBLOB
 
 ### `LONGBLOB` 类型
 
-类似于 [`BLOB`](#blob-类型)，区别在于最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-从-v4010-和-v500-版本开始引入) 的限制，TiDB 中默认单行存储最大不超过 6 MiB，可通过配置项将该限制调整至 120 MiB。
+<CustomContent platform="tidb">
 
+`LONGBLOB` 类型类似于 [`BLOB` 类型](#blob-type)。区别在于 `LONGBLOB` 的最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](/tidb-configuration-file.md#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
+<CustomContent platform="tidb-cloud">
+
+`LONGBLOB` 类型类似于 [`BLOB` 类型](#blob-type)。区别在于 `LONGBLOB` 的最大列长度为 4,294,967,295。但由于 [`txn-entry-size-limit`](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#txn-entry-size-limit-new-in-v4010-and-v500) 的限制，TiDB 中单行的最大存储大小默认为 6 MiB，可以通过修改配置将其提高到 120 MiB。
+
+</CustomContent>
 
 ```sql
 LONGBLOB
@@ -129,49 +153,39 @@ LONGBLOB
 
 ### `ENUM` 类型
 
-枚举类型是一个字符串，它只能有一个值的字符串对象。其值必须是从一个固定集合中选取，这个固定集合在创建表的时候定义，语法是：
-
+`ENUM` 是一种字符串对象，其值从在创建表时显式列出允许值的列表中选择。语法如下：
 
 ```sql
 ENUM('value1','value2',...) [CHARACTER SET charset_name] [COLLATE collation_name]
-```
 
-例如：
-
-
-```sql
+# 例如：
 ENUM('apple', 'orange', 'pear')
 ```
 
-枚举类型的值在 TiDB 内部使用数值来存储，每个值会按照定义的顺序转换为一个数字，比如上面的例子中，每个字符串值都会映射为一个数字：
+`ENUM` 数据类型的值以数字存储。每个值根据定义顺序转换为数字。在前述示例中，每个字符串映射为一个数字：
 
 | 值 | 数字 |
 | ---- | ---- |
-| NULL  | NULL |
+| NULL | NULL |
 | '' | 0 |
 | 'apple' | 1 |
 | 'orange' | 2 |
 | 'pear' | 3 |
 
-更多信息参考 [MySQL 枚举文档](https://dev.mysql.com/doc/refman/8.0/en/enum.html)。
+更多信息请参见 [the ENUM type in MySQL](https://dev.mysql.com/doc/refman/8.0/en/enum.html)。
 
 ### `SET` 类型
 
-集合类型是一个包含零个或多个值的字符串，其中每个值必须是从一个固定集合中选取，这个固定集合在创建表的时候定义，语法是：
-
+`SET` 是一种字符串对象，可以包含零个或多个值，每个值必须从在创建表时指定的允许值列表中选择。语法如下：
 
 ```sql
 SET('value1','value2',...) [CHARACTER SET charset_name] [COLLATE collation_name]
-```
 
-例如：
-
-
-```sql
+# 例如：
 SET('1', '2') NOT NULL
 ```
 
-上面的例子中，这列的有效值可以是：
+在示例中，以下任意值都可以是有效的：
 
 ```
 ''
@@ -180,15 +194,15 @@ SET('1', '2') NOT NULL
 '1,2'
 ```
 
-集合类型的值在 TiDB 内部会转换为一个 Int64 数值，每个元素是否存在用一个二进制位的 0/1 值来表示，比如这个例子 `SET('a','b','c','d')`，每一个元素都被映射为一个数字，且每个数字的二进制表示只会有一位是 1：
+在 TiDB 中，`SET` 类型的值会被内部转换为 `Int64`。每个元素的存在用二进制表示：0 或 1。对于指定为 `SET('a','b','c','d')` 的列，其成员对应的十进制和二进制值如下：
 
-| 成员 | 十进制表示 | 二进制表示 |
+| 成员 | 十进制值 | 二进制值 |
 | ---- | ---- | ------ |
-| 'a'  | 1 | 0001 |
+| 'a' | 1 | 0001 |
 | 'b' | 2 | 0010 |
 | 'c' | 4 | 0100 |
 | 'd' | 8 | 1000 |
 
-这样对于值为 `('a', 'c')` 的元素，其二进制表示即为 0101。
+在这种情况下，元素 `('a', 'c')` 的二进制表示为 `0101`。
 
-更多信息参考 [MySQL 集合文档](https://dev.mysql.com/doc/refman/8.0/en/set.html)。
+更多信息请参见 [the SET type in MySQL](https://dev.mysql.com/doc/refman/8.0/en/set.html)。

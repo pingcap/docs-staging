@@ -1,40 +1,61 @@
 ---
-title: 将 UUID 用作主键的最佳实践
-summary: 了解在 TiDB 中将 UUID 用作主键的最佳实践。
-aliases: ['/zh/tidb/stable/uuid/','/zh/tidb/dev/uuid/','/zh/tidbcloud/uuid/']
+title: 使用 UUID 作为主键的最佳实践
+summary: UUIDs（通用唯一标识符）在作为主键时，具有减少网络请求次数、支持大部分编程语言和数据库、以及防止枚举攻击等优点。建议将 UUID 以二进制格式存储在 `BINARY(16)` 列中。同时，建议避免在 TiDB 中设置 `swap_flag` 以防热点。UUIDs 也兼容 MySQL。
 ---
 
-# 将 UUID 用作主键的最佳实践
+# 使用 UUID 作为主键的最佳实践
 
-通用唯一标识符 (UUID) 是分布式数据库中常用的主键替代方案，相较于自增整数，它具有独特优势。本文将介绍在 TiDB 中使用 UUID 的优势，并提供高效存储和索引 UUID 的最佳实践。
+UUIDs（通用唯一标识符）是在分布式数据库中替代自增整数作为主键的常用方案。本文档概述了在 TiDB 中使用 UUID 的优势，并提供了高效存储和索引的最佳实践。
 
 ## UUID 概述
 
-当用作主键时，UUID 相较于 [`AUTO_INCREMENT`](/auto-increment.md) 整数具有以下优势：
+作为主键时，UUID 相较于 [`AUTO_INCREMENT`](/auto-increment.md) 整数具有以下优势：
 
-- UUID 可以在多个系统生成，而不会产生冲突。某些情况下可以减少到 TiDB 的网络往返次数，从而提高性能。
-- 绝大多数编程语言和数据库系统都支持 UUID。
-- 用在 URL 中时，UUID 不容易被枚举攻击。相比之下，使用 `AUTO_INCREMENT` 数字，则很容易让发票 ID 或用户 ID 被猜出。
+- UUID 可以在多个系统上生成，而不必担心冲突。在某些情况下，这可以减少对 TiDB 的网络请求次数，从而提升性能。
+- UUID 被大多数编程语言和数据库系统支持。
+- 作为 URL 的一部分时，UUID 不易受到枚举攻击。相比之下，使用 `AUTO_INCREMENT` 数字时，可能会猜测出发票编号或用户编号。
 
 ## 最佳实践
 
 本节介绍在 TiDB 中存储和索引 UUID 的最佳实践。
 
-### 二进制存储
+### 以二进制存储
 
-UUID 文本是一个包含 36 字符的字符串，如 `ab06f63e-8fe7-11ec-a514-5405db7aad56`。使用 [`UUID_TO_BIN()`](/functions-and-operators/miscellaneous-functions.md#uuid_to_bin) 可将 UUID 文本格式转换为 16 字节的二进制格式。这样，你可以将文本存储在 [`BINARY(16)`](/data-type-string.md#binary-类型) 列中。检索 UUID 时，可以使用 [`BIN_TO_UUID()`](/functions-and-operators/miscellaneous-functions.md#bin_to_uuid) 函数再将其转换回文本格式。
+文本格式的 UUID 如：`ab06f63e-8fe7-11ec-a514-5405db7aad56`，是一个 36 字符的字符串。通过使用 [`UUID_TO_BIN()`](/functions-and-operators/miscellaneous-functions.md#uuid_to_bin)，可以将文本格式转换为 16 字节的二进制格式。这允许你将其存储在 [`BINARY(16)`](/data-type-string.md#binary-type) 列中。在检索 UUID 时，可以使用 [`BIN_TO_UUID()`](/functions-and-operators/miscellaneous-functions.md#bin_to_uuid) 函数还原为文本格式。
 
-### UUID 格式二进制顺序和聚簇主键
+### UUID 格式的二进制排序和聚簇主键
 
-`UUID_TO_BIN()` 函数可以接收一个参数 (UUID) 或两个参数（第一个为 UUID，第二个为 `swap_flag`）。建议不要在 TiDB 中设置 `swap_flag`，以避免出现[热点](/best-practices/high-concurrency-best-practices.md)问题。
+`UUID_TO_BIN()` 函数可以接受一个参数，即 UUID，或者两个参数，其中第二个参数是 `swap_flag`。
 
-同时，你也可以在 UUID 主键上显式设置 [`CLUSTERED` 选项](/clustered-indexes.md)来避免热点问题。
+<CustomContent platform="tidb">
 
-为了演示 `swap_flag` 的效果，本文以表结构相同的两张表为例。区别在于，`uuid_demo_1` 表中插入的数据使用 `UUID_TO_BIN(?, 0)`，而 `uuid_demo_2` 表中使用 `UUID_TO_BIN(?, 1)`。
+建议不要在 TiDB 中设置 `swap_flag`，以避免 [hotspots](/best-practices/high-concurrency-best-practices.md)。
 
-在如下的[流量可视化页面](/dashboard/dashboard-key-visualizer.md) (Key Visualizer)，你可以看到写入操作集中在 `uuid_demo_2` 表的单个 Region 中，而这个表中的二进制格式字段顺序被调换过。
+</CustomContent>
 
-![Key Visualizer](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/uuid_keyviz.png)
+<CustomContent platform="tidb-cloud">
+
+建议不要在 TiDB 中设置 `swap_flag`，以避免热点。
+
+</CustomContent>
+
+你也可以显式为基于 UUID 的主键设置 [`CLUSTERED` 选项](/clustered-indexes.md)，以避免热点。
+
+为了演示 `swap_flag` 的效果，以下是两个结构相同的表。区别在于插入到 `uuid_demo_1` 的数据使用了 `UUID_TO_BIN(?, 0)`，而 `uuid_demo_2` 使用了 `UUID_TO_BIN(?, 1)`。
+
+<CustomContent platform="tidb">
+
+在下面的 [Key Visualizer](/dashboard/dashboard-key-visualizer.md) 截图中，你可以看到写入集中在 `uuid_demo_2` 表的某一单一区域，该表的字段顺序在二进制格式中被交换。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+在下面的 [Key Visualizer](/tidb-cloud/tune-performance.md#key-visualizer) 截图中，你可以看到写入集中在 `uuid_demo_2` 表的某一单一区域，该表的字段顺序在二进制格式中被交换。
+
+</CustomContent>
+
+![Key Visualizer](https://docs-download.pingcap.com/media/images/docs/best-practices/uuid_keyviz.png)
 
 ```sql
 CREATE TABLE `uuid_demo_1` (
@@ -52,11 +73,6 @@ CREATE TABLE `uuid_demo_2` (
 )
 ```
 
-关于流量可视化页面的更多信息，参见：
+## MySQL 兼容性
 
-- TiDB 的[流量可视化页面](/dashboard/dashboard-key-visualizer.md)
-- TiDB Cloud 的[流量可视化页面](https://docs.pingcap.com/zh/tidbcloud/tune-performance/#key-visualizer)
-
-## 与 MySQL 兼容性
-
-UUID 也可以在 MySQL 中使用。MySQL 8.0 引入了 `BIN_TO_UUID()` 和 `UUID_TO_BIN()` 函数。`UUID()` 函数在较早的 MySQL 版本中也可以使用。
+UUIDs 也可以在 MySQL 中使用。`BIN_TO_UUID()` 和 `UUID_TO_BIN()` 函数在 MySQL 8.0 版本中引入，`UUID()` 函数在早期版本的 MySQL 中也可用。

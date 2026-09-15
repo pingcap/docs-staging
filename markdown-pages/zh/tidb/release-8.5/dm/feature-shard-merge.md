@@ -1,35 +1,35 @@
 ---
-title: 分库分表合并迁移
-summary: DM 提供了分库分表的合并迁移功能，可将上游 MySQL/MariaDB 实例中的表迁移到下游 TiDB 的同一个表中。支持悲观协调和乐观协调两种模式。悲观模式保证数据不出错，但可能会阻塞迁移；乐观模式处理 DDL 时不会阻塞数据迁移，但可能导致数据不一致。
+title: Merge and Migrate Data from Sharded Tables
+summary: Learn how DM merges and migrates data from sharded tables.
 ---
 
-# 分库分表合并迁移
+# Merge and Migrate Data from Sharded Tables
 
-本文介绍了 DM 提供的分库分表的合并迁移功能，此功能可用于将上游 MySQL/MariaDB 实例中结构相同/不同的表迁移到下游 TiDB 的同一个表中。DM 不仅支持迁移上游的 DML 数据，也支持协调迁移多个上游分表的 DDL 表结构变更。
+This document introduces the sharding support feature provided by Data Migration (DM). This feature allows you to merge and migrate the data of tables with the same or different table schemas in the upstream MySQL or MariaDB instances into one same table in the downstream TiDB. It supports not only migrating the upstream DML statements, but also coordinating to migrate the table schema change using DDL statements in multiple upstream sharded tables.
 
-## 简介
+## Overview
 
-DM 支持对上游多个分表的数据合并迁移到 TiDB 的一个表中，在迁移过程中需要协调各个分表的 DDL，以及该 DDL 前后的 DML。针对用户的使用场景，DM 支持悲观协调和乐观协调两种不同的模式。
+DM supports merging and migrating the data of multiple upstream sharded tables into one table in TiDB. During the migration, the DDL of each sharded table, and the DML before and after the DDL need to be coordinated. For the usage scenarios, DM supports two different modes: pessimistic mode and optimistic mode.
 
-> **注意：**
+> **Note:**
 >
-> - 要执行分库分表合并迁移任务，必须在任务配置文件中设置 `shard-mode`。
-> - DM 对分库分表的合并默认使用悲观协调模式，在文档中如果没特殊说明则默认为悲观协调模式。
-> - 在没有深入了解乐观模式的原理和使用限制的情况下不建议使用该模式，否则可能造成迁移中断甚至数据不一致的严重后果。
+> - To merge and migrate data from sharded tables, you must set `shard-mode` in the task configuration file.
+> - DM uses the pessimistic mode by default for the merge of the sharding support feature. (If there is no special description in the document, use the pessimistic mode by default.)
+> - It is not recommended to use this mode if you do not understand the principles and restrictions of the optimistic mode. Otherwise, it may cause serious consequences such as migration interruption and even data inconsistency.
 
-### 悲观协调模式
+### The pessimistic mode
 
-当上游一个分表执行某一 DDL 后，这个分表的迁移会暂停，并等待其他所有分表都执行了同样的 DDL 才在下游执行该 DDL 并继续数据迁移。“悲观协调”模式的优点是可以保证迁移到下游的数据不会出错，详细的介绍请参考[悲观模式下分库分表合并迁移](/dm/feature-shard-merge-pessimistic.md)。
+When an upstream sharded table executes a DDL statement, the migration of this sharded table will be suspended. After all other sharded tables execute the same DDL, the DDL will be executed in the downstream and the data migration task will restart. The advantage of this mode is that it can ensure that the data migrated to the downstream will not go wrong. For details, refer to [shard merge in pessimistic mode](/dm/feature-shard-merge-pessimistic.md).
+ 
+### The optimistic mode
 
-### 乐观协调模式
+DM will automatically modify the DDL executed on a sharded table into a statement compatible with other sharded tables, and then migrate to the downstream. This will not block the DML migration of any sharded tables. The advantage of this mode is that it will not block data migration when processing DDL. However, improper use will cause migration interruption or even data inconsistency. For details, refer to [shard merge in optimistic mode](/dm/feature-shard-merge-optimistic.md).
 
-在一个分表上执行的 DDL，DM 会自动修改成兼容其他分表的语句，并立即迁移到下游，不会阻挡任何分表 DML 的迁移。“乐观协调”模式的优点是处理 DDL 时不会阻塞数据的迁移，但是使用不当会有迁移中断甚至数据不一致的风险，详细的介绍请参考[乐观模式下分库分表合并迁移](/dm/feature-shard-merge-optimistic.md)。
+### Contrast
 
-### 悲观协调模式与乐观协调模式的对比
-
-| 悲观协调模式   | 乐观协调模式   |
+| Pessimistic mode   | Optimistic mode   |
 | :----------- | :----------- |
-| 发起 DDL 的分表会暂停 DML 迁移 | 发起 DDL 的分表会继续 DML 迁移 |
-| 每个分表的 DDL 执行次序和语句必须相同 | 每个分表只需保持表结构互相兼容即可 |
-| DDL 在整个分表群达成一致后才迁移到下游 | 每个分表的 DDL 会即时影响下游 |
-| 错误的 DDL 操作在侦测到后可以被拦截 | 错误的 DDL 操作也会被迁移到下游，可能在侦测到之前已使部分上下游数据不一致 |
+| Sharded tables that executes DDL suspend DML migration | Sharded tables that executes DDL continue DML migration |
+| The DDL execution order and statements of each sharded table must be the same | Each sharded table only needs to keep the table schema compatible with each other  |
+| The DDL is migrated to the downstream after the entire shard group is consistent | The DDL of each sharded table immediately affects the downstream |
+| Wrong DDL operations can be intercepted after the detection | Wrong DDL operations will be migrated to the downstream, which may cause inconsistency between the upstream and downstream data before the detection  |

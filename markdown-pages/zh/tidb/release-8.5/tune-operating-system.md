@@ -1,24 +1,24 @@
 ---
-title: 操作系统性能参数调优
-summary: 了解如何进行 CentOS 7 系统的性能调优。
+title: Tune Operating System Performance
+summary: Learn how to tune the parameters of the operating system.
 ---
 
-# 操作系统性能参数调优
+# Tune Operating System Performance
 
-本文档仅用于描述如何优化 CentOS 7 的各个子系统。
+This document introduces how to tune each subsystem of CentOS 7.
 
-> **注意：**
+> **Note:**
 >
-> + CentOS 7 操作系统的默认配置适用于中等负载下运行的大多数服务。调整特定子系统的性能可能会对其他子系统产生负面影响。因此在调整系统之前，请备份所有用户数据和配置信息；
-> + 请在测试环境下对所有修改做好充分测试后，再应用到生产环境中。
+> + The default configuration of the CentOS 7 operating system is suitable for most services running under moderate workloads. Adjusting the performance of a particular subsystem might negatively affect other subsystems. Therefore, before tuning the system, back up all the user data and configuration information.
+> + Fully test all the changes in the test environment before applying them to the production environment.
 
-## 性能分析工具
+## Performance analysis methods
 
-系统调优需要根据系统性能分析的结果做指导，因此本文先列出常用的性能分析方法。
+System tuning must be based on the results of system performance analysis. This section lists common methods for performance analysis.
 
-### 60 秒分析法
+### In 60 seconds
 
-[60 秒分析法](http://www.brendangregg.com/Articles/Netflix_Linux_Perf_Analysis_60s.pdf)由《性能之巅》的作者 Brendan Gregg 及其所在的 Netflix 性能工程团队公布。所用到的工具均可从发行版的官方源获取，通过分析以下清单中的输出，可定位大部分常见的性能问题。
+[*Linux Performance Analysis in 60,000 Milliseconds*](http://www.brendangregg.com/Articles/Netflix_Linux_Perf_Analysis_60s.pdf) is published by the author Brendan Gregg and the Netflix Performance Engineering team. All tools used can be obtained from the official release of Linux. You can analyze outputs of the following list items to troubleshoot most common performance issues.
 
 + `uptime`
 + `dmesg | tail`
@@ -31,40 +31,40 @@ summary: 了解如何进行 CentOS 7 系统的性能调优。
 + `sar -n TCP,ETCP 1`
 + `top`
 
-具体用法可查询相应 `man` 手册。
+For detailed usage, see the corresponding `man` instructions.
 
 ### perf
 
-perf 是 Linux 内核提供的一个重要的性能分析工具，它涵盖硬件级别（CPU/PMU 和性能监视单元）功能和软件功能（软件计数器和跟踪点）。详细用法请参考 [perf Examples](http://www.brendangregg.com/perf.html#Background)。
+perf is an important performance analysis tool provided by the Linux kernel, which covers hardware level (CPU/PMU, performance monitoring unit) features and software features (software counters, trace points). For detailed usage, see [perf Examples](http://www.brendangregg.com/perf.html#Background).
 
 ### BCC/bpftrace
 
-CentOS 从 7.6 版本起，内核已实现对 BPF (Berkeley Packet Filter) 的支持，因此可根据[上述清单](#60-秒分析法)的结果，选取适当的工具进行深入分析。相比 perf/ftrace，BPF 提供了可编程能力和更小的性能开销。相比 kprobe，BPF 提供了更高的安全性，更适合在生产环境上使用。关于 BCC 工具集的使用请参考 [BPF Compiler Collection (BCC)](https://github.com/iovisor/bcc/blob/master/README.md)。
+Starting from CentOS 7.6, the Linux kernel has supported Berkeley Packet Filter (BPF). Therefore, you can choose proper tools to conduct an in-depth analysis based on the results in [In 60 seconds](#in-60-seconds). Compared with perf/ftrace, BPF provides programmability and smaller performance overhead. Compared with kprobe, BPF provides higher security and is more suitable for the production environments. For detailed usage of the BCC toolkit, see [BPF Compiler Collection (BCC)](https://github.com/iovisor/bcc/blob/master/README.md).
 
-## 性能调优
+## Performance tuning
 
-性能调优将根据内核子系统进行分类描述。
+This section introduces performance tuning based on the classified kernel subsystems.
 
-### 处理器——动态节能技术
+### CPU—frequency scaling
 
-cpufreq 是一个动态调整 CPU 频率的模块，可支持五种模式。为保证服务性能应选用 performance 模式，将 CPU 频率固定工作在其支持的最高运行频率上，不进行动态调节，操作命令为 `cpupower frequency-set --governor performance`。
+cpufreq is a module that dynamically adjusts the CPU frequency. It supports five modes. To ensure service performance, select the performance mode and fix the CPU frequency at the highest supported operating frequency without dynamic adjustment. The command for this operation is `cpupower frequency-set --governor performance`.
 
-### 处理器——中断亲和性
+### CPU—interrupt affinity
 
-- 自动平衡：可通过 `irqbalance` 服务实现。
-- 手动平衡：
-    - 确定需要平衡中断的设备，从 CentOS 7.5 开始，系统会自动为某些设备及其驱动程序配置最佳的中断关联性。不能再手动配置其亲和性。目前已知的有使用 `be2iscsi` 驱动的设备，以及 NVMe 设置；
-    - 对于其他设备，可查询其芯片手册，是否支持分发中断。
-        - 若不支持，则该设备的所有中断会路由到同一个 CPU 上，无法对其进行修改。
-        - 若支持，则计算 `smp_affinity` 掩码并设置对应的配置文件，具体请参考[内核 IRQ-affinity 文档](https://www.kernel.org/doc/Documentation/IRQ-affinity.txt)。
+- Automatic balance can be implemented through the `irqbalance` service.
+- Manual balance:
+    - Identify the devices that need to balance interrupts. Starting from CentOS 7.5, the system automatically configures the best interrupt affinity for certain devices and their drivers, such as devices that use the `be2iscsi` driver and NVMe settings. You can no longer manually configure interrupt affinity for such devices.
+    - For other devices, check the chip manual to see whether these devices support distributing interrupts.
+        - If they do not, all interrupts of these devices are routed to the same CPU and cannot be modified.
+        - If they do, calculate the `smp_affinity` mask and set the corresponding configuration file. For details, see the [kernel document](https://www.kernel.org/doc/Documentation/IRQ-affinity.txt).
 
-### NUMA 绑核
+### NUMA CPU binding
 
-为尽可能的避免跨 NUMA (Non-Uniform Memory Access) 访问内存，可以通过设置线程的 CPU 亲和性来实现 NUMA 绑核。对于普通程序，可使用 `numactl` 命令来绑定，具体用法请查询 `man` 手册。对于网卡中断，请参考下文[网络](#网络)章节。
+To avoid accessing memory across Non-Uniform Memory Access (NUMA) nodes as much as possible, you can bind a thread/process to certain CPU cores by setting the CPU affinity of the thread. For ordinary programs, you can use the `numactl` command for the CPU binding. For detailed usage, see the Linux manual pages. For network interface card (NIC) interrupts, see [tune network](#network-tuning).
 
-### 内存——透明大页
+### Memory—transparent huge page (THP)
 
-对于数据库应用，**不推荐**使用 THP，因为数据库往往具有稀疏而不是连续的内存访问模式，且当高阶内存碎片化比较严重时，分配 THP 页面会出现较大的延迟。若开启针对 THP 的直接内存规整功能，也会出现系统 CPU 使用率激增的现象，因此建议关闭 THP。
+It is **NOT** recommended to use THP for database applications, because databases often have sparse rather than continuous memory access patterns. If high-level memory fragmentation is serious, a higher latency will occur when THP pages are allocated. If the direct compaction is enabled for THP, the CPU usage will surge. Therefore, it is recommended to disable THP.
 
 ```shell
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -72,49 +72,57 @@ echo never > /sys/kernel/mm/transparent_hugepage/defrag
 grubby --update-kernel="$KERNEL" --args='transparent_hugepage=never'
 ```
 
-### 内存——虚拟内存参数
+### Memory—virtual memory parameters
 
-- `dirty_ratio` 百分比值。当脏的 page cache 总量达到系统内存总量的这一百分比后，系统将开始使用 `pdflush` 操作将脏的 page cache 写入磁盘。默认值为 20％，通常不需调整。对于高性能 SSD，比如 NVMe 设备来说，降低其值有利于提高内存回收时的效率。
-- `dirty_background_ratio` 百分比值。当脏的 page cache 总量达到系统内存总量的这一百分比后，系统开始在后台将脏的 page cache 写入磁盘。默认值为 10％，通常不需调整。对于高性能 SSD，比如 NVMe 设备来说，设置较低的值有利于提高内存回收时的效率。
+- `dirty_ratio` percentage ratio. When the total amount of dirty page caches reach this percentage ratio of the total system memory, the system starts to use the `pdflush` operation to write the dirty page caches to disk. The default value of `dirty_ratio` is 20% and usually does not need adjustment. For high-performance SSDs such as NVMe devices, lowering this value helps improve the efficiency of memory reclamation.
+- `dirty_background_ratio` percentage ratio. When the total amount of dirty page caches reach this percentage ratio of the total system memory, the system starts to write the dirty page caches to the disk in the background. The default value of `dirty_background_ratio` is 10% and usually does not need adjustment. For high-performance SSDs such as NVMe devices, setting a lower value helps improve the efficiency of memory reclamation.
 
-### 存储及文件系统
+### Storage and file system
 
-内核 I/O 栈链路较长，包含了文件系统层、块设备层和驱动层。
+The core I/O stack link is long, including the file system layer, the block device layer, and the driver layer.
 
-#### I/O 调度器
+#### I/O scheduler
 
-I/O 调度程序确定 I/O 操作何时在存储设备上运行以及持续多长时间。也称为 I/O 升降机。对于 SSD 设备，宜设置为 `noop`。
+The I/O scheduler determines when and how long I/O operations run on the storage device. It is also called I/O elevator. For SSD devices, it is recommended to set the I/O scheduling policy to `noop`.
 
 ```shell
 echo noop > /sys/block/${SSD_DEV_NAME}/queue/scheduler
 ```
 
-#### 格式化参数——块大小
+#### Formatting parameters—block size
 
-块 (block) 是文件系统的工作单元。块大小决定了单个块中可以存储多少数据，因此决定了一次写入或读取的最小数据量。
+Blocks are the working units of the file system. The block size determines how much data can be stored in a single block, and thus determines the minimum amount of data to be written or read each time.
 
-默认块大小适用于大多数使用情况。但是，如果块大小（或多个块的大小）与通常一次读取或写入的数据量相同或稍大，则文件系统将性能更好，数据存储效率更高。小文件仍将使用整个块。文件可以分布在多个块中，但这会增加运行时开销。
+The default block size is suitable for most scenarios. However, if the block size (or the size of multiple blocks) is the same or slightly larger than the amount of data normally read or written each time, the file system performs better and the data storage efficiency is higher. Small files still use the entire block. Files can be distributed among multiple blocks, but this will increase runtime overhead.
 
-使用 `mkfs` 命令格式化设备时，将块大小指定为文件系统选项的一部分。指定块大小的参数随文件系统的不同而不同。有关详细信息，请查询对应文件系统的 `mkfs` 手册页，比如 `man mkfs.ext4`。
+When using the `mkfs` command to format a device, specify the block size as a part of the file system options. The parameters that specify the block size vary with the file system. For details, see the corresponding `mkfs` manual pages, such as using `man mkfs.ext4`.
 
-#### 挂载参数
+#### `mount` parameters
 
-`noatime` 读取文件时，将禁用对元数据的更新。它还启用了 nodiratime 行为，该行为会在读取目录时禁用对元数据的更新。
+If the `noatime` option is enabled in the `mount` command, the update of metadata is disabled when files are read. If the `nodiratime` behavior is enabled, the update of metadata is disabled when the directory is read.
 
-### 网络
+### Network tuning
 
-网络子系统由具有敏感连接的许多不同部分组成。因此，CentOS 7 网络子系统旨在为大多数工作负载提供最佳性能，并自动优化其性能。因此，通常无需手动调整网络性能。
+The network subsystem consists of many different parts with sensitive connections. The CentOS 7 network subsystem is designed to provide the best performance for most workloads and automatically optimizes the performance of these workloads. Therefore, usually you do not need to manually adjust network performance.
 
-网络问题通常由硬件或相关设施出现问题导致的，因此在调优协议栈前，请先排除硬件问题。
+Network issues are usually caused by issues of hardware or related devices. So before tuning the protocol stack, rule out hardware issues.
 
-尽管网络堆栈在很大程度上是自我优化的。但是在网络数据包处理过程中，以下方面可能会成为瓶颈并降低性能：
+Although the network stack is largely self-optimizing, the following aspects in the network packet processing might become the bottleneck and affect performance:
 
-- 网卡硬件缓存：正确观察硬件层面的丢包方法是使用 `ethtool -S ${NIC_DEV_NAME}` 命令观察 `drops` 字段。当出现丢包现象时，主要考虑是硬/软中断的处理速度跟不上网卡接收速度。若接收缓存小于最大限制时，也可尝试增加 RX 缓存来防止丢包。查询命令为：`ethtool -g ${NIC_DEV_NAME}`，修改命令为 `ethtool -G ${NIC_DEV_NAME}`。
-- 硬中断：若网卡支持 Receive-Side Scaling（RSS 也称为多网卡接收）功能，则观察 `/proc/interrupts` 网卡中断，如果出现了中断不均衡的情况，请参考[处理器动态节能技术](#处理器动态节能技术)，[处理器调优](#处理器中断亲和性)，[NUMA 绑核](#numa-绑核)。若不支持 RSS 或 RSS 数量远小于物理 CPU 核数，则可配置 Receive Packet Steering（RPS，可以看作 RSS 的软件实现），及 RPS 的扩展 Receive Flow Steering (RFS)。具体设置请参考[内核文档](https://www.kernel.org/doc/Documentation/networking/scaling.txt)。
-- 软中断：观察 `/proc/net/softnet_stat` 监控。如果除第三列的其他列的数值在增长，则应适度调大 `net.core.netdev_budget` 或 `net.core.dev_weight` 值，使 `softirq` 可以获得更多的 CPU 时间。除此之外，也需要检查 CPU 使用情况，确定哪些任务在频繁占用 CPU，能否优化。
-- 应用的套接字接收队列：监控 `ss -nmp` 的 `Recv-q` 列，若队列已满，则应考虑增大应用程序套接字的缓存大小或使用自动调整缓存的方式。除此之外，也要考虑能否优化应用层的架构，降低读取套接字的间隔。
-- 以太网流控：若网卡和交换机支持流控功能，可通过使能此功能，给内核一些时间来处理网卡队列中的数据，来规避网卡缓存溢出的问题。对于网卡测，可通过 `ethtool -a ${NIC_DEV_NAME}` 命令检查是否支持/使能，并通过 `ethtool -A ${NIC_DEV_NAME}` 命令开启。对于交换机，请查询其手册。
-- 中断合并：过于频繁的硬件中断会降低系统性能，而过晚的硬件中断会导致丢包。对于较新的网卡支持中断合并功能，并允许驱动自动调节硬件中断数。可通过 `ethtool -c ${NIC_DEV_NAME}` 命令检查，`ethtool -C ${NIC_DEV_NAME}` 命令开启。自适应模式使网卡可以自动调节中断合并。在自适应模式下，驱动程序将检查流量模式和内核接收模式，并实时评估合并设置，以防止数据包丢失。不同品牌的网卡具有不同的功能和默认配置，具体请参考网卡手册。
-- 适配器队列：在协议栈处理之前，内核利用此队列缓存网卡接收的数据，每个 CPU 都有各自的 backlog 队列。此队列可缓存的最大 packets 数量为 `netdev_max_backlog`。观察 `/proc/net/softnet_stat` 第二列，当某行的第二列持续增加，则意味着 CPU [row-1] 队列已满，数据包被丢失，可通过持续加倍 `net.core.netdev_max_backlog` 值来解决。
-- 发送队列：发送队列长度值确定在发送之前可以排队的数据包数量。默认值是 1000，对于 10 Gbps 足够。但若从 `ip -s link` 的输出中观察到 `TX errors` 值时，可尝试加倍该数据包数量：`ip link set dev ${NIC_DEV_NAME} txqueuelen 2000`。
-- 驱动：网卡驱动通常也会提供调优参数，请查询设备硬件手册及其驱动文档。
+- NIC hardware cache: To correctly observe the packet loss at the hardware level, use the `ethtool -S ${NIC_DEV_NAME}` command to observe the `drops` field. When packet loss occurs, it might be that the processing speed of the hard/soft interrupts cannot catch up with the receiving speed of NIC. If the received buffer size is less than the upper limit, you can also try to increase the RX buffer to avoid packet loss. The query command is: `ethtool -g ${NIC_DEV_NAME}`, and the modification command is `ethtool -G ${NIC_DEV_NAME}`.
+
+- Hardware interrupts: If the NIC supports the Receive-Side Scaling (RSS, also called multi-NIC receiving) feature, observe the `/proc/interrupts` NIC interrupts. If the interrupts are uneven, see [CPU—frequency scaling](#cpufrequency-scaling), [CPU—interrupt affinity](#cpuinterrupt-affinity), and [NUMA CPU binding](#numa-cpu-binding). If the NIC does not support RSS or the number of RSS is much smaller than the number of physical CPU cores, configure Receive Packet Steering (RPS, which can be regarded as the software implementation of RSS), and the RPS extension Receive Flow Steering (RFS). For detailed configuration, see the [kernel document](https://www.kernel.org/doc/Documentation/networking/scaling.txt).
+
+- Software interrupts: Observe the monitoring of `/proc/net/softnet_stat`. If the values of the other columns except the third column are increasing, properly adjust the value of `net.core.netdev_budget` or `net.core.dev_weight` for `softirq` to get more CPU time. In addition, you also need to check the CPU usage to determine which tasks are frequently using the CPU and whether they can be optimized.
+
+- Receive queue of application sockets: Monitor the `Resv-q` column of `ss -nmp`. If the queue is full, consider increasing the size of the application socket cache or use the automatic cache adjustment method. In addition, consider whether you can optimize the architecture of the application layer and reduce the interval between reading sockets.
+
+- Ethernet flow control: If the NIC and switch support the flow control feature, you can use this feature to leave some time for the kernel to process the data in the NIC queue, to avoid the issue of NIC buffer overflow.
+
+- Interrupts coalescing: Too frequent hardware interrupts reduces system performance, and too late hardware interrupts causes packet loss. Newer NICs support the interrupt coalescing feature and allow the driver to automatically adjust the number of hardware interrupts. You can execute `ethtool -c ${NIC_DEV_NAME}` to check and `ethtool -C ${NIC_DEV_NAME}` to enable this feature. The adaptive mode allows the NIC to automatically adjust the interrupt coalescing. In this mode, the driver checks the traffic mode and kernel receiving mode, and evaluates the coalescing settings in real time to prevent packet loss. NICs of different brands have different features and default configurations. For details, see the NIC manuals.
+
+- Adapter queue: Before processing the protocol stack, the kernel uses this queue to buffer the data received by the NIC, and each CPU has its own backlog queue. The maximum number of packets that can be cached in this queue is `netdev_max_backlog`. Observe the second column of `/proc/net/softnet_stat`. When the second column of a row continues to increase, it means that the CPU [row-1] queue is full and the data packet is lost. To resolve this problem, continue to double the `net.core.netdev_max_backlog` value.
+
+- Send queue: The length value of a send queue determines the number of packets that can be queued before sending. The default value is `1000`, which is sufficient for 10 Gbps. But if you have observed the value of TX errors from the output of `ip -s link`, you can try to double it: `ip link set dev ${NIC_DEV_NAME} txqueuelen 2000`.
+
+- Driver: NIC drivers usually provide tuning parameters. See the device hardware manual and its driver documentation.

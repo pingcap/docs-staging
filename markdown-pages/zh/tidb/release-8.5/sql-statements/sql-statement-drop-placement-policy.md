@@ -1,13 +1,17 @@
 ---
 title: DROP PLACEMENT POLICY
-summary: TiDB 数据库中 ALTER PLACEMENT POLICY 的使用概况。
+summary: The usage of ALTER PLACEMENT POLICY in TiDB.
 ---
 
 # DROP PLACEMENT POLICY
 
-`DROP PLACEMENT POLICY` 用于删除已创建的放置策略。
+`DROP PLACEMENT POLICY` 用于删除之前创建的放置策略（placement policy）。
 
-## 语法图
+> **Note:**
+>
+> 此功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+
+## 语法
 
 ```ebnf+diagram
 DropPolicyStmt ::=
@@ -19,20 +23,19 @@ PolicyName ::=
 
 ## 示例
 
-删除放置规则时，确保该策略未被任何表或分区引用，否则会删除失败。
-
+只有当放置策略未被任何表或分区引用时，才能删除该放置策略。
 
 ```sql
 CREATE PLACEMENT POLICY p1 FOLLOWERS=4;
 CREATE TABLE t1 (a INT PRIMARY KEY) PLACEMENT POLICY=p1;
-DROP PLACEMENT POLICY p1;  -- 该语句执行失败，因为放置规则 p1 被引用。
+DROP PLACEMENT POLICY p1;  -- 此语句会失败，因为放置策略 p1 仍被引用。
 
--- 查看引用放置规则的表和分区。
+-- 查询哪些表和分区引用了该放置策略。
 SELECT table_schema, table_name FROM information_schema.tables WHERE tidb_placement_policy_name='p1';
 SELECT table_schema, table_name FROM information_schema.partitions WHERE tidb_placement_policy_name='p1';
 
-ALTER TABLE t1 PLACEMENT POLICY=default;  -- 移除表 t1 上的默认放置规则。
-DROP PLACEMENT POLICY p1;  -- 执行成功。
+ALTER TABLE t1 PLACEMENT POLICY=default;  -- 从 t1 表移除放置策略。
+DROP PLACEMENT POLICY p1;  -- 删除成功。
 ```
 
 ```sql
@@ -60,7 +63,7 @@ Query OK, 0 rows affected (0.21 sec)
 
 该语句是 TiDB 对 MySQL 语法的扩展。
 
-## 另请参阅
+## 参见
 
 * [Placement Rules in SQL](/placement-rules-in-sql.md)
 * [SHOW PLACEMENT](/sql-statements/sql-statement-show-placement.md)

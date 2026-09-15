@@ -1,37 +1,39 @@
 ---
-title: TiDB Data Migration 1.0.x 到 2.0+ 手动升级
-summary: 了解如何从 TiDB Data Migration 1.0.x 手动升级到 2.0+。
+title: Manually Upgrade TiDB Data Migration from v1.0.x to v2.0+
+summary: Learn how to manually upgrade TiDB data migration from v1.0.x to v2.0+.
 ---
 
-# TiDB Data Migration 1.0.x 到 2.0+ 手动升级
+# Manually Upgrade TiDB Data Migration from v1.0.x to v2.0+
 
-本文档主要介绍如何手动从 DM v1.0.x 升级到 v2.0+，主要思路为利用 v1.0.x 时的全局 checkpoint 信息在 v2.0+ 集群中启动一个新的增量数据复制任务。
+This document introduces how to manually upgrade the TiDB DM tool from v1.0.x to v2.0+. The main idea is to use the global checkpoint information in v1.0.x to start a new data migration task in the v2.0+ cluster.
 
-> **注意：**
+For how to automatically upgrade the TiDB DM tool from v1.0.x to v2.0+, refer to [Using TiUP to automatically import the 1.0 cluster deployed by DM-Ansible](/dm/maintain-dm-using-tiup.md#import-and-upgrade-a-dm-10-cluster-deployed-using-dm-ansible).
+
+> **Note:**
 >
-> - DM 当前不支持在数据迁移任务处于全量导出或全量导入过程中从 v1.0.x 升级到 v2.0+。
-> - 由于 DM 各组件间用于交互的 gRPC 协议进行了较大变更，因此需确保升级前后 DM 集群各组件（包括 dmctl）使用相同的版本。
-> - 由于 DM 集群的元数据存储（如 checkpoint、shard DDL lock 状态及 online DDL 元信息等）发生了较大变更，升级到 v2.0+ 后无法自动复用 v1.0.x 的元数据，因此在执行升级操作前需要确保：
->     - 所有数据迁移任务不处于 shard DDL 协调过程中。
->     - 所有数据迁移任务不处于 online DDL 协调过程中。
+> - Currently, upgrading DM from v1.0.x to v2.0+ is not supported when the data migration task is in the process of full export or full import.
+> - As the gRPC protocol used for interaction between the components of the DM cluster is updated greatly, you need to make sure that the DM components (including dmctl) use the same version before and after the upgrade.
+> - Because the metadata storage of the DM cluster (such as checkpoint, shard DDL lock status, and online DDL metadata) is updated greatly, the metadata of v1.0.x cannot be reused automatically in v2.0+. So you need to make sure the following requirements are satisfied before performing the upgrade operation:
+>     - All data migration tasks are not in the process of shard DDL coordination.
+>     - All data migration tasks are not in the process of online DDL coordination.
 
-下面是手动升级的具体步骤。
+The steps for manual upgrade are as follows.
 
-## 第 1 步：准备 v2.0+ 的配置文件
+## Step 1: Prepare v2.0+ configuration file
 
-准备的 v2.0+ 的配置文件包括上游数据库的配置文件以及数据迁移任务的配置文件。
+The prepared configuration files of v2.0+ include the configuration files of the upstream database and the configuration files of the data migration task.
 
-### 上游数据库配置文件
+### Upstream database configuration file
 
-在 v2.0+ 中将[上游数据库 source 相关的配置](/dm/dm-source-configuration-file.md)从 DM-worker 的进程配置中独立了出来，因此需要根据 [v1.0.x 的 DM-worker 配置](/dm/dm-worker-configuration-file.md)拆分得到 source 配置。
+In v2.0+, the [upstream database configuration file](/dm/dm-source-configuration-file.md) is separated from the process configuration of the DM-worker, so you need to obtain the source configuration based on the [v1.0.x DM-worker configuration](/dm/dm-worker-configuration-file.md).
 
-> **注意：**
+> **Note:**
 >
-> 当前从 v1.0.x 升级到 v2.0+ 时，如在 source 配置中启用了 `enable-gtid`，则后续需要通过解析 binlog 或 relay log 文件获取 binlog position 对应的 GTID sets。
+> If `enable-gtid` in the source configuration is enabled during the upgrade from v1.0.x to v2.0+, you need to parse the binlog or relay log file to obtain the GTID sets corresponding to the binlog position.
 
-#### 从 DM-Ansible 部署的 v1.0.x 升级
+#### Upgrade a v1.0.x cluster deployed by DM-Ansible
 
-如果 v1.0.x 是使用 DM-Ansible 部署的，且假设在 `inventory.ini` 中有如下 `dm_worker_servers` 配置：
+Assume that the v1.0.x DM cluster is deployed by DM-Ansible, and the following `dm_worker_servers` configuration is in the `inventory.ini` file:
 
 ```ini
 [dm_master_servers]
@@ -39,43 +41,41 @@ dm_worker1 ansible_host=172.16.10.72 server_id=101 source_id="mysql-replica-01" 
 dm_worker2 ansible_host=172.16.10.73 server_id=102 source_id="mysql-replica-02" mysql_host=172.16.10.82 mysql_user=root mysql_password='VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU=' mysql_port=3306
 ```
 
-则可以转换得到如下两个 source 配置文件：
+Then you can convert it to the following two source configuration files:
 
 ```yaml
-# 原 dm_worker1 对应的 source 配置，如命名为 source1.yaml
-server-id: 101                                   # 对应原 `server_id`
-source-id: "mysql-replica-01"                    # 对应原 `source_id`
+# The source configuration corresponding to the original dm_worker1. For example, it is named as source1.yaml.
+server-id: 101                                   # Corresponds to the original `server_id`.
+source-id: "mysql-replica-01"                    # Corresponds to the original `source_id`.
 from:
-  host: "172.16.10.81"                           # 对应原 `mysql_host`
-  port: 3306                                     # 对应原 `mysql_port`
-  user: "root"                                   # 对应原 `mysql_user`
-  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # 对应原 `mysql_password`
+  host: "172.16.10.81"                           # Corresponds to the original `mysql_host`.
+  port: 3306                                     # Corresponds to the original `mysql_port`.
+  user: "root"                                   # Corresponds to the original `mysql_user`.
+  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # Corresponds to the original `mysql_password`.
 ```
 
 ```yaml
-# 原 dm_worker2 对应的 source 配置，如命名为 source2.yaml
-server-id: 102                                   # 对应原 `server_id`
-source-id: "mysql-replica-02"                    # 对应原 `source_id`
+# The source configuration corresponding to the original dm_worker2. For example, it is named as source2.yaml.
+server-id: 102                                   # Corresponds to the original `server_id`.
+source-id: "mysql-replica-02"                    # Corresponds to the original `source_id`.
 from:
-  host: "172.16.10.82"                           # 对应原 `mysql_host`
-  port: 3306                                     # 对应原 `mysql_port`
-  user: "root"                                   # 对应原 `mysql_user`
-  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # 对应原 `mysql_password`
+  host: "172.16.10.82"                           # Corresponds to the original `mysql_host`.
+  port: 3306                                     # Corresponds to the original `mysql_port`.
+  user: "root"                                   # Corresponds to the original `mysql_user`.
+  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # Corresponds to the original `mysql_password`.
 ```
 
-#### 从 Binary 部署的 v1.0.x 升级
+#### Upgrade a v1.0.x cluster deployed by binary
 
-如果 v1.0.x 是使用 Binary 部署的，且对应的 DM-worker 配置如下：
+Assume that the v1.0.x DM cluster is deployed by binary, and the corresponding DM-worker configuration is as follows:
 
 ```toml
 log-level = "info"
 log-file = "dm-worker.log"
 worker-addr = ":8262"
-
 server-id = 101
 source-id = "mysql-replica-01"
 flavor = "mysql"
-
 [from]
 host = "172.16.10.81"
 user = "root"
@@ -83,45 +83,45 @@ password = "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="
 port = 3306
 ```
 
-则可转换得到如下的一个 source 配置文件：
+Then you can convert it to the following source configuration file:
 
 ```yaml
-server-id: 101                                   # 对应原 `server-id`
-source-id: "mysql-replica-01"                    # 对应原 `source-id`
-flavor: "mysql"                                  # 对应原 `flavor`
+server-id: 101                                   # Corresponds to the original `server-id`.
+source-id: "mysql-replica-01"                    # Corresponds to the original `source-id`.
+flavor: "mysql"                                  # Corresponds to the original `flavor`.
 from:
-  host: "172.16.10.81"                           # 对应原 `from.host`
-  port: 3306                                     # 对应原 `from.port`
-  user: "root"                                   # 对应原 `from.user`
-  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # 对应原 `from.password`
+  host: "172.16.10.81"                           # Corresponds to the original `from.host`.
+  port: 3306                                     # Corresponds to the original `from.port`.
+  user: "root"                                   # Corresponds to the original `from.user`.
+  password: "VjX8cEeTX+qcvZ3bPaO4h0C80pe/1aU="   # Corresponds to the original `from.password`.
 ```
 
-### 数据迁移任务配置文件
+### Data migration task configuration file
 
-对于[数据迁移任务配置向导](/dm/dm-task-configuration-guide.md)，v2.0+ 基本与 v1.0.x 保持兼容，可直接复制 v1.0.x 的配置。
+For [data migration task configuration guide](/dm/dm-task-configuration-guide.md), v2.0+ is basically compatible with v1.0.x. You can directly copy the configuration of v1.0.x.
 
-## 第 2 步：部署 v2.0+ 集群
+## Step 2: Deploy the v2.0+ cluster
 
-> **注意：**
+> **Note:**
 >
-> 如果已有其他可用的 v2.0+ 集群，可跳过此步。
+> Skip this step if you have other v2.0+ clusters available.
 
-[使用 TiUP](/dm/deploy-a-dm-cluster-using-tiup.md) 按所需要节点数部署新的 v2.0+ 集群。
+[Use TiUP](/dm/deploy-a-dm-cluster-using-tiup.md) to deploy a new v2.0+ cluster according to the required number of nodes.
 
-## 第 3 步：下线 v1.0.x 集群
+## Step 3: Stop the v1.0.x cluster
 
-如果原 v1.0.x 集群是使用 DM-Ansible 部署的，则[使用 DM-Ansible 下线 v1.0.x 集群](https://docs-archive.pingcap.com/zh/tidb-data-migration/v1.0/cluster-operations#下线集群)。
+If the original v1.0.x cluster is deployed by DM-Ansible, you need to use [DM-Ansible to stop the v1.0.x cluster](https://docs.pingcap.com/tidb-data-migration/v1.0/cluster-operations#stop-a-cluster).
 
-如果原 v1.0.x 集群是使用 Binary 部署，则直接停止 DM-worker 与 DM-master 进程。
+If the original v1.0.x cluster is deployed by binary, you can stop the DM-worker and DM-master processes directly.
 
-## 第 4 步：升级数据迁移任务
+## Step 4: Upgrade data migration task
 
-1. 使用 [`operate-source`](/dm/dm-manage-source.md#数据源操作) 命令将[准备 v2.0+ 的配置文件](#第-1-步准备-v20-的配置文件)中得到的上游数据库 source 配置加载到 v2.0+ 集群中。
+1. Use the [`operate-source`](/dm/dm-manage-source.md#operate-data-source) command to load the upstream database source configuration from [step 1](#step-1-prepare-v20-configuration-file) into the v2.0+ cluster.
 
-2. 在下游 TiDB 中，从 v1.0.x 的数据复制任务对应的增量 checkpoint 表中获取对应的全局 checkpoint 信息。
+2. In the downstream TiDB cluster, obtain the corresponding global checkpoint information from the incremental checkpoint table of the v1.0.x data migration task.
 
-    - 假设 v1.0.x 的数据迁移配置中未额外指定 `meta-schema`（或指定其值为默认的`dm_meta`），且对应的任务名为 `task_v1`，则对应的 checkpoint 信息在下游 TiDB 的 ``` `dm_meta`.`task_v1_syncer_checkpoint` ``` 表中。
-    - 使用以下 SQL 语句分别获取该数据迁移任务对应的所有上游数据库 source 的全局 checkpoint 信息。
+    - Assume that the v1.0.x data migration configuration does not specify `meta-schema` (or specify its value as the default `dm_meta`), and the corresponding task name is `task_v1`, the corresponding checkpoint information is in the ``` `dm_meta`.`task_v1_syncer_checkpoint` ``` table of the downstream TiDB.
+    - Use the following SQL statements to obtain the global checkpoint information of all upstream database sources corresponding to the data migration task.
 
         ```sql
         > SELECT `id`, `binlog_name`, `binlog_pos` FROM `dm_meta`.`task_v1_syncer_checkpoint` WHERE `is_global`=1;
@@ -133,20 +133,20 @@ from:
         +------------------+-------------------------+------------+
         ```
 
-3. 更新 v1.0.x 的数据迁移任务配置文件以启动新的 v2.0+ 数据迁移任务。
+3. Update the v1.0.x data migration task configuration file to start a new v2.0+ data migration task.
 
-    - 如 v1.0.x 的数据迁移任务配置文件为 `task_v1.yaml`，则将其复制一份为 `task_v2.yaml`。
-    - 对 `task_v2.yaml` 进行以下修改：
-        - 将 `name` 修改为一个新的、不存在的名称，如 `task_v2`
-        - 将 `task-mode` 修改为 `incremental`
-        - 根据 step.2 中获取的全局 checkpoint 信息，为各 source 设置增量复制的起始点，如：
+    - If the data migration task configuration file of v1.0.x is `task_v1.yaml`, copy it and rename it to `task_v2.yaml`.
+    - Make the following changes to `task_v2.yaml`:
+        - Modify `name` to a new name, such as `task_v2`.
+        - Change `task-mode` to `incremental`.
+        - Set the starting point of incremental replication for each source according to the global checkpoint information obtained in step 2. For example:
 
             ```yaml
             mysql-instances:
-              - source-id: "mysql-replica-01"        # 对应 checkpoint 信息所属的 `id`
+              - source-id: "mysql-replica-01"        # Corresponds to the `id` of the checkpoint information.
                 meta:
-                  binlog-name: "mysql-bin.000123"    # 对应 checkpoint 信息中的 `binlog_name`，但不包含 `|000001` 部分
-                  binlog-pos: 15847                  # 对应 checkpoint 信息中的 `binlog_pos`
+                  binlog-name: "mysql-bin.000123"    # Corresponds to the `binlog_name` in the checkpoint information, excluding the part of `|000001`.
+                  binlog-pos: 15847                  # Corresponds to `binlog_pos` in the checkpoint information.
 
               - source-id: "mysql-replica-02"
                 meta:
@@ -154,12 +154,12 @@ from:
                   binlog-pos: 10485
             ```
 
-            > **注意：**
+            > **Note:**
             >
-            > 如在 source 配置中启动了 `enable-gtid`，当前需要通过解析 binlog 或 relay log 文件获取 binlog position 对应的 GTID sets 并在 `meta` 中设置为 `binlog-gtid`。
+            > If `enable-gtid` is enabled in the source configuration, currently you need to parse the binlog or relay log file to obtain the GTID sets corresponding to the binlog position, and set it to `binlog-gtid` in the `meta`.
 
-4. 使用 [`start-task`](/dm/dm-create-task.md) 命令以 v2.0+ 的数据迁移任务配置文件启动升级后的数据迁移任务。
+4. Use the [`start-task`](/dm/dm-create-task.md) command to start the upgraded data migration task through the v2.0+ data migration task configuration file.
 
-5. 使用 [`query-status`](/dm/dm-query-status.md) 命令确认数据迁移任务是否运行正常。
+5. Use the [`query-status`](/dm/dm-query-status.md) command to confirm whether the data migration task is running normally.
 
-如果数据迁移任务运行正常，则表明 DM 升级到 v2.0+ 的操作成功。
+If the data migration task runs normally, it indicates that the DM upgrade to v2.0+ is successful.

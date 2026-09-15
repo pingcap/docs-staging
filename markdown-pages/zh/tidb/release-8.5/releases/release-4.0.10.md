@@ -1,111 +1,110 @@
 ---
 title: TiDB 4.0.10 Release Notes
-summary: TiDB 4.0.10 发布日期为 2021 年 1 月 15 日。新功能包括 PD 添加了配置项 `enable-redact-log` 和 TiFlash 添加了配置项 `security.redact_info_log`。改进提升方面，TiDB 添加了 `txn-entry-size-limit` 配置项，PD 优化了 `store-state-filter` 监控，Tools 中 TiCDC 默认开启了 old value 特性。Bug 修复方面，TiDB 修复了多个并发导致的问题，TiKV 修复了 peer 和 ready 之间的错误映射，PD 修复了 ID 分配不是单调递增的问题，TiFlash 修复了多个启动和函数调用的问题，Tools 中 TiCDC 修复了多个协议和内存问题，Dumpling 修改了默认设置的行为。 Backup & Restore (BR) 修复了多个备份和恢复问题，TiDB Binlog 修复了启用 `AMEND TRANSACTION` 特性时的问题，TiDB Lightning 修复了多个备份和使用问题。
-aliases: ['/zh/tidb/dev/release-4.0.10/','/zh/tidb/v4.0/release-4.0.10','/zh/tidb/v5.4/release-4.0.10','/zh/tidb/v6.1/release-4.0.10','/zh/tidb/v6.5/release-4.0.10','/zh/tidb/v7.1/release-4.0.10','/zh/tidb/v7.5/release-4.0.10','/zh/tidb/v8.1/release-4.0.10']
+summary: TiDB 4.0.10 was released on January 15, 2021. New features include redacting user data from logs and configurable size limits for key-value entries. Bug fixes address concurrency issues, duplicate bindings, and incorrect results. Improvements include optimized metrics and upgraded dependencies. Various tools have also been updated and fixed, such as TiCDC, Dumpling, Backup & Restore, TiDB Binlog, and TiDB Lightning.
 ---
 
 # TiDB 4.0.10 Release Notes
 
-发版日期：2021 年 1 月 15 日
+Release date: January 15, 2021
 
-TiDB 版本：4.0.10
+TiDB version: 4.0.10
 
-## 新功能
+## New Features
 
 + PD
 
-    - 添加了配置项 `enable-redact-log`，可以设置将日志中的用户数据脱敏 [#3266](https://github.com/pingcap/pd/pull/3266)
+    - Add the `enable-redact-log` configuration item to redact user data from logs [#3266](https://github.com/pingcap/pd/pull/3266)
 
 + TiFlash
 
-    - 添加了配置项 `security.redact_info_log`，可以设置将日志中的用户数据脱敏
+    - Add the `security.redact_info_log` configuration item to redact user data from logs
 
-## 改进提升
+## Improvements
 
 + TiDB
 
-    - 添加 `txn-entry-size-limit` 配置项，用于限制事务中单个 key-value 记录的大小 [#21843](https://github.com/pingcap/tidb/pull/21843)
+    - Make the size limit of a key-value entry in transaction configurable using `txn-entry-size-limit` [#21843](https://github.com/pingcap/tidb/pull/21843)
 
 + PD
 
-    - 优化了 `store-state-filter` 的监控，可以显示更加具体的原因 [#3100](https://github.com/tikv/pd/pull/3100)
-    - 更新 `go.etcd.io/bbolt` 依赖至 v1.3.5 [#3331](https://github.com/tikv/pd/pull/3331)
+    - Optimize the `store-state-filter` metrics to show more information [#3100](https://github.com/tikv/pd/pull/3100)
+    - Upgrade the `go.etcd.io/bbolt` dependency to v1.3.5 [#3331](https://github.com/tikv/pd/pull/3331)
 
 + Tools
 
     + TiCDC
 
-        - 默认启用 unified sorter 特性 [#1230](https://github.com/pingcap/tiflow/pull/1230)
+        - Enable the unified sorter feature by default [#1230](https://github.com/pingcap/tiflow/pull/1230)
 
     + Dumpling
 
-        - 支持检查未定义的参数，支持输出导出的进度 [#228](https://github.com/pingcap/dumpling/pull/228)
+        - Support checking unrecognized arguments and printing the current progress during dumping [#228](https://github.com/pingcap/dumpling/pull/228)
 
     + TiDB Lightning
 
-        - 支持重试读 S3 遇到的错误 [#533](https://github.com/pingcap/tidb-lightning/pull/533)
+        - Support retrying the error that occurs when reading from S3 [#533](https://github.com/pingcap/tidb-lightning/pull/533)
 
-## Bug 修复
+## Bug Fixes
 
 + TiDB
 
-    - 修复由于并发导致的 batch client 超时问题 [#22336](https://github.com/pingcap/tidb/pull/22336)
-    - 修复由于并发地自动捕获 SQL 绑定而导致的重复绑定问题 [#22295](https://github.com/pingcap/tidb/pull/22295)
-    - 当日志级别为 `'debug'` 时，让 SQL 语句绑定的自动捕获正确运行 [#22293](https://github.com/pingcap/tidb/pull/22293)
-    - 当 Region 合并正在发生时，正确地释放锁 [#22267](https://github.com/pingcap/tidb/pull/22267)
-    - 对 `Datetime` 类型的用户变量返回正确的值 [#22143](https://github.com/pingcap/tidb/pull/22143)
-    - 修复错误使用 Index Merge 访问方式的问题 [#22124](https://github.com/pingcap/tidb/pull/22124)
-    - 修复由于执行计划缓存导致 TiFlash 报 `wrong precision` 错误的问题 [#21960](https://github.com/pingcap/tidb/pull/21960)
-    - 修复由于 schema 变更导致的错误结果 [#21596](https://github.com/pingcap/tidb/pull/21596)
-    - 避免在 `ALTER TABLE` 中不必要地更改 column flag [#21474](https://github.com/pingcap/tidb/pull/21474)
-    - 让包含子查询块别名的 optimizer hint 生效 [#21380](https://github.com/pingcap/tidb/pull/21380)
-    - 为 `IndexHashJoin` 和 `IndexMergeJoin` 生成正确的 optimizer hint [#21020](https://github.com/pingcap/tidb/pull/21020)
+    - Fix a concurrency bug that might cause the batch client timeout [#22336](https://github.com/pingcap/tidb/pull/22336)
+    - Fix the issue of duplicate bindings caused by concurrent baseline capture [#22295](https://github.com/pingcap/tidb/pull/22295)
+    - Make the baseline capture bound to the SQL statement work when the log level is `'debug'` [#22293](https://github.com/pingcap/tidb/pull/22293)
+    - Correctly release GC locks when Region merge occurs [#22267](https://github.com/pingcap/tidb/pull/22267)
+    - Return correct values for user variables of the `datetime` type [#22143](https://github.com/pingcap/tidb/pull/22143)
+    - Fix the issue of using index merge when there are multiple table filters [#22124](https://github.com/pingcap/tidb/pull/22124)
+    - Fix the `wrong precision` issue in TiFlash caused by the `prepare` plan cache [#21960](https://github.com/pingcap/tidb/pull/21960)
+    - Fix the issue of incorrect results caused by schema change [#21596](https://github.com/pingcap/tidb/pull/21596)
+    - Avoid unnecessary column flag changes in `ALTER TABLE` [#21474](https://github.com/pingcap/tidb/pull/21474)
+    - Set the database name for table aliases of query blocks used in optimizer hints [#21380](https://github.com/pingcap/tidb/pull/21380)
+    - Generate the proper optimizer hint for `IndexHashJoin` and `IndexMergeJoin` [#21020](https://github.com/pingcap/tidb/pull/21020)
 
 + TiKV
 
-    - 修复了 peer 和 ready 之间的错误映射 [#9409](https://github.com/tikv/tikv/pull/9409)
-    - 修复一些日志信息在 `security.redact-info-log` 设置为 `true` 时未脱敏的问题 [#9314](https://github.com/tikv/tikv/pull/9314)
+    - Fix the wrong mapping between ready and peer [#9409](https://github.com/tikv/tikv/pull/9409)
+    - Fix the issue that some logs are not redacted when `security.redact-info-log` is set to `true` [#9314](https://github.com/tikv/tikv/pull/9314)
 
 + PD
 
-    - 修复 ID 分配不是单调递增的问题 [#3308](https://github.com/tikv/pd/pull/3308) [#3323](https://github.com/tikv/pd/pull/3323)
-    - 修复 PD client 在某些情况下可能卡住的问题 [#3285](https://github.com/pingcap/pd/pull/3285)
+    - Fix the issue that the ID allocation is not monotonic [#3308](https://github.com/tikv/pd/pull/3308) [#3323](https://github.com/tikv/pd/pull/3323)
+    - Fix the issue that the PD client might be blocked in some cases [#3285](https://github.com/pingcap/pd/pull/3285)
 
 + TiFlash
 
-    - 修复了 TiFlash 解析老版本 TiDB 表结构失败导致 TiFlash 无法启动的问题
-    - 修复了在 RedHat 系统中 TiFlash 会对 `cpu_time` 进行错误处理导致 TiFlash 无法启动的问题
-    - 修复了将配置项 `path_realtime_mode` 设置为 `true` 时 TiFlash 无法启动的问题
-    - 修复了当调用有三个参数的 `substr` 函数时，返回结果错误的问题
-    - 修复了当 TiDB 对 `Enum` 枚举进行无损修改时，TiFlash 无法读取修改后的值的问题
+    - Fix the issue that TiFlash fails to start because TiFlash fails to process the TiDB schema of an old version
+    - Fix the issue that TiFlash fails to start due to incorrect handling of `cpu_time` on the RedHat system
+    - Fix the issue that TiFlash fails to start when `path_realtime_mode` is set to `true`
+    - Fix an issue of incorrect results when calling the `substr` function with three parameters
+    - Fix the issue that TiFlash does not support changing the `Enum` type even if the change is lossless
 
 + Tools
 
     + TiCDC
 
-        - 修复过期的元数据可能引发新创建的 changefeed 异常的问题 [#1184](https://github.com/pingcap/tiflow/pull/1184)
-        - 修复在关闭的 notifier 上创建 receiver 的问题[#1199](https://github.com/pingcap/tiflow/pull/1199)
-        - 修复在 etcd 更新缓慢时导致内存访问量增长的问题 [#1227](https://github.com/pingcap/tiflow/pull/1227)
-        - 修复 `max-batch-size` 不生效的问题 [#1253](https://github.com/pingcap/tiflow/pull/1253)
-        - 修复清理过期任务信息的问题 [#1280](https://github.com/pingcap/tiflow/pull/1280)
-        - 修复 MySQL sink 中由于没有调用 `rollback` 而导致回收 db conn 卡住的问题 [#1285](https://github.com/pingcap/tiflow/pull/1285)
+        - Fix a bug that outdated metadata might cause the newly created changefeed abnormal [#1184](https://github.com/pingcap/tiflow/pull/1184)
+        - Fix the issue of creating the receiver on the closed notifier [#1199](https://github.com/pingcap/tiflow/pull/1199)
+        - Fix a bug that the TiCDC owner might consume too much memory in the etcd watch client [#1227](https://github.com/pingcap/tiflow/pull/1227)
+        - Fix the issue that `max-batch-size` does not take effect [#1253](https://github.com/pingcap/tiflow/pull/1253)
+        - Fix the issue of cleaning up stale tasks before the capture information is constructed [#1280](https://github.com/pingcap/tiflow/pull/1280)
+        - Fix the issue that the recycling of db conn is block because `rollback` is not called in MySQL sink [#1285](https://github.com/pingcap/tiflow/pull/1285)
 
     + Dumpling
 
-        - 修改默认设置的 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 的行为以避免 TiDB 内存溢出 [#233](https://github.com/pingcap/dumpling/pull/233)
+        - Avoid TiDB out of memory (OOM) by setting the default behavior of [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) [#233](https://github.com/pingcap/dumpling/pull/233)
 
     + Backup & Restore (BR)
 
-        - 修复 BR v4.0.9 无法恢复 BR v4.0.8 保存在 GCS 上的备份 [#688](https://github.com/pingcap/br/pull/688)
-        - 修复在恢复 GCS 上的备份时可能发生的 panic 问题 [#673](https://github.com/pingcap/br/pull/673)
-        - 默认禁用备份统计信息以避免 BR 内存溢出 [#693](https://github.com/pingcap/br/pull/693)
+        - Fix the issue that BR v4.0.9 cannot restore the files backed up using BR v4.0.8 on GCS [#688](https://github.com/pingcap/br/pull/688)
+        - Fix the issue that BR panics when the GCS storage URL has no prefix [#673](https://github.com/pingcap/br/pull/673)
+        - Disable backup statistics by default to avoid BR OOM [#693](https://github.com/pingcap/br/pull/693)
 
     + TiDB Binlog
 
-        - 修复在启用 `AMEND TRANSACTION` 特性时，Drainer 可能会使用错误 schema 来生成 SQL 语句的问题 [#1033](https://github.com/pingcap/tidb-binlog/pull/1033)
+        - Fix the issue that when the `AMEND TRANSACTION` feature is enabled, Drainer might choose the incorrect schema version to generate SQL statements [#1033](https://github.com/pingcap/tidb-binlog/pull/1033)
 
     + TiDB Lightning
 
-        - 修复未正确编码 Region key 而导致分裂 Region 失败问题 [#531](https://github.com/pingcap/tidb-lightning/pull/531)
-        - 修复可能丢失 `CREATE TABLE` 失败的错误 [#530](https://github.com/pingcap/tidb-lightning/pull/530)
-        - 修复使用 TiDB-backend 时遇到的 `column count mismatch` 问题 [#535](https://github.com/pingcap/tidb-lightning/pull/535)
+        - Fix a bug that the Region is not split because the Region key is incorrectly encoded [#531](https://github.com/pingcap/tidb-lightning/pull/531)
+        - Fix the issue that the failure of `CREATE TABLE` might be lost when multiple tables are created [#530](https://github.com/pingcap/tidb-lightning/pull/530)
+        - Fix the issue of `column count mismatch` when using the TiDB-backend [#535](https://github.com/pingcap/tidb-lightning/pull/535)

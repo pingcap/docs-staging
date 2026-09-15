@@ -1,64 +1,63 @@
 ---
 title: TiDB 2.1 RC3 Release Notes
-summary: TiDB 2.1 RC3 版本对系统稳定性、兼容性、优化器和执行引擎做了很多改进。包括修复了多个 SQL 优化器和执行引擎的问题，增强了部分执行器的性能，修复了配置文件内存配额选项不生效的问题，支持使用 `admin show slow` 语句来获取 SLOW QUERY LOG，修复了一些兼容性问题，增加了一些内建函数的支持，修复了一些 DML 和 DDL 的问题。PD 新增了获取按大小逆序排序的 Region 列表 API，Region API 返回更详细的信息，修复了 PD 切换 leader 后可能导致 crash 的问题。TiKV 进行了性能优化，并新增了一些函数的支持，同时修复了一些 Bug。
-aliases: ['/zh/tidb/dev/release-2.1-rc.3/','/zh/tidb/v2.1/release-2.1-rc.3','/docs-cn/dev/releases/release-2.1-rc.3/','/docs-cn/dev/releases/21rc3/','/zh/tidb/v5.4/release-2.1-rc.3','/zh/tidb/v6.1/release-2.1-rc.3','/zh/tidb/v6.5/release-2.1-rc.3','/zh/tidb/v7.1/release-2.1-rc.3','/zh/tidb/v7.5/release-2.1-rc.3','/zh/tidb/v8.1/release-2.1-rc.3']
+summary: TiDB 2.1 RC3 was released on September 29, 2018, with improvements in stability, compatibility, SQL optimizer, and execution engine. The release includes fixes and enhancements for SQL optimizer, execution engine, server, compatibility, expressions, DML, DDL, and PD. TiKV also received performance optimizations, new features, and bug fixes.
 ---
 
 # TiDB 2.1 RC3 Release Notes
 
-2018 年 9 月 29 日，TiDB 发布 2.1 RC3 版。相比 2.1 RC2 版本，该版本对系统稳定性、兼容性、优化器以及执行引擎做了很多改进。
+On September 29, 2018, TiDB 2.1 RC3 is released. Compared with TiDB 2.1 RC2, this release has great improvement in stability, compatibility, SQL optimizer, and execution engine.
 
 ## TiDB
 
-+ SQL 优化器
-    - 修复语句内包含内嵌的 `LEFT OUTER JOIN` 时，结果不正确的问题 [#7689](https://github.com/pingcap/tidb/pull/7689)
-    - 增强 `JOIN` 语句上的 predicate pushdown 优化规则 [#7645](https://github.com/pingcap/tidb/pull/7645)
-    - 修复 `UnionScan` 算子的 predicate pushdown 优化规则 [#7695](https://github.com/pingcap/tidb/pull/7695)
-    - 修复 `Union` 算子的 unique key 属性设置不正确的问题 [#7680](https://github.com/pingcap/tidb/pull/7680)
-    - 增强常量折叠的优化规则 [#7696](https://github.com/pingcap/tidb/pull/7696)
-    - 把常量传播后的 filter 是 null 的 data source 优化成 table dual [#7756](https://github.com/pingcap/tidb/pull/7756)
-+ SQL 执行引擎
-    - 优化事务内读请求的性能 [#7717](https://github.com/pingcap/tidb/pull/7717)
-    - 优化部分执行器 Chunk 内存分配的开销 [#7540](https://github.com/pingcap/tidb/pull/7540)
-    - 修复点查全部为 NULL 的列导致数组越界的问题 [#7790](https://github.com/pingcap/tidb/pull/7790)
++ SQL Optimizer
+    - Fix the incorrect result issue when a statement contains embedded `LEFT OUTER JOIN` [#7689](https://github.com/pingcap/tidb/pull/7689)
+    - Enhance the optimization rule of predicate pushdown on the `JOIN` statement [#7645](https://github.com/pingcap/tidb/pull/7645)
+    - Fix the optimization rule of predicate pushdown for the `UnionScan` operator [#7695](https://github.com/pingcap/tidb/pull/7695)
+    - Fix the issue that the unique key property of the `Union` operator is not correctly set [#7680](https://github.com/pingcap/tidb/pull/7680)
+    - Enhance the optimization rule of constant folding [#7696](https://github.com/pingcap/tidb/pull/7696)
+    - Optimize the data source in which the filter is null after propagation to table dual [#7756](https://github.com/pingcap/tidb/pull/7756)
++ SQL Execution Engine
+    - Optimize the performance of read requests in a transaction [#7717](https://github.com/pingcap/tidb/pull/7717)
+    - Optimize the cost of allocating Chunk memory in some executors [#7540](https://github.com/pingcap/tidb/pull/7540)
+    - Fix the "index out of range" panic caused by the columns where point queries get all NULL values [#7790](https://github.com/pingcap/tidb/pull/7790)
 + Server
-    - 修复配置文件里内存配额选项不生效的问题 [#7729](https://github.com/pingcap/tidb/pull/7729)
-    - 添加 tidb_force_priority 系统变量用来整体设置语句执行的优先级 [#7694](https://github.com/pingcap/tidb/pull/7694)
-    - 支持使用 `admin show slow` 语句来获取 SLOW QUERY LOG [#7785](https://github.com/pingcap/tidb/pull/7785)
-+ 兼容性
-    - 修复 `information_schema.schemata` 里 `charset/collation` 结果不正确的问题 [#7751](https://github.com/pingcap/tidb/pull/7751)
-    - 修复 `hostname` 系统变量的值为空的问题 [#7750](https://github.com/pingcap/tidb/pull/7750)
-+ 表达式
-    - 内建函数 `AES_ENCRYPT/AES_DECRYPT` 支持 `init_vecter` 参数 [#7425](https://github.com/pingcap/tidb/pull/7425)
-    - 修复部分表达式 `Format` 结果不正确的问题 [#7770](https://github.com/pingcap/tidb/pull/7770)
-    - 支持内建函数 `JSON_LENGTH` [#7739](https://github.com/pingcap/tidb/pull/7739)
-    - 修复 unsigned integer 类型 cast 为 decimal 类型结果不正确的问题 [#7792](https://github.com/pingcap/tidb/pull/7792)
+    - Fix the issue that the memory quota in the configuration file does not take effect [#7729](https://github.com/pingcap/tidb/pull/7729)
+    - Add the `tidb_force_priority` system variable to set the execution priority for each statement [#7694](https://github.com/pingcap/tidb/pull/7694)
+    - Support using the `admin show slow` statement to obtain the slow query log [#7785](https://github.com/pingcap/tidb/pull/7785)
++ Compatibility
+    - Fix the issue that the result of `charset/collation` is incorrect in `information_schema.schemata` [#7751](https://github.com/pingcap/tidb/pull/7751)
+    - Fix the issue that the value of the `hostname` system variable is empty [#7750](https://github.com/pingcap/tidb/pull/7750)
++ Expressions
+    - Support the `init_vecter` argument in the `AES_ENCRYPT`/`AES_DECRYPT` built-in function [#7425](https://github.com/pingcap/tidb/pull/7425)
+    - Fix the issue that the result of `Format` is incorrect in some expressions [#7770](https://github.com/pingcap/tidb/pull/7770)
+    - Support the `JSON_LENGTH` built-in function [#7739](https://github.com/pingcap/tidb/pull/7739)
+    - Fix the incorrect result issue when casting the unsigned integer type to the decimal type [#7792](https://github.com/pingcap/tidb/pull/7792)
 + DML
-    - 修复 `INSERT … ON DUPLICATE KEY UPDATE` 语句在 unique key 更新时结果不正确的问题 [#7675](https://github.com/pingcap/tidb/pull/7675)
+    - Fix the issue that the result of the `INSERT … ON DUPLICATE KEY UPDATE` statement is incorrect while updating the unique key [#7675](https://github.com/pingcap/tidb/pull/7675)
 + DDL
-    - 修复在新建的 timestamp 类型的列上新建索引时，索引值没有做时区转换的问题 [#7724](https://github.com/pingcap/tidb/pull/7724)
-    - 支持 enum 类型 append 新的值 [#7767](https://github.com/pingcap/tidb/pull/7767)
-    - 快速新建 etcd session，使网络隔离后，集群更快恢复可用 [#7774](https://github.com/pingcap/tidb/pull/7774)
+    - Fix the issue that the index value is not converted between time zones when you create a new index on a new column of the timestamp type [#7724](https://github.com/pingcap/tidb/pull/7724)
+    - Support appending new values for the enum type [#7767](https://github.com/pingcap/tidb/pull/7767)
+    - Support creating an etcd session quickly, which improves the cluster availability after network isolation [#7774](https://github.com/pingcap/tidb/pull/7774)
 
 ## PD
 
-+ 新特性
-    - 添加获取按大小逆序排序的 Region 列表 API (/size) [#1254](https://github.com/pingcap/pd/pull/1254)
-+ 功能改进
-    - Region API 会返回更详细的信息 [#1252](https://github.com/pingcap/pd/pull/1252)
-+ Bug 修复
-    - 修复 PD 切换 leader 以后 `adjacent-region-scheduler` 可能会导致 crash 的问题 [#1250](https://github.com/pingcap/pd/pull/1250)
++ New feature
+    - Add the API to get the Region list by size in reverse order [#1254](https://github.com/pingcap/pd/pull/1254)
++ Improvement
+    - Return more detailed information in the Region API [#1252](https://github.com/pingcap/pd/pull/1252)
++ Bug fix
+    - Fix the issue that `adjacent-region-scheduler` might lead to a crash after PD switches the leader [#1250](https://github.com/pingcap/pd/pull/1250)
 
 ## TiKV
 
-+ 性能优化
-    - 优化函数下推的并发支持 [#3515](https://github.com/tikv/tikv/pull/3515)
-+ 新特性
-    - 添加对 Log 函数的支持 [#3603](https://github.com/tikv/tikv/pull/3603)
-    - 添加对 `sha1` 函数的支持 [#3612](https://github.com/tikv/tikv/pull/3612)
-    - 添加 `truncate_int` 函数的支持 [#3532](https://github.com/tikv/tikv/pull/3532)
-    - 添加 `year` 函数的支持 [#3622](https://github.com/tikv/tikv/pull/3622)
-    - 添加 `truncate_real` 函数的支持 [#3633](https://github.com/tikv/tikv/pull/3633)
-+ Bug 修复
-    - 修正时间函数相关的报错行为 [#3487](https://github.com/tikv/tikv/pull/3487) [#3615](https://github.com/tikv/tikv/pull/3615)
-    - 修复字符串解析成时间与 TiDB 不一致的问题 [#3589](https://github.com/tikv/tikv/pull/3589)
++ Performance
+    - Optimize the concurrency for coprocessor requests [#3515](https://github.com/tikv/tikv/pull/3515)
++ New features
+    - Add the support for Log functions [#3603](https://github.com/tikv/tikv/pull/3603)
+    - Add the support for the `sha1` function [#3612](https://github.com/tikv/tikv/pull/3612)
+    - Add the support for the `truncate_int` function [#3532](https://github.com/tikv/tikv/pull/3532)
+    - Add the support for the `year` function [#3622](https://github.com/tikv/tikv/pull/3622)
+    - Add the support for the `truncate_real` function [#3633](https://github.com/tikv/tikv/pull/3633)
++ Bug fixes
+    - Fix the reporting error behavior related to time functions [#3487](https://github.com/tikv/tikv/pull/3487), [#3615](https://github.com/tikv/tikv/pull/3615)
+    - Fix the issue that the time parsed from string is inconsistent with that in TiDB [#3589](https://github.com/tikv/tikv/pull/3589)

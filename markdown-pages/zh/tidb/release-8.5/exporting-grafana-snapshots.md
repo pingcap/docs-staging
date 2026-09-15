@@ -1,53 +1,53 @@
 ---
-title: 将 Grafana 监控数据导出成快照
-summary: 了解如何将 Grafana 监控数据导出为快照以及如何将快照文件可视化。
+title: Export Grafana Snapshots
+summary: Learn how to export snapshots of Grafana Dashboard, and how to visualize these files.
 ---
 
-> **警告：**
+> **Warning:**
 >
-> - 从 TiDB v6.0.0 起，PingCAP 不再维护 MetricsTool 工具。从 v6.1.0 起，不再维护 MetricsTool 的文档。
-> - 如需导出监控数据，建议使用 [PingCAP Clinic 诊断服务](/clinic/clinic-introduction.md)一键导出诊断 TiDB 集群时所需要的信息，包括监控数据、日志、集群拓扑、配置、参数等。
+> - Since TiDB v6.0.0, PingCAP no longer maintains MetricsTool. Since v6.1.0, PingCAP no longer maintains the MetricsTool document.
+> - To export monitoring metrics data, use the [PingCAP Clinic diagnostic service](/clinic/clinic-introduction.md) to get the information required for diagnosing a TiDB cluster, including the monitoring metrics, logs, cluster topology, configuration, and parameters.
 
-# 将 Grafana 监控数据导出成快照
+# Export Grafana Snapshots
 
-> **注意：**
+> **Note:**
 >
-> 目前该工具仅支持在 Grafana v6.x.x 上使用。
+> Currently, MetricsTool can only be used with Grafana v6.x.x.
 
-在故障诊断中，监控数据十分重要。当你请求远程协助时，技术支持人员有时需要查看 Grafana Dashboard 以确认问题所在。[MetricsTool](https://metricstool.pingcap.net/) 用于将 Grafana Dashboard 的快照导出为本地文件，并将快照可视化。因此，你可以在不泄露 Grafana 服务器上其他敏感信息的前提下，将监控数据以快照形式分享给外部人员，同时也方便外部人员准确识读数据图表。
+Metrics data is important in troubleshooting. When you request remote assistance, sometimes the support staff need to view the Grafana dashboards to diagnose problems. [MetricsTool](https://metricstool.pingcap.net/) can help export snapshots of Grafana dashboards as local files and visualize these snapshots. You can share these snapshots with outsiders and allow them to accurately read out the graphs, without giving out access to other sensitive information on the Grafana server.
 
-## 使用方法
+## Usage
 
-可以通过访问 `<https://metricstool.pingcap.net>` 来使用 MetricsTool。它主要提供以下三种功能：
+MetricsTool can be accessed from <https://metricstool.pingcap.net/>. It consists of three sets of tools:
 
-* **导出快照**：提供一段在浏览器开发者工具上运行的用户脚本。你可以使用这个脚本在任意 Grafana v6.x.x 服务器上下载当前 Dashboard 中所有可见面板的快照。
+* **Export**: A user script running on the browser's Developer Tool, allowing you to download a snapshot of all visible panels in the current dashboard on any Grafana v6.x.x server.
 
-    ![运行用户脚本后的 MetricsTool Exporter 截图](https://docs-download.pingcap.com/media/images/docs-cn/metricstool-export.png)
+    ![Screenshot of MetricsTool Exporter after running the user script](https://docs-download.pingcap.com/media/images/docs/metricstool-export.png)
 
-* **快照可视化**：通过网页端可视化工具 Visualizer 将快照导出文件可视化。快照经过可视化后，操作起来与实际的 Grafana Dashboard 无异。
+* **Visualize**: A web page visualizing the exported snapshot files. The visualized snapshots can be operated in the same way as live Grafana dashboards.
 
-    ![MetricsTool Visualizer 截图](https://docs-download.pingcap.com/media/images/docs-cn/metricstool-visualize.png)
+    ![Screenshot of MetricsTool Visualizer](https://docs-download.pingcap.com/media/images/docs/metricstool-visualize.png)
 
-* **导入快照**：介绍如何将导出的快照重新导入到已有的 Grafana 实例中。
+* **Import**: Instructions to import the exported snapshot back into an actual Grafana instance.
 
 ## FAQs
 
-### 与直接截图及导出 PDF 相比，MetricTool 有什么优势？
+### What is the advantage of this tool compared with screenshot or PDF printing?
 
-MetricsTool 导出的快照文件包含快照生成时的监控指标实际数值。你可以通过 Visualizer 与渲染的图表进行交互，比如切换序列、选择一个较小的时间范围以及检查特定时间点的监控数据值等，就像在操作一个实际的 Grafana Dashboard 一样，因此它比 PDF 文件和截图更强大。
+The snapshot files exported by MetricsTool contain the actual values when they are taken. And the Visualizer allows you to interact with the rendered graphs as if it is a live Grafana dashboard, supporting operations like toggling series, zooming into a smaller time range, and checking the precise value at a given time. This makes MetricsTool much more powerful than images or PDFs.
 
-### 快照文件里都包含什么？
+### What are included in the snapshot file?
 
-快照文件包含所选时间范围内所有图表和面板数据的值，但不保存数据源的原始监控指标，所以无法在 Visualizer 中编辑查询表达式。
+The snapshot file contains the values of all graphs and panels in the selected time range. It does not save the original metrics from the data sources (and thus you cannot edit the query expression in the Visualizer).
 
-### Visualizer 会将上传的快照文件保存到 PingCAP 的服务器上吗？
+### Will the Visualizer save the uploaded snapshot files in PingCAP's servers?
 
-不会。快照文件解析全部在浏览器中完成，Visualizer 不会将任何信息发送给 PingCAP。你可以放心地使用 Visualizer 查看带有敏感信息的快照文件，不用担心信息会泄露给第三方。
+No, the Visualizer parses the snapshot files entirely inside your browser. Nothing will be sent to PingCAP. You are free to view snapshot files received from sensitive sources, and no need to worry about these leaking to third parties through the Visualizer.
 
-### 可以在所有监控指标数据都加载完毕前就运行脚本吗？
+### Will there be problems to execute the script before all metrics are loaded?
 
-可以。虽然脚本会弹出提示，让你等所有监控数据加载完毕后再运行，但可以手动跳过等待并导出快照，以免有些监控数据加载的时间过长。
+No, the script UI will notify you to wait for all metrics to be loaded. However, you can manually skip waiting and export the snapshot in case of some metrics loading for too long.
 
-### 快照文件可视化后，可以通过网页链接分享吗？
+### Can we share a link to a visualized snapshot?
 
-不能。但你可以分享快照文件，并说明如何使用 Visualizer 查看。如果确实需要通过网页链接分享，可以尝试使用 Grafana 内置的 `snapshot.raintank.io` 服务。但在这样做之前，要确保不会泄漏隐私信息。
+No, but you can share the snapshot file, with instruction on how to use the Visualizer to view it. If you truly need a world-readable URL, you may also try the public `snapshot.raintank.io` service built into Grafana, but make sure all privacy concerns are cleared before doing so.

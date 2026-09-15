@@ -1,247 +1,256 @@
 ---
-title: TiKV 内存参数性能调优
-summary: TiKV 内存参数性能调优，根据机器配置情况调整参数以达到最佳性能。TiKV 使用 RocksDB 作为持久化存储，配置项包括 block-cache 大小和 write-buffer 大小。除此之外，系统内存还会被用于 page cache 和处理大查询时的数据结构生成。推荐将 TiKV 部署在 CPU 核数不低于 8 或内存不低于 32GiB 的机器上，对写入吞吐要求高时使用吞吐能力较好的磁盘，对读写延迟要求高时使用 IOPS 较高的 SSD 盘。
+title: Tune TiKV Memory Parameter Performance
+summary: Learn how to tune the TiKV parameters for optimal performance.
 ---
 
-# TiKV 内存参数性能调优
+# Tune TiKV Memory Parameter Performance
 
-本文档用于描述如何根据机器配置情况来调整 TiKV 的参数，使 TiKV 的性能达到最优。你可以在 [etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml) 找到配置文件模版，参考[使用 TiUP 修改配置参数](/maintain-tidb-using-tiup.md#修改配置参数)进行操作，部分配置项可以通过[在线修改 TiKV 配置](/dynamic-config.md#在线修改-tikv-配置)方式在线更新。具体配置项的含义可参考 [TiKV 配置文件描述](/tikv-configuration-file.md)。
+This document describes how to tune the TiKV parameters for optimal performance. You can find the default configuration file in [etc/config-template.toml](https://github.com/tikv/tikv/blob/release-8.5/etc/config-template.toml). To modify the configuration, you can [use TiUP](/maintain-tidb-using-tiup.md#modify-the-configuration) or [modify TiKV dynamically](/dynamic-config.md#modify-tikv-configuration-dynamically) for a limited set of configuration items. For the complete configuration, see [TiKV configuration file](/tikv-configuration-file.md).
 
-TiKV 最底层使用的是 RocksDB 做为持久化存储，所以 TiKV 的很多性能相关的参数都是与 RocksDB 相关的。TiKV 使用了两个 RocksDB 实例，默认 RocksDB 实例存储 KV 数据，Raft RocksDB 实例（简称 RaftDB）存储 Raft 数据。
+TiKV uses RocksDB for persistent storage at the bottom level of the TiKV architecture. Therefore, many of the performance parameters are related to RocksDB. TiKV uses two RocksDB instances: the default RocksDB instance stores KV data, the Raft RocksDB instance (RaftDB) stores Raft logs.
 
-TiKV 使用了 RocksDB 的 `Column Families` (CF) 特性。
+TiKV implements `Column Families` (CF) from RocksDB.
 
-- 默认 RocksDB 实例将 KV 数据存储在内部的 `default`、`write` 和 `lock` 3 个 CF 内。
+- The default RocksDB instance stores KV data in the `default`, `write` and `lock` CFs.
 
-    - `default` CF 存储的是真正的数据，与其对应的参数位于 `[rocksdb.defaultcf]` 项中；
-    - `write` CF 存储的是数据的版本信息 (MVCC) 以及索引相关的数据，相关的参数位于 `[rocksdb.writecf]` 项中；
-    - `lock` CF 存储的是锁信息，系统使用默认参数。
+    - The `default` CF stores the actual data. The corresponding parameters are in `[rocksdb.defaultcf]`.
+    - The `write` CF stores the version information in Multi-Version Concurrency Control (MVCC) and index-related data. The corresponding parameters are in `[rocksdb.writecf]`.
+    - The `lock` CF stores the lock information. The system uses the default parameters.
 
-- Raft RocksDB 实例存储 Raft log。
+- The Raft RocksDB (RaftDB) instance stores Raft logs.
 
-    - `default` CF 主要存储的是 Raft log，与其对应的参数位于 `[raftdb.defaultcf]` 项中。
+    - The `default` CF stores the Raft log. The corresponding parameters are in `[raftdb.defaultcf]`.
 
-所有的 CF 默认共同使用一个 block cache 实例。通过在 `[storage.block-cache]` 下设置 `capacity` 参数，你可以配置该 block cache 的大小。block cache 越大，能够缓存的热点数据越多，读取数据越容易，同时占用的系统内存也越多。
+After TiKV 3.0, by default, all CFs share one block cache instance. You can configure the size of the cache by setting the `capacity` parameter under `[storage.block-cache]`. The bigger the block cache, the more hot data can be cached, and the easier to read data, in the meantime, the more system memory is occupied.
 
-> **注意：**
->
-> 在 TiKV 3.0 之前的版本中，不支持使用 `shared block cache`，需要为每个 CF 单独配置 block cache。
+Before TiKV 3.0, shared block cache is not supported, and you need to configure block cache for each CF individually.
 
-每个 CF 有各自的 `write-buffer`，大小通过 `write-buffer-size` 控制。
+Each CF also has a separate `write buffer`. You can configure the size by setting the `write-buffer-size` parameter.
 
-## 参数说明
+## Parameter specification
 
 ```toml
-# 日志级别，可选值为：trace，debug，warn，error，info，off
+# Log level: trace, debug, warn, error, info, off.
 log-level = "info"
 
 [server]
-# 监听地址
+# Set listening address
 # addr = "127.0.0.1:20160"
 
-# gRPC 线程池大小
+# Size of thread pool for gRPC
 # grpc-concurrency = 4
-# TiKV 每个实例之间的 gRPC 连接数
-# grpc-raft-conn-num = 1
+# The number of gRPC connections between each TiKV instance
+# grpc-raft-conn-num = 10
 
-# TiDB 过来的大部分读请求都会发送到 TiKV 的 Coprocessor 进行处理，该参数用于设置
-# coprocessor 线程的个数，如果业务是读请求比较多，增加 coprocessor 的线程数，但应比系统的
-# CPU 核数小。例如：TiKV 所在的机器有 32 core，在重读的场景下甚至可以将该参数设置为 30。在没有
-# 设置该参数的情况下，TiKV 会自动将该值设置为 CPU 总核数乘以 0.8。
+# Most read requests from TiDB are sent to the coprocessor of TiKV. This parameter is used to set the number of threads
+# of the coprocessor. If many read requests exist, add the number of threads and keep the number within that of the
+# system CPU cores. For example, for a 32-core machine deployed with TiKV, you can even set this parameter to 30 in
+# repeatable read scenarios. If this parameter is not set, TiKV automatically sets it to CPU cores * 0.8.
 # end-point-concurrency = 8
 
-# 可以给 TiKV 实例打标签，用于副本的调度
+# Tag the TiKV instances to schedule replicas.
 # labels = {zone = "cn-east-1", host = "118", disk = "ssd"}
 
 [storage]
-# 数据目录
+# The data directory
 # data-dir = "/tmp/tikv/store"
 
-# 通常情况下使用默认值就可以了。在导数据的情况下建议将该参数设置为 1024000。
+# In most cases, you can use the default value. When importing data, it is recommended to set the parameter to 1024000.
 # scheduler-concurrency = 102400
-# 该参数控制写入线程的个数，当写入操作比较频繁的时候，需要把该参数调大。使用 top -H -p tikv-pid
-# 发现名称为 sched-worker-pool 的线程都特别忙，这个时候就需要将 scheduler-worker-pool-size
-# 参数调大，增加写线程的个数。
+# This parameter controls the number of write threads. When write operations occur frequently, set this parameter value
+# higher. Run `top -H -p tikv-pid` and if the threads named `sched-worker-pool` are busy, set the value of parameter
+# `scheduler-worker-pool-size` higher and increase the number of write threads.
 # scheduler-worker-pool-size = 4
 
 [storage.block-cache]
-## 是否为 RocksDB 的所有 CF 都创建一个 `shared block cache`。
+## Whether to create a shared block cache for all RocksDB column families.
 ##
-## RocksDB 使用 block cache 来缓存未压缩的数据块。较大的 block cache 可以加快读取速度。
-## 推荐开启 `shared block cache` 参数。这样只需要设置全部缓存大小，使配置过程更加方便。
-## 在大多数情况下，可以通过 LRU 算法在各 CF 间自动平衡缓存用量。
+## Block cache is used by RocksDB to cache uncompressed blocks. Big block cache can speed up read.
+## It is recommended to turn on shared block cache. Since only the total cache size need to be
+## set, it is easier to configure. In most cases, it should be able to auto-balance cache usage
+## between column families with standard LRU algorithm.
 ##
-## `storage.block-cache` 会话中的其余配置仅在开启 `shared block cache` 时起作用。
-## 从 v6.6.0 开始，该选项永远开启且无法关闭。
+## The rest of config in the storage.block-cache session is effective only when shared block cache
+## is on.
+## Starting from v6.6.0, the `shared` option is always enabled and cannot be disabled.
 # shared = true
-## `shared block cache` 的大小。正常情况下应设置为系统全部内存的 30%-50%。
-## 如果未设置该参数，则由以下字段或其默认值的总和决定。
+
+## Size of the shared block cache. Normally it should be tuned to 30%-50% of system's total memory.
+## When the config is not set, it is decided by the sum of the following fields or their default
+## value:
+##   * rocksdb.defaultcf.block-cache-size or 25% of system's total memory
+##   * rocksdb.writecf.block-cache-size   or 15% of system's total memory
+##   * rocksdb.lockcf.block-cache-size    or  2% of system's total memory
+##   * raftdb.defaultcf.block-cache-size  or  2% of system's total memory
 ##
-##   * rocksdb.defaultcf.block-cache-size 或系统全部内存的 25%
-##   * rocksdb.writecf.block-cache-size 或系统全部内存的 15%
-##   * rocksdb.lockcf.block-cache-size 或系统全部内存的 2%
-##   * raftdb.defaultcf.block-cache-size 或系统全部内存的 2%
-##
-## 要在单个物理机上部署多个 TiKV 节点，需要显式配置该参数。
-## 否则，TiKV 中可能会出现 OOM 错误。
-# capacity = "1GB"
+## To deploy multiple TiKV nodes on a single physical machine, configure this parameter explicitly.
+## Otherwise, the OOM problem might occur in TiKV.
+# capacity = "1GiB"
 
 [pd]
-# pd 的地址
+# PD address
 # endpoints = ["127.0.0.1:2379","127.0.0.2:2379","127.0.0.3:2379"]
 
 [metric]
-# 将 metrics 推送给 Prometheus pushgateway 的时间间隔
+# The interval of pushing metrics to Prometheus Pushgateway
 interval = "15s"
-# Prometheus pushgateway 的地址
+# Prometheus Pushgateway address
 address = ""
 job = "tikv"
 
 [raftstore]
-# Raft RocksDB 目录。默认值是 [storage.data-dir] 的 raft 子目录。
-# 如果机器上有多块磁盘，可以将 Raft RocksDB 的数据放在不同的盘上，提高 TiKV 的性能。
+# Raft RocksDB directory. The default value is Raft subdirectory of [storage.data-dir].
+# If there are multiple disks on the machine, store the data of Raft RocksDB on different disks to improve TiKV performance.
 # raftdb-path = "/tmp/tikv/store/raft"
 
-# 当 Region 写入的数据量超过该阈值的时候，TiKV 会检查该 Region 是否需要分裂。为了减少检查过程
-# 中扫描数据的成本，导入数据过程中可以将该值设置为 32 MB，正常运行状态下使用默认值即可。
+# When the data size change in a Region is larger than the threshold value, TiKV checks whether this Region needs split.
+# To reduce the costs of scanning data in the checking process, set the value to 32 MiB during the data import process. In the normal operation status, set it to the default value.
 region-split-check-diff = "32MiB"
 
 [coprocessor]
-
-## 当区间为 [a,e) 的 Region 的大小超过 `region_max_size`，TiKV 会尝试分裂该 Region，例如分裂成 [a,b)、[b,c)、[c,d)、[d,e) 等区间的 Region 后
-## 这些 Region [a,b), [b,c), [c,d) 的大小为 `region_split_size` (或者稍大于 `region_split_size`）
-# region-max-size = "384MiB"
-# region-split-size = "256MiB"
+## If the size of a Region with the range of [a,e) is larger than the value of `region_max_size`, TiKV tries to split the Region to several Regions, for example, the Regions with the ranges of [a,b), [b,c), [c,d), and [d,e).
+## After the Region split, the size of the split Regions is equal to the value of `region_split_size` (or slightly larger than the value of `region_split_size`).
+# region-max-size = "144MiB"
+# region-split-size = "96MiB"
 
 [rocksdb]
-# RocksDB 进行后台任务的最大线程数，后台任务包括 compaction 和 flush。具体 RocksDB 为什么需要进行 compaction，
-# 请参考 RocksDB 的相关资料。在写流量比较大的时候（例如导数据），建议开启更多的线程，
-# 但应小于 CPU 的核数。例如在导数据的时候，32 核 CPU 的机器，可以设置成 28。
+# The maximum number of threads of RocksDB background tasks. The background tasks include compaction and flush.
+# For detailed information why RocksDB needs to implement compaction, see RocksDB-related materials. When write
+# traffic (like the importing data size) is big, it is recommended to enable more threads. But set the number of the enabled
+# threads smaller than that of CPU cores. For example, when importing data, for a machine with a 32-core CPU,
+# set the value to 28.
 # max-background-jobs = 8
 
-# RocksDB 能够打开的最大文件句柄数。
+# The maximum number of file handles RocksDB can open
 # max-open-files = 40960
 
-# RocksDB MANIFEST 文件的大小限制.# 更详细的信息请参考：https://github.com/facebook/rocksdb/wiki/MANIFEST
+# The file size limit of RocksDB MANIFEST. For more details, see https://github.com/facebook/rocksdb/wiki/MANIFEST
 max-manifest-file-size = "20MiB"
 
-# RocksDB write-ahead logs 目录。如果机器上有两块盘，可以将 RocksDB 的数据和 WAL 日志放在
-# 不同的盘上，提高 TiKV 的性能。
+# The directory of RocksDB write-ahead logs. If there are two disks on the machine, store the RocksDB data and WAL logs
+# on different disks to improve TiKV performance.
 # wal-dir = "/tmp/tikv/store"
 
-# 下面两个参数用于怎样处理 RocksDB 归档 WAL。
-# 更多详细信息请参考：https://github.com/facebook/rocksdb/wiki/How-to-persist-in-memory-RocksDB-database%3F
+# Use the following two parameters to deal with RocksDB archiving WAL.
+# For more details, see https://github.com/facebook/rocksdb/wiki/How-to-persist-in-memory-RocksDB-database%3F
 # wal-ttl-seconds = 0
 # wal-size-limit = 0
 
-# RocksDB WAL 日志的最大总大小，通常情况下使用默认值就可以了。
-# max-total-wal-size = "4GB"
+# In most cases, set the maximum total size of RocksDB WAL logs to the default value.
+# max-total-wal-size = "4GiB"
 
-# 开启 RocksDB compaction 过程中的预读功能，如果使用的是机械磁盘，建议该值至少为2MiB。
+# Use this parameter to enable the readahead feature during RocksDB compaction. If you are using mechanical disks, it is recommended to set the value to 2MiB at least.
 # compaction-readahead-size = "2MiB"
 
 [rocksdb.defaultcf]
-# 数据块大小。RocksDB 是按照 block 为单元对数据进行压缩的，同时 block 也是缓存在 block-cache
-# 中的最小单元（类似其他数据库的 page 概念）。
-block-size = "32KiB"
+# The data block size. RocksDB compresses data based on the unit of block.
+# Similar to page in other databases, block is the smallest unit cached in block-cache.
+block-size = "64KB"
 
-# RocksDB 每一层数据的压缩方式，可选的值为：no,snappy,zlib,bzip2,lz4,lz4hc,zstd。注意 Snappy 压缩文件必须遵循[官方 Snappy 格式](https://github.com/google/snappy)。不支持其他非官方压缩格式。
-# no:no:lz4:lz4:lz4:zstd:zstd 表示 level0 和 level1 不压缩，level2 到 level4 采用 lz4 压缩算法,
-# level5 和 level6 采用 zstd 压缩算法,。
-# no 表示没有压缩，lz4 是速度和压缩比较为中庸的压缩算法，zlib 的压缩比很高，对存储空间比较友
-# 好，但是压缩速度比较慢，压缩的时候需要占用较多的 CPU 资源。不同的机器需要根据 CPU 以及 I/O 资
-# 源情况来配置怎样的压缩方式。例如：如果采用的压缩方式为"no:no:lz4:lz4:lz4:zstd:zstd"，在大量
-# 写入数据的情况下（导数据），发现系统的 I/O 压力很大（使用 iostat 发现 %util 持续 100% 或者使
-# 用 top 命令发现 iowait 特别多），而 CPU 的资源还比较充裕，这个时候可以考虑将 level0 和
-# level1 开启压缩，用 CPU 资源换取 I/O 资源。如果采用的压缩方式
-# 为"no:no:lz4:lz4:lz4:zstd:zstd"，在大量写入数据的情况下，发现系统的 I/O 压力不大，但是 CPU
-# 资源已经吃光了，top -H 发现有大量的 bg 开头的线程（RocksDB 的 compaction 线程）在运行，这
-# 个时候可以考虑用 I/O 资源换取 CPU 资源，将压缩方式改成"no:no:no:lz4:lz4:zstd:zstd"。总之，目
-# 的是为了最大限度地利用系统的现有资源，使 TiKV 的性能在现有的资源情况下充分发挥。
+# The compaction mode of each layer of RocksDB data. The optional values include no, snappy, zlib,
+# bzip2, lz4, lz4hc, and zstd. Note that the Snappy compressed file must be in the [official Snappy format](https://github.com/google/snappy). Other variants of Snappy compression are not supported.
+# "no:no:lz4:lz4:lz4:zstd:zstd" indicates there is no compaction of level0 and level1; lz4 compaction algorithm is used
+# from level2 to level4; zstd compaction algorithm is used from level5 to level6.
+# "no" means no compaction. "lz4" is a compaction algorithm with moderate speed and compaction ratio. The
+# compaction ratio of zlib is high. It is friendly to the storage space, but its compaction speed is slow. This
+# compaction occupies many CPU resources. Different machines deploy compaction modes according to CPU and I/O resources.
+# For example, if you use the compaction mode of "no:no:lz4:lz4:lz4:zstd:zstd" and find much I/O pressure of the
+# system (run the iostat command to find %util lasts 100%, or run the top command to find many iowaits) when writing
+# (importing) a lot of data while the CPU resources are adequate, you can compress level0 and level1 and exchange CPU
+# resources for I/O resources. If you use the compaction mode of "no:no:lz4:lz4:lz4:zstd:zstd" and you find the I/O
+# pressure of the system is not big when writing a lot of data, but CPU resources are inadequate. Then run the top
+# command and choose the -H option. If you find a lot of bg threads (namely the compaction thread of RocksDB) are
+# running, you can exchange I/O resources for CPU resources and change the compaction mode to "no:no:no:lz4:lz4:zstd:zstd".
+# In a word, it aims at making full use of the existing resources of the system and improving TiKV performance
+# in terms of the current resources.
 compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
 
-# RocksDB memtable 的大小。
+# The RocksDB memtable size
 write-buffer-size = "128MiB"
 
-# 最多允许几个 memtable 存在。写入到 RocksDB 的数据首先会记录到 WAL 日志里面，然后会插入到
-# memtable 里面，当 memtable 的大小到达了 write-buffer-size 限定的大小的时候，当前的
-# memtable 会变成只读的，然后生成一个新的 memtable 接收新的写入。只读的 memtable 会被
-# RocksDB 的 flush 线程（max-background-flushes 参数能够控制 flush 线程的最大个数）
-# flush 到磁盘，成为 level0 的一个 sst 文件。当 flush 线程忙不过来，导致等待 flush 到磁盘的
-# memtable 的数量到达 max-write-buffer-number 限定的个数的时候，RocksDB 会将新的写入
-# stall 住，stall 是 RocksDB 的一种流控机制。在导数据的时候可以将 max-write-buffer-number
-# 的值设置的更大一点，例如 10。
+# The maximum number of the memtables. The data written into RocksDB is first recorded in the WAL log, and then inserted
+# into memtables. When the memtable reaches the size limit of `write-buffer-size`, it turns into read only and generates
+# a new memtable receiving new write operations. The flush threads of RocksDB will flush the read only memtable to the
+# disks to become an sst file of level0. `max-background-flushes` controls the maximum number of flush threads. When the
+# flush threads are busy, resulting in the number of the memtables waiting to be flushed to the disks reaching the limit
+# of `max-write-buffer-number`, RocksDB stalls the new operation.
+# "Stall" is a flow control mechanism of RocksDB. When importing data, you can set the `max-write-buffer-number` value
+# higher, like 10.
 max-write-buffer-number = 5
 
-# 当 level0 的 sst 文件个数到达 level0-slowdown-writes-trigger 指定的限度的时候，
-# RocksDB 会尝试减慢写入的速度。因为 level0 的 sst 太多会导致 RocksDB 的读放大上升。
-# level0-slowdown-writes-trigger 和 level0-stop-writes-trigger 是 RocksDB 进行流控的
-# 另一个表现。当 level0 的 sst 的文件个数到达 4（默认值），level0 的 sst 文件会和 level1 中
-# 有 overlap 的 sst 文件进行 compaction，缓解读放大的问题。
+# When the number of sst files of level0 reaches the limit of `level0-slowdown-writes-trigger`, RocksDB
+# tries to slow down the write operation, because too many sst files of level0 can cause higher read pressure of
+# RocksDB. `level0-slowdown-writes-trigger` and `level0-stop-writes-trigger` are for the flow control of RocksDB.
+# When the number of sst files of level0 reaches 4 (the default value), the sst files of level0 and the sst files
+# of level1 which overlap those of level0 implement compaction to relieve the read pressure.
 level0-slowdown-writes-trigger = 20
 
-# 当 level0 的 sst 文件个数到达 level0-stop-writes-trigger 指定的限度的时候，RocksDB 会
-# stall 住新的写入。
+# When the number of sst files of level0 reaches the limit of `level0-stop-writes-trigger`, RocksDB stalls the new
+# write operation.
 level0-stop-writes-trigger = 36
 
-# 当 level1 的数据量大小达到 max-bytes-for-level-base 限定的值的时候，会触发 level1 的
-# sst 和 level2 中有 overlap 的 sst 进行 compaction。
-# 黄金定律：max-bytes-for-level-base 的设置的第一参考原则就是保证和 level0 的数据量大致相
-# 等，这样能够减少不必要的 compaction。例如压缩方式为"no:no:lz4:lz4:lz4:lz4:lz4"，那么
-# max-bytes-for-level-base 的值应该是 write-buffer-size 的大小乘以 4，因为 level0 和
-# level1 都没有压缩，而且 level0 触发 compaction 的条件是 sst 的个数到达 4（默认值）。在
-# level0 和 level1 都采取了压缩的情况下，就需要分析下 RocksDB 的日志，看一个 memtable 的压
-# 缩成一个 sst 文件的大小大概是多少，例如 32MB，那么 max-bytes-for-level-base 的建议值就应
-# 该是 32MiB * 4 = 128MiB。
+# When the level1 data size reaches the limit value of `max-bytes-for-level-base`, the sst files of level1
+# and their overlap sst files of level2 implement compaction. The golden rule: the first reference principle
+# of setting `max-bytes-for-level-base` is guaranteeing that the `max-bytes-for-level-base` value is roughly equal to the
+# data volume of level0. Thus unnecessary compaction is reduced. For example, if the compaction mode is
+# "no:no:lz4:lz4:lz4:lz4:lz4", the `max-bytes-for-level-base` value is write-buffer-size * 4, because there is no
+# compaction of level0 and level1 and the trigger condition of compaction for level0 is that the number of the
+# sst files reaches 4 (the default value). When both level0 and level1 adopt compaction, it is necessary to analyze
+# RocksDB logs to know the size of an sst file compressed from an mentable. For example, if the file size is 32MB,
+# the proposed value of `max-bytes-for-level-base` is 32MiB * 4 = 128MiB.
 max-bytes-for-level-base = "512MiB"
 
-# sst 文件的大小。level0 的 sst 文件的大小受 write-buffer-size 和 level0 采用的压缩算法的
-# 影响，target-file-size-base 参数用于控制 level1-level6 单个 sst 文件的大小。
+# The sst file size. The sst file size of level0 is influenced by the compaction algorithm of `write-buffer-size`
+# and level0. `target-file-size-base` is used to control the size of a single sst file of level1-level6.
 target-file-size-base = "32MiB"
 
 [rocksdb.writecf]
-# 保持和 rocksdb.defaultcf.compression-per-level 一致。
+# Set it the same as `rocksdb.defaultcf.compression-per-level`.
 compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
 
-# 保持和 rocksdb.defaultcf.write-buffer-size 一致。
+# Set it the same as `rocksdb.defaultcf.write-buffer-size`.
 write-buffer-size = "128MiB"
 max-write-buffer-number = 5
 min-write-buffer-number-to-merge = 1
 
-# 保持和 rocksdb.defaultcf.max-bytes-for-level-base 一致。
+# Set it the same as `rocksdb.defaultcf.max-bytes-for-level-base`.
 max-bytes-for-level-base = "512MiB"
 target-file-size-base = "32MiB"
 
 [raftdb]
-# RaftDB 能够打开的最大文件句柄数。
+# The maximum number of the file handles RaftDB can open
 # max-open-files = 40960
 
-# 开启 RaftDB compaction 过程中的预读功能，如果使用的是机械磁盘，建议该值至少为2MiB。
+# Enable the readahead feature in RaftDB compaction. If you are using mechanical disks, it is recommended to set
+# this value to 2MB at least.
 # compaction-readahead-size = "2MiB"
 
 [raftdb.defaultcf]
-# 保持和 rocksdb.defaultcf.compression-per-level 一致。
+# Set it the same as `rocksdb.defaultcf.compression-per-level`.
 compression-per-level = ["no", "no", "lz4", "lz4", "lz4", "zstd", "zstd"]
 
-# 保持和 rocksdb.defaultcf.write-buffer-size 一致。
+# Set it the same as `rocksdb.defaultcf.write-buffer-size`.
 write-buffer-size = "128MiB"
 max-write-buffer-number = 5
 min-write-buffer-number-to-merge = 1
 
-# 保持和 rocksdb.defaultcf.max-bytes-for-level-base 一致。
+# Set it the same as `rocksdb.defaultcf.max-bytes-for-level-base`.
 max-bytes-for-level-base = "512MiB"
 target-file-size-base = "32MiB"
 ```
 
-## TiKV 内存使用情况
+## TiKV memory usage
 
-除了以上列出的 `block-cache` 以及 `write-buffer` 会占用系统内存外：
+Besides `block cache` and `write buffer` which occupy the system memory, the system memory is occupied in the following scenarios:
 
-1. 需预留一些内存作为系统的 page cache
-2. TiKV 在处理大的查询的时候（例如 `select * from ...`）会读取数据然后在内存中生成对应的数据结构返回给 TiDB，这个过程中 TiKV 会占用一部分内存
++ Some of the memory is reserved as the system's page cache.
 
-## TiKV 机器配置推荐
++ When TiKV processes large queries such as `select * from ...`, it reads data, generates the corresponding data structure in the memory, and returns this structure to TiDB. During this process, TiKV occupies some of the memory.
 
-1. 生产环境中，不建议将 TiKV 部署在 CPU 核数小于 8 或内存低于 32GiB 的机器上
-2. 如果对写入吞吐要求比较高，建议使用吞吐能力比较好的磁盘
-3. 如果对读写的延迟要求非常高，建议使用 IOPS 比较高的 SSD 盘
+## Recommended configuration of TiKV
+
++ In production environments, it is not recommended to deploy TiKV on the machine whose CPU cores are less than 8 or the memory is less than 32GiB.
+
++ If you demand a high write throughput, it is recommended to use a disk with good throughput capacity.
+
++ If you demand a very low read-write latency, it is recommended to use SSD with high IOPS.

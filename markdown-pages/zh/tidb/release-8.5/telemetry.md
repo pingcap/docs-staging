@@ -1,68 +1,99 @@
 ---
-title: 遥测
-summary: 介绍遥测的场景，如何禁用功能和查看遥测状态。
+title: Telemetry
+summary: Learn the telemetry feature, how to disable the feature and view its status.
 ---
 
-# 遥测
+# Telemetry
 
-开启遥测后，TiUP 会收集使用情况信息，并将这些信息分享给 PingCAP 用于改善产品。
+When the telemetry feature is enabled, TiUP and TiSpark collect usage information and share the information with PingCAP to help understand how to improve the product.
 
-> **注意：**
+> **Note:**
 >
-> - 从 TiUP v1.11.3 起，TiUP 遥测功能默认关闭，即 TiUP 默认不再收集使用情况信息。如果从 v1.11.3 之前的 TiUP 版本升级至 v1.11.3 或更高 TiUP 版本，遥测保持升级前的开启或关闭状态。
-> - 在 v8.1.0 到 v8.5.2 及其之间的版本中，TiDB 和 TiDB Dashboard 移除了遥测功能。
-> - 在 v8.5.3 到 v8.5.6 及其之间的版本中，TiDB 重新引入遥测功能，但其行为已更改为仅将遥测相关信息输出到日志文件，不再通过网络发送给 PingCAP。
-> - 从 v8.5.7 开始，TiDB 和 TiDB Dashboard 中的遥测功能已被弃用。
+> - Starting from TiUP v1.11.3, the telemetry feature in TiUP is disabled by default, which means TiUP usage information is not collected by default. If you upgrade from a TiUP version earlier than v1.11.3 to v1.11.3 or a later version, the telemetry feature keeps the same status as before the upgrade.
+> - Starting from TiSpark v3.0.3, the telemetry feature in TiSpark is disabled by default, which means TiSpark usage information is not collected by default.
+> - Starting from v8.1.0, the telemetry feature in TiDB and TiDB Dashboard is removed.
 
-## 开启遥测后哪些使用情况信息会被收集？
+## What is shared when telemetry is enabled?
 
-以下章节具体描述了 TiUP 收集并分享的使用情况信息。若收集的使用情况信息有变化，将在版本更新说明中告知。
+The following sections describe the shared usage information in detail for TiUP and TiSpark. The usage details that get shared might change over time. These changes (if any) will be announced in [release notes](/releases/release-notes.md).
 
-> **注意：**
+> **Note:**
 >
-> 在**任何情况**下，集群中用户存储的数据都**不会**被收集。另请参阅[隐私政策](https://pingkai.cn/legal/privacy-policy)。
+> In **ALL** cases, user data stored in the TiDB cluster will **NOT** be shared. You can also refer to [PingCAP Privacy Policy](https://pingcap.com/privacy-policy).
 
-当 TiUP 遥测功能开启时，执行 TiUP 命令时会将使用情况信息分享给 PingCAP，包括（但不限于）：
+### TiUP
 
-- 随机生成的遥测标示符
-- TiUP 命令的执行情况，如命令执行是否成功、命令执行耗时等
-- 使用 TiUP 进行部署的情况，如部署的目标机器硬件信息、组件版本号、修改过的部署配置名称等
+When the telemetry collection feature is enabled in TiUP, usage details of TiUP will be shared, including (but not limited to):
 
-使用 TiUP 时，可通过设置 `TIUP_CLUSTER_DEBUG=enable` 环境变量输出执行命令时收集的使用情况信息，例如：
+- A randomly generated telemetry ID.
+- Execution status of TiUP commands, such as whether the execution is successful and the execution duration.
+- Deployment characteristics, such as the size of hardware, TiDB components versions, and deployment configuration names that have been modified.
+
+To view the full content of the usage information shared to PingCAP, set the `TIUP_CLUSTER_DEBUG=enable` environment variable when executing the TiUP command. For example:
 
 ```shell
 TIUP_CLUSTER_DEBUG=enable tiup cluster list
 ```
 
-## 开启遥测功能
+### TiSpark
 
-可通过执行以下命令开启 TiUP 遥测功能：
+> **Note:**
+>
+> Starting from v3.0.3, the telemetry collection is disabled by default in TiSpark, and usage information is not collected and shared with PingCAP.
+
+When the telemetry collection feature is enabled for TiSpark, the Spark module will share the usage details of TiSpark, including (but not limited to):
+
+- A randomly generated telemetry ID.
+- Some configuration information of TiSpark, such as the read engine and whether streaming read is enabled.
+- Cluster deployment information, such as the machine hardware information, OS information, and component version number of the node where TiSpark is located.
+
+You can view TiSpark usage information that is collected in Spark logs. You can set the Spark log level to INFO or lower, for example:
+
+```shell
+grep "Telemetry report" {spark.log} | tail -n 1
+```
+
+## Enable telemetry
+
+### Enable TiUP telemetry
+
+To enable the TiUP telemetry collection, execute the following command:
 
 ```shell
 tiup telemetry enable
 ```
 
-## 禁用遥测功能
+### Enable TiSpark telemetry
 
-可通过执行以下命令禁用 TiUP 遥测功能：
+To enable the TiSpark telemetry collection, configure `spark.tispark.telemetry.enable = true` in the TiSpark configuration file.
+
+## Disable telemetry
+
+### Disable TiUP telemetry
+
+To disable the TiUP telemetry collection, execute the following command:
 
 ```shell
 tiup telemetry disable
 ```
 
-## 查看遥测启用状态
+### Disable TiSpark telemetry
 
-对于 TiUP 遥测，可通过执行以下命令查看遥测状态：
+To disable the TiSpark telemetry collection, configure `spark.tispark.telemetry.enable = false` in the TiSpark configuration file.
+
+## Check telemetry status
+
+For TiUP telemetry, execute the following command to check the telemetry status:
 
 ```shell
 tiup telemetry status
 ```
 
-## 使用情况信息合规性
+## Compliance
 
-为了满足不同国家或地区对于此类信息的合规性要求，使用情况信息会按照不同的操作者 IP 地址发送到位于不同国家的服务器，具体如下：
+To meet compliance requirements in different countries or regions, the usage information is sent to servers located in different countries according to the IP address of the sender machine:
 
-- 若为中国大陆 IP 地址，使用情况信息将会发送并存储于中国大陆境内的公有云服务器。
-- 若为中国大陆以外 IP 地址，使用情况信息将会发送并存储于美国的公有云服务器。
+- For IP addresses from the Chinese mainland, usage information is sent to and stored on cloud servers in the Chinese mainland.
+- For IP addresses from outside of the Chinese mainland, usage information is sent to and stored on cloud servers in the US.
 
-可参阅[隐私政策](https://pingkai.cn/legal/privacy-policy)了解详情。
+See [PingCAP Privacy Policy](https://www.pingcap.com/privacy-policy/) for details.

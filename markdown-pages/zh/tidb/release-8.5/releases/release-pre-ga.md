@@ -1,40 +1,39 @@
 ---
-title: TiDB Pre-GA Release Notes
-summary: TiDB Pre-GA 版本发布，对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量工作。TiDB 改进了 SQL 查询优化器、大量 MySQL 兼容性相关功能、支持 Natural Join、JSON 类型支持、裁剪无用数据、支持在 SQL 语句中设置优先级、完成表达式重构。PD 支持手动切换 PD 集群 Leader。TiKV 改进了 Raft Log 使用独立的 RocksDB 实例、使用 DeleteRange 加快删除副本速度、Coprocessor 支持更多运算符下推、提升性能和稳定性。TiSpark Beta Release 支持谓词下推、支持聚合下推、支持范围裁剪。
-aliases: ['/zh/tidb/dev/release-pre-ga/','/docs-cn/dev/releases/release-pre-ga/','/docs-cn/dev/releases/prega/','/zh/tidb/v5.4/release-pre-ga','/zh/tidb/v6.1/release-pre-ga','/zh/tidb/v6.5/release-pre-ga','/zh/tidb/v7.1/release-pre-ga','/zh/tidb/v7.5/release-pre-ga','/zh/tidb/v8.1/release-pre-ga']
+title: Pre-GA release notes
+summary: TiDB Pre-GA release on August 30, 2017, focuses on MySQL compatibility, SQL optimization, stability, and performance. TiDB introduces SQL query optimizer enhancements, MySQL compatibility, JSON type support, and memory consumption reduction. Placement Driver (PD) now supports manual leader change, while TiKV uses dedicated Rocksdb for Raft log storage and improves performance. TiDB Connector for Spark Beta Release implements predicates pushdown, aggregation pushdown, and range pruning, capable of running TPC+H queries.
 ---
 
-# TiDB Pre-GA Release Notes
+# Pre-GA Release Notes
 
-2017 年 8 月 30 日，TiDB 发布 Pre-GA 版。该版本对 MySQL 兼容性、SQL 优化器、系统稳定性、性能做了大量的工作。
+On August 30, 2017, TiDB Pre-GA is released! This release is focused on MySQL compatibility, SQL optimization, stability, and performance.
 
 ## TiDB
 
-+ SQL 查询优化器
-    - 调整代价模型
-    - 优化索引选择，支持不同类型字段比较的索引选择
-    - 支持基于贪心算法的 Join Reorder
-+ 大量 MySQL 兼容性相关功能
-+ 支持 Natural Join
-+ 完成 JSON 类型支持 (Experimental)，包括对 JSON 中的字段查询、更新、建索引
-+ 裁剪无用数据，减小执行器内存消耗
-+ 支持在 SQL 语句中设置优先级，并根据查询类型自动设置部分语句的优先级
-+ 完成表达式重构，执行速度提升 30% 左右
++ The SQL query optimizer:
+    - Adjust the cost model
+    - Use index scan to handle the `where` clause with the `compare` expression which has different types on each side
+    - Support the Greedy algorithm based Join Reorder
++ Many enhancements have been introduced to be more compatible with MySQL
++ Support `Natural Join`
++ Support the JSON type (Experimental), including the query, update and index of the JSON fields
++ Prune the useless data to reduce the consumption of the executor memory
++ Support configuring prioritization in the SQL statements and automatically set the prioritization for some of the statements according to the query type
++ Completed the expression refactor and the speed is increased by about 30%
 
-## PD
+## Placement Driver (PD)
 
-+ 支持手动切换 PD 集群 Leader
++ Support manually changing the leader of the PD cluster
 
 ## TiKV
 
-+ Raft Log 使用独立的 RocksDB 实例
-+ 使用 DeleteRange 加快删除副本速度
-+ Coprocessor 支持更多运算符下推
-+ 提升性能，提升稳定性
++ Use dedicated Rocksdb instance to store Raft log
++ Use `DeleteRange` to speed up the deleting of replicas
++ Coprocessor now supports more pushdown operators
++ Improve the performance and stability
 
-## TiSpark Beta Release
+## TiDB Connector for Spark Beta Release
 
-+ 支持谓词下推
-+ 支持聚合下推
-+ 支持范围裁剪
-+ 通过 TPC-H 测试（除去一个需要 View 的 Query）
++ Implement the predicates pushdown
++ Implement the aggregation pushdown
++ Implement range pruning
++ Capable of running full set of TPC+H except for one query that needs view support

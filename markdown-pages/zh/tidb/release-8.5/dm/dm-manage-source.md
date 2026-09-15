@@ -1,19 +1,19 @@
 ---
-title: 管理 TiDB Data Migration 上游数据源
-summary: 了解如何管理上游 MySQL 实例。
+title: Manage Data Source Configurations in TiDB Data Migration
+summary: Learn how to manage upstream MySQL instances in TiDB Data Migration.
 ---
 
-# 管理 TiDB Data Migration 上游数据源
+# Manage Data Source Configurations in TiDB Data Migration
 
-[dmctl](/dm/dmctl-introduction.md) 是运维 TiDB Data Migration (DM) 集群的命令行工具。本文介绍了如何使用 dmctl 组件来管理数据源配置，包括如何加密数据库密码，数据源操作，查看数据源配置，改变数据源与 DM-worker 的绑定关系。
+This document introduces how to manage data source configurations, including encrypting the MySQL password, operating the data source, and changing the bindings between upstream MySQL instances and DM-workers using [dmctl](/dm/dmctl-introduction.md).
 
-## 加密数据库密码
+## Encrypt the database password
 
-在 DM 相关配置文件中，推荐使用经 dmctl 加密后的密码。对于同一个原始密码，每次加密后密码不同。
+In DM configuration files, it is recommended to use the password encrypted with dmctl. For one original password, the encrypted password is different after each encryption.
 
-> **注意：**
+> **Note:**
 >
-> 从 v8.0.0 开始，DM-master 必须配置 [`secret-key-path`](/dm/dm-master-configuration-file.md) 后才可使用 `dmctl encrypt` 命令。
+> Starting from v8.0.0, you must configure [`secret-key-path`](/dm/dm-master-configuration-file.md) for DM-master before using the `dmctl encrypt` command.
 
 
 ```bash
@@ -24,9 +24,9 @@ summary: 了解如何管理上游 MySQL 实例。
 MKxn0Qo3m3XOyjCnhEMtsUCm83EhGQDZ/T4=
 ```
 
-## 数据源操作
+## Operate data source
 
-`operate-source` 命令向 DM 集群加载、列出、移除数据源。
+You can use the `operate-source` command to load, list or remove the data source configurations to the DM cluster.
 
 
 ```bash
@@ -47,32 +47,30 @@ Global Flags:
   -s, --source strings   MySQL Source ID
 ```
 
-### 参数解释
+### Flags description
 
-+ `create`：创建一个或多个上游的数据库源。创建多个数据源失败时，会尝试回滚到执行命令之前的状态
++ `create`: Creates one or more upstream database sources. When creating multiple data sources fails, DM rolls back to the state where the command was not executed.
 
-+ `stop`：停止一个或多个上游的数据库源。停止多个数据源失败时，可能有部分数据源已成功停止
++ `stop`: Stops one or more upstream database sources. When stopping multiple data sources fails, some data sources might be stopped.
 
-+ `show`：显示已添加的数据源以及对应的 DM-worker
++ `show`: Shows the added data source and the corresponding DM-worker.
 
-+ `config-file`：
-    - 指定 `source.yaml` 的文件路径
-    - 可传递多个文件路径
++ `config-file`: Specifies the file path of `source.yaml` and can pass multiple file paths.
 
-+ `--print-sample-config`：打印示例配置文件。该参数会忽视其余参数
++ `--print-sample-config`: Prints the sample configuration file. This parameter ignores other parameters.
 
-### 命令用法示例
+### Usage example
 
-使用 `operate-source` 命令创建数据源配置：
+Use the following `operate-source` command to create a source configuration file:
 
 
 ```bash
 operate-source create ./source.yaml
 ```
 
-其中 `source.yaml` 的配置参考[上游数据库配置文件介绍](/dm/dm-source-configuration-file.md)。
+For the configuration of `source.yaml`, refer to [Upstream Database Configuration File Introduction](/dm/dm-source-configuration-file.md).
 
-结果如下：
+The following is an example of the returned result:
 
 
 ```
@@ -90,13 +88,13 @@ operate-source create ./source.yaml
 }
 ```
 
-## 查看数据源配置
+### Check data source configurations
 
-> **注意：**
+> **Note:**
 >
-> `config` 命令仅在 DM v6.0 及其以后版本支持，之前版本可使用 `get-config` 命令。
+> The `config` command is only supported in DM v6.0 and later versions. For earlier versions, you must use the `get-config` command.
 
-如果知道 source-id，可以通过 `dmctl --master-addr <master-addr> config source <source-id>` 命令直接查看数据源配置。
+If you know the `source-id`, you can run `dmctl --master-addr <master-addr> config source <source-id>` to get the data source configuration.
 
 
 ```bash
@@ -106,19 +104,19 @@ config source mysql-replica-01
 ```
 {
   "result": true,
-  "msg": "",
-  "cfg": "enable-gtid: false
-    flavor: mysql
-    source-id: mysql-replica-01
-    from:
-      host: 127.0.0.1
-      port: 8407
-      user: root
-      password: '******'
+    "msg": "",
+    "cfg": "enable-gtid: false
+      flavor: mysql
+      source-id: mysql-replica-01
+      from:
+        host: 127.0.0.1
+        port: 8407
+        user: root
+        password: '******'
 }
 ```
 
-如果不知道 source-id，可以先通过 `dmctl --master-addr <master-addr> operate-source show` 查看源数据库列表。
+If you don't know the `source-id`, you can run `dmctl --master-addr <master-addr> operate-source show` to list all data sources first.
 
 
 ```bash
@@ -146,9 +144,9 @@ operate-source show
 }
 ```
 
-## 改变数据源与 DM-worker 的绑定关系
+## Change the bindings between upstream MySQL instances and DM-workers
 
-`transfer-source` 用于改变数据源与 DM-worker 的绑定关系。
+You can use the `transfer-source` command to change the bindings between upstream MySQL instances and DM-workers.
 
 
 ```bash
@@ -156,23 +154,20 @@ help transfer-source
 ```
 
 ```
-Transfers a upstream MySQL/MariaDB source to a free worker.
-
+Transfers an upstream MySQL/MariaDB source to a free worker.
 Usage:
   dmctl transfer-source <source-id> <worker-id> [flags]
-
 Flags:
   -h, --help   help for transfer-source
-
 Global Flags:
   -s, --source strings   MySQL Source ID.
 ```
 
-在改变绑定关系前，DM 会检查待解绑的 worker 是否正在运行同步任务，如果正在运行则需要先[暂停任务](/dm/dm-pause-task.md)，并在改变绑定关系后[恢复任务](/dm/dm-resume-task.md)。
+Before transferring, DM checks whether the worker to be unbound still has running tasks. If the worker has any running tasks, you need to [pause the tasks](/dm/dm-pause-task.md) first, change the binding, and then [resume the tasks](/dm/dm-resume-task.md).
 
-### 命令用法示例
+### Usage example
 
-如果不清楚 DM-worker 的绑定关系，可以通过 `dmctl --master-addr <master-addr> list-member --worker` 查看。
+If you do not know the bindings of DM-workers, you can run `dmctl --master-addr <master-addr> list-member --worker` to list the current bindings of all workers.
 
 
 ```bash
@@ -207,7 +202,7 @@ list-member --worker
 }
 ```
 
-在本示例中 `mysql-replica-01` 绑定到了 `dm-worker-1` 上。使用如下命令可以将该数据源绑定到 `dm-worker-2` 上
+In the above example, `mysql-replica-01` is bound to `dm-worker-1`. The below command transfers the binding worker of `mysql-replica-01` to `dm-worker-2`.
 
 
 ```bash
@@ -221,7 +216,7 @@ transfer-source mysql-replica-01 dm-worker-2
 }
 ```
 
-再次通过 `dmctl --master-addr <master-addr> list-member --worker` 查看，检查命令已生效。
+Check whether the command takes effect by running `dmctl --master-addr <master-addr> list-member --worker`.
 
 
 ```bash

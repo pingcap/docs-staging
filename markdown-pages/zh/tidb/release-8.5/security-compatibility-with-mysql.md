@@ -1,151 +1,160 @@
 ---
-title: 与 MySQL 安全特性差异
-summary: TiDB 支持与 MySQL 5.7 类似的安全特性，同时也支持 MySQL 8.0 的部分安全特性。然而，在实现上存在一些差异，包括不支持列级别权限设置和部分权限属性。此外，TiDB 的密码过期策略和密码复杂度策略与 MySQL 存在一些差异。另外，TiDB 支持多种身份验证方式，包括 TLS 证书和 JWT。
+title: Security Compatibility with MySQL
+summary: Learn TiDB's security compatibilities with MySQL.
 ---
 
-# 与 MySQL 安全特性差异
+# Security Compatibility with MySQL
 
-TiDB 支持与 MySQL 5.7 类似的安全特性，同时 TiDB 还支持 MySQL 8.0 的部分安全特性。TiDB 的安全特性在实现上与 MySQL 存在差异。
+TiDB supports security features similar to MySQL 5.7, and also supports some security features of MySQL 8.0. The security features of TiDB are different from MySQL in implementation.
 
-## 不支持的安全功能特性
+## Unsupported security features
 
-- 不支持列级别权限设置。
-- 不支持权限属性 `max_questions`、`max_updated`。
-- 不支持密码修改验证策略，修改密码时需要验证当前密码。
-- 不支持双密码策略。
-- 不支持随机密码生成策略。
-- 不支持多因素身份验证。
+- Column level permissions.
+- These permission attributes: `max_questions`, `max_updated`, and `max_user_connections`.
+- Password verification policy, which requires you to verify the current password when you change it.
+- Dual password policy.
+- Random password generation.
+- Multi-factor authentication.
 
-## 与 MySQL 有差异的安全特性详细说明
+## Differences with MySQL
 
-### 密码过期策略
+### Password expiration policy
 
-针对密码过期策略功能，TiDB 与 MySQL 的比较如下：
+The password expiration policies of TiDB and MySQL have the following differences:
 
-- MySQL 5.7 和 8.0 支持密码过期策略管理功能。
-- TiDB 从 v6.5.0 起支持密码过期策略管理功能。
+- MySQL supports password expiration policy in v5.7 and v8.0.
+- TiDB supports password expiration policy starting from v6.5.0.
 
-TiDB 的密码过期策略功能与 MySQL 保持一致，但是在密码过期处理机制上存在以下差异：
+The expiration mechanism of TiDB is different from MySQL in the following aspects:
 
-- MySQL 5.7 和 8.0 在密码过期后是否将客户端的连接限制为“沙盒模式”，由客户端和服务端设置的组合确定。
-- TiDB 在密码过期后是否将客户端的连接限制为“沙盒模式”，仅由 TiDB 配置文件中的 `[security]` 部分的 [`disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-从-v650-版本开始引入) 选项确定。
+- In MySQL v5.7 and v8.0, the configuration of the client and the server combined together determines whether to enable "sandbox mode" for the client connection.
+- In TiDB, the [`security.disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-new-in-v650) configuration item alone determines whether to enable "sandbox mode" for the client connection.
 
-### 密码复杂度策略
+### Password complexity policy
 
-针对密码复杂度策略功能，TiDB 与 MySQL 的比较如下：
+The password complexity policies of TiDB and MySQL have the following differences:
 
-- MySQL 5.7 以 validate_password 插件的形式实现了密码复杂度策略管理功能。
-- MySQL 8.0 重新以 validate_password 组件的形式实现了密码复杂度策略管理功能。
-- TiDB 从 v6.5.0 起内置实现了密码复杂度策略管理功能。
+- MySQL v5.7 implements the password complexity policy by using the `validate_password` plugin.
+- MySQL v8.0 re-implements the password complexity policy by using the `validate_password` component.
+- TiDB introduces a built-in password complexity management feature starting from v6.5.0.
 
-因此，功能实现上存在以下差异：
+The feature implementation has the following differences:
 
-- 密码复杂度策略功能如何启用：
+- Enable the feature:
 
-    + MySQL 5.7 以 validate_password 插件的形式实现，需要进行插件的安装以启用密码复杂度策略管理。
-    + MySQL 8.0 以 validate_password 组件的形式实现，需要进行组件的安装以启用密码复杂度策略管理。
-    + TiDB 内置实现了密码复杂度策略管理，支持通过系统变量 [`validate_password.enable`](/system-variables.md#validate_passwordenable-从-v650-版本开始引入) 启用密码复杂度策略管理。
+    - In MySQL v5.7, the feature is implemented by using the `validate_password` plugin. You can enable the feature by installing the plugin.
+    - In MySQL v8.0, the feature is implemented by using the `validate_password` component. You can enable the feature by installing the component.
+    - For TiDB, this feature is built-in. You can enable the feature using the system variable [`validate_password.enable`](/system-variables.md#validate_passwordenable-new-in-v650).
 
-- 密码字典功能：
+- Dictionary check:
 
-    + MySQL 5.7 通过变量 `validate_password_dictionary_file` 指定一个文件路径，在文件中写入密码中不允许包含的单词。
-    + MySQL 8.0 通过变量 `validate_password.dictionary_file` 指定一个文件路径，在文件中写入密码中不允许包含的单词。
-    + TiDB 通过变量 [`validate_password.dictionary`](/system-variables.md#validate_passworddictionary-从-v650-版本开始引入) 指定一个字符串，在该字符串中写入密码中不允许包含的单词。
+    - In MySQL v5.7, you can specify a file path using the `validate_password_dictionary_file` variable. The file contains a list of words that are not allowed to exist in passwords.
+    - In MySQL v8.0, you can specify a file path using the `validate_password.dictionary_file` variable. The file contains a list of words that are not allowed to exist in passwords.
+    - In TiDB, you can specify a string using the [`validate_password.dictionary`](/system-variables.md#validate_passworddictionary-new-in-v650) system variable. The string contains a list of words that are not allowed to exist in passwords.
 
-### 密码连续错误限制登录策略
+### Password failure tracking
 
-针对密码连续错误限制登录策略功能，TiDB 与 MySQL 的比较如下：
+The password failure tracking policies of TiDB and MySQL have the following differences:
 
-- MySQL 5.7 不支持密码连续错误限制登录策略管理功能。
-- MySQL 8.0 支持密码连续错误限制登录策略管理功能。
-- TiDB 从 v6.5.0 起支持密码连续错误限制登录策略管理功能。
+- MySQL v5.7 does not support password failure tracking.
+- MySQL v8.0 supports password failure tracking.
+- TiDB supports password failure tracking starting from v6.5.0.
 
-因为用户的失败尝试次数和锁定状态需要做到全局一致，而 TiDB 是分布式数据库，不能像 MySQL 在服务端的内存中记录失败尝试次数和锁定状态，所以实现机制存在以下差异：
+Because the number of failed attempts and lock status of accounts need to be globally consistent, and as a distributed database, TiDB cannot record the number of failed attempts and lock status in the server memory like MySQL, so the implementation mechanisms are different between TiDB and MySQL.
 
-- 用户未被自动锁定，失败尝试次数的计数重置场景：
+- For users that are not locked automatically, the count of failed attempts is reset in the following scenarios:
 
-    + MySQL 8.0：
+    + MySQL 8.0:
 
-        - 服务器重启时，所有用户失败尝试次数的计数都会被重置。
-        - 执行 `FLUSH PRIVILEGES` 时，所有用户失败尝试次数的计数都会被重置。
-        - 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
-        - 该用户登录成功时。
+        - When the server is restarted, the count of failed attempts for all accounts is reset.
+        - When `FLUSH PRIVILEGES` is executed, the count of failed attempts for all accounts is reset.
+        - When you run `ALTER USER ... ACCOUNT UNLOCK` to unlock an account, the count is reset.
+        - When an account logs in successfully, the count is reset.
 
-    + TiDB：
+    + TiDB:
 
-        - 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
-        - 该用户登录成功时。
+        - When you run `ALTER USER ... ACCOUNT UNLOCK` to unlock an account, the count is reset.
+        - When an account logs in successfully, the count is reset.
 
-- 账户被自动锁定后的解锁场景：
+- For users that are locked automatically, the count of failed attempts is reset in the following scenarios:
 
-    + MySQL 8.0：
+    + MySQL 8.0:
 
-        - 服务器重启时，所有用户的自动锁定标识都会被重置。
-        - 执行 `FLUSH PRIVILEGES` 时，所有用户的自动锁定标识都会被重置。
-        - 该用户锁定时间结束，这种情况下，用户的自动锁定标识将在下次登录尝试时重置。
-        - 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
+        - When the server is restarted, the temporary locking for all accounts is reset.
+        - When `FLUSH PRIVILEGES` is executed, the temporary locking for all accounts is reset.
+        - If the lock time of an account ends, the temporary locking for the account is reset on the next login attempt.
+        - When you run `ALTER USER ... ACCOUNT UNLOCK` to unlock an account, the temporary locking for the account is reset.
 
-    + TiDB：
+    + TiDB:
 
-        - 该用户锁定时间结束，这种情况下，用户的自动锁定标识将在下次登录尝试时重置。
-        - 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
+        - If the lock time of an account ends, the temporary locking for the account is reset on the next login attempt.
+        - When you run `ALTER USER ... ACCOUNT UNLOCK` to unlock an account, the temporary locking for the account is reset.
 
-### 密码重用策略
+### Password reuse policy
 
-针对密码重用策略功能，TiDB 与 MySQL 的比较如下：
+The password reuse policies of TiDB and MySQL have the following differences:
 
-- MySQL 5.7 不支持密码重用策略管理功能。
-- MySQL 8.0 支持密码重用策略管理功能。
-- TiDB 从 v6.5.0 起支持密码重用策略管理功能。
+- MySQL v5.7 does not support password reuse management.
+- MySQL v8.0 supports password reuse management.
+- TiDB supports password reuse management starting from v6.5.0.
 
-TiDB 的密码重用策略功能与 MySQL 一致，在实现密码重用策略时都增加了系统表 `mysql.password_history`，但 TiDB 与 MySQL 在删除 `mysql.user` 系统表中不存在的用户时存在以下差异：
+The implementation mechanisms are consistent between TiDB and MySQL. Both use the `mysql.password_history` system table to implement the password reuse management feature. However, when deleting a user that does not exist in the `mysql.user` system table, TiDB and MySQL have different behaviors:
 
-- 场景：没有正确创建用户（例如： `user01` ），而通过 `INSERT INTO mysql.password_history VALUES (...)` 命令直接向 `mysql.password_history` 系统表中添加一条 `user01` 的记录，此时系统表 `mysql.user` 中没有 `user01` 的记录。对该用户执行 `DROP USER` 操作时，TiDB 和 MySQL 状态不一致。
-- 差异点：
+- Scenario: A user (`user01`) is not created in a normal way; instead, it is created by using the `INSERT INTO mysql.password_history VALUES (...)` statement to append a record of `user01` to the `mysql.password_history` system table. In such cases, because the record of `user01` does not exist in the `mysql.user` system table, when you run `DROP USER` on `user01`, TiDB and MySQL have different behaviors.
 
-    + MySQL：执行 `DROP USER user01` 时，在 `mysql.user` 和 `mysql.password_history` 系统表中匹配 `user01`，若在两个系统表或其中一个系统表中匹配成功，则 `DROP USER` 操作可以正常执行，不会报错。
-    + TiDB：执行 `DROP USER user01` 时，只在 `mysql.user` 系统表中匹配 `user01`，若没有匹配成功，则 `DROP USER` 操作执行失败，返回报错。此时如果需要成功执行 `DROP USER user01` 操作，删除 `mysql.password_history` 中 `user01` 的记录，请使用 `DROP USER IF EXISTS user01`。
+    - MySQL: When you run `DROP USER user01`, MySQL tries to find `user01` in `mysql.user` and `mysql.password_history`. If either system table contains `user01`, the `DROP USER` statement is executed successfully and no error is reported.
+    - TiDB: When you run `DROP USER user01`, TiDB tries to find `user01` only in `mysql.user`. If no related record is found, the `DROP USER` statement fails and an error is reported. If you want to execute the statement successfully and delete the `user01` record from `mysql.password_history`, use `DROP USER IF EXISTS user01` instead.
 
-## 可用的身份验证插件
+## Authentication plugin status
 
-TiDB 支持多种身份验证方式。通过使用 [`CREATE USER`](/sql-statements/sql-statement-create-user.md) 语句和 [`ALTER USER`](/sql-statements/sql-statement-alter-user.md) 语句，即可创建新用户或更改 TiDB 权限系统内的已有用户。TiDB 身份验证方式与 MySQL 兼容，其名称与 MySQL 保持一致。
+TiDB supports multiple authentication methods. These methods can be specified on a per user basis using [`CREATE USER`](/sql-statements/sql-statement-create-user.md) and [`ALTER USER`](/sql-statements/sql-statement-alter-user.md). These methods are compatible with the authentication methods of MySQL with the same names.
 
-TiDB 目前支持的身份验证方式可在以下的表格中查找到。服务器和客户端建立连接时，如要指定服务器对外通告的默认验证方式，可通过 [`default_authentication_plugin`](/system-variables.md#default_authentication_plugin) 变量进行设置。`tidb_sm3_password` 为仅在 TiDB 支持的 SM3 身份验证方式，使用该方式登录的用户需要使用 [TiDB-JDBC](https://github.com/pingcap/mysql-connector-j/tree/release/8.0-sm3)。`tidb_auth_token` 用于 TiDB Cloud 内部的基于 JSON Web Token (JWT) 的认证，用户通过配置也可以用于自托管环境。
+You can use one of the following supported authentication methods in the table. To specify a default method that the server advertises when the client-server connection is being established, set the [`default_authentication_plugin`](/system-variables.md#default_authentication_plugin) variable. `tidb_sm3_password` is the SM3 authentication method only supported in TiDB. Therefore, to authenticate using this method, you must connect to TiDB using [TiDB-JDBC](https://github.com/pingcap/mysql-connector-j/tree/release/8.0-sm3). `tidb_auth_token` is a JSON Web Token (JWT)-based authentication method used in TiDB Cloud, and you can also configure it for use in TiDB Self-Managed.
 
-针对 TLS 身份验证，TiDB 目前采用不同的配置方案。具体情况请参见[为 TiDB 客户端服务端间通信开启加密传输](/enable-tls-between-clients-and-servers.md)。
+<CustomContent platform="tidb">
 
-| 身份验证方式    | 支持        |
-| :------------------------| :--------------- |
-| `mysql_native_password`  | 是              |
-| `sha256_password`        | 否               |
-| `caching_sha2_password`  | 是（5.2.0 版本起） |
-| `auth_socket`            | 是（5.3.0 版本起） |
-| `tidb_sm3_password`      | 是（6.3.0 版本起） |
-| `tidb_auth_token`        | 是（6.4.0 版本起） |
-| `authentication_ldap_sasl`   | 是（7.1.0 版本起） |
-| `authentication_ldap_simple` | 是（7.1.0 版本起） |
-| TLS 证书       | 是              |
-| LDAP                     | 是（7.1.0 版本起） |
-| PAM                      | 否               |
-| ed25519 (MariaDB)        | 否               |
-| GSSAPI (MariaDB)         | 否               |
-| FIDO                     | 否               |
+The support for TLS authentication is configured differently. For detailed information, see [Enable TLS between TiDB Clients and Servers](/enable-tls-between-clients-and-servers.md).
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+The support for TLS authentication is configured differently. For detailed information, see [Enable TLS between TiDB Clients and Servers](https://docs.pingcap.com/tidb/stable/enable-tls-between-clients-and-servers).
+
+</CustomContent>
+
+| Authentication Method        | Supported        |
+| :----------------------------| :--------------- |
+| `mysql_native_password`      | Yes              |
+| `sha256_password`            | No               |
+| `caching_sha2_password`      | Yes, since 5.2.0 |
+| `auth_socket`                | Yes, since 5.3.0 |
+| `tidb_sm3_password`          | Yes, since 6.3.0 |
+| `tidb_auth_token`            | Yes, since 6.4.0 |
+| `authentication_ldap_sasl`   | Yes, since 7.1.0 |
+| `authentication_ldap_simple` | Yes, since 7.1.0 |
+| TLS Certificates             | Yes              |
+| LDAP                         | Yes, since 7.1.0 |
+| PAM                          | No               |
+| ed25519 (MariaDB)            | No               |
+| GSSAPI (MariaDB)             | No               |
+| FIDO                         | No               |
 
 ### `tidb_auth_token`
 
-`tidb_auth_token` 是一种基于 [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519) 的无密码认证方式。在 v6.4.0 中，`tidb_auth_token` 仅用于 TiDB Cloud 内部的用户认证，从 v6.5.0 起，你也可以将 `tidb_auth_token` 配置为 TiDB 自托管环境中用户的认证方式。不同于 `mysql_native_password`、`caching_sha2_password` 等使用密码的认证方式，`tidb_auth_token` 认证方式在创建用户时无需设置并保存自定义密码，在用户登录时只需使用一个签发的 token，从而简化用户的认证过程并提升安全性。
+`tidb_auth_token` is a passwordless authentication method based on [JSON Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519). In v6.4.0, `tidb_auth_token` is only used for user authentication in TiDB Cloud. Starting from v6.5.0, you can also configure `tidb_auth_token` as a user authentication method for TiDB Self-Managed. Different from password-based authentication methods such as `mysql_native_password` and `caching_sha2_password`, when you create users using `tidb_auth_token`, there is no need to set or store custom passwords. To log into TiDB, users only need to use a signed token instead of a password, which simplifies the authentication process and improves security.
 
 #### JWT
 
-JWT 由 Header、Payload 和 Signature 三部分组成。这三部分分别通过 base64 编码后，使用点号（`.`）拼接成一个字符串，以便在客户端和服务器之间传输。
+JWT consists of three parts: Header, Payload, and Signature. After being encoded using base64, they are concatenated into a string separated by dots (`.`) for transmission between the client and server.
 
-Header 描述 JWT 的元数据，包含 3 个属性：
+The Header describes the metadata of the JWT, including 3 parameters:
 
-* `alg`：表示签名使用的算法，默认为 `RS256`。
-* `typ`：表示 token 的类型，为 `JWT`。
-* `kid`：表示用于生成 token 签名的 key ID。
+* `alg`: the algorithm for signature, which is `RS256` by default.
+* `typ`: the type of token, which is `JWT`.
+* `kid`: the key ID for generating token signature.
 
-Header 示例：
+Here is an example for Header:
 
 ```json
 {
@@ -155,71 +164,71 @@ Header 示例：
 }
 ```
 
-Payload 是 JWT 的主体部分，用于保存用户的信息。Payload 中的每个字段称为一个 claim（声明）。TiDB 用户认证要求提供的声明如下：
+Payload is the main part of JWT, which stores the user information. Each field in the Payload is called a claim. The claims required for TiDB user authentication are as follows:
 
-* `iss`：如果[创建用户](/sql-statements/sql-statement-create-user.md)时未指定 `TOKEN_ISSUER` 或者将其设置为了空字符串，则可以不包含该声明；否则 `iss` 应该与 `TOKEN_ISSUER` 设置值相同。
-* `sub`：TiDB 中要求该值与待认证的用户名相同。
-* `iat`：发布 token 的时间戳。TiDB 中要求该值不得晚于认证时的时间，也不得早于认证前 15 分钟。
-* `exp`：token 到期的时间戳。如果 token 在认证时已经过期，则认证失败。
-* `email`：邮件地址。创建用户时可以通过 `ATTRIBUTE '{"email": "xxxx@example.com"}'` 指定 email 信息。如果创建用户时未指定 email 信息，则该声明应设置为空字符串；否则该声明应该与创建用户时的设置值相同。
+* `iss`: if `TOKEN_ISSUER` is not specified or set to empty when [`CREATE USER`](/sql-statements/sql-statement-create-user.md), this claim is not required; otherwise, `iss` should use the same value as `TOKEN_ISSUER`.
+* `sub`: this claim is required to be the same as the username to be authenticated.
+* `iat`: it means `issued at`, the timestamp when the token is issued. In TiDB, this value must not be later than the authentication time or earlier than 15 minutes before authentication.
+* `exp`: the timestamp when the token expires. If it is earlier than the time of authentication, the authentication fails.
+* `email`: the email can be specified when creating a user by `ATTRIBUTE '{"email": "xxxx@pingcap.com"}`. If no email is specified when a user is created, this claim must be set as an empty string; otherwise, this claim must be the same as the specified value when the user is created.
 
-Payload 示例：
+Here is an example for Payload:
 
 ```json
 {
-  "email": "user@example.com",
+  "email": "user@pingcap.com",
   "exp": 1703305494,
   "iat": 1703304594,
   "iss": "issuer-abc",
-  "sub": "user@example.com"
+  "sub": "user@pingcap.com"
 }
 ```
 
-Signature 用于对 Header 和 Payload 这两部分数据进行签名。
+Signature is used to sign the Header and Payload data.
 
-> **警告：**
+> **Warning:**
 >
-> - Header 与 Payload 使用 base64 进行编码的过程是可逆的，请勿在 Payload 中携带敏感数据。
-> - `tidb_auth_token` 认证方式要求客户端支持 [`mysql_clear_password`](https://dev.mysql.com/doc/refman/8.0/en/cleartext-pluggable-authentication.html) 插件，并将 token 以明文的方式发送至 TiDB，因此请[为 TiDB 开启加密传输](/enable-tls-between-clients-and-servers.md)后再使用 `tidb_auth_token` 进行认证。
+> - The encoding of the Header and Payload in base64 is reversible. Do **Not** attach any sensitive information to them.
+> - The `tidb_auth_token` authentication method requires clients to support the [`mysql_clear_password`](https://dev.mysql.com/doc/refman/8.0/en/cleartext-pluggable-authentication.html) plugin to send the token to TiDB in plain text. Therefore, you need to [enable TLS between clients and servers](/enable-tls-between-clients-and-servers.md) before using `tidb_auth_token`.
 
-#### 使用方法
+#### Usage
 
-配置并使用 `tidb_auth_token` 作为 TiDB 自托管环境中用户的认证方式，有以下几个步骤：
+To configure and use `tidb_auth_token` as the authentication method for TiDB Self-Managed users, take the following steps:
 
-1. 在 TiDB 配置文件中设置 [`auth-token-jwks`](/tidb-configuration-file.md#auth-token-jwks-从-v640-版本开始引入) 和 [`auth-token-refresh-interval`](/tidb-configuration-file.md#auth-token-refresh-interval-从-v640-版本开始引入)。
+1. Configure [`auth-token-jwks`](/tidb-configuration-file.md#auth-token-jwks-new-in-v640) and [`auth-token-refresh-interval`](/tidb-configuration-file.md#auth-token-refresh-interval-new-in-v640) in the TiDB configuration file.
 
-    例如，可以通过下列命令获取示例 JWKS：
-
+    For example, you can get an example JWKS using the following command:
+    
     ```bash
     wget https://raw.githubusercontent.com/CbcWestwolf/generate_jwt/master/JWKS.json
     ```
 
-    然后在 TiDB 的配置文件 `config.toml` 中配置上述 JWKS 文件的路径：
+    Then, configure the path of the example JWKS in `config.toml`:
 
     ```toml
     [security]
     auth-token-jwks = "JWKS.json"
     ```
 
-2. 启动 `tidb-server`，并定期更新保存 JWKS 至 `auth-token-jwks` 指定的路径。
+2. Start `tidb-server` and periodically update and save the JWKS to the path specified by `auth-token-jwks`.
 
-3. 创建使用 `tidb_auth_token` 认证的用户，并根据需要通过 `REQUIRE TOKEN_ISSUER` 和 `ATTRIBUTE '{"email": "xxxx@example.com"}` 指定 `iss` 与 `email` 信息。
+3. Create a user with `tidb_auth_token`, and specify `iss` and `email` as needed using `REQUIRE TOKEN_ISSUER` and `ATTRIBUTE '{"email": "xxxx@pingcap.com"}`.
 
-    例如，创建一个使用 `tidb_auth_token` 认证的用户 `user@example.com`：
+    For example, create a user `user@pingcap.com` with `tidb_auth_token`:
 
     ```sql
-    CREATE USER 'user@example.com' IDENTIFIED WITH 'tidb_auth_token' REQUIRE TOKEN_ISSUER 'issuer-abc' ATTRIBUTE '{"email": "user@example.com"}';
+    CREATE USER 'user@pingcap.com' IDENTIFIED WITH 'tidb_auth_token' REQUIRE TOKEN_ISSUER 'issuer-abc' ATTRIBUTE '{"email": "user@pingcap.com"}';
     ```
 
-4. 生成并签发用于认证的 token，通过 mysql 客户端的 `mysql_clear_text` 插件进行认证。
+4. Generate and sign a token for authentication, and authenticate using the `mysql_clear_text` plugin of the MySQL client.
 
-    通过 `go install github.com/cbcwestwolf/generate_jwt` 安装 JWT 生成工具。该工具仅用于生成测试 `tidb_auth_token` 的 JWT。例如：
+    Install the JWT generation tool via `go install github.com/cbcwestwolf/generate_jwt` (this tool is only used for testing `tidb_auth_token`). For example:
 
     ```text
-    generate_jwt --kid "the-key-id-0" --sub "user@example.com" --email "user@example.com" --iss "issuer-abc"
+    generate_jwt --kid "the-key-id-0" --sub "user@pingcap.com" --email "user@pingcap.com" --iss "issuer-abc"
     ```
 
-    打印公钥和 token 形式如下：
+    It prints the public key and token as follows:
 
     ```text
     -----BEGIN PUBLIC KEY-----
@@ -231,21 +240,21 @@ Signature 用于对 Header 和 Payload 这两部分数据进行签名。
     hXDTMJ5FNi8zHhvzyBKHU0kBTS1UNUbP9wIDAQAB
     -----END PUBLIC KEY-----
 
-    <the-token-generated>
+    eyJhbGciOiJSUzI1NiIsImtpZCI6InRoZS1rZXktaWQtMCIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAcGluZ2NhcC5jb20iLCJleHAiOjE3MDMzMDU0OTQsImlhdCI6MTcwMzMwNDU5NCwiaXNzIjoiaXNzdWVyLWFiYyIsInN1YiI6InVzZXJAcGluZ2NhcC5jb20ifQ.T4QPh2hTB5on5xCuvtWiZiDTuuKvckggNHtNaovm1F4RvwUv15GyOqj9yMstE-wSoV5eLEcPC2HgE6eN1C6yH_f4CU-A6n3dm9F1w-oLbjts7aYCl8OHycVYnq609fNnb8JLsQAmd1Zn9C0JW899-WSOQtvjLqVSPe9prH-cWaBVDQXzUJKxwywQzk9v-Z1Njt9H3Rn9vvwwJEEPI16VnaNK38I7YG-1LN4fAG9jZ6Zwvz7vb_s4TW7xccFf3dIhWTEwOQ5jDPCeYkwraRXU8NC6DPF_duSrYJc7d7Nu9Z2cr-E4i1Rt_IiRTuIIzzKlcQGg7jd9AGEfGe_SowsA-w
     ```
 
-    复制生成的 token 用于登录：
+    Copy the preceding token in the last line for login:
 
     ```Shell
-    mycli -h 127.0.0.1 -P 4000 -u 'user@example.com' -p '<the-token-generated>'
+    mycli -h 127.0.0.1 -P 4000 -u 'user@pingcap.com' -p '<the-token-generated>'
     ```
 
-    注意这里使用的 mysql 客户端必须支持 `mysql_clear_password` 插件。[mycli](https://www.mycli.net/) 默认开启这一插件，如果使用 [mysql 命令行客户端](https://dev.mysql.com/doc/refman/8.0/en/mysql.html)则需要 `--enable-cleartext-plugin` 选项来开启这个插件：
+    Ensure that the MySQL client here supports the `mysql_clear_password` plugin. [mycli](https://www.mycli.net/) supports and enables this plugin by default. If you are using the [mysql command-line client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html), you need to use the `--enable-cleartext-plugin` option to enable this plugin:
 
     ```Shell
-    mysql -h 127.0.0.1 -P 4000 -u 'user@example.com' -p'<the-token-generated>' --enable-cleartext-plugin
+    mysql -h 127.0.0.1 -P 4000 -u 'user@pingcap.com' -p'<the-token-generated>' --enable-cleartext-plugin
     ```
 
-    如果在生成 token 的时候指定了错误的 `--sub`（比如 `--sub "wronguser@example.com"`），则无法使用该 token 进行认证。
+    If an incorrect `--sub` is specified when the token is generated (such as `--sub "wronguser@pingcap.com"`), the authentication using this token would fail.
 
-可以使用 [jwt.io](https://jwt.io/) 提供的 debugger 对 token 进行编解码。
+You can encode and decode a token using the debugger provided by [jwt.io](https://jwt.io/).

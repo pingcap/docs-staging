@@ -1,162 +1,129 @@
 ---
-title: TiDB 快照备份与恢复功能架构
-summary: 了解 TiDB 快照备份与恢复功能的架构设计。
+title: TiDB Snapshot Backup and Restore Architecture
+summary: TiDB Snapshot Backup and Restore Architecture introduces the process using a Backup & Restore (BR) tool. The architecture includes backup and restore processes, types of backup files, naming format, storage format, and structure of backup files. The backup process involves scheduling, data backup, and metadata backup. The restore process includes scheduling, schema restore, Region allocation, data restore, and reporting. The types of backup files include SST, backupmeta, and backup.lock files. The naming format and storage format of SST files are explained in detail. For more information, refer to the TiDB snapshot backup and restore guide.
 ---
 
-# TiDB 快照备份与恢复功能架构
+# TiDB Snapshot Backup and Restore Architecture
 
-本文以使用 BR 工具进行备份与恢复为例，介绍 TiDB 集群快照数据备份和恢复的架构设计与流程。
+This document introduces the architecture and process of TiDB snapshot backup and restore using a Backup & Restore (BR) tool as an example.
 
-## 架构设计
+## Architecture
 
-快照数据备份和恢复的架构如下：
+The TiDB snapshot backup and restore architecture is as follows:
 
-![BR snapshot backup and restore architecture](https://docs-download.pingcap.com/media/images/docs-cn/br/br-snapshot-arch.png)
+![BR snapshot backup and restore architecture](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-arch.png)
 
-## 备份流程
+## Process of backup
 
-集群快照数据备份的流程如下：
+The process of a cluster snapshot backup is as follows:
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant BR
-    participant PD
-    participant TiKV
-    participant Storage
+![snapshot backup process design](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-backup-ts.png)
 
-    User->>BR: Run `br backup full`
-    BR->>PD: Pause GC
-    BR->>PD: Fetch TiKV and Region info
-    BR->>TiKV: Request TiKV to back up data
-    loop TiKV handles the local snapshot backup task
-        TiKV->>TiKV: Scan KVs
-        TiKV->>TiKV: Generate SST
-        TiKV->>Storage: Upload SST
-    end
-    TiKV->>BR: Report backup result
-    BR->>BR: Handle all backup results
-    BR->>TiKV: Back up schemas
-    BR->>Storage: Upload backup metadata
-```
+The complete backup process is as follows:
 
-完整的备份交互流程描述如下：
+1. BR receives the `br backup full` command.
 
-1. BR 接收备份命令 `br backup full`。
-    * 获得备份快照点 (backup ts) 和备份存储地址。
+    * Gets the backup time point and storage path.
 
-2. BR 调度备份数据。
-    * **Pause GC**：配置 TiDB GC，防止要备份的数据被 [TiDB GC 机制](/garbage-collection-overview.md)回收。
-    * **Fetch TiKV and Region info**：访问 PD，获取所有 TiKV 节点访问地址以及数据的 [Region](/tidb-storage.md#region) 分布信息。
-    * **Request TiKV to back up data**：创建备份请求，发送给 TiKV 节点，备份请求包含 backup ts、需要备份的 region、备份存储地址。
+2. BR schedules the backup data.
 
-3. TiKV 接受备份请求，初始化 backup worker。
+    * **Pause GC**: BR configures the TiDB GC time to prevent the backup data from being cleaned up by [TiDB GC mechanism](/garbage-collection-overview.md).
+    * **Fetch TiKV and Region info**: BR accesses PD to get all TiKV nodes addresses and [Region](/tidb-storage.md#region) distribution of data.
+    * **Request TiKV to back up data**: BR creates a backup request and sends it to all TiKV nodes. The backup request includes the backup time point, Regions to be backed up, and the storage path.
 
-4. TiKV 备份数据。
-    * **Scan KVs**：backup worker 从 Region (only leader) 读取 backup ts 对应的数据。
-    * **Generate SST**：backup worker 将读取到的数据保存到 SST 文件，存储在内存中。
-    * **Upload SST**：backup worker 上传 SST 文件到备份存储中。
+3. TiKV accepts the backup request and initiates a backup worker.
 
-5. BR 从各个 TiKV 获取备份结果。
-    * 如果局部数据因为 Region 变动而备份失败，比如 TiKV 节点故障，BR 将重试这些数据的备份。
-    * 如果任意数据被判断为不可重试的备份失败，则备份任务失败。
-    * 全部数据备份成功后，则在最后完成元信息备份。
+4. TiKV backs up the data.
 
-6. BR 备份元信息。
-    * **Back up schemas**：备份 table schema，同时计算 table data checksum。
-    * **Upload metadata**：生成 backup metadata，并上传到备份存储。backup metadata 包含 backup ts、表和对应的备份文件、data checksum 和 file checksum 等信息。
+    * **Scan KVs**: the backup worker reads data corresponding to the backup time point from the Region where the leader locates.
+    * **Generate SST**: the backup worker saves the data to SST files, which are stored in the memory.
+    * **Upload SST**: the backup worker uploads the SST files to the storage path.
 
-## 恢复流程
+5. BR receives the backup result from each TiKV node.
 
-恢复集群快照备份数据的流程如下：
+    * If some data fails to be backed up due to Region changes, for example, a TiKV node is down, BR will retry the backup.
+    * If there is any data fails to be backed up and cannot be retried, the backup task fails.
+    * After all data is backed up, BR will then back up the metadata.
 
-```mermaid
-sequenceDiagram
-    actor User
-    participant BR
-    participant PD
-    participant TiKV
-    participant Storage
+6. BR backs up the metadata.
 
-    User->>BR: Run `br restore`
-    BR->>PD: Pause Region schedule
-    BR->>TiKV: Restore schema
-    BR->>PD: Split and scatter Regions
-    BR->>TiKV: Request TiKV to restore data
-    loop TiKV handles restore request
-        TiKV->>Storage: Download SST
-        TiKV->>TiKV: Rewrite KVs
-        TiKV->>TiKV: Ingest SST
-    end
-    TiKV->>BR: Report restore result
-    BR->>BR: Handle all restore results
-```
+    * **Back up schemas**: BR backs up the table schemas and calculates the checksum of the table data.
+    * **Upload metadata**: BR generates the backup metadata and uploads it to the storage path. The backup metadata includes the backup timestamp, the table and corresponding backup files, data checksum, and file checksum.
 
-完整的恢复交互流程描述如下：
+## Process of restore
 
-1. BR 接收恢复命令 `br restore`。
-    * 获得快照备份数据存储地址、要恢复的 database 或 table。
-    * 检查要恢复的 table 是否存在及是否符合要求。
+The process of a cluster snapshot restore is as follows:
 
-2. BR 调度恢复数据。
-    * **Pause Region schedule**：请求 PD 在恢复期间关闭自动 Region schedule。
-    * **Restore schema**：读取备份数据的 schema、恢复的 database 和 table（注意新建表的 table ID 与备份数据可能不一样）。
-    * **Split & scatter Region**：BR 基于备份数据信息，请求 PD 分配 Region (split Region)，并调度 Region 均匀分布到存储节点上 (scatter Region)。每个 Region 都有明确的数据范围 [start key, end key)。
-    * **Request TiKV to restore data**：根据 PD 分配的 Region 结果，发送恢复请求到对应的 TiKV 节点，恢复请求包含要恢复的备份数据及 rewrite 规则。
+![snapshot restore process design](https://docs-download.pingcap.com/media/images/docs/br/br-snapshot-restore-ts.png)
 
-3. TiKV 接受恢复请求，初始化 restore worker。
-    * restore worker 计算恢复数据需要读取的备份数据。
+The complete restore process is as follows:
 
-4. TiKV 恢复数据。
-    * **Download SST**：restore worker 从备份存储中下载相应的备份数据到本地。
-    * **Rewrite KVs**：restore worker 根据新建表 table ID，对备份数据 kv 进行重写，即将原有的 [kv 编码](/tidb-computing.md#表数据与-key-value-的映射关系)中的 table ID 替换为新创建的 table ID。对 index ID，restore worker 也进行相同处理。
-    * **Ingest SST**：restore worker 将处理好的 SST 文件 ingest 到 RocksDB 中。
-    * **Report restore result**：restore worker 返回恢复结果给 BR。
+1. BR receives the `br restore` command.
 
-5. BR 从各个 TiKV 获取恢复结果。
-    * 如果局部数据恢复因为 `RegionNotFound` 或 `EpochNotMatch` 等原因失败，比如 TiKV 节点故障，BR 重试恢复这些数据。
-    * 如果存在备份数据不可重试的恢复失败，则恢复任务失败。
-    * 全部备份都恢复成功后，则整个恢复任务成功。
+    * Gets the data storage path and the database or table to be restored.
+    * Checks whether the table to be restored exists and whether it meets the requirements for restore.
 
-详细的快照数据备份恢与恢复流程设计，可以参考[备份恢复设计方案](https://github.com/pingcap/tidb/blob/release-8.5/br/docs/cn/2019-08-05-new-design-of-backup-restore.md)。
+2. BR schedules the restore data.
 
-## 备份文件
+    * **Pause Region schedule**: BR requests PD to pause the automatic Region scheduling during restore.
+    * **Restore schema**: BR gets the schema of the backup data and the database and table to be restored. Note that the ID of a newly created table might be different from that of the backup data.
+    * **Split & scatter Region**: BR requests PD to allocate Regions (split Region) based on backup data, and schedules Regions to be evenly distributed to storage nodes (scatter Region). Each Region has a specified data range `[start key, end key)`.
+    * **Request TiKV to restore data**: BR creates a restore request and sends it to the corresponding TiKV nodes according to the result of Region split. The restore request includes the data to be restored and rewrite rules.
 
-### 文件类型
+3. TiKV accepts the restore request and initiates a restore worker.
 
-快照备份会产生如下类型文件：
+    * The restore worker calculates the backup data that needs to be read to restore.
 
-- `SST` 文件：存储 TiKV 备份下来的数据信息。单个 `SST` 文件大小等于 TiKV Region 的大小。
-- `backupmeta` 文件：存储本次备份的元信息，包括备份文件数、备份文件的 Key 区间、备份文件大小和备份文件 Hash (sha256) 值。
-- `backup.lock` 文件：用于防止多次备份到同一目录。
+4. TiKV restores the data.
 
-### SST 文件的命名格式
+    * **Download SST**: the restore worker downloads corresponding SST files from the storage path to a local directory.
+    * **Rewrite KVs**: the restore worker rewrites the KV data according to the new table ID, that is, replace the original table ID in the [Key-Value](/tidb-computing.md#mapping-table-data-to-key-value) with the new table ID. The restore worker also rewrites the index ID in the same way.
+    * **Ingest SST**: the restore worker ingests the processed SST files into RocksDB.
+    * **Report restore result**: the restore worker reports the restore result to BR.
 
-当备份数据到 Google Cloud Storage 或 Azure Blob Storage 时，SST 文件以 `storeID_regionID_regionEpoch_keyHash_timestamp_cf` 的格式命名。格式名的解释如下：
+5. BR receives the restore result from each TiKV node.
 
-- `storeID`：TiKV 节点编号
-- `regionID`：Region 编号
-- `regionEpoch`：Region 版本号
-- `keyHash`：Range startKey 的 Hash (sha256) 值，确保唯一性
-- `timestamp`：TiKV 节点生成 SST 文件名时刻的 Unix 时间戳
-- `cf`：RocksDB 的 ColumnFamily（只备份 cf 为 `default` 或 `write` 的数据）
+    * If some data fails to be restored due to `RegionNotFound` or `EpochNotMatch`, for example, a TiKV node is down, BR will retry the restore.
+    * If there is any data fails to be restored and cannot be retried, the restore task fails.
+    * After all data is restored, the restore task succeeds.
 
-当备份数据到 Amazon S3 或网络盘上时，SST 文件以 `regionID_regionEpoch_keyHash_timestamp_cf` 的格式命名。
+## Backup files
 
-- `regionID`：Region 编号
-- `regionEpoch`：Region 版本号
-- `keyHash`：Range startKey 的 Hash (sha256) 值，确保唯一性
-- `timestamp`：TiKV 节点生成 SST 文件名时刻的 Unix 时间戳
-- `cf`：RocksDB 的 ColumnFamily（只备份 cf 为 `default` 或 `write` 的数据）
+### Types of backup files
 
-### SST 文件存储格式
+Snapshot backup generates the following types of files:
 
-- 关于 SST 文件存储格式，可以参考 [RocksDB SST table 介绍](https://github.com/facebook/rocksdb/wiki/Rocksdb-BlockBasedTable-Format)。
-- 关于 SST 文件中存储的备份数据编码格式，可以参考 [TiDB 表数据与 Key-Value 的映射关系](/tidb-computing.md#表数据与-key-value-的映射关系)。
+- `SST` file: stores the data that the TiKV node backs up. The size of an `SST` file equals to that of a Region.
+- `backupmeta` file: stores the metadata of a backup task, including the number of all backup files, and the key range, the size, and the Hash (sha256) value of each backup file.
+- `backup.lock` file: prevents multiple backup tasks from storing data at the same directory.
 
-### 备份文件目录结构
+### Naming format of SST files
 
-将数据备份到 Google Cloud Storage 或 Azure Blob Storage 上时，SST 文件、`backupmeta` 文件和 `backup.lock` 文件在同一目录下。目录结构如下：
+When data is backed up to Google Cloud Storage (GCS) or Azure Blob Storage, SST files are named in the format of `storeID_regionID_regionEpoch_keyHash_timestamp_cf`. The fields in the name are explained as follows:
+
+- `storeID` is the TiKV node ID.
+- `regionID` is the Region ID.
+- `regionEpoch` is the version number of Region.
+- `keyHash` is the Hash (sha256) value of the startKey of a range, which ensures the uniqueness of a file.
+- `timestamp` is the Unix timestamp of an SST file when it is generated by TiKV.
+- `cf` indicates the Column Family of RocksDB (only restores data whose `cf` is `default` or `write` ).
+
+When data is backed up to Amazon S3 or a network disk, the SST files are named in the format of `regionID_regionEpoch_keyHash_timestamp_cf`. The fields in the name are explained as follows:
+
+- `regionID` is the Region ID.
+- `regionEpoch` is the version number of Region.
+- `keyHash` is the Hash (sha256) value of the startKey of a range, which ensures the uniqueness of a file.
+- `timestamp` is the Unix timestamp of an SST file when it is generated by TiKV.
+- `cf` indicates the Column Family of RocksDB (only restores data whose `cf` is `default` or `write` ).
+
+### Storage format of SST files
+
+- For details about the storage format of SST files, see [RocksDB BlockBasedTable format](https://github.com/facebook/rocksdb/wiki/Rocksdb-BlockBasedTable-Format).
+- For details about the encoding format of backup data in SST files, see [mapping of table data to Key-Value](/tidb-computing.md#mapping-table-data-to-key-value).
+
+### Structure of backup files
+
+When you back up data to GCS or Azure Blob Storage, the SST files, `backupmeta` files, and `backup.lock` files are stored in the same directory as the following structure:
 
 ```
 .
@@ -168,7 +135,7 @@ sequenceDiagram
     └── {storeID}-{regionID}-{regionEpoch}-{keyHash}-{timestamp}-{cf}.sst
 ```
 
-将数据备份到 Amazon S3 或网络盘上时，SST 文件会根据 `storeID` 划分子目录。目录结构如下：
+When you back up data to Amazon S3 or a network disk, the SST files are stored in sub-directories based on the `storeID`. The structure is as follows:
 
 ```
 .
@@ -186,6 +153,6 @@ sequenceDiagram
     └── store5
 ```
 
-## 探索更多
+## See also
 
-- [TiDB 快照备份与恢复使用指南](/br/br-snapshot-guide.md)
+- [TiDB snapshot backup and restore guide](/br/br-snapshot-guide.md)

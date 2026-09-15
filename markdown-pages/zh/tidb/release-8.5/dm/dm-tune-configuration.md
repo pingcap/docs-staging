@@ -1,59 +1,59 @@
 ---
-title: DM 配置优化
-summary: 介绍如何通过优化配置来提高数据迁移性能。
+title: Optimize Configuration of DM
+summary: Learn how to optimize the configuration of the data migration task to improve the performance of data migration.
 ---
 
-# DM 配置优化
+# Optimize Configuration of DM
 
-本文档介绍如何对迁移任务的配置进行优化，从而提高 DM 的数据迁移性能。
+This document introduces how to optimize the configuration of the data migration task to improve the performance of data migration.
 
-## 全量导出
+## Full data export
 
-全量导出相关的配置项为 `mydumpers`，下面介绍和性能相关的参数如何配置。
+`mydumpers` is the configuration item related to full data export. This section describes how to configure performance-related options.
 
 ### `rows`
 
-设置 `rows` 选项可以开启单表多线程并发导出，值为导出的每个 chunk 包含的最大行数。开启后，DM 会在 MySQL 的单表并发导出时，优先选出一列做拆分基准，选择的优先级为主键 > 唯一索引 > 普通索引，选出目标列后需保证该列为整数类型（如 `INT`、`MEDIUMINT`、`BIGINT` 等）。
+Setting the `rows` option enables concurrently exporting data from a single table using multi-thread. The value of `rows` is the maximum number of rows contained in each exported chunk. After this option is enabled, DM selects a column as the split benchmark when the data of a MySQL single table is concurrently exported. This column can be one of the following columns: the primary key column, the unique index column, and the normal index column (ordered from highest priority to lowest). Make sure this column is of integer type (for example, `INT`, `MEDIUMINT`, `BIGINT`).
 
-`rows` 的值可以设置为 10000，具体设置的值可以根据表中包含数据的总行数以及数据库的性能做调整。另外也需要设置 `threads` 来控制并发线程数量，默认值为 4，可以适当做些调整。
+The value of `rows` can be set to 10000. You can change this value according to the total number of rows in the table and the performance of the database. In addition, you need to set `threads` to control the number of concurrent threads. By default, the value of `threads` is 4. You can adjust this value as needed.
 
 ### `chunk-filesize`
 
-DM 全量备份时会根据 `chunk-filesize` 参数的值把每个表的数据划分成多个 chunk，每个 chunk 保存到一个文件中，大小约为 `chunk-filesize`。根据这个参数把数据切分到多个文件中，这样就可以利用 DM Load 处理单元的并行处理逻辑提高导入速度。该参数默认值为 64（单位为 MB），正常情况下不需要设置，也可以根据全量数据的大小做适当的调整。
+During full backup, DM splits the data of each table into multiple chunks according to the value of the `chunk-filesize` option. Each chunk is saved in a file with a size of about `chunk-filesize`. In this way, data is split into multiple files and you can use the parallel processing of the DM Load unit to improve the import speed. The default value of this option is 64 (in MB). Normally, you do not need to set this option. If you set it, adjust the value of this option according to the size of the full data.
 
-> **注意：**
+> **Note:**
 >
-> - `mydumpers` 的参数值不支持在迁移任务创建后更新，所以需要在创建任务前确定好各个参数的值。如果需要更新，则需要使用 dmctl stop 任务后更新配置文件，然后再重新创建任务。
-> - `mydumpers`.`threads` 可以使用配置项 `mydumper-thread` 替代来简化配置。
-> - 如果设置了 `rows`，DM 会忽略 `chunk-filesize` 的值。
+> - You cannot update the value of `mydumpers` after the migration task is created. Be sure about the value of each option before creating the task. If you need to update the value, stop the task using dmctl, update the configuration file, and re-create the task.
+> - `mydumpers`.`threads` can be replaced with the `mydumper-thread` configuration item for simplicity.
+> - If `rows` is set, DM ignores the value of `chunk-filesize`.
 
-## 全量导入
+## Full data import
 
-全量导入相关的配置项为 `loaders`，下面介绍和性能相关的参数如何配置。
+`loaders` is the configuration item related to full data import. This section describes how to configure performance-related options.
 
 ### `pool-size`
 
-`pool-size` 为 DM Load 阶段线程数量的设置，默认值为 16，正常情况下不需要设置，也可以根据全量数据的大小以及数据库的性能做适当的调整。
+The `pool-size` option determines the number of threads in the DM Load unit. The default value is 16. Normally, you do not need to set this option. If you set it, adjust the value of this option according to the size of the full data and the performance of the database.
 
-> **注意：**
+> **Note:**
 >
-> - `loaders` 的参数值不支持在迁移任务创建后更新，所以需要在创建任务前确定好各个参数的值。如果需要更新，则需要使用 dmctl stop 任务后更新配置文件，然后再重新创建任务。
-> - `loaders`.`pool-size` 可以使用配置项 `loader-thread` 替代来简化配置。
+> - You cannot update the value of `loaders` after the migration task is created. Be sure about the value of each option before creating the task. If you need to update the value, stop the task using dmctl, update the configuration file, and re-create the task.
+> - `loaders`.`pool-size` can be replaced with the `loader-thread` configuration item for simplicity.
 
-## 增量复制
+## Incremental data replication
 
-增量复制相关的配置为 `syncers`，下面介绍和性能相关的参数如何配置。
+`syncers` is the configuration item related to incremental data replication. This section describes how to configure performance-related options.
 
 ### `worker-count`
 
-`worker-count` 为 DM Sync 阶段并发迁移 DML 的线程数量设置，默认值为 16，如果对迁移速度有较高的要求，可以适当调高改参数的值。
+`worker-count` determines the number of threads for concurrent replication of DMLs in the DM Sync unit. The default value is 16. To speed up data replication, increase the value of this option appropriately.
 
-### batch
+### `batch`
 
-`batch` 为 DM Sync 阶段迁移数据到下游数据库时，每个事务包含的 DML 的数量，默认值为 100，正常情况下不需要调整。
+`batch` determines the number of DMLs included in each transaction when the data is replicated to the downstream database during the DM Sync unit. The default value is 100. Normally, you do not need to change the value of this option.
 
-> **注意：**
+> **Note:**
 >
-> - `syncers` 的参数值不支持在迁移任务创建后更新，所以需要在创建任务前确定好各个参数的值。如果需要更新，则需要使用 dmctl stop 任务后更新配置文件，然后再重新创建任务。
-> - `syncers`.`worker-count` 可以使用配置项 `syncer-thread` 替代来简化配置。
-> - `worker-count` 和 `batch` 的设置需要根据实际的场景进行调整，例如：DM 到下游数据库的网络延迟较高，可以适当调高 `worker-count`，调低 `batch`。
+> - You cannot update the value of `syncers` after the replication task is created. Be sure about the value of each option before creating the task. If you need to update the value, stop the task using dmctl, update the configuration file, and re-create the task.
+> - `syncers`.`worker-count` can be replaced with the `syncer-thread` configuration item for simplicity.
+> - You can change the values of `worker-count` and `batch` according to the actual scenario. For example, if there is a high network delay between DM and the downstream database, you can increase the value of `worker-count` and decrease the value of `batch` appropriately.

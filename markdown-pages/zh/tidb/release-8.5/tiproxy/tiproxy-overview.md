@@ -1,121 +1,86 @@
 ---
-title: TiProxy 简介
-summary: 介绍 TiProxy 的主要功能、安装与使用方法。
+title: TiProxy Overview
+summary: Learn the main features, installation, and usage of TiProxy.
 ---
 
-# TiProxy 简介
+# TiProxy Overview
 
-TiProxy 是 PingCAP 的官方代理组件，它放置在客户端和 TiDB server 之间，为 TiDB 提供负载均衡、连接保持、服务发现等功能。
+TiProxy is the official proxy component of PingCAP. It is placed between the client and the TiDB server to provide load balancing, connection persistence, service discovery, and other features for TiDB.
 
-TiProxy 是可选组件，你也可以使用第三方的代理组件，或者直接连接到 TiDB server。
+TiProxy is an optional component. You can also use a third-party proxy component or connect directly to the TiDB server without using a proxy.
 
-TiProxy 示意图如下：
+The following figure shows the architecture of TiProxy:
 
-```mermaid
-graph TD
-    Client[Client]
+<img src="https://docs-download.pingcap.com/media/images/docs/tiproxy/tiproxy-architecture.png" alt="TiProxy architecture" width="500" />
 
-    Client --> ProxyLayer
+## Main features
 
-    subgraph ProxyLayer["proxy layer"]
-        TiProxy1[TiProxy] ~~~ TiProxy2[TiProxy]
-    end
+TiProxy provides connection migration, failover, service discovery, and quick deployment.
 
-    ProxyLayer --> ComputeLayer
+### Connection migration
 
-    subgraph ComputeLayer["compute layer"]
-        TiDB1[TiDB] ~~~ TiDB2[TiDB] ~~~ TiDB3[TiDB]
-    end
+TiProxy can migrate connections from one TiDB server to another without breaking the client connection.
 
-    ComputeLayer --> StorageLayer
+As shown in the following figure, the client originally connects to TiDB 1 through TiProxy. After the connection migration, the client actually connects to TiDB 2. When TiDB 1 is about to be offline or the ratio of connections on TiDB 1 to connections on TiDB 2 exceeds the set threshold, the connection migration is triggered. The client is unaware of the connection migration.
 
-    subgraph StorageLayer["storage layer"]
-        TiKV1[TiKV] ~~~ TiKV2[TiKV] ~~~ TiFlash[TiFlash]
-    end
+<img src="https://docs-download.pingcap.com/media/images/docs/tiproxy/tiproxy-session-migration.png" alt="TiProxy connection migration" width="400" />
 
-    style ProxyLayer stroke-dasharray: 5 5
-    style ComputeLayer stroke-dasharray: 5 5
-    style StorageLayer stroke-dasharray: 5 5
-```
+Connection migration usually occurs in the following scenarios:
 
-## 主要功能
+- When a TiDB server performs scaling in, rolling upgrade, or rolling restart, TiProxy can migrate connections from the TiDB server that is about to be offline to other TiDB servers to keep the client connection alive.
+- When a TiDB server performs scaling out, TiProxy can migrate existing connections to the new TiDB server to achieve real-time load balancing without resetting the client connection pool.
 
-TiProxy 提供连接迁移、故障转移、服务发现和一键部署的功能。
+### Failover
 
-### 连接迁移
+When a TiDB server is at risk of running out of memory (OOM) or fails to connect to PD or TiKV, TiProxy detects the issue automatically and migrates the connections to another TiDB server, thus ensuring continuous client connectivity.
 
-TiProxy 在保持客户端连接不变的情况下，能将一台 TiDB server 上的连接迁移到另一台 TiDB server。
+### Service discovery
 
-如下图所示，原先客户端通过 TiProxy 连接到 TiDB 1 上，连接迁移之后，客户端实际连接到 TiDB 2 上。在 TiDB 1 即将下线或 TiDB 1 上的连接数比 TiDB 2 上的连接数超过设定阈值时，会触发连接迁移。连接迁移对客户端无感知。
+When a TiDB server performs scaling in or scaling out, if you use a common load balancer, you need to manually update the TiDB server list. However, TiProxy can automatically discover the TiDB server list without manual intervention.
 
-```mermaid
-graph TD
-    Client[Client]
-    TiProxy[TiProxy]
-    TiDB1[TiDB 1]
-    TiDB2[TiDB 2]
+### Quick deployment
 
-    Client --> TiProxy
-    TiProxy -.-x TiDB1
-    TiProxy --> TiDB2
-```
+TiProxy is integrated into [TiUP](https://github.com/pingcap/tiup), [TiDB Operator](https://github.com/pingcap/tidb-operator), [TiDB Dashboard](/dashboard/dashboard-intro.md), and [Grafana](/tiproxy/tiproxy-grafana.md), and supports built-in virtual IP management, reducing the deployment, operation, and management costs.
 
-连接迁移通常发生在以下场景：
+## User scenarios
 
-- 当 TiDB server 进行缩容、滚动升级、滚动重启操作时，TiProxy 能把连接从即将下线的 TiDB server 迁移到其他 TiDB server 上，从而保持客户端连接不断开。
-- 当 TiDB server 进行扩容操作时，TiProxy 能将已有的部分连接迁移到新的 TiDB server 上，从而实现了实时的负载均衡，无需客户端重置连接池。
+TiProxy is suitable for the following scenarios:
 
-### 故障转移
+- Connection persistence: When a TiDB server performs scaling in, rolling upgrade, or rolling restart, the client connection is broken, resulting in an error. If the client does not have an idempotent error retry mechanism, you need to manually check and fix the error, which greatly increases the labor cost. TiProxy can keep the client connection, so that the client does not report an error.
+- Frequent scaling in and scaling out: The workload of an application might change periodically. To save costs, you can deploy TiDB on the cloud and automatically scale in and scale out TiDB servers according to the workload. However, scaling in might cause the client to disconnect, and scaling out might result in unbalanced load. TiProxy can keep the client connection and achieve load balancing.
+- CPU load imbalance: When background tasks consume a significant amount of CPU resources or workloads across connections vary significantly, leading to an imbalanced CPU load, TiProxy can migrate connections based on CPU usage to achieve load balancing. For more details, see [CPU-based load balancing](/tiproxy/tiproxy-load-balance.md#cpu-based-load-balancing).
+- TiDB server OOM: When a runaway query causes a TiDB server to run out of memory, TiProxy can proactively detect the OOM risk and migrate other healthy connections to a different TiDB server, thus ensuring continuous client connectivity. For more details, see [Memory-based load balancing](/tiproxy/tiproxy-load-balance.md#memory-based-load-balancing).
 
-当一台 TiDB server 存在 Out of Memory (OOM) 风险、连接 PD 或 TiKV 失败时，TiProxy 自动感知故障，并将连接迁移到其他 TiDB server 上，从而保持客户端连接不断开。
+TiProxy is not suitable for the following scenarios:
 
-### 服务发现
+- Sensitive to performance: The performance of TiProxy is lower than that of HAProxy and other load balancers, so using TiProxy requires reserving more CPU resources to maintain similar performance levels. For details, refer to [TiProxy Performance Test Report](/tiproxy/tiproxy-performance-test.md).
+- Sensitive to cost: If the TiDB cluster uses hardware load balancers, virtual IP, or the load balancer provided by Kubernetes, adding TiProxy will increase the cost. In addition, if you deploy the TiDB cluster across availability zones on the cloud, adding TiProxy will also increase the traffic cost across availability zones.
+- Failover for unexpected TiDB server downtime: TiProxy can keep the client connection only when the TiDB server is offline or restarted as planned. If the TiDB server is offline unexpectedly, the connection is still broken.
 
-当 TiDB server 进行扩容、缩容操作时，如果使用普通负载均衡器，你需要手动更新 TiDB server 列表，而 TiProxy 能自动发现 TiDB server 列表，无需人工介入。
+It is recommended that you use TiProxy for the scenarios that TiProxy is suitable for and use HAProxy or other proxies when your application is sensitive to performance.
 
-### 一键部署
+## Installation and usage
 
-TiProxy 集成到了 [TiUP](https://github.com/pingcap/tiup)、[TiDB Operator](https://github.com/pingcap/tidb-operator)、[TiDB Dashboard](/dashboard/dashboard-intro.md) 和 [Grafana](/tiproxy/tiproxy-grafana.md) 中，且内置虚拟 IP 管理，降低了部署和运维成本。
+This section describes how to deploy and change TiProxy using TiUP. You can either [create a new cluster with TiProxy](#create-a-cluster-with-tiproxy) or [enable TiProxy for an existing cluster](#enable-tiproxy-for-an-existing-cluster) by scaling out TiProxy.
 
-## 使用场景
-
-TiProxy 适用于以下场景：
-
-- 连接保持：当 TiDB 缩容、滚动升级、滚动重启操作时，客户端连接会断开，导致报错。如果客户端没有幂等的错误重试机制，则需要人工手动检查错误并修复，这大大增加了人力成本。TiProxy 能保持客户端连接，因此可以避免客户端报错。
-- 频繁扩缩容：应用的负载可能周期性地变化，为了节省成本，你可以将 TiDB 部署到云上，并根据负载自动地扩缩容 TiDB server。然而，缩容可能导致客户端断连，而扩容不能及时地实现负载均衡。通过迁移连接功能，TiProxy 能保持客户端连接并实现负载均衡。
-- CPU 负载不均：后台任务占用较多 CPU 资源，或者不同连接上的工作负载差异较大，导致 CPU 负载不均时，TiProxy 能根据 CPU 使用率迁移连接，实现负载均衡。请参阅[基于 CPU 的负载均衡](/tiproxy/tiproxy-load-balance.md#基于-cpu-的负载均衡)。
-- TiDB server OOM：当出现 Runaway Query 导致 TiDB server OOM 时，TiProxy 能提前感知到 TiDB server OOM 的风险，并将其他正常连接迁移到其他 TiDB server 上，从而保持客户端连接不断开。请参阅[基于内存的负载均衡](/tiproxy/tiproxy-load-balance.md#基于内存的负载均衡)。
-
-TiProxy 不适用于以下场景：
-
-- 对性能敏感：TiProxy 的性能低于 HAProxy 等负载均衡器，因此使用 TiProxy 需要预留更多 CPU 资源。请参阅 [TiProxy 性能测试报告](/tiproxy/tiproxy-performance-test.md)。
-- 对成本敏感：如果 TiDB 集群使用了硬件负载均衡、虚拟 IP 或 Kubernetes 自带的负载均衡器，此时增加 TiProxy 组件会增加成本。另外，如果在云上跨可用区部署 TiDB 集群，增加 TiProxy 组件也会增加跨可用区的流量费用。
-- TiDB server 意外下线时的故障转移：只有当 TiDB server 在计划内的下线或重启操作时，TiProxy 才能保持连接。如果 TiDB server 意外下线，则连接仍然会断开。
-
-当符合 TiProxy 的使用场景时，推荐使用 TiProxy。当对性能敏感时，推荐使用 HAProxy 或其他代理。
-
-## 安装和使用
-
-本节介绍使用 TiUP 部署和变更 TiProxy 的步骤。你可以在[创建新集群时部署 TiProxy](#创建带有-tiproxy-的集群)，也可以通过扩容的方式[为已有集群启用 TiProxy](#为已有集群启用-tiproxy)。
-
-> **注意：**
+> **Note:**
 >
-> 请确保 TiUP 为 v1.16.1 或之后版本。
+> Make sure that TiUP is v1.16.1 or later.
 
-其他部署方式，请参考以下文档：
+For other deployment methods, refer to the following documents:
 
-- 使用 TiDB Operator 部署 TiProxy，请参见 [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-tiproxy) 文档。
-- 使用 TiUP 本地快速部署 TiProxy，请参见[部署 TiProxy](/tiup/tiup-playground.md#部署-tiproxy)。
+- To deploy TiProxy using TiDB Operator, see the [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-tiproxy) documentation.
+- To quickly deploy TiProxy locally using TiUP, see [Deploy TiProxy](/tiup/tiup-playground.md#deploy-tiproxy).
 
-### 创建带有 TiProxy 的集群
+### Create a cluster with TiProxy
 
-以下步骤介绍如何在创建新集群时部署 TiProxy。
+The following steps describe how to deploy TiProxy when creating a new cluster.
 
-1. 配置 TiDB 实例。
+1. Configure the TiDB instances.
 
-    使用 TiProxy 时，需要为 TiDB 配置 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入)。该值应比应用程序最长事务的持续时间大 10 秒以上，以避免 TiDB server 下线时客户端连接中断。你可以通过 [TiDB 监控面板的 Transaction 指标](/grafana-tidb-dashboard.md#transaction)查看事务持续时间。更多信息，请参阅[使用限制](#使用限制)。
+    When using TiProxy, you need to configure [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) for TiDB. This value must be at least 10 seconds greater than the duration of the longest transaction of your application, which avoids client connection interruption when the TiDB server goes offline. You can view the transaction duration through the [Transaction metrics on the TiDB monitoring dashboard](/grafana-tidb-dashboard.md#transaction). For more information, see [Limitations](#limitations).
 
-    配置示例：
+    A configuration example is as follows:
 
     ```yaml
     server_configs:
@@ -123,25 +88,25 @@ TiProxy 不适用于以下场景：
         graceful-wait-before-shutdown: 30
     ```
 
-2. 配置 TiProxy 实例。
+2. Configure the TiProxy instances.
 
-    为了保证 TiProxy 的高可用，建议部署至少 2 个 TiProxy 实例，并配置虚拟 IP [`ha.virtual-ip`](/tiproxy/tiproxy-configuration.md#virtual-ip) 和 [`ha.interface`](/tiproxy/tiproxy-configuration.md#interface)，以便流量能够路由到可用的 TiProxy 实例。
+    To ensure the high availability of TiProxy, it is recommended to deploy at least two TiProxy instances and configure a virtual IP by setting [`ha.virtual-ip`](/tiproxy/tiproxy-configuration.md#virtual-ip) and [`ha.interface`](/tiproxy/tiproxy-configuration.md#interface) to route the traffic to the available TiProxy instance.
 
-    注意事项：
+    Note the following:
 
-    - 要根据负载类型和最大 QPS 选择 TiProxy 的机型和实例数。更多详情，请参阅 [TiProxy 性能测试报告](/tiproxy/tiproxy-performance-test.md)。
-    - 由于 TiProxy 实例通常少于 TiDB server 实例，TiProxy 的网络带宽更容易成为瓶颈。例如，在 AWS 上，同系列 EC2 的基准网络带宽与 CPU 核数并不成正比。当网络带宽成为瓶颈时，可以把 TiProxy 实例拆分为更多更小规格的实例，从而提高 QPS。更多详情，请参阅[网络规格](https://docs.aws.amazon.com/zh_cn/ec2/latest/instancetypes/co.html#co_network)。
-    - 建议在拓扑配置中指定 TiProxy 的版本号。这样在执行 [`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md) 升级 TiDB 集群时，可以避免 TiProxy 被一并升级，从而避免因 TiProxy 升级导致客户端连接断开。
+    - Select the model and number of TiProxy instances based on the workload type and maximum QPS. For details, see [TiProxy Performance Test Report](/tiproxy/tiproxy-performance-test.md).
+    - Because there are usually fewer TiProxy instances than TiDB server instances, the network bandwidth of TiProxy is more likely to become a bottleneck. For example, on AWS, the baseline network bandwidth EC2 instances in the same series is not proportional to the number of CPU cores. When network bandwidth becomes a bottleneck, you can split the TiProxy instance into more and smaller instances to increase QPS. For details, see [Network specifications](https://docs.aws.amazon.com/ec2/latest/instancetypes/co.html#co_network).
+    - It is recommended to specify the TiProxy version in the topology configuration file. This will prevent TiProxy from being upgraded automatically when you execute [`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md) to upgrade the TiDB cluster, thus preventing client connections from being disconnected due to the TiProxy upgrade.
 
-    关于 TiProxy 的配置模板，请参见 [TiProxy 配置模板](/tiproxy/tiproxy-deployment-topology.md)。
+    For more information about the template for TiProxy, see [A simple template for the TiProxy topology](https://github.com/pingcap/docs/blob/master/config-templates/simple-tiproxy.yaml).
 
-    关于 TiDB 集群拓扑文件中的配置项说明，请参见[通过 TiUP 部署 TiDB 集群的拓扑文件配置](/tiup/tiup-cluster-topology-reference.md)。
+    For detailed descriptions of the configuration items in the TiDB cluster topology file, see [Topology Configuration File for TiDB Deployment Using TiUP](/tiup/tiup-cluster-topology-reference.md).
 
-    配置示例：
+    A configuration example is as follows:
 
     ```yaml
     component_versions:
-      tiproxy: "v1.3.2"
+      tiproxy: "v1.2.0"
     server_configs:
       tiproxy:
         ha.virtual-ip: "10.0.1.10/24"
@@ -155,25 +120,25 @@ TiProxy 不适用于以下场景：
         status_port: 3080
     ```
 
-3. 启动集群。
+3. Start the cluster.
 
-    使用 TiUP 启动集群的方式，请参阅 [TiUP](/tiup/tiup-documentation-guide.md) 文档。
+    To start the cluster using TiUP, see [TiUP documentation](/tiup/tiup-documentation-guide.md).
 
-4. 连接到 TiProxy。
+4. Connect to TiProxy.
 
-    集群部署完成后，会同时暴露 TiDB server 端口和 TiProxy 端口。客户端应当连接到 TiProxy 的端口，而不是直接连接 TiDB server。
+    After the cluster is deployed, the TiDB server port and TiProxy port will be exposed at the same time. The client should connect to the TiProxy port instead of directly connecting to the TiDB server.
 
-### 为已有集群启用 TiProxy
+### Enable TiProxy for an existing cluster
 
-对于未启用 TiProxy 的集群，可以通过扩容的方式启用 TiProxy。
+For clusters that do not have TiProxy deployed, you can enable TiProxy by scaling out TiProxy instances.
 
-1. 配置 TiProxy 实例。
+1. Configure the TiProxy instance.
 
-    在单独的拓扑文件中配置 TiProxy，例如 `tiproxy.toml`：
+    Configure TiProxy in a separate topology file, such as `tiproxy.toml`:
 
     ```yaml
     component_versions:
-      tiproxy: "v1.3.2"
+      tiproxy: "v1.2.0"
     server_configs:
       tiproxy:
         ha.virtual-ip: "10.0.1.10/24"
@@ -189,21 +154,21 @@ TiProxy 不适用于以下场景：
         status_port: 3080
     ```
 
-2. 扩容 TiProxy。
+2. Scale out TiProxy.
 
-    使用 [`tiup cluster scale-out`](/tiup/tiup-component-cluster-scale-out.md) 命令扩容 TiProxy 实例，例如：
+    Use the [`tiup cluster scale-out`](/tiup/tiup-component-cluster-scale-out.md) command to scale out the TiProxy instances. For example:
 
     ```shell
     tiup cluster scale-out <cluster-name> tiproxy.toml
     ```
 
-    扩容 TiProxy 时，TiUP 会自动为 TiDB 配置自签名证书 [`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-从-v640-版本开始引入) 和 [`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-从-v640-版本开始引入)，该证书用于迁移连接。
+    When you scale out TiProxy, TiUP automatically configures a self-signed certificate [`security.session-token-signing-cert`](/tidb-configuration-file.md#session-token-signing-cert-new-in-v640) and [`security.session-token-signing-key`](/tidb-configuration-file.md#session-token-signing-key-new-in-v640) for TiDB. The certificate is used for connection migration.
 
-3. 修改 TiDB 配置。
+3. Modify the TiDB configuration.
 
-    使用 TiProxy 时，需要为 TiDB 配置 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入)。该值应比应用程序最长事务的持续时间大 10 秒以上，以避免 TiDB server 下线时客户端连接中断。你可以通过 [TiDB 监控面板的 Transaction 指标](/grafana-tidb-dashboard.md#transaction)查看事务持续时间。更多信息，请参阅[使用限制](#使用限制)。
+   When using TiProxy, you need to configure [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) for TiDB. This value must be at least 10 seconds greater than the duration of the longest transaction of your application to avoid client connection interruption when the TiDB server goes offline. You can view the transaction duration through the [Transaction metrics on the TiDB monitoring dashboard](/grafana-tidb-dashboard.md#transaction). For more information, see [Limitations](#limitations).
 
-    配置示例：
+   A configuration example is as follows:
 
     ```yaml
     server_configs:
@@ -211,110 +176,110 @@ TiProxy 不适用于以下场景：
         graceful-wait-before-shutdown: 30
     ```
 
-4. 重新加载 TiDB 配置。
+4. Reload TiDB configuration.
 
-    由于 TiDB 配置了自签名证书和 `graceful-wait-before-shutdown`，需要使用 [`tiup cluster reload`](/tiup/tiup-component-cluster-reload.md) 命令重新加载配置使它们生效。注意，重新加载配置后，TiDB 会滚动重启，此时客户端连接会断开。
+    Because TiDB is configured with a self-signed certificate and `graceful-wait-before-shutdown`, you need to use the [`tiup cluster reload`](/tiup/tiup-component-cluster-reload.md) command to reload the configuration for them to take effect. Note that after reloading the configuration, TiDB will perform a rolling restart, and the client connection will be disconnected.
 
     ```shell
     tiup cluster reload <cluster-name> -R tidb
     ```
 
-5. 连接到 TiProxy。
+5. Connect to TiProxy.
 
-    启用 TiProxy 后，客户端应连接 TiProxy 端口，而不是 TiDB server 端口。
+    After you enable TiProxy, the client should connect to the TiProxy port instead of the TiDB server port.
 
-### 更改 TiProxy 配置
+### Modify TiProxy configuration
 
-为了保证连接保持功能的有效性，TiProxy 不应随意重启。因此，TiProxy 的大多数配置项支持在线变更。支持在线变更的配置列表请参阅 [TiProxy 配置](/tiproxy/tiproxy-configuration.md)。
+To ensure that TiProxy keeps the client connection, do not restart TiProxy unless necessary. Therefore, most of the TiProxy configuration items can be modified online. For the list of configuration items that support online change, see [TiProxy configuration](/tiproxy/tiproxy-configuration.md).
 
-使用 TiUP 更改 TiProxy 配置时，如果要更改的配置项支持在线变更，应当带上 [`--skip-restart`](/tiup/tiup-component-cluster-reload.md#--skip-restart) 选项，避免重启 TiProxy。
+When using TiUP to change the TiProxy configuration, if the configuration item to be changed supports online change, you can use the [`--skip-restart`](/tiup/tiup-component-cluster-reload.md#--skip-restart) option to avoid restarting TiProxy.
 
-### 升级 TiProxy
+### Upgrade TiProxy
 
-部署 TiProxy 时建议指定 TiProxy 的版本，使升级 TiDB 集群时不会升级 TiProxy。
+When you deploy TiProxy, it is recommended to specify the version of TiProxy so that TiProxy will not be upgraded when you upgrade the TiDB cluster.
 
-如果确实要升级 TiProxy 的版本，需加上 [`--tiproxy-version`](/tiup/tiup-component-cluster-upgrade.md#--tiproxy-version) 指定 TiProxy 的版本：
+If you need to upgrade TiProxy, add [`--tiproxy-version`](/tiup/tiup-component-cluster-upgrade.md#--tiproxy-version) in the upgrade command to specify the version of TiProxy:
 
 ```shell
 tiup cluster upgrade <cluster-name> <version> --tiproxy-version <tiproxy-version>
 ```
 
-> **注意：**
+> **Note:**
 >
-> 该命令将会同时升级 TiDB 集群。即使 TiDB 版本没有变化，也会重启 TiDB 集群。
+> This command also upgrades and restarts the TiDB cluster, even if the cluster version does not change.
 
-### 重启 TiDB 集群
+### Restart the TiDB cluster
 
-使用 [`tiup cluster restart`](/tiup/tiup-component-cluster-restart.md) 重启 TiDB 集群时，TiDB server 不是滚动重启，会导致连接断开，请尽量避免使用。
+When you restart the TiDB cluster using [`tiup cluster restart`](/tiup/tiup-component-cluster-restart.md), TiDB servers are not rolling restarted, which causes the client connection to be disconnected. Therefore, avoid using this command.
 
-使用 [`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md) 升级集群和 [`tiup cluster reload`](/tiup/tiup-component-cluster-reload.md) 重新加载配置时，TiDB server 是滚动重启的，因此连接不会断开。
+Instead, when you upgrade the cluster using [`tiup cluster upgrade`](/tiup/tiup-component-cluster-upgrade.md) or reload the configuration using [`tiup cluster reload`](/tiup/tiup-component-cluster-reload.md), TiDB servers are rolling restarted, so the client connection is not affected.
 
-## TiProxy 与其他组件的兼容性
+## Compatibility with other components
 
-- TiProxy 仅支持 TiDB v6.5.0 及以上版本。
-- TiProxy 的 TLS 连接与 TiDB 有不兼容的功能，请参阅[安全](#安全)。
-- TiDB Dashboard 和 Grafana 从 v7.6.0 开始支持 TiProxy。
-- TiUP 从 v1.14.1 开始支持 TiProxy，TiDB Operator 从 v1.5.1 开始支持 TiProxy。
-- 由于 TiProxy 的状态端口提供的接口与 TiDB server 不同，使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 导入数据时，目标数据库应当填写 TiDB server 的地址，不能是 TiProxy 的地址。
+- TiProxy only supports TiDB v6.5.0 and later versions.
+- TiProxy's TLS connection has incompatible features with TiDB. For details, see [Security](#security).
+- TiDB Dashboard and Grafana support TiProxy from v7.6.0.
+- TiUP supports TiProxy from v1.14.1, and TiDB Operator supports TiProxy from v1.5.1.
+- Because the interface provided by the status port of TiProxy is different from that of TiDB server, when you use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to import data, the target database should be the address of TiDB server, not the address of TiProxy.
 
-## 安全
+## Security
 
-TiProxy 提供了 TLS 连接。客户端与 TiProxy 之间的 TLS 连接按照如下规则开启：
+TiProxy provides TLS connections. The TLS connection between the client and TiProxy is enabled according to the following rules:
 
-- 当 TiProxy 的 [`security.server-tls`](/tiproxy/tiproxy-configuration.md#server-tls) 配置为不使用 TLS 连接时，无论客户端是否开启 TLS 连接，客户端与 TiProxy 之间都不开启 TLS 连接。
-- 当 TiProxy 的 [`security.server-tls`](/tiproxy/tiproxy-configuration.md#server-tls) 配置为使用 TLS 连接时，仅当客户端开启 TLS 连接时，客户端与 TiProxy 才开启 TLS 连接。
+- If the [`security.server-tls`](/tiproxy/tiproxy-configuration.md#server-tls) configuration of TiProxy is set to not use TLS connection, the TLS connection between the client and TiProxy is not enabled regardless of whether the client enables TLS connection.
+- If the [`security.server-tls`](/tiproxy/tiproxy-configuration.md#server-tls) configuration of TiProxy is set to use TLS connection, the TLS connection between the client and TiProxy is enabled only when the client enables TLS connection.
 
-TiProxy 与 TiDB server 之间的 TLS 连接按照如下规则开启：
+The TLS connection between TiProxy and TiDB server is enabled according to the following rules:
 
-- 当 TiProxy 的 [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) 设置为 `true` 时，无论客户端与 TiProxy 之间是否开启了 TLS 连接，TiProxy 和 TiDB server 之间都会开启 TLS 连接。如果 TiProxy 的 [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) 配置为不使用 TLS 或 TiDB server 没有配置 TLS 证书，则客户端报错。
-- 当 TiProxy 的 [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) 设置为 `false`，TiProxy 的 [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) 配置了 TLS 且 TiDB server 配置了 TLS 证书时，仅当客户端与 TiProxy 之间开启了 TLS 时，TiProxy 与 TiDB server 之间才开启 TLS 连接。
-- 当 TiProxy 的 [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) 设置为 `false`，TiProxy 的 [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) 没有配置 TLS 或 TiDB server 没有配置 TLS 证书时，TiProxy 与 TiDB server 之间不开启 TLS 连接。
+- If TiProxy's [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) is set to `true`, TiProxy and TiDB server always enable TLS connection regardless of whether the client enables TLS connection. If TiProxy's [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) is set to not use TLS or TiDB server does not configure TLS certificate, the client reports an error.
+- If TiProxy's [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) is set to `false`, TiProxy's [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) is configured with TLS and TiDB server is configured with a TLS certificate, TiProxy and TiDB server only enable TLS connection when the client enables TLS connection.
+- If TiProxy's [`security.require-backend-tls`](/tiproxy/tiproxy-configuration.md#require-backend-tls) is set to `false`, TiProxy's [`security.sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) is set to not use TLS or TiDB server does not configure a TLS certificate, TiProxy and TiDB server do not enable TLS connection.
 
-TiProxy 的以下行为与 TiDB 不兼容：
+TiProxy has the following behaviors incompatible with TiDB:
 
-- 执行 `STATUS` 和 `SHOW STATUS` 语句显示的 TLS 信息可能不一致。`STATUS` 语句显示的是客户端到 TiProxy 之间的 TLS 信息，而 `SHOW STATUS` 语句显示的是 TiProxy 与 TiDB server 之间的 TLS 信息。
-- TiProxy 不支持[基于证书鉴权的登录方式](/certificate-authentication.md)，否则客户端可能会登录失败，因为客户端与 TiProxy 之间的 TLS 证书和 TiProxy 与 TiDB server 之间的 TLS 证书是不同的，TiDB server 根据 TiProxy 上的 TLS 证书校验。
+- The `STATUS` and `SHOW STATUS` statements might return different TLS information. The `STATUS` statement returns the TLS information between the client and TiProxy, while the `SHOW STATUS` statement returns the TLS information between TiProxy and TiDB server.
+- TiProxy does not support [certificate-based authentication](/certificate-authentication.md). Otherwise, the client might fail to log in because the TLS certificate between the client and TiProxy is different from that between TiProxy and TiDB server, and TiDB server verifies the TLS certificate based on the TLS certificate on TiProxy.
 
-## 使用限制
+## Limitations
 
-以下情况下，TiProxy 不能保持客户端连接：
+TiProxy cannot keep the client connection in the following scenarios:
 
-- TiDB 意外下线。TiProxy 仅支持 TiDB server 在计划内的下线或重启时保持客户端连接，不支持 TiDB server 的故障转移。
-- TiProxy 进行缩容、升级、重启等下线操作。一旦 TiProxy 下线，客户端连接也会断开。
-- TiDB 主动断开连接。例如会话超过 `wait_timeout` 的时间没有发送请求时，TiDB 会主动断开连接，此时 TiProxy 也会断开客户端连接。
+- TiDB is offline unexpectedly. TiProxy only keeps the client connection when the TiDB server is offline or restarted as planned, and does not support failover of the TiDB server.
+- TiProxy performs scaling in, upgrade, or restart. Once TiProxy is offline, the client connection is broken.
+- TiDB actively disconnects the connection. For example, when a session does not send a request for a period of time longer than `wait_timeout`, TiDB actively disconnects the connection, and TiProxy also disconnects the client connection.
 
-在以下情况下，TiProxy 将无法完成连接迁移，会导致客户端连接中断或负载均衡失效：
+TiProxy cannot migrate connections in the following scenarios, and thus cause the client connection to be interrupted or the load balancing to fail:
 
-- 长时间运行的单条语句或单个事务：其执行时间超过了 TiDB Server 配置的 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入) 的值减去 10 秒的时间窗口。
-- 使用游标且未及时完成：会话使用游标读取数据，但超过 TiDB Server 配置的 [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-从-v50-版本开始引入) 的值减去 10 秒后，仍未完成数据读取或关闭游标。
-- 会话创建了[本地临时表](/temporary-tables.md#本地临时表)。
-- 会话持有了[用户级锁](/functions-and-operators/locking-functions.md)。
-- 会话持有了[表锁](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md)。
-- 会话创建了[预处理语句](/develop/dev-guide-prepared-statement.md)，且该预处理语句失效，例如创建预处理语句之后相关的表被删除。
-- 会话创建了会话级的[执行计划绑定](/sql-plan-management.md#执行计划绑定-sql-binding)，且该执行计划绑定失效，例如创建执行计划绑定之后相关的表被删除。
-- 创建会话后，该会话使用的用户被删除或用户名被更改。
+- A long-running single statement or single transaction: the execution time exceeds the value of the [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) configured in the TiDB server minus 10 seconds.
+- Using cursors and not completing in time: the session uses a cursor to read data, but does not complete data reading or close the cursor after the value of [`graceful-wait-before-shutdown`](/tidb-configuration-file.md#graceful-wait-before-shutdown-new-in-v50) configured in TiDB server minus 10 seconds.
+- The session creates a [local temporary table](/temporary-tables.md#local-temporary-tables).
+- The session holds a [user-level lock](/functions-and-operators/locking-functions.md).
+- The session holds a [table lock](/sql-statements/sql-statement-lock-tables-and-unlock-tables.md).
+- The session creates a [prepared statement](/develop/dev-guide-prepared-statement.md), and the prepared statement is invalid. For example, the table related to the prepared statement is dropped after the prepared statement is created.
+- The session creates a session-level [execution plan binding](/sql-plan-management.md#sql-binding), and the binding is invalid. For example, the table related to the binding is dropped after the binding is created.
+- After the session is created, the user used by the session is deleted or the username is changed.
 
-## TiProxy 支持的连接器
+## Supported connectors
 
-TiProxy 要求客户端使用的连接器支持[认证插件](https://dev.mysql.com/doc/refman/8.0/en/pluggable-authentication.html)，否则可能会连接失败。
+TiProxy requires that the connector used by the client supports [authentication plugins](https://dev.mysql.com/doc/refman/8.0/en/pluggable-authentication.html). Otherwise, the connection might fail.
 
-以下列举了部分支持的连接器：
+The following table lists some supported connectors:
 
-| 编程语言       | 连接器                     | 支持的最低版本   |
-|------------|-------------------------|-----------|
-| Java       | MySQL Connector/J       | 5.1.19    |
-| C          | libmysqlclient          | 5.5.7     |
-| Go         | Go SQL Driver           | 1.4.0     |
-| JavaScript | MySQL Connector/Node.js | 1.0.2     |
-| JavaScript | mysqljs/mysql           | 2.15.0    |
-| JavaScript | node-mysql2             | 1.0.0-rc-6 |
-| PHP        | mysqlnd                 | 5.4       |
-| Python     | MySQL Connector/Python  | 1.0.7     |
-| Python     | PyMySQL                 | 0.7       |
+| Language   | Connector              | The minimum supported version |
+|------------|------------------------|------------------------------|
+| Java       | MySQL Connector/J      | 5.1.19                       |
+| C          | libmysqlclient         | 5.5.7                        |
+| Go         | Go SQL Driver          | 1.4.0                        |
+| JavaScript | MySQL Connector/Node.js | 1.0.2                        |
+| JavaScript | mysqljs/mysql          | 2.15.0                       |
+| JavaScript | node-mysql2            | 1.0.0-rc-6                   |
+| PHP        | mysqlnd                | 5.4                          |
+| Python     | MySQL Connector/Python | 1.0.7                        |
+| Python     | PyMySQL                | 0.7                          |
 
-注意，某些连接器调用公共的库连接数据库，这些连接器没有在表中列出，请在上述列表中查询对应的库所需的版本。例如，MySQL/Ruby 使用 libmysqlclient 连接数据库，因此要求它使用的 libmysqlclient 为 5.5.7 及以上版本。
+Note that some connectors call the common library to connect to the database, and these connectors are not listed in the table. You can refer to the above table for the required version of the corresponding library. For example, MySQL/Ruby uses libmysqlclient to connect to the database, so it requires that the libmysqlclient used by MySQL/Ruby is version 5.5.7 or later.
 
-## 资源
+## TiProxy resources
 
-- [TiProxy 版本发布历史](https://github.com/pingcap/tiproxy/releases)
-- [TiProxy Issues](https://github.com/pingcap/tiproxy/issues)：TiProxy GitHub Issues 列表
+- [TiProxy Release Notes](https://github.com/pingcap/tiproxy/releases)
+- [TiProxy Issues](https://github.com/pingcap/tiproxy/issues): Lists TiProxy GitHub issues

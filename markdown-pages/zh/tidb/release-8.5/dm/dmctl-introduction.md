@@ -1,23 +1,23 @@
 ---
-title: 使用 dmctl 运维 TiDB Data Migration 集群
-summary: 了解如何使用 dmctl 运维 DM 集群。
+title: Maintain DM Clusters Using dmctl
+summary: Learn how to maintain a DM cluster using dmctl.
 ---
 
-# 使用 dmctl 运维 TiDB Data Migration 集群
+# Maintain DM Clusters Using dmctl
 
-> **注意：**
+> **Note:**
 >
-> 对于用 TiUP 部署的 DM 集群，推荐直接使用 [`tiup dmctl` 命令](/dm/maintain-dm-using-tiup.md#集群控制工具-dmctl)。
+> For DM clusters deployed using TiUP, you are recommended to directly use [`tiup dmctl`](/dm/maintain-dm-using-tiup.md#dmctl) to maintain the clusters.
 
-dmctl 是用来运维 DM 集群的命令行工具，支持交互模式和命令模式。
+dmctl is a command line tool used to maintain DM clusters. It supports both the interactive mode and the command mode.
 
-## dmctl 交互模式
+## Interactive mode
 
-进入交互模式，与 DM-master 进行交互：
+Enter the interactive mode to interact with DM-master:
 
-> **注意：**
+> **Note:**
 >
-> 交互模式下不具有 bash 的特性，比如不需要通过引号传递字符串参数而应当直接传递。
+> The interactive mode does not support Bash features. For example, you need to directly pass string flags instead of passing them in quotes.
 
 
 ```bash
@@ -63,20 +63,20 @@ Available Commands:
   transfer-source Transfers a upstream MySQL/MariaDB source to a free worker
 
 Flags:
-  -h, --help             help for dmctl
+  -h, --help             Help for dmctl.
   -s, --source strings   MySQL Source ID.
 
 Use "dmctl [command] --help" for more information about a command.
 ```
 
-## dmctl 命令模式
+## Command mode
 
-命令模式跟交互模式的区别是，执行命令时只需要在 dmctl 命令后紧接着执行任务操作，任务操作同交互模式的参数一致。
+The command mode differs from the interactive mode in that you need to append the task operation right after the dmctl command. The parameters of the task operation in the command mode are the same as those in the interactive mode.
 
-> **注意：**
+> **Note:**
 >
-> + 一条 dmctl 命令只能跟一个任务操作
-> + 从 v2.0.4 版本开始，支持从环境变量 (DM_MASTER_ADDR) 里读取 `-master-addr` 参数
+> + A dmctl command must be followed by only one task operation.
+> + Starting from v2.0.4, DM supports reading the `-master-addr` parameter from the environment variable `DM_MASTER_ADDR`.
 
 
 ```bash

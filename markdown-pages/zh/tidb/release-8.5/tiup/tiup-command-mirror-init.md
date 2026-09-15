@@ -1,45 +1,47 @@
 ---
 title: tiup mirror init
-summary: tiup mirror init 命令用于初始化一个空的镜像。初始化的镜像不包含任何组件和组件管理员，仅生成一些文件。语法为 tiup mirror init <path> [flags]，其中 <path> 为本地目录路径，可以为相对路径。选项包括 -k, --key-dir（string，默认 {path}/keys）。输出包括若成功则无输出，若 <path> 不为空则输出错误信息，若 <path> 不是目录则输出错误信息。
+summary: The `tiup mirror init` command initializes an empty mirror, generating root.json, 1.index.json, snapshot.json, and timestamp.json files. Use `tiup mirror init <path>` to specify a local directory for mirror files. Use the -k or --key-dir option to specify the directory for private key files. If the specified directory is not empty, an error will be reported.
 ---
 
 # tiup mirror init
 
-命令 `tiup mirror init` 用于初始化一个空的镜像。初始化的镜像不包含任何组件和组件管理员，仅生成以下文件：
+The command `tiup mirror init` is used to initialize an empty mirror. The initialized mirror does not contain any components or component owners. The command only generates the following files for the initialized mirror:
 
 ```
-+ <mirror-dir>                                  # 镜像根目录
-|-- root.json                                   # 镜像根证书
-|-- 1.index.json                                # 组件/用户索引
-|-- snapshot.json                               # 镜像最新快照
-|-- timestamp.json                              # 镜像最新时间戳                 
-|--+ keys                                       # 镜像私钥（可移动到其他位置）
-   |-- {hash1..hashN}-root.json                 # 根证书私钥
-   |-- {hash}-index.json                        # 索引私钥
-   |-- {hash}-snapshot.json                     # 快照私钥
-   |-- {hash}-timestamp.json                    # 时间戳私钥
++ <mirror-dir>                                  # Mirror's root directory
+|-- root.json                                   # Mirror's root certificate
+|-- 1.index.json                                # Component/user index
+|-- snapshot.json                               # Mirror's latest snapshot
+|-- timestamp.json                              # Mirror's latest timestamp
+|--+ keys                                       # Mirror's private key (can be moved to other locations)
+   |-- {hash1..hashN}-root.json                 # Private key of the root certificate
+   |-- {hash}-index.json                        # Private key of the indexes
+   |-- {hash}-snapshot.json                     # Private key of the snapshots
+   |-- {hash}-timestamp.json                    # Private key of the timestamps
 ```
 
-以上文件的具体作用及内容格式请参考[镜像说明](/tiup/tiup-mirror-reference.md)。
+For the specific usage and content format of the above files, refer to [TiUP Mirror Reference Guide](/tiup/tiup-mirror-reference.md).
 
-## 语法
+## Syntax
 
 ```shell
 tiup mirror init <path> [flags]
 ```
 
-`<path>` 为本地目录路径，可以为相对路径。TiUP 会以此路径为镜像文件存放路径，在其中生成文件。若该目录已存在，则必须保证为空，若该目录不存在，则 TiUP 会自动创建。
+`<path>` is used to specify a local directory where TiUP generates and stores mirror files. The local directory can be a relative path. If the specified directory already exists, it must be empty; if it does not exist, TiUP creates it automatically.
 
-## 选项
+## Options
 
-### -k, --key-dir（string，默认 {path}/keys）
+### -k, --key-dir
 
-指定生成私钥文件的目录。若指定的文件目录不存在，则会自动创建。
+- Specifies the directory where TiUP generates private key files. If the specified directory does not exist, TiUP automatically creates it.
+- Data type: `STRING`
+- If this option is not specified in the command, TiUP generates private key files in `{path}/keys` by default.
 
-### 输出
+### Outputs
 
-- 若成功：无输出
-- 若 `<path>` 不为空：`Error: the target path '%s' is not an empty directory`
-- 若 `<path>` 不是目录：`Error: fdopendir: not a directory`
+- If the command is executed successfully, there is no output.
+- If the specified `<path>` is not empty, TiUP reports the error `Error: the target path '%s' is not an empty directory`.
+- If the specified `<path>` is not a directory, TiUP reports the error `Error: fdopendir: not a directory`.
 
-[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)
+[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)

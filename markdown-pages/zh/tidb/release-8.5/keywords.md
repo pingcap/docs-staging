@@ -1,15 +1,15 @@
 ---
 title: 关键字
-summary: 本文介绍 TiDB 的关键字。
+summary: 关键字与保留字
 ---
 
 # 关键字
 
-本文介绍 TiDB 的关键字，对保留字和非保留字作出区分，并汇总所有的关键字以供查询使用。
+本文介绍了 TiDB 中的关键字、保留字与非保留字的区别，并总结了所有可用于查询的关键字。
 
-关键字是 SQL 语句中具有特殊含义的单词，例如  [`SELECT`](/sql-statements/sql-statement-select.md)、[`UPDATE`](/sql-statements/sql-statement-update.md) 和 [`DELETE`](/sql-statements/sql-statement-delete.md) 等等。它们之中有的能够直接作为标识符，被称为**非保留关键字**（简称**非保留字**），但有需要经过特殊处理才能作为标识符的字，被称为**保留关键字**（简称**保留字**）。
+关键字是在 SQL 语句中具有特殊含义的单词，例如 [`SELECT`](/sql-statements/sql-statement-select.md)、[`UPDATE`](/sql-statements/sql-statement-update.md) 和 [`DELETE`](/sql-statements/sql-statement-delete.md)。其中有些可以直接作为标识符使用，称为**非保留关键字**。有些则在作为标识符使用时需要特殊处理，称为**保留关键字**。
 
-对于保留字，必须使用反引号包裹，才能作为标识符被使用。例如：
+如果要将保留关键字作为标识符使用，必须用反引号 `` ` `` 包裹：
 
 ```sql
 CREATE TABLE select (a INT);
@@ -27,7 +27,7 @@ CREATE TABLE `select` (a INT);
 Query OK, 0 rows affected (0.09 sec)
 ```
 
-而非保留字则不需要反引号也能直接作为标识符。例如 `BEGIN` 和 `END` 是非保留字，以下语句能够正常执行：
+非保留关键字无需使用反引号，例如 `BEGIN` 和 `END`，可以在如下语句中作为标识符成功使用：
 
 ```sql
 CREATE TABLE `select` (BEGIN int, END int);
@@ -37,7 +37,7 @@ CREATE TABLE `select` (BEGIN int, END int);
 Query OK, 0 rows affected (0.09 sec)
 ```
 
-有一种特殊情况，如果使用了限定符 `.`，那么也不需要用反引号：
+在特殊情况下，如果保留关键字与 `.` 分隔符一起使用，则无需加反引号：
 
 ```sql
 CREATE TABLE test.select (BEGIN int, END int);
@@ -47,13 +47,13 @@ CREATE TABLE test.select (BEGIN int, END int);
 Query OK, 0 rows affected (0.08 sec)
 ```
 
-TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md) 表，可以用于查询 TiDB 中所有的关键字。
+自 v7.5.3 和 v7.6.0 起，TiDB 在 [`INFORMATION_SCHEMA.KEYWORDS`](/information-schema/information-schema-keywords.md) 表中提供了完整的关键字列表。
 
-你可以使用系统变量 [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) 控制[窗口函数](/functions-and-operators/window-functions.md)中的关键词是否在语法树中生效。将 `tidb_enable_window_function` 设置为 `OFF`，则窗口函数中的单词将不再作为关键词。
+你可以通过 [`tidb_enable_window_function`](/system-variables.md#tidb_enable_window_function) 系统变量控制 [窗口函数](/functions-and-operators/window-functions.md) 中的关键字是否在语法树中生效。如果将 `tidb_enable_window_function` 设置为 `OFF`，窗口函数中的单词将不再被视为关键字。
 
 ## 关键字列表
 
-下表列出了 TiDB 中所有的关键字。其中保留字用 `(R)` 来标识。[窗口函数](/functions-and-operators/window-functions.md)的保留字用 `(R-Window)` 来标识。
+下表展示了 TiDB 中的关键字。保留关键字以 `(R)` 标记。用于 [窗口函数](/functions-and-operators/window-functions.md) 的保留关键字以 `(R-Window)` 标记。
 
 <TabsPanel letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
 
@@ -225,6 +225,9 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - DISK
 - DISTINCT (R)
 - DISTINCTROW (R)
+- DISTRIBUTE
+- DISTRIBUTION
+- DISTRIBUTIONS
 - DIV (R)
 - DO
 - DOUBLE (R)
@@ -383,6 +386,7 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - LAST_BACKUP
 - LAST_VALUE (R-Window)
 - LASTVAL
+- LATERAL (R)
 - LEAD (R-Window)
 - LEADING (R)
 - LEAVE (R)
@@ -438,6 +442,7 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - MOD (R)
 - MODE
 - MODIFY
+- MONITOR
 - MONTH
 
 <a id="N" class="letter" href="#N">N</a>
@@ -592,6 +597,7 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - ROW_NUMBER (R-Window)
 - ROWS (R-Window)
 - RTREE
+- RULE
 - RUN
 
 <a id="S" class="letter" href="#S">S</a>
@@ -704,6 +710,7 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - TIFLASH
 - TIKV_IMPORTER
 - TIME
+- TIMEOUT
 - TIMESTAMP
 - TINYBLOB (R)
 - TINYINT (R)
@@ -759,7 +766,7 @@ TiDB 从 v7.5.3 和 v7.6.0 开始提供 [`INFORMATION_SCHEMA.KEYWORDS`](/informa
 - VARCHARACTER (R)
 - VARIABLES
 - VARYING (R)
-- VECTOR 
+- VECTOR
 - VIEW
 - VIRTUAL (R)
 - VISIBLE

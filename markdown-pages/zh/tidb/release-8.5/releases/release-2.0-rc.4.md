@@ -1,39 +1,38 @@
 ---
 title: TiDB 2.0 RC4 Release Notes
-summary: TiDB 2.0 RC4 版本发布，改进了 MySQL 兼容性、系统稳定性和优化器。TiDB 支持了一些新的语法和修复了一些问题。PD 支持手动 split Region 和优化了 metrics 及代码结构。TiKV 限制了接收 snapshot 时的内存使用，支持导数据模式和改善了在被隔离的情况下的输出问题。
-aliases: ['/zh/tidb/dev/release-2.0-rc.4/','/zh/tidb/v2.0/release-2.0-rc.4','/docs-cn/dev/releases/release-2.0-rc.4/','/docs-cn/dev/releases/2rc4/','/zh/tidb/v5.4/release-2.0-rc.4','/zh/tidb/v6.1/release-2.0-rc.4','/zh/tidb/v6.5/release-2.0-rc.4','/zh/tidb/v7.1/release-2.0-rc.4','/zh/tidb/v7.5/release-2.0-rc.4','/zh/tidb/v8.1/release-2.0-rc.4']
+summary: TiDB 2.0 RC4, released on March 30, 2018, brings improvements in MySQL compatibility, SQL optimization, and stability. Key updates include support for various syntax, bug fixes, and performance optimizations in TiDB, PD, and TiKV. Notable changes include manual Region splitting in PD, memory usage limitation in TiKV, and support for data pattern import. Overall, the release focuses on enhancing functionality and addressing performance issues.
 ---
 
 # TiDB 2.0 RC4 Release Notes
 
-2018 年 3 月 30 日，TiDB 发布 2.0 RC4 版。该版本在 2.0 RC3 版的基础上，对 MySQL 兼容性、系统稳定性和优化器做了很多改进。
+On March 30, 2018, TiDB 2.0 RC4 is released. This release has great improvement in MySQL compatibility, SQL optimization and stability.
 
 ## TiDB
 
-- 支持 `SHOW GRANTS FOR CURRENT_USER();`
-- 修复 `UnionScan` 里的 `Expression` 没有 Clone 的问题
-- 支持 `SET TRANSACTION` 语法
-- 修复 `copIterator` 中潜在的 goroutine 泄露问题
-- 修复 `admin check table` 对包含 null 的 unique index 误判的问题
-- 支持用科学计数法显示浮点数
-- 修复 binary literal 计算时的类型推导
-- 修复解析 `CREATE VIEW` 语句的问题
-- 修复语句中同时包含 `ORDER BY` 和 `LIMIT 0` 时 panic 的问题
-- 提升 `DecodeBytes` 执行性能
-- 优化 `LIMIT 0` 为 `TableDual`，避免无用的执行计划构建
+- Support `SHOW GRANTS FOR CURRENT_USER();`
+- Fix the issue that the `Expression` in `UnionScan` is not cloned
+- Support the `SET TRANSACTION` syntax
+- Fix the potential goroutine leak issue in `copIterator`
+- Fix the issue that `admin check table` misjudges the unique index including null
+- Support displaying floating point numbers using scientific notation
+- Fix the type inference issue during binary literal computing
+- Fix the issue in parsing the `CREATE VIEW` statement
+- Fix the panic issue when one statement contains both `ORDER BY` and `LIMIT 0`
+- Improve the execution performance of `DecodeBytes`
+- Optimize `LIMIT 0` to `TableDual`, to avoid building useless execution plans
 
 ## PD
 
-- 支持手动 split Region，可用于处理单 Region 热点的问题
-- 修复 `pdctl` 运行 `config show all` 不显示 label property 的问题
-- metrics 及代码结构相关的优化
+- Support splitting Region manually to handle the hot spot in a single Region
+- Fix the issue that the label property is not displayed when `pdctl` runs `config show all`
+- Optimize metrics and code structure
 
 ## TiKV
 
-- 限制接收 snapshot 时的内存使用，解决极端情况下的 OOM
-- 可以配置 Coprocessor 在遇到 warnings 时的行为
-- TiKV 支持导数据模式
-- 支持 Region 从正中间分裂
-- 提升 CI test 的速度
-- 使用 `crossbeam channel`
-- 改善 TiKV 在被隔离的情况下由于 leader missing 输出太多日志的问题
+- Limit the memory usage during receiving snapshots, to avoid OOM in extreme conditions
+- Support configuring the behavior of Coprocessor when it encounters warnings
+- Support importing the data pattern in TiKV
+- Support splitting Region in the middle
+- Increase the speed of CI test
+- Use `crossbeam channel`
+- Fix the issue that too many logs are output caused by leader missing when TiKV is isolated

@@ -1,11 +1,15 @@
 ---
 title: CLUSTER_HARDWARE
-summary: 了解 TiDB 集群硬件表 `CLUSTER_HARDWARE`。
+summary: Learn the `CLUSTER_HARDWARE` information_schema table.
 ---
 
 # CLUSTER_HARDWARE
 
-集群硬件表 `CLUSTER_HARDWARE` 提供了集群各实例所在服务器的硬件信息。
+The `CLUSTER_HARDWARE` hardware system table provides the hardware information of the server where each instance of the cluster is located.
+
+> **Note:**
+>
+> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
 
 
 ```sql
@@ -27,20 +31,20 @@ DESC cluster_hardware;
 6 rows in set (0.00 sec)
 ```
 
-字段解释：
+Field description:
 
-* `TYPE`：对应集群信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `TYPE` 字段，可取值为 `tidb`，`pd` 和 `tikv`。
-* `INSTANCE`：对应于集群信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `INSTANCE` 字段。
-* `DEVICE_TYPE`：硬件类型。目前可以查询的硬件类型有 `cpu`、`memory`、`disk` 和 `net`。
-* `DEVICE_NAME`：硬件名。对于不同的 `DEVICE_TYPE`，`DEVICE_NAME` 的取值不同。
-    * `cpu`：硬件名为 cpu。
-    * `memory`：硬件名为 memory。
-    * `disk`：磁盘名。
-    * `net`：网卡名。
-* `NAME`：硬件不同的信息名，比如 cpu 有 `cpu-logical-cores` 和 `cpu-physical-cores` 两个信息名，表示逻辑核心数量和物理核心数量。
-* `VALUE`：对应硬件信息的值。例如磁盘容量和 CPU 核数。
+* `TYPE`: Corresponds to the `TYPE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) table. The optional values are `tidb`, `pd`, and `tikv`.
+* `INSTANCE`: Corresponds to the `INSTANCE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) cluster information table.
+* `DEVICE_TYPE`: Hardware type. Currently, you can query the `cpu`, `memory`, `disk`, and `net` types.
+* `DEVICE_NAME`: Hardware name. The value of `DEVICE_NAME` varies with `DEVICE_TYPE`.
+    * `cpu`: The hardware name is cpu.
+    * `memory`: The hardware name is memory.
+    * `disk`: The disk name.
+    * `net`: The network card name.
+* `NAME`: The different information names of the hardware. For example, cpu has two information names: `cpu-logical-cores` and `cpu-physical-cores`, which respectively mean logical core numbers and physical core numbers.
+* `VALUE`: The value of the corresponding hardware information, such as the disk volume and CPU core numbers.
 
-查询集群 CPU 信息的示例如下：
+The following example shows how to query the CPU information using the `CLUSTER_HARDWARE` table:
 
 
 ```sql
@@ -51,11 +55,11 @@ SELECT * FROM cluster_hardware WHERE device_type='cpu' AND device_name='cpu' AND
 +------+-----------------+-------------+-------------+--------------------+-------+
 | TYPE | INSTANCE        | DEVICE_TYPE | DEVICE_NAME | NAME               | VALUE |
 +------+-----------------+-------------+-------------+--------------------+-------+
-| tidb | 0.0.0.0:4000    | cpu         | cpu         | cpu-logical-cores  | 16     |
+| tidb | 0.0.0.0:4000    | cpu         | cpu         | cpu-logical-cores  | 16    |
 | tidb | 0.0.0.0:4000    | cpu         | cpu         | cpu-physical-cores | 8     |
-| pd   | 127.0.0.1:2379  | cpu         | cpu         | cpu-logical-cores  | 16     |
+| pd   | 127.0.0.1:2379  | cpu         | cpu         | cpu-logical-cores  | 16    |
 | pd   | 127.0.0.1:2379  | cpu         | cpu         | cpu-physical-cores | 8     |
-| tikv | 127.0.0.1:20165 | cpu         | cpu         | cpu-logical-cores  | 16     |
+| tikv | 127.0.0.1:20165 | cpu         | cpu         | cpu-logical-cores  | 16    |
 | tikv | 127.0.0.1:20165 | cpu         | cpu         | cpu-physical-cores | 8     |
 +------+-----------------+-------------+-------------+--------------------+-------+
 6 rows in set (0.03 sec)

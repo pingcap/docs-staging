@@ -1,13 +1,13 @@
 ---
-title: ADD COLUMN
-summary: TiDB 数据库中 ADD COLUMN 的使用概况。
+title: ADD COLUMN | TiDB SQL Statement Reference
+summary: TiDB 数据库中 ADD COLUMN 的用法概述。
 ---
 
 # ADD COLUMN
 
-`ALTER TABLE.. ADD COLUMN` 语句用于在已有表中添加列。在 TiDB 中，`ADD COLUMN` 为在线操作，不会阻塞表中的数据读写。
+`ALTER TABLE.. ADD COLUMN` 语句用于向已有表中添加一列。此操作在 TiDB 中是在线的，这意味着在添加列的过程中，表的读写都不会被阻塞。
 
-## 语法图
+## 语法
 
 ```ebnf+diagram
 AlterTableStmt
@@ -45,76 +45,36 @@ ColumnOption
 
 ## 示例
 
-
 ```sql
-CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT);
-```
-
-```
+mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT);
 Query OK, 0 rows affected (0.11 sec)
-```
 
-
-```sql
-INSERT INTO t1 VALUES (NULL);
-```
-
-```
+mysql> INSERT INTO t1 VALUES (NULL);
 Query OK, 1 row affected (0.02 sec)
-```
 
-
-```sql
-SELECT * FROM t1;
-```
-
-```
+mysql> SELECT * FROM t1;
 +----+
 | id |
 +----+
 |  1 |
 +----+
 1 row in set (0.00 sec)
-```
 
-
-```sql
-ALTER TABLE t1 ADD COLUMN c1 INT NOT NULL;
-```
-
-```
+mysql> ALTER TABLE t1 ADD COLUMN c1 INT NOT NULL;
 Query OK, 0 rows affected (0.28 sec)
-```
 
-
-```sql
-SELECT * FROM t1;
-```
-
-```
+mysql> SELECT * FROM t1;
 +----+----+
 | id | c1 |
 +----+----+
 |  1 |  0 |
 +----+----+
 1 row in set (0.00 sec)
-```
 
-
-```sql
-ALTER TABLE t1 ADD c2 INT NOT NULL AFTER c1;
-```
-
-```
+mysql> ALTER TABLE t1 ADD c2 INT NOT NULL AFTER c1;
 Query OK, 0 rows affected (0.28 sec)
-```
 
-
-```sql
-SELECT * FROM t1;
-```
-
-```
+mysql> SELECT * FROM t1;
 +----+----+----+
 | id | c1 | c2 |
 +----+----+----+
@@ -125,10 +85,10 @@ SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-* 不支持将新添加的列设为 `PRIMARY KEY`。
-* 不支持将新添加的列设为 `AUTO_INCREMENT`。
-* 对添加生成列有局限性，具体可参考：[生成列局限性](/generated-columns.md#生成列的局限性)。
-* TiDB 对[分区表](/partitioned-table.md)进行了扩展，你可以在添加新列时通过将 `PRIMARY KEY` 或 `UNIQUE INDEX` 设置为 `GLOBAL` 来设置[全局索引](/global-indexes.md)。该扩展与 MySQL 不兼容。
+* 不支持添加新列并将其设置为 `PRIMARY KEY`。
+* 不支持添加新列并将其设置为 `AUTO_INCREMENT`。
+* 添加生成列存在限制，详见：[generated column limitations](/generated-columns.md#limitations)。
+* 在添加新列时，通过指定 `PRIMARY KEY` 或 `UNIQUE INDEX` 为 `GLOBAL` 来设置 [全局索引](/global-indexes.md) 是 TiDB 针对 [分区表](/partitioned-table.md) 的扩展功能，与 MySQL 不兼容。
 
 ## 另请参阅
 

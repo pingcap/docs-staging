@@ -1,48 +1,51 @@
 ---
 title: TiDB 3.0.17 Release Notes
-summary: TiDB 3.0.17 发布，修复了多个 bug，包括查询返回错误和函数处理问题。优化了配置项和 HTTP API 访问速度。TiKV 修复了数据读取和调度问题，新增了配置支持。TiDB Lightning 解决了参数不生效的问题，并新增了更简单易用的过滤规则。
-aliases: ['/zh/tidb/dev/release-3.0.17/','/zh/tidb/v3.0/release-3.0.17','/docs-cn/dev/releases/release-3.0.17/','/zh/tidb/v5.4/release-3.0.17','/zh/tidb/v6.1/release-3.0.17','/zh/tidb/v6.5/release-3.0.17','/zh/tidb/v7.1/release-3.0.17','/zh/tidb/v7.5/release-3.0.17','/zh/tidb/v8.1/release-3.0.17']
+summary: TiDB 3.0.17 was released on Aug 3, 2020. The release includes improvements such as decreasing the default value of the query-feedback-limit configuration item and bug fixes like returning the actual error message instead of an empty set. TiKV also added the hibernate-timeout configuration to improve rolling update performance. TiDB Lightning deprecated the black-white-list filter format and fixed the issue of the log-file flag being ignored.
 ---
 
 # TiDB 3.0.17 Release Notes
 
-发版日期：2020 年 8 月 3 日
+Release date: Aug 3, 2020
 
-TiDB 版本：3.0.17
+TiDB version: 3.0.17
 
-## Bug 修复
-
-+ TiDB
-
-    - 当一个查询中含有 `IndexHashJoin` 或 `IndexMergeJoin` 算子，且该算子的子节点发生 panic 时，返回客户端 panic 的原因，而非返回空结果 [#18498](https://github.com/pingcap/tidb/pull/18498)
-    - 修复形如 `SELECT a FROM t HAVING t.a` 的查询返回 `UnknowColumn` 错误的问题 [#18432](https://github.com/pingcap/tidb/pull/18432)
-    - 当一张表没有主键，或其主键为整型时，禁止在这张表上执行添加主键 [#18342](https://github.com/pingcap/tidb/pull/18342)
-    - 对 `EXPLAIN FORMAT="dot" FOR CONNECTION` 始终返回空结果 [#17157](https://github.com/pingcap/tidb/pull/17157)
-    - 修复 `STR_TO_DATE` 函数处理 `'%r'` 和 `'%h'` 的行为 [#18725](https://github.com/pingcap/tidb/pull/18725)
-
-+ TiKV
-
-    - 修复在 Region 合并过程中可能导致读到旧数据的问题 [#8111](https://github.com/tikv/tikv/pull/8111)
-    - 修复调度时可能产生内存泄漏的问题 [#8355](https://github.com/tikv/tikv/pull/8355)
-
-+ TiDB Lightning
-
-    - 解决 `log-file` 参数不生效的问题 [#345](https://github.com/pingcap/tidb-lightning/pull/345)
-
-## 优化
+## Improvements
 
 + TiDB
 
-    - 将配置项 `query-feedback-limit` 默认值从 1024 修改为 512, 并优化统计信息反馈机制，降低其对集群的性能影响 [#18770](https://github.com/pingcap/tidb/pull/18770)
-    - 限制单次 split 请求中的 Region 个数 [#18694](https://github.com/pingcap/tidb/pull/18694)
-    - 加速 HTTP API `/tiflash/replica` 在集群中存在大量历史 DDL 记录时的访问速度 [#18386](https://github.com/pingcap/tidb/pull/18386)
-    - 提升索引等值条件下的行数估算准确率 [#17609](https://github.com/pingcap/tidb/pull/17609)
-    - 加快 `kill tidb conn_id` 的响应速度 [#18506](https://github.com/pingcap/tidb/pull/18506)
+    - Decrease the default value of the `query-feedback-limit` configuration item from 1024 to 512, and improve the statistics feedback mechanism to ease its impact on the cluster [#18770](https://github.com/pingcap/tidb/pull/18770)
+    - Limit batch split count for one request [#18694](https://github.com/pingcap/tidb/pull/18694)
+    - Accelerate `/tiflash/replica` HTTP API when there are many history DDL jobs in the TiDB cluster [#18386](https://github.com/pingcap/tidb/pull/18386)
+    - Improve row count estimation for index equal condition [#17609](https://github.com/pingcap/tidb/pull/17609)
+    - Speed up the execution of `kill tidb conn_id` [#18506](https://github.com/pingcap/tidb/pull/18506)
 
 + TiKV
 
-    - 新增 `hibernate-timeout` 配置支持推后 Region 休眠时间，减少 Region 休眠对滚动升级的影响 [#8207](https://github.com/tikv/tikv/pull/8207)
+    - Add the `hibernate-timeout` configuration that delays region hibernation to improve rolling update performance [#8207](https://github.com/tikv/tikv/pull/8207)
 
-+ TiDB Lightning
++ Tools
 
-    - 废弃 `[black-white-list]` 参数，新增一种更加简单易用的过滤规则 [#332](https://github.com/pingcap/tidb-lightning/pull/332)
+    + TiDB Lightning
+
+        - `[black-white-list]` has been deprecated with a newer, easier-to-understand filter format [#332](https://github.com/pingcap/tidb-lightning/pull/332)
+
+## Bug Fixes
+
++ TiDB
+
+    - Return the actual error message instead of an empty set when a query which contains `IndexHashJoin` or `IndexMergeJoin` encounters a panic [#18498](https://github.com/pingcap/tidb/pull/18498)
+    - Fix the unknown column error for SQL statements like `SELECT a FROM t HAVING t.a` [#18432](https://github.com/pingcap/tidb/pull/18432)
+    - Forbid adding a primary key for a table when the table has no primary key or when the table already has an integer primary key [#18342](https://github.com/pingcap/tidb/pull/18342)
+    - Return an empty set when executing `EXPLAIN FORMAT="dot" FOR CONNECTION` [#17157](https://github.com/pingcap/tidb/pull/17157)
+    - Fix `STR_TO_DATE`'s handling for format token '%r', '%h' [#18725](https://github.com/pingcap/tidb/pull/18725)
+
++ TiKV
+
+    - Fix a bug that might read stale data during region merging [#8111](https://github.com/tikv/tikv/pull/8111)
+    - Fix the issue of memory leak during the scheduling process [#8355](https://github.com/tikv/tikv/pull/8355)
+
++ Tools
+
+    + TiDB Lightning
+
+        - Fix the issue that the `log-file` flag is ignored [#345](https://github.com/pingcap/tidb-lightning/pull/345)

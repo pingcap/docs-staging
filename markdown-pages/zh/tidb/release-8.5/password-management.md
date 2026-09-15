@@ -1,45 +1,50 @@
 ---
-title: TiDB 密码管理
-summary: 了解 TiDB 的用户密码管理机制。
+title: TiDB Password Management
+summary: Learn the mechanism of user password management in TiDB.
 ---
 
-# TiDB 密码管理
+# TiDB Password Management
 
-为了保护用户密码的安全，从 TiDB v6.5.0 开始支持密码管理能力：
+To protect the security of user passwords, TiDB supports the following password management policies starting from v6.5.0:
 
-- 密码复杂度策略：要求用户设置强密码，以防止出现空密码、弱密码。
-- 密码过期策略：要求用户定期修改密码。
-- 密码重用策略：限制用户重复使用旧密码。
-- 密码连续错误限制登录策略：连续多次密码错误导致登录失败后，临时锁定用户，限制该用户继续尝试登录。
+- Password complexity policy: require users to set strong passwords to prevent empty and weak passwords.
+- Password expiration policy: require users to change their passwords periodically.
+- Password reuse policy: prevent users from reusing old passwords.
+- Failed-login tracking and temporary account locking policy: temporarily lock a user account to prevent the same user from trying to log in after multiple login failures caused by wrong passwords.
 
-## TiDB 身份验证凭据存储
+## TiDB authentication credential storage
 
-密码作为一种用户身份凭据，在用户登录到服务端时用于身份验证，确保用户身份的合法性。本文中描述的密码是指由 TiDB 生成、存储、验证的内部凭据，TiDB 将用户密码被存储到 `mysql.user` 系统表中，以下身份验证插件涉及本文的密码管理功能：
+To ensure the authenticity of user identity, TiDB uses passwords as credentials to authenticate users when they log in to the TiDB server.
+
+The *password* described in this document refers to the internal credentials generated, stored, and verified by TiDB. TiDB stores user passwords in the `mysql.user` system table.
+
+The following authentication plugins are related to TiDB password management:
 
 - `mysql_native_password`
 - `caching_sha2_password`
 - `tidb_sm3_password`
 
-有关 TiDB 支持身份验证插件的更多信息，请查看[`可用的身份验证插件`](/security-compatibility-with-mysql.md#可用的身份验证插件)。
+For more information about TiDB authentication plugins, see [Authentication plugin status](/security-compatibility-with-mysql.md#authentication-plugin-status).
 
-## 密码复杂度策略
+## Password complexity policy
 
-在 TiDB 中，密码复杂度检查默认未开启。通过配置密码复杂度相关的系统变量，你可以开启密码复杂度检查，并确保为账户设置的密码符合密码复杂度策略。
+Password complexity check is disabled by default in TiDB. By configuring system variables related to password complexity, you can enable the password complexity check and make sure the user passwords comply with the password complexity policy.
 
-密码复杂度策略支持以下功能：
+The password complexity policy has the following features:
 
-- 对采用明文方式设置用户密码的 SQL 语句（包括 `CREATE USER`、`ALTER USER`、`SET PASSWORD` ），系统会根据密码复杂度策略检查该密码，如果该密码不符合要求，则拒绝该密码。
-- 可以使用 SQL 函数 [`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) 评估给定密码的强度。
+- For SQL statements that set user passwords in plaintext (including `CREATE USER`, `ALTER USER`, and `SET PASSWORD`), TiDB checks the passwords against the password complexity policy. If a password does not meet the requirements, the password is rejected.
+- You can use the SQL function [`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) to validate the password strength.
 
-> **注意：**
+> **Note:**
 >
-> - 对于 `CREATE USER` 语句，即使该账户最初被锁定，也必须提供满足密码复杂度策略的密码，否则将账户解锁后，该账户可以使用不符合密码复杂度策略的密码访问 TiDB。
-> - 对密码复杂度策略的变更不影响已存在的密码，只会对新设置的密码产生影响。
+> - For the `CREATE USER` statement, even if you can lock the account upon creation, you must set an acceptable password. Otherwise, when the account is unlocked, this account can log in to TiDB using a password that does not comply with the password complexity policy.
+> - The modification to the password complexity policy does not affect the passwords that already exist and only affects the newly set passwords.
 
-通过以下 SQL 语句，你可以查看所有密码复杂度策略相关的系统变量：
+You can view all system variables related to the password complexity policy by executing the following SQL statement:
 
 ```sql
 mysql> SHOW VARIABLES LIKE 'validate_password.%';
+
 +--------------------------------------+--------+
 | Variable_name                        | Value  |
 +--------------------------------------+--------+
@@ -55,37 +60,37 @@ mysql> SHOW VARIABLES LIKE 'validate_password.%';
 8 rows in set (0.00 sec)
 ```
 
-关于这些变量的详细解释，请查阅[系统变量文档](/system-variables.md#validate_passwordcheck_user_name-从-v650-版本开始引入)。
+For a detailed description of each system variable, see [System Variables](/system-variables.md#validate_passwordcheck_user_name-new-in-v650).
 
-### 配置密码复杂度策略
+### Configure password complexity policy
 
-密码复杂度策略相关的系统变量的配置方式如下：
+This section shows examples of configuring system variables related to the password complexity policy.
 
-开启密码复杂度策略检查：
+Enable the password complexity check:
 
 ```sql
 SET GLOBAL validate_password.enable = ON;
 ```
 
-设置不允许密码与当前用户名相同：
+Do not allow users to use a password that is the same as the user name:
 
 ```sql
 SET GLOBAL validate_password.check_user_name = ON;
 ```
 
-设置密码复杂度的检查等级为 `LOW`：
+Set the password complexity level to `LOW`:
 
 ```sql
 SET GLOBAL validate_password.policy = LOW;
 ```
 
-设置密码最小长度为 10：
+Set the minimum password length to `10`:
 
 ```sql
 SET GLOBAL validate_password.length = 10;
 ```
 
-设置密码中至少含有 2 个数字，至少含有 1 个大写和小写字符，至少含有 1 个特殊字符：
+Require a password to contain at least two numbers, one uppercase letter, one lowercase letter, and one special character:
 
 ```sql
 SET GLOBAL validate_password.number_count = 2;
@@ -93,54 +98,54 @@ SET GLOBAL validate_password.mixed_case_count = 1;
 SET GLOBAL validate_password.special_char_count = 1;
 ```
 
-设置密码字典功能，要求密码中不允许包含 `mysql` 或 `abcd`：
+Enable the dictionary check that prevents a password from containing words like `mysql` or `abcd`:
 
 ```sql
 SET GLOBAL validate_password.dictionary = 'mysql;abcd';
 ```
 
-> **注意：**
+> **Note:**
 >
-> - `validate_password.dictionary` 是一个长字符串，长度不超过 1024，字符串内容可包含一个或多个在密码中不允许出现的单词，每个单词之间采用英文分号（`;`）分隔。
-> - 密码字典功能进行单词比较时，不区字符分大小写。
+> - The value of `validate_password.dictionary` is a string, no longer than 1024 characters. It contains a list of words that must not exist in the password. Each word is separated by semicolon (`;`).
+> - The dictionary check is case-insensitive.
 
-### 密码复杂度检查示例
+### Password complexity check examples
 
-配置系统变量 `validate_password.enable = ON` 后，TiDB 将开启密码复杂度检查。以下为一些典型的检查示例：
+When the system variable `validate_password.enable` is set to `ON`, TiDB enables the password complexity check. The following are examples of the check results:
 
-按照默认密码复杂度策略，检测用户明文密码，若设置的密码不符合复杂度策略要求，则设置失败。
+TiDB checks the user's plaintext password against the default password complexity policy. If the set password does not meet the policy, the password is rejected.
 
 ```sql
-ALTER USER 'test'@'localhost' IDENTIFIED BY 'abc';
+mysql> ALTER USER 'test'@'localhost' IDENTIFIED BY 'abc';
 ERROR 1819 (HY000): Require Password Length: 8
 ```
 
-TiDB 进行密码复杂度检查时，不检查散列后的密码。
+TiDB does not check the hashed password against the password complexity policy.
 
 ```sql
-ALTER USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password AS '*0D3CED9BEC10A777AEC23CCC353A8C08A633045E';
+mysql> ALTER USER 'test'@'localhost' IDENTIFIED WITH mysql_native_password AS '*0D3CED9BEC10A777AEC23CCC353A8C08A633045E';
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-创建一个最初被锁定的账户时，也必须设置符合密码复杂度策略的密码，否则创建失败。
+When creating an account initially locked, you must also set a password that matches the password complexity policy, or the creation will fail.
 
 ```sql
-CREATE USER 'user02'@'localhost' ACCOUNT LOCK;
+mysql> CREATE USER 'user02'@'localhost' ACCOUNT LOCK;
 ERROR 1819 (HY000): Require Password Length: 8
 ```
 
-### 密码强度评估函数
+### Password strength validation function
 
-使用 [`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) 函数评估给定密码的强度，该函数接受一个密码参数，并返回一个从 0（弱）到 100（强）的整数。
+To check the password strength, you can use the [`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) function. This function accepts a password argument and returns an integer from 0 (weak) to 100 (strong).
 
-> **注意：**
+> **Note:**
 >
-> 密码强度是基于当前已配置的密码复杂度策略进行评估的，密码复杂度配置改变后，同一个密码的评估结果可能与之前不同。
+> This function evaluates the password strength based on the current password complexity policy. If the password complexity policy is changed, the same password might get different evaluation results.
 
-[`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) 函数使用示例如下：
+The following example shows how to use the [`VALIDATE_PASSWORD_STRENGTH()`](/functions-and-operators/encryption-and-compression-functions.md#validate_password_strength) function:
 
 ```sql
-SELECT VALIDATE_PASSWORD_STRENGTH('weak');
+mysql> SELECT VALIDATE_PASSWORD_STRENGTH('weak');
 +------------------------------------+
 | VALIDATE_PASSWORD_STRENGTH('weak') |
 +------------------------------------+
@@ -148,7 +153,7 @@ SELECT VALIDATE_PASSWORD_STRENGTH('weak');
 +------------------------------------+
 1 row in set (0.01 sec)
 
-SELECT VALIDATE_PASSWORD_STRENGTH('lessweak$_@123');
+mysql> SELECT VALIDATE_PASSWORD_STRENGTH('lessweak$_@123');
 +----------------------------------------------+
 | VALIDATE_PASSWORD_STRENGTH('lessweak$_@123') |
 +----------------------------------------------+
@@ -156,7 +161,7 @@ SELECT VALIDATE_PASSWORD_STRENGTH('lessweak$_@123');
 +----------------------------------------------+
 1 row in set (0.01 sec)
 
-SELECT VALIDATE_PASSWORD_STRENGTH('N0Tweak$_@123!');
+mysql> SELECT VALIDATE_PASSWORD_STRENGTH('N0Tweak$_@123!');
 +----------------------------------------------+
 | VALIDATE_PASSWORD_STRENGTH('N0Tweak$_@123!') |
 +----------------------------------------------+
@@ -165,31 +170,35 @@ SELECT VALIDATE_PASSWORD_STRENGTH('N0Tweak$_@123!');
 1 row in set (0.01 sec)
 ```
 
-## 密码过期策略
+## Password expiration policy
 
-TiDB 支持通过设置密码过期策略，要求用户定期修改密码，从而提高密码的安全性。可以手动将指定账户的密码设置为过期，也可以建立密码自动过期策略。自动过期策略分为全局级别和账户级别，管理员可以在全局级别建立密码过期策略，也可以使用账户级别密码过期策略覆盖全局级别策略。设置密码过期策略的权限要求如下：
+TiDB supports configuring a password expiration policy so that users must change their passwords periodically to improve password security. You can manually make account passwords expire or establish a policy for automatic password expiration.
 
-- 具有 `SUPER` 或者 `CREATE USER` 权限的数据库管理员可以手动设置密码过期。
-- 具有 `SUPER` 或者 `CREATE USER` 权限的数据库管理员可以设置账户级别自动密码过期策略。
-- 具有 `SUPER` 或者 `SYSTEM_VARIABLES_ADMIN` 权限的数据库管理员可以设置全局级别自动密码过期策略。
+The automatic password expiration policy can be set at the global level and at the account level. As a database administrator, you can establish an automatic password expiration policy at the global level, and also use an account-level policy to override the global policy.
 
-### 手动密码过期
+The privileges for setting the password expiration policy are as follows:
 
-要手动设置账户密码过期，请使用 `CREATE USER` 或 `ALTER USER` 语句。
+- Database administrator with `SUPER` or `CREATE USER` privileges can manually make passwords expire.
+- Database administrator with `SUPER` or `CREATE USER` privileges can set the account-level password expiration policy.
+- Database administrator with `SUPER` or `SYSTEM_VARIABLES_ADMINR` privileges can set the global-level password expiration policy.
+
+### Manual expiration
+
+To manually make an account password expire, use the `CREATE USER` or `ALTER USER` statements.
 
 ```sql
 ALTER USER 'test'@'localhost' PASSWORD EXPIRE;
 ```
 
-当账户密码被管理员手动设置过期后，必须修改该账户密码才能解除密码过期，不支持取消手动过期。
+When the account password is set to expire by a database administrator, you must change the password before you can log in to TiDB. The manual expiration cannot be revoked.
 
-对于通过 `CREATE ROLE` 语句创建的角色，由于角色不需要设置密码，所以该角色对应的密码字段为空，此时对应的 `password_expired` 属性为 `'Y'`，即该角色的密码处于手动过期状态。如此设计的目的是防止出现角色锁定状态被解除后，该角色以空密码登录到 TiDB，当该角色被 `ALTER USER ... ACCOUNT UNLOCK` 命令解锁后，此时该角色处于可登录的状态，但是密码为空；因此 TiDB 通过 `password_expired` 属性，使得角色的密码处于手动过期状态，从而强制要求为该角色设置一个有效的密码。
+For roles created using the `CREATE ROLE` statement, since the role does not require a password, the password field for the role is empty. In such case, TiDB sets the `password_expired` attribute to `'Y'`, which means that the role's password is manually expired. The purpose of this design is to prevent the role from being unlocked and logged into TiDB with an empty password. When the role is unlocked by the `ALTER USER ... ACCOUNT UNLOCK` statement, you can log in with this account even though the password is empty. Therefore, TiDB makes the password manually expired using the `password_expired` attribute so that the user must set a valid password for the account.
 
 ```sql
-CREATE ROLE testrole;
+mysql> CREATE ROLE testrole;
 Query OK, 0 rows affected (0.01 sec)
 
-SELECT user,password_expired,Account_locked FROM mysql.user WHERE user = 'testrole';
+mysql> SELECT user,password_expired,Account_locked FROM mysql.user WHERE user = 'testrole';
 +----------+------------------+----------------+
 | user     | password_expired | Account_locked |
 +----------+------------------+----------------+
@@ -198,128 +207,130 @@ SELECT user,password_expired,Account_locked FROM mysql.user WHERE user = 'testro
 1 row in set (0.02 sec)
 ```
 
-### 自动密码过期
+### Automatic expiration
 
-自动密码过期是基于**密码使用期限**和**密码被允许的生存期**来判断的。
+Automatic password expiration is based on the **password age** and the **password lifetime**.
 
-- 密码使用期限：从最近一次密码更改日期到当前日期的时间间隔。系统表 `mysql.user` 中会记录最近一次修改密码的时间。
-- 密码被允许的生存期：一个密码被设置后，其可以正常用于登录 TiDB 的天数。
+- Password age: the time interval from the last password change date to the current date. The time of the last password change is recorded in the `mysql.user` system table.
+- Password lifetime: the number of days the password can be used to log in to TiDB.
 
-如果密码使用期限大于其被允许的生存期，服务器会自动将密码视为已过期。
+If a password is used for a longer period than it is allowed to live, the server automatically treats the password as expired.
 
-TiDB 支持在全局级别和账户级别设置自动密码过期：
+TiDB supports automatic password expiration at the global level and at the account level.
 
-- 全局级别自动密码过期
+- The global level
 
-    你可以设置系统变量 [`default_password_lifetime`](/system-variables.md#default_password_lifetime-从-v650-版本开始引入) 来控制密码生存期。该变量默认值为 0，表示禁用自动密码过期。如果设置该变量的值为正整数 N，则表示允许的密码生存期为 N 天，即必须在 N 天之内更改密码。
+    You can set the system variable [`default_password_lifetime`](/system-variables.md#default_password_lifetime-new-in-v650) to control the password lifetime. The default value `0` indicates that the password never expires. If this system variable is set to a positive integer `N`, it means that the password lifetime is `N` days, and you must change your password every `N` days.
 
-    全局自动密码过期策略适用于所有未设置账户级别覆盖的账户。
+    The global automatic password expiration policy applies to all accounts that do not have an account-level override.
 
-    以下示例建立全局自动密码过期策略，密码有效期为 180 天：
+    The following example establishes a global automatic password expiration policy with a password lifetime of 180 days:
 
     ```sql
     SET GLOBAL default_password_lifetime = 180;
     ```
 
-- 账户级别自动密码过期
+- The account level
 
-    要为个人账户建立自动密码过期策略，请使用 `CREATE USER` 或 `ALTER USER` 语句的 `PASSWORD EXPIRE` 选项。
+    To establish an automatic password expiration policy for an individual account, use the `PASSWORD EXPIRE` option in the `CREATE USER` or `ALTER USER` statement.
 
-    以下示例要求用户密码每 90 天更改一次：
+    The following examples require that the user password is changed every 90 days:
 
     ```sql
     CREATE USER 'test'@'localhost' PASSWORD EXPIRE INTERVAL 90 DAY;
     ALTER USER 'test'@'localhost' PASSWORD EXPIRE INTERVAL 90 DAY;
     ```
 
-    在账户级别禁用自动密码过期策略：
+    The following examples disable the automatic password expiration policy for an individual account:
 
     ```sql
     CREATE USER 'test'@'localhost' PASSWORD EXPIRE NEVER;
     ALTER USER 'test'@'localhost' PASSWORD EXPIRE NEVER;
     ```
 
-    移除指定账户的账户级别自动密码过期策略，使其遵循于全局自动密码过期策略：
+    Remove the account-level automatic password expiration policy for a specified account so that it follows the global automatic password expiration policy:
 
     ```sql
     CREATE USER 'test'@'localhost' PASSWORD EXPIRE DEFAULT;
     ALTER USER 'test'@'localhost' PASSWORD EXPIRE DEFAULT;
     ```
 
-### 密码过期策略检查机制
+### Password expiration check mechanism
 
-当客户端连接成功后，服务端将按顺序进行以下检查，判断账号密码是否过期：
+When a client connects to the TiDB server, the server checks whether the password is expired in the following order:
 
-1. 服务器检查密码是否已手动过期。
-2. 若密码没有手动过期，服务器根据自动密码过期策略检查密码使用期限是否大于其允许的生存期。如果是，服务器认为密码已过期。
+1. The server checks whether the password has been set as expired manually.
+2. If the password is not manually expired, the server checks whether the password age is longer than its configured lifetime. If so, the server treats the password as expired.
 
-### 密码过期处理机制
+### Handle an expired password
 
-TiDB 支持密码过期策略控制。当密码过期后，服务器要么断开客户端的连接，要么将客户端限制为“沙盒模式”。“沙盒模式”下，TiDB 服务端接受密码过期账户的连接，但是连接成功后只允许该用户执行重置密码的操作。
+You can control the behavior of the TiDB server for password expiration. When a password is expired, the server either disconnects the client or restricts the client to the "sandbox mode". In a "sandbox mode", the TiDB server allows connections from the expired account. However, in such connections, the user is only allowed to reset the password.
 
-TiDB 服务端可以控制是否将密码已过期用户的连接限制为“沙盒模式”。你可以在 TiDB 配置文件中的 `[security]` 部分，配置 [`disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-从-v650-版本开始引入) 选项：
+The TiDB server can control whether to restrict the user with an expired password in the "sandbox mode". To control the behavior of the TiDB server when a password is expired, configure the [`security.disconnect-on-expired-password`](/tidb-configuration-file.md#disconnect-on-expired-password-new-in-v650) parameter in the TiDB configuration file:
 
 ```toml
 [security]
 disconnect-on-expired-password = true
 ```
 
-- 默认情况下，`disconnect-on-expired-password` 为 `true`，表示当密码过期后，服务器将直接断开客户端的连接。
-- 如果配置 `disconnect-on-expired-password` 为 `false`，则服务端处于沙盒模式，服务端允许用户建立连接，但只能执行密码重置操作，密码重置后将允许用户正常执行各类 SQL 语句。
+- If `disconnect-on-expired-password` is set to `true` (default), the server disconnects the client when the password is expired.
+- If `disconnect-on-expired-password` is set to `false`, the server enables the "sandbox mode" and allows the user to connect to the server. However, the user can only reset the password. After the password is reset, the user can execute SQL statements normally.
 
-当 `disconnect-on-expired-password` 为 `true` 时，TiDB 将拒绝密码已过期用户的连接，此时可以通过如下方法修改密码：
+When `disconnect-on-expired-password` is enabled, if an account password is expired, TiDB rejects the connection from the account. In such cases, you can modify the password in the following ways:
 
-- 普通用户密码过期，可以由管理员用户通过 SQL 语句修改该用户的密码。
-- 管理员密码过期，可以由其他管理员用户通过 SQL 语句修改该用户的密码。
-- 如果管理员密码过期，且无法寻求其他管理员帮助修改该用户的密码，此时可以采用 `skip-grant-table` 机制修改该用户密码，具体可参看[忘记密码流程](/user-account-management.md#忘记-root-密码)。
+- If the password for a normal account is expired, the administrator can change the password for the account by using SQL statements.
+- If the password for an administrator account is expired, another administrator can change the password for the account by using SQL statements.
+- If the password for an administrator account is expired and no other administrator is available to help change the password, you can use the `skip-grant-table` mechanism to change the password for the account. For details, see [Forgot password process](/user-account-management.md#forget-the-root-password).
 
-## 密码重用策略
+## Password reuse policy
 
-TiDB 支持限制重复使用以前的密码。密码重用策略可以基于密码更改的次数或经过的时间，也可以同时基于两者。密码重用策略分为全局级别和账户级别。你可以在全局级别建立密码重用策略，也可以使用账户级别密码重用策略覆盖全局策略。
+TiDB can limit the reuse of previous passwords. The password reuse policy can be based on the number of password changes or time elapsed, or both.
 
-TiDB 会记录账户的历史密码，并限制从该历史记录中选择新密码：
+The password reuse policy can be set at the global level and at the account level. You can establish a password reuse policy at the global level, and also use an account-level policy to override the global policy.
 
-- 如果密码重用策略基于密码更改次数，则新密码不得与指定数量的历史密码相同。例如，如果密码的最小更改次数设置为 3，则新密码不能与最近 3 个密码中的任何一个相同。
-- 如果密码重用策略基于经过的时间，则新密码不得与历史记录中指定天数内使用过的密码相同。例如，如果密码重用间隔设置为 60，则新密码不能与最近 60 天内使用过的密码相同。
+TiDB records the password history for an account and limits the selection of a new password from the history:
 
-> **注意：**
+- If a password reuse policy is based on the number of password changes, a new password must not be the same as any of the specified number of most recent passwords. For example, if the minimum number of password changes is set to `3`, the new password cannot be the same as any of the previous 3 passwords.
+- If a password reuse policy is based on time elapsed, a new password must not be the same as any of the passwords used within the specified number of days. For example, if the password reuse interval is set to `60`, the new password cannot be the same as any of the passwords used within the last 60 days.
+
+> **Note:**
 >
-> 空密码不计入密码历史记录，可以随时重复使用。
+> Empty passwords are not recorded in the password history and can be reused at any time.
 
-### 全局级别密码重用策略
+### Global-level password reuse policy
 
-要在全局范围内建立密码重用策略，请使用 [`password_history`](/system-variables.md#password_history-从-v650-版本开始引入) 和 [`password_reuse_interval`](/system-variables.md#password_reuse_interval-从-v650-版本开始引入) 系统变量。
+To establish a global password reuse policy, use the [`password_history`](/system-variables.md#password_history-new-in-v650) and [`password_reuse_interval`](/system-variables.md#password_reuse_interval-new-in-v650) system variables.
 
-例如，建立全局密码重用策略，禁止重复使用最近 6 个密码或最近 365 天的密码：
+For example, to establish a global password reuse policy that prohibits the reuse of the last 6 passwords and passwords used within the last 365 days:
 
 ```sql
 SET GLOBAL password_history = 6;
 SET GLOBAL password_reuse_interval = 365;
 ```
 
-全局密码重用策略适用于所有未在账户级别设置过密码重用策略的账户。
+The global password reuse policy applies to all accounts that do not have an account-level override.
 
-### 账户级别密码重用策略
+### Account-level password reuse policy
 
-要建立账户级别密码重用策略，请使用 `CREATE USER` 或 `ALTER USER` 语句的 `PASSWORD HISTORY` 和 `PASSWORD REUSE INTERVAL` 选项。
+To establish an account-level password reuse policy, use the `PASSWORD HISTORY` and `PASSWORD REUSE INTERVAL` options in the `CREATE USER` or `ALTER USER` statement.
 
-示例：
+For example:
 
-禁止重复使用最近 5 次使用过的密码：
+To prohibit the reuse of the last 5 passwords:
 
 ```sql
 CREATE USER 'test'@'localhost' PASSWORD HISTORY 5;
 ALTER USER 'test'@'localhost' PASSWORD HISTORY 5;
 ```
 
-禁止重复使用最近 365 天内使用过的密码：
+To prohibit the reuse of passwords used within the last 365 days:
 
 ```sql
 CREATE USER 'test'@'localhost' PASSWORD REUSE INTERVAL 365 DAY;
 ALTER USER 'test'@'localhost' PASSWORD REUSE INTERVAL 365 DAY;
 ```
 
-如需组合两种类型的重用策略，请一起使用 `PASSWORD HISTORY` 和 `PASSWORD REUSE INTERVAL`：
+To combine the two types of reuse policies, use both `PASSWORD HISTORY` and `PASSWORD REUSE INTERVAL`:
 
 ```sql
 CREATE USER 'test'@'localhost'
@@ -330,7 +341,7 @@ ALTER USER 'test'@'localhost'
   PASSWORD REUSE INTERVAL 365 DAY;
 ```
 
-移除指定账户的账户级别密码重用策略，使其遵循于全局密码重用策略：
+To remove the account-level password reuse policy for a specified account so that it follows the global password reuse policy:
 
 ```sql
 CREATE USER 'test'@'localhost'
@@ -341,69 +352,71 @@ ALTER USER 'test'@'localhost'
   PASSWORD REUSE INTERVAL DEFAULT;
 ```
 
-> **注意：**
+> **Note:**
 >
-> - 如果多次设置密码重用策略，则最后一次设置的值生效。
-> - `PASSWORD HISTORY` 和 `PASSWORD REUSE INTERVAL` 选项的默认值为 0，表示禁用该项重用策略。
-> - 在修改用户名时，TiDB 会将 `mysql.password_history` 系统表中原用户名的历史密码记录迁移到新用户名的记录中。
+> - If you set the password reuse policy multiple times, the last set value takes effect.
+> - The default value of the `PASSWORD HISTORY` and `PASSWORD REUSE INTERVAL` options is 0, which means that the reuse policy is disabled.
+> - When you modify a username, TiDB migrates the corresponding password history in the `mysql.password_history` system table from the original username to the new username.
 
-## 密码连续错误限制登录策略
+## Failed-login tracking and temporary account locking policy
 
-TiDB 支持限制账户持续尝试登录，防止用户密码被暴力破解。当账户连续登录失败次数过多时，账户将被临时锁定。
+TiDB can track the number of failed login attempts for an account. To prevent the password from being cracked by brute force, TiDB can lock the account after a specified number of failed login attempts.
 
-> **注意：**
+> **Note:**
 >
-> - 只支持账户级别的密码连续错误限制登录策略，不支持全局级别的策略。
-> - 登录失败是指客户端在连接尝试期间未能提供正确的密码，不包括由于未知用户或网络问题等原因而导致的连接失败。
-> - 对用户启用密码连续错误限制登录策略后，将增加该用户登录时的检查步骤，此时会影响该用户登录相关操作的性能，尤其是高并发登录场景。
+> - TiDB only supports failed-login tracking and temporary account locking at the account level, but not at the global level.
+> - Failed-login means that the client fails to provide the correct password during the connection attempt, and does not include connection failures due to unknown users or network issues.
+> - When you enable the failed-login tracking and temporary account locking for an account, the account is subject to additional checks when the account attempts to log in. This affects the performance of the login operation, especially in high-concurrency login scenarios.
 
-### 配置密码连续错误限制登录策略
+### Configure the login failure tracking policy
 
-每个账户的登录失败次数和锁定时间是可配置的，你可以使用 `CREATE USER`、`ALTER USER` 语句的 `FAILED_LOGIN_ATTEMPTS` 和 `PASSWORD_LOCK_TIME` 选项。`FAILED_LOGIN_ATTEMPTS` 和 `PASSWORD_LOCK_TIME` 选项的可设置值如下：
+You can configure the number of failed login attempts and the lock time for each account by using the `FAILED_LOGIN_ATTEMPTS` and `PASSWORD_LOCK_TIME` options in the `CREATE USER` or `ALTER USER` statement. The available value options are as follows:
 
-- `FAILED_LOGIN_ATTEMPTS`：N。表示连续登录失败 N 次后，账户将被临时锁定。N 取值范围为 0 到 32767。
-- `PASSWORD_LOCK_TIME`：N | UNBOUNDED。N 表示登录失败后，账户将被临时锁定 N 天。UNBOUNDED 表明锁定时间无限期，账户必须被手动解锁。N 取值范围为 0 到 32767。
+- `FAILED_LOGIN_ATTEMPTS`: N. The account is temporarily locked after `N` consecutive login failures. The value of N ranges from 0 to 32767.
+- `PASSWORD_LOCK_TIME`: N | UNBOUNDED.
+    - N means that the account will be temporarily locked for `N` days after consecutive failed login attempts. The value of N ranges from 0 to 32767.
+    - `UNBOUNDED` means that the lock time is unlimited and the account must be manually unlocked. The value of N ranges from 0 to 32767.
 
-> **注意：**
+> **Note:**
 >
-> - 允许单条 SQL 语句只设置 `FAILED_LOGIN_ATTEMPTS` 或 `PASSWORD_LOCK_TIME` 中的一个选项，这时密码连续错误限制登录策略不会实质生效。
-> - 只有当账户的 `FAILED_LOGIN_ATTEMPTS` 和 `PASSWORD_LOCK_TIME` 都不为 0 时，系统才会跟踪该账户的失败登录次数并执行临时锁定。
+> - You can configure only `FAILED_LOGIN_ATTEMPTS` or `PASSWORD_LOCK_TIME` in a single SQL statement. In this case, the account locking does not take effect.
+> - The account locking takes effect only when both `FAILED_LOGIN_ATTEMPTS` and `PASSWORD_LOCK_TIME` are not 0.
 
-配置密码连续错误限制登录策略的示例如下：
+You can configure the account locking policy as follows:
 
-新建一个用户，并配置密码连续错误限制登录策略，当该用户密码连续错误 3 次时，临时锁定 3 天：
+Create a user and configure the account locking policy. When the password is entered incorrectly for 3 consecutive times, the account will be temporarily locked for 3 days:
 
 ```sql
 CREATE USER 'test1'@'localhost' IDENTIFIED BY 'password' FAILED_LOGIN_ATTEMPTS 3 PASSWORD_LOCK_TIME 3;
 ```
 
-修改用户的密码连续错误限制登录策略，当该用户密码连续错误 4 次时，无限期锁定，直到账户被手动解锁：
+Modify the account locking policy for an existing user. When the password is entered incorrectly for 4 consecutive times, the account will be locked indefinitely until it is manually unlocked:
 
 ```sql
 ALTER USER 'test2'@'localhost' FAILED_LOGIN_ATTEMPTS 4 PASSWORD_LOCK_TIME UNBOUNDED;
 ```
 
-关闭用户的密码连续错误限制登录策略：
+Disable the account locking policy for an existing user:
 
 ```sql
 ALTER USER 'test3'@'localhost' FAILED_LOGIN_ATTEMPTS 0 PASSWORD_LOCK_TIME 0;
 ```
 
-### 锁定账户解锁
+### Unlock the locked account
 
-在以下场景中，TiDB 将重置用户密码连续错误次数的计数：
+In the following scenarios, the count of consecutive password errors can be reset:
 
-- 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
-- 该用户登录成功时。
+- When you execute the `ALTER USER ... ACCOUNT UNLOCK` statement.
+- When you log in successfully.
 
-当用户因密码连续多次错误触发账户锁定后，以下情况下可以解锁账户：
+In the following scenarios, the locked account can be unlocked:
 
-- 该用户锁定时间结束，这种情况下，用户的自动锁定标识将在下次登录尝试时重置。
-- 对该用户执行 `ALTER USER ... ACCOUNT UNLOCK` 解锁命令时。
+- When the lock time ends, the automatic lock flag of the account will be reset at the next login attempt.
+- When you execute the `ALTER USER ... ACCOUNT UNLOCK` statement.
 
-> **注意：**
+> **Note:**
 >
-> 当用户因密码连续失败次数达到设定值而被自动锁定时，如果修改该账户的密码连续错误限制登录策略，需要注意：
+> When an account is locked due to consecutive login failures, modifying the account locking policy has the following effects:
 >
-> - 修改该用户的登录失败次数 `FAILED_LOGIN_ATTEMPTS`，用户的自动锁定状态不会改变。修改后的连续登录失败次数，将在用户解锁后再次尝试登录时生效。
-> - 修改该用户的锁定时间 `PASSWORD_LOCK_TIME`，用户的自动锁定状态不会改变。修改后的用户锁定时间，将在账户再次登录尝试时检查是否满足此时的锁定时间要求，如果锁定时间结束就会解锁该用户。
+> - When you modify `FAILED_LOGIN_ATTEMPTS`, the lock status of the account does not change. The modified `FAILED_LOGIN_ATTEMPTS` takes effect after the account is unlocked and attempts to log in again.
+> - When you modify `PASSWORD_LOCK_TIME`, the lock status of the account does not change. The modified `PASSWORD_LOCK_TIME` takes effect when the account attempts to log in again. At that time, TiDB checks whether the new lock time has reached. If yes, TiDB will unlock the user.

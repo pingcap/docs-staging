@@ -1,11 +1,11 @@
 ---
-title: 恢复 TiDB Data Migration 数据迁移任务
-summary: 了解 TiDB Data Migration 如何恢复数据迁移任务。
+title: Resume a Data Migration Task
+summary: Learn how to resume a data migration task.
 ---
 
-# 恢复 TiDB Data Migration 数据迁移任务
+# Resume a Data Migration Task
 
-`resume-task` 命令用于恢复处于 `Paused` 状态的数据迁移任务，通常用于在人为处理完造成迁移任务暂停的故障后手动恢复迁移任务。
+You can use the `resume-task` command to resume a data migration task in the `Paused` state. This is generally used in scenarios where you want to manually resume a data migration task after handling the error that get the task paused.
 
 
 ```bash
@@ -25,24 +25,19 @@ Global Flags:
  -s, --source strings   MySQL Source ID
 ```
 
-## 命令用法示例
+## Usage example
 
 
 ```bash
 resume-task [-s "mysql-replica-01"] task-name
 ```
 
-## 参数解释
+## Flags description
 
-- `-s`：
-    - 可选
-    - 指定在特定的一个 MySQL 源上恢复数据迁移任务的子任务
-    - 如果设置，则只恢复该任务在指定 MySQL 源上的子任务
-- `task-name | task-file`：
-    - 必选
-    - 指定任务名称或任务文件路径
+- `-s`: (Optional) Specifies the MySQL source where you want to resume the subtask of the migration task. If it is set, the command resumes only the subtasks on the specified MySQL source.
+- `task-name | task-file`: (Required) Specifies the task name or task file path.
 
-## 返回结果示例
+## Returned results
 
 
 ```bash

@@ -1,100 +1,99 @@
 ---
-title: SaaS 多租户场景下处理百万张表的最佳实践
-summary: 介绍 TiDB 在 SaaS (Software as a service) 多租户场景的最佳实践，特别适用于单集群表数量超过百万级别的场景。
-aliases: ['/zh/tidb/stable/saas-best-practices/','/zh/tidb/dev/saas-best-practices/']
+title: Best Practices for Handling Millions of Tables in SaaS Multi-Tenant Scenarios
+summary: Learn best practices for TiDB in SaaS (Software as a Service) multi-tenant scenarios, especially for environments where the number of tables in a single cluster exceeds one million.
 ---
 
-# SaaS 多租户场景下处理百万张表的最佳实践
+# Best Practices for Handling Millions of Tables in SaaS Multi-Tenant Scenarios
 
-本文档介绍 TiDB 在 SaaS (Software as a service) 多租户环境中的最佳实践，特别适用于**单集群表数量超过百万级别**的场景。通过合理的配置和选择，可以实现 TiDB 在 SaaS 场景下的高效稳定运行，同时降低资源消耗和成本。
+This document introduces best practices for TiDB in SaaS (Software as a Service) multi-tenant environments, especially in scenarios where the **number of tables in a single cluster exceeds one million**. By making reasonable configurations and choices, you can enable TiDB to run efficiently and stably in SaaS scenarios while reducing resource consumption and costs.
 
-> **注意：**
-> 
-> 推荐使用 TiDB v8.5.0 及以上版本。
+> **Note:**
+>
+> It is recommended to use TiDB v8.5.0 or later versions.
 
-关于该最佳实践的实操案例，请参阅博客 [Scaling 3 Million Tables: How TiDB Powers Atlassian Forge's SaaS Platform](https://www.pingcap.com/blog/scaling-3-million-tables-how-tidb-powers-atlassian-forge-saas-platform/)。
+For a practical case study of these best practices, see the blog post: [Scaling 3 Million Tables: How TiDB Powers Atlassian Forge's SaaS Platform](https://www.pingcap.com/blog/scaling-3-million-tables-how-tidb-powers-atlassian-forge-saas-platform/).
 
-## 硬件配置建议
+## TiDB hardware recommendations
 
-建议使用高内存规格的 TiDB 实例，例如：
+It is recommended to use high-memory TiDB instances. For example:
 
-- 100 万张表：使用 32 GiB 或更高内存。
-- 300 万张表：使用 64 GiB 或更高内存。
+- For one million tables, use 32 GiB or more memory.
+- For three million tables, use 64 GiB or more memory.
 
-高内存规格的 TiDB 实例可以为 Infoschema、Statistics 和执行计划缓存分配更多的缓存空间，提高缓存命中率，从而提升业务性能。同时，更大的内存可以缓解 TiDB GC 带来的性能波动和稳定性问题。
+High-memory TiDB instances allocate more cache space for Infoschema, Statistics, and execution plan caches, thereby improving cache hit rates and consequently enhancing business performance. Larger memory also mitigates performance fluctuations and stability issues caused by TiDB GC.
 
-TiKV 和 PD 推荐的硬件配置如下：
+Recommended hardware configurations for TiKV and PD are as follows:
 
-* **TiKV**：8 vCPU 和 32 GiB 或更高内存。
-* **PD**：8 CPU 和 16 GiB 或更高内存。
+* TiKV: 8 vCPUs and 32 GiB or more memory.
+* PD: 8 CPUs and 16 GiB or more memory.
 
-## 控制 Region 数量
+## Control the number of Regions
 
-如果需要创建大量的表（例如 10 万张以上），建议将 TiDB 的配置 [`split-table`](/tidb-configuration-file.md#split-table) 设置为 `false`，减少集群 Region 数量，从而降低 TiKV 内存压力。
+If you need to create a large number of tables (for example, more than 100,000), it is recommended to set the TiDB configuration item [`split-table`](/tidb-configuration-file.md#split-table) to `false` to reduce the number of Regions, thus alleviating memory pressure on TiKV.
 
-## 缓存配置
+## Configure caches
 
-* 从 TiDB v8.4.0 开始，TiDB 在执行 SQL 语句时，会按需将 SQL 语句涉及的表信息加载到 Infoschema 缓存中。
+* Starting from TiDB v8.4.0, TiDB loads table information involved in SQL statements into the Infoschema cache on demand during SQL execution.
 
-    * 通过 TiDB 监控中 **Schema Load** 面板下的 **Infoschema v2 Cache Size** 和 **Infoschema v2 Cache Operation** 子面板，可以查看 Infoschema 缓存的大小和命中率。
-    * 使用系统变量 [`tidb_schema_cache_size`](/system-variables.md#tidb_schema_cache_size-从-v800-版本开始引入) 可以调整 Infoschema 缓存的内存上限，以满足业务需求。Infoschema 缓存大小与执行 SQL 语句涉及的不同表数量呈线性关系。在实际测试中，全量缓存 100 万张表（每张表含 4 列、1 个主键和 1 个索引）的元数据大约需要 2.4 GiB 内存。
+    - You can monitor the size and hit rate of the Infoschema cache by observing the **Infoschema v2 Cache Size** and **Infoschema v2 Cache Operation** sub-panels under the **Schema Load** panel in TiDB Dashboard.
+    - You can use the [`tidb_schema_cache_size`](/system-variables.md#tidb_schema_cache_size-new-in-v800) system variable to adjust the memory limit of the Infoschema cache to meet business needs. The size of the Infoschema cache is linearly related to the number of different tables involved in SQL execution. In actual tests, fully caching metadata for one million tables (each with four columns, one primary key, and one index) requires about 2.4 GiB of memory.
 
-* TiDB 在执行 SQL 语句时，也会按需将相关表的统计信息加载到 Statistics 缓存中。
+* TiDB loads table statistics involved in SQL statements into the Statistics cache on demand during SQL execution. 
 
-    * 通过 TiDB 监控中 **Statistics & Plan Management** 面板下的 **Stats Cache Cost** 和 **Stats Cache OPS** 子面板，可以查看 Statistics 缓存的使用情况。
-    * 使用系统变量 [`tidb_stats_cache_mem_quota`](/system-variables.md#tidb_stats_cache_mem_quota-从-v610-版本开始引入) 可以调整 Statistics 缓存的内存上限，以满足业务需求。在实际测试中，执行 10 万张表的简单 SQL（使用 IndexRangeScan 操作符）时，Statistics 缓存大约消耗 3.96 GiB 内存。
+    - You can monitor the size and hit rate of the Statistics cache by observing the **Stats Cache Cost** and **Stats Cache OPS** sub-panels under the **Statistics & Plan Management** panel in TiDB Dashboard.
+    - You can use the [`tidb_stats_cache_mem_quota`](/system-variables.md#tidb_stats_cache_mem_quota-new-in-v610) system variable to adjust the memory limit of the Statistics cache to meet business needs. In actual tests, executing simple SQL (using the `IndexRangeScan` operator) on 100,000 tables consumes about 3.96 GiB of memory in the Statistics cache.
 
-## 统计信息收集
+## Collect statistics
 
-* 从 TiDB v8.4.0 开始，TiDB 引入了 [`tidb_auto_analyze_concurrency`](/system-variables.md#tidb_auto_analyze_concurrency-从-v840-版本开始引入) 系统变量，用来设置 TiDB 集群中自动更新统计信息操作的并发度。多表场景下，适当提升并发度可提高自动分析吞吐量。随着并发值的增加，自动分析的吞吐量和 TiDB Owner 节点的 CPU 使用率会线性增加。在实际测试中，使用并发度 16 时，每分钟可自动分析 320 张表（每张表有 1 万行数据、4 列和 1 个索引），占用 TiDB Owner 节点一个 CPU 核心。
-* [`tidb_auto_build_stats_concurrency`](/system-variables.md#tidb_auto_build_stats_concurrency-从-v650-版本开始引入) 和 [`tidb_build_sampling_stats_concurrency`](/system-variables.md#tidb_build_sampling_stats_concurrency-从-v750-版本开始引入) 影响 TiDB 统计信息构建的并发度，需根据具体场景调整：
-    - 分区表较多时，优先提高 `tidb_auto_build_stats_concurrency` 的值。
-    - 列数较多时，优先提高 `tidb_build_sampling_stats_concurrency` 的值。
-* 建议确保 `tidb_auto_analyze_concurrency`、`tidb_auto_build_stats_concurrency` 和 `tidb_build_sampling_stats_concurrency` 三个变量的值的乘积不超过 TiDB CPU 核心数，避免过度占用资源。
+* Starting from TiDB v8.4.0, TiDB introduces the [`tidb_auto_analyze_concurrency`](/system-variables.md#tidb_auto_analyze_concurrency-new-in-v840) system variable to control the number of concurrent auto-analyze operations that can run in a TiDB cluster. In multi-table scenarios, you can increase this concurrency as needed to improve the throughput of automatic analysis. As the concurrency value increases, the throughput and the CPU usage of the TiDB Owner node increase linearly. In actual tests, using a concurrency value of 16 allows automatic analysis of 320 tables (each with 10,000 rows, 4 columns, and 1 index) within one minute, consuming one CPU core of the TiDB Owner node.
+* The [`tidb_auto_build_stats_concurrency`](/system-variables.md#tidb_auto_build_stats_concurrency-new-in-v650) and [`tidb_build_sampling_stats_concurrency`](/system-variables.md#tidb_build_sampling_stats_concurrency-new-in-v750) system variables control the concurrency of TiDB statistics construction. You can adjust them based on your scenario:
+    - For scenarios with many partitioned tables, prioritize increasing the value of `tidb_auto_build_stats_concurrency`.
+    - For scenarios with many columns, prioritize increasing the value of `tidb_build_sampling_stats_concurrency`.
+* To avoid excessive resource usage, ensure that the product of `tidb_auto_analyze_concurrency`, `tidb_auto_build_stats_concurrency`, and `tidb_build_sampling_stats_concurrency` does not exceed the number of TiDB CPU cores.
 
-## 系统表查询
+## Query system tables efficiently
 
-在查询系统表时，建议添加 `TABLE_SCHEMA` 和 `TABLE_NAME` 或 `TIDB_TABLE_ID` 等过滤条件，以避免扫描大量无关数据，从而提高查询速度并降低资源消耗。
+When querying system tables, it is recommended to add filters such as `TABLE_SCHEMA`, `TABLE_NAME`, or `TIDB_TABLE_ID` to avoid scanning a large amount of irrelevant data. This improves query speed and reduces resource consumption.
 
-例如，在 300 万表的场景下：
+For example, in a scenario with three million tables:
 
-- 执行以下 SQL 语句要消耗约 8 GiB 内存：
+- Executing the following SQL statement consumes about 8 GiB of memory.
 
     ```sql
     SELECT COUNT(*) FROM information_schema.tables;
     ```
 
-- 执行以下 SQL 语句需要约 20 分钟：
+- Executing the following SQL statement takes about 20 minutes.
 
     ```sql
     SELECT COUNT(*) FROM information_schema.views;
     ```
 
-在以上示例中的两个 SQL 语句加上建议的查询条件之后，内存消耗可以忽略不计，查询耗时降至毫秒级别。
+By adding appropriate filter conditions to the preceding SQL statements, memory consumption becomes negligible, and query time is reduced to milliseconds.
 
-## 大量连接场景
+## Handle connection-intensive scenarios
 
-在 SaaS 多租户场景中，通常每个用户连接到 TiDB 操作各自租户 (database) 的数据。为支持更多连接数，建议：
+In SaaS multi-tenant scenarios, each user usually connects to TiDB to operate data in their own tenant (database). To support a high number of connections:
 
-* 调高 TiDB 的配置项 [`token-limit`](/tidb-configuration-file.md#token-limit)（默认值为 `1000`）以支持更多并发请求。
-* TiDB 内存使用量与连接数基本上呈线性关系。在实际测试中，20 万个空闲连接将使 TiDB 进程增加约 30 GiB 内存。建议根据实际连接数调整 TiDB 内存规格。
-* 使用 `PREPARED` 语句时，每个连接都会维护一个会话级的 Prepared Plan Cache。如果长时间未执行 `DEALLOCATE` 预编译语句，可能导致缓存中的计划数量过多，增加内存消耗。在实际测试中，40 万条涉及 IndexRangeScan 的执行计划占用约 5 GiB 内存。建议相应提高内存规格。
+* Increase the TiDB configuration item [`token-limit`](/tidb-configuration-file.md#token-limit) (`1000` by default) to support more concurrent requests.
+* The memory usage of TiDB is roughly linear with the number of connections. In actual tests, 200,000 idle connections increase TiDB memory usage by about 30 GiB. It is recommended to increase TiDB memory specifications based on actual connection numbers.
+* If you use `PREPARED` statements, each connection maintains a session-level Prepared Plan Cache. If the `DEALLOCATE` statement is not executed for a long time, the cache might accumulate too many plans, increasing memory usage. In actual tests, 400,000 execution plans involving `IndexRangeScan` consume approximately 5 GiB of memory. It is recommended to increase memory specifications accordingly.
 
-## Stale Read
+## Use stale read carefully
 
-使用 [Stale Read](/stale-read.md) 时，如果使用的 schema 版本过于陈旧，可能触发历史 schema 全量加载，影响性能。建议通过提高 [`tidb_schema_version_cache_limit`](/system-variables.md#tidb_schema_version_cache_limit-从-v740-版本开始引入) 的值（例如 `255`）来缓解此问题。
+When you use [Stale Read](/stale-read.md), an outdated schema version might trigger a full load of historical schemas, which can significantly impact performance. To mitigate this issue, increase the value of [`tidb_schema_version_cache_limit`](/system-variables.md#tidb_schema_version_cache_limit-new-in-v740) (for example, to `255`).
 
-## BR 备份恢复
+## Optimize BR backup and restore
 
-* 在全量恢复百万张表的场景中，建议使用高内存 BR 实例。例如：
-    - 100 万张表：使用 32 GiB 或更高内存的 BR 实例
-    - 300 万张表：使用 64 GiB 或更高内存的 BR 实例
-* BR 日志备份和快照恢复会额外消耗 TiKV 内存，建议 TiKV 使用 32 GiB 或更高规格的内存。
-* 可根据业务需求，适当增加 BR 的 [`pitr-batch-count` 和 `pitr-concurrency`](/br/br-pitr-manual.md#恢复到指定时间点-pitr) 配置以提升 BR 日志恢复速度。
+* When restoring a full backup with millions of tables, it is recommended to use high-memory BR instances. For example:
+    - For one million tables, use BR instances with 32 GiB or more memory.
+    - For three million tables, use BR instances with 64 GiB or more memory.
+* BR log backup and snapshot restore consume additional TiKV memory. It is recommended to use TiKV instances with 32 GiB or more memory.
+* Adjust BR configurations [`pitr-batch-count` and `pitr-concurrency`](/br/use-br-command-line-tool.md#common-options) as needed to improve log restore speed.
 
-## TiDB Lightning 数据导入
+## Import data with TiDB Lightning
 
-在使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 导入百万张表数据时，建议：
+When importing millions of tables using [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md), follow these recommendations:
 
-- 对大表（超过 100 GiB）使用 TiDB Lightning [物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)。
-- 对小表（通常数量较多）使用 TiDB Lightning [逻辑导入模式](/tidb-lightning/tidb-lightning-logical-import-mode.md)。
+- For large tables (over 100 GiB), use TiDB Lightning [physical import mode](/tidb-lightning/tidb-lightning-physical-import-mode.md).
+- For small tables (typically numerous in quantity), use TiDB Lightning [logical import mode](/tidb-lightning/tidb-lightning-logical-import-mode.md).

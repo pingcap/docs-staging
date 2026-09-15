@@ -1,94 +1,94 @@
 ---
-title: TiDB Dashboard 概况页面
-summary: TiDB Dashboard 概况页面显示整个集群的 QPS、查询延迟、Top SQL 语句、最近的慢查询、实例状态和监控及告警信息。登录后默认进入该页面，也可通过左侧导航条点击概况进入。包含最近一小时整个集群的 QPS 和查询延迟，以及最近一段时间内累计耗时最多的 SQL 语句和运行时间超过一定阈值的慢查询。还显示各个实例的节点数和状态，以及提供了便捷的链接方便用户查看详细监控或告警。
+title: Overview Page
+summary: The TiDB overview page displays cluster QPS, latency, top SQL statements, recent slow queries, instance status, and monitor/alert links. Access it via TiDB Dashboard or left navigation menu. QPS and latency require Prometheus monitoring. Top SQL and slow queries need SQL Statements and slow query logs enabled. Instance status shows total and abnormal instances. Monitor and alert links lead to Grafana dashboard, AlertManager, and cluster diagnostics.
 ---
 
-# TiDB Dashboard 概况页面
+# Overview Page
 
-该页面显示了整个集群的概况，包含以下信息：
+This page shows the overview of the entire TiDB cluster, including the following information:
 
-- 整个集群的 QPS
-- 整个集群的查询延迟
-- 最近一段时间内累计耗时最多的若干 SQL 语句
-- 最近一段时间内运行时间超过一定阈值的慢查询
-- 各个实例的节点数和状态
-- 监控及告警信息
+- Queries per second (QPS) of the entire cluster.
+- The query latency of the entire cluster.
+- The SQL statements that have accumulated the longest execution time over the recent period.
+- The slow queries whose execution time over the recent period exceeds the threshold.
+- The node count and status of each instance.
+- Monitor and alert messages.
 
-## 访问
+## Access the page
 
-登录 TiDB Dashboard 后默认进入该页面，也可以左侧导航条点击**概况** (Overview) 进入：
+After logging in to TiDB Dashboard, the overview page is entered by default, or you can click **Overview** in the left navigation menu to enter this page:
 
-![访问](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-access-v650.png)
+![Enter overview page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-access-v650.png)
 
 ## QPS
 
-该区域显示最近一小时整个集群的每秒成功和失败查询数量：
+This area shows the number of successful and failed queries per second for the entire cluster over the recent hour:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-qps.png)
+![QPS](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-qps.png)
 
-> **注意：**
+> **Note:**
 >
-> 该功能仅在部署了 Prometheus 监控组件的集群上可用，未部署监控组件的情况下会显示为失败。
+> This feature is available only in the cluster where the Prometheus monitoring component is deployed. If Prometheus is not deployed, an error will be displayed.
 
-## 延迟
+## Latency
 
-该区域显示最近一小时整个集群中 99.9%、99% 和 90% 查询的延迟：
+This area shows the latency of 99.9%, 99%, and 90% of queries in the entire cluster over the recent one hour:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-latency.png)
+![Latency](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-latency.png)
 
-> **注意：**
+> **Note:**
 >
-> 该功能仅在部署了 Prometheus 监控组件的集群上可用，未部署监控组件的情况下会显示为失败。
+> This feature is available only on the cluster where the Prometheus monitoring component is deployed. If Prometheus is not deployed, an error will be displayed.
 
-## Top SQL 语句
+## Top SQL statements
 
-该区域显示最近一段时间内整个群集中累计耗时最长的 10 类 SQL 语句。查询参数不一样但结构一样的 SQL 会归为同一类 SQL 语句，在同一行中显示：
+This area shows the ten types of SQL statements that have accumulated the longest execution time in the entire cluster over the recent period. SQL statements with different query parameters but of the same structure are classified into the same SQL type and displayed in the same row:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-top-statements.png)
+![Top SQL](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-top-statements.png)
 
-该区域显示的内容与 [SQL 语句分析页面](/dashboard/dashboard-statement-list.md)一致，可点击 **Top SQL 语句** (Top SQL Statements) 标题查看完整列表。关于该表格中各列详情，见 [SQL 语句分析页面](/dashboard/dashboard-statement-list.md)。
+The information shown in this area is consistent with the more detailed [SQL Statements Page](/dashboard/dashboard-statement-list.md). You can click the **Top SQL Statements** heading to view the complete list. For details of the columns in this table, see [SQL Statements Page](/dashboard/dashboard-statement-list.md).
 
-> **注意：**
+> **Note:**
 >
-> 该功能仅在开启了 SQL 语句分析功能的集群上可用。
+> This feature is available only on the cluster where SQL Statements feature is enabled.
 
-## 最近的慢查询
+## Recent slow queries
 
-该区域默认显示最近 30 分钟内整个集群中最新的 10 条慢查询：
+By default, this area shows the latest 10 slow queries in the entire cluster over the recent 30 minutes:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-slow-query.png)
+![Recent slow queries](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-slow-query.png)
 
-默认情况下运行时间超过 300ms 的 SQL 查询即会被计为慢查询并显示在该表格中。可通过调整 [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold) 变量或 TiDB [instance.tidb_slow_log_threshold](/tidb-configuration-file.md#tidb_slow_log_threshold) 参数调整阈值。
+By default, the SQL query that is executed longer than 300 milliseconds is counted as a slow query and displayed on the table. You can change this threshold by modifying the [tidb_slow_log_threshold](/system-variables.md#tidb_slow_log_threshold) variable or the [instance.tidb_slow_log_threshold](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB parameter.
 
-该区域显示的内容与[慢查询页面](/dashboard/dashboard-slow-query.md)一致，可点击**最近的慢查询** (Recent Slow Queries) 标题查看完整列表。关于该表格中各列详情，见[慢查询页面](/dashboard/dashboard-slow-query.md)。
+The content displayed in this area is consistent with the more detailed [Slow Queries Page](/dashboard/dashboard-slow-query.md). You can click the **Recent Slow Queries** title to view the complete list. For details of the columns in this table, see this [Slow Queries Page](/dashboard/dashboard-slow-query.md).
 
-> **注意：**
+> **Note:**
 >
-> 该功能仅在配置开启了慢查询日志的集群中可用，使用 TiUP 部署的集群默认开启慢查询日志。
+> This feature is available only in the cluster with slow query logs enabled. By default, slow query logs are enabled in the cluster deployed using TiUP.
 
-## 实例
+## Instances
 
-该区域汇总显示了整个集群中 TiDB、TiKV、PD、TiFlash 的总实例数量及异常实例数量：
+This area summarizes the total number of instances and abnormal instances of TiDB, TiKV, PD, and TiFlash in the entire cluster:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-instances.png)
+![Instances](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-instances.png)
 
-状态描述如下：
+The statuses in the preceding image are described as follows:
 
-- Up：实例运行正常（含下线中的存储实例）。
-- Down：实例运行异常，例如网络无法连接、进程已崩溃等。
+- Up: The instance is running properly (including the offline storage instance).
+- Down: The instance is running abnormally, such as network disconnection and process crash.
 
-点击**实例**标题可进入[集群信息页面](/dashboard/dashboard-cluster-info.md)查看各个实例的详细运行状态。
+Click the **Instance** title to enter the [Cluster Info Page](/dashboard/dashboard-cluster-info.md) that shows the detailed running status of each instance.
 
-## 监控和告警
+## Monitor and alert
 
-该区域提供了便捷的链接方便用户查看详细监控或告警：
+This area provides links for you to view detailed monitor and alert:
 
-![界面](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-overview-monitor.png)
+![Monitor and alert](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-overview-monitor.png)
 
-- **查看监控**链接：点击后跳转至 Grafana 页面，可查看集群详细监控信息。关于 Grafana 监控面板中各个详细监控指标的解释，参见[监控指标](/grafana-overview-dashboard.md)文档。
-- **查看告警**链接：点击后跳转至 AlertManager 页面，可查看集群详细告警信息。当集群中已有告警时，告警数量将会直接显示在链接文本上。
-- **运行诊断**链接：点击后跳转至集群诊断页面，参见[集群诊断页面](/dashboard/dashboard-diagnostics-access.md)了解详情。
+- **View Metrics**: Click this link to jump to the Grafana dashboard where you can view detailed monitoring information of the cluster. For details of each monitoring metric in the Grafana dashboard, see [monitoring metrics](/grafana-overview-dashboard.md).
+- **View Alerts**: Click this link to jump to the AlertManager page where you can view detailed alert information of the cluster. If alerts exist in the cluster, the number of alerts is directly shown in the link text.
+- **Run Diagnostics**: Click this link to jump to the more detailed [cluster diagnostics page](/dashboard/dashboard-diagnostics-access.md).
 
-> **注意：**
+> **Note:**
 >
-> **查看监控**链接仅在集群中部署了 Grafana 节点时可用，**查看告警**链接仅在集群中部署了 AlertManager 节点时可用。
+> The **View Metrics** link is available only in the cluster where the Grafana node is deployed. The **View Alerts** link is available only in the cluster where the AlertManager node is deployed.

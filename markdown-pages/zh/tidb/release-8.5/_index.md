@@ -1,135 +1,145 @@
 ---
-title: TiDB 产品文档
+title: TiDB Self-Managed
 hide_sidebar: true
 hide_commit: true
-summary: TiDB 是 PingCAP 公司自主设计、研发的开源分布式关系型数据库。产品文档包括了 TiDB 简介、功能概览、TiFlash、快速上手 TiDB、HTAP、开发者手册概览、软硬件环境需求、使用 TiUP 部署 TiDB、数据迁移概览、运维、监控、调优、工具、TiDB 路线图、配置文件参数、命令行参数、TiDB Control、系统变量、发布历史、常见问题。
+summary: TiDB is an open-source distributed SQL database that supports Hybrid Transactional and Analytical Processing (HTAP) workloads. The guide provides information on features, TiFlash, development, deployment, migration, maintenance, monitoring, tuning, tools, and references. It covers everything from quick start to advanced configurations and tools for TiDB.
 ---
 
-<LearningPathContainer platform="tidb" title="TiDB" subTitle="TiDB 是 PingCAP 公司自主设计、研发的开源分布式关系型数据库。您可以在这里查看概念介绍、操作指南、应用开发、参考等产品文档。">
+<LearningPathContainer platform="tidb" title="TiDB Self-Managed" subTitle="TiDB is an open-source distributed SQL database that supports Hybrid Transactional and Analytical Processing (HTAP) workloads. Find the guide, samples, and references you need to use TiDB.">
 
-<LearningPath label="了解" icon="cloud1">
+<!-- Localization note for TiDB:
 
-[TiDB 简介](https://docs.pingcap.com/zh/tidb/v8.5/overview)
+- English: use distributed SQL, and start to emphasize HTAP
+- Chinese: can keep "NewSQL" and emphasize one-stop real-time HTAP ("一栈式实时 HTAP")
+- Japanese: use NewSQL because it is well-recognized
 
-[功能概览](https://docs.pingcap.com/zh/tidb/v8.5/basic-features)
+-->
 
-[TiFlash](https://docs.pingcap.com/zh/tidb/v8.5/tiflash-overview)
+<LearningPath label="Learn" icon="cloud1">
 
-</LearningPath>
+[What is TiDB Self-Managed](https://docs.pingcap.com/tidb/v8.5/overview)
 
-<LearningPath label="试用" icon="cloud5">
+[Features](https://docs.pingcap.com/tidb/v8.5/basic-features)
 
-[快速上手 TiDB](https://docs.pingcap.com/zh/tidb/v8.5/quick-start-with-tidb)
-
-[快速上手 HTAP](https://docs.pingcap.com/zh/tidb/v8.5/quick-start-with-htap)
-
-[深入探索 HTAP](https://docs.pingcap.com/zh/tidb/v8.5/explore-htap)
+[TiFlash](https://docs.pingcap.com/tidb/v8.5/tiflash-overview)
 
 </LearningPath>
 
-<LearningPath label="开发" icon="doc8">
+<LearningPath label="Try" icon="cloud5">
 
-[开发者手册概览](https://docs.pingcap.com/zh/developer/)
+[Try Out TiDB Self-Managed](https://docs.pingcap.com/tidb/v8.5/quick-start-with-tidb)
 
-[快速开始](https://docs.pingcap.com/zh/developer/dev-guide-build-cluster-in-cloud/)
+[Try Out HTAP](https://docs.pingcap.com/tidb/v8.5/quick-start-with-htap)
 
-[连接到 TiDB](https://docs.pingcap.com/zh/developer/dev-guide-connect-to-tidb/)
-
-</LearningPath>
-
-<LearningPath label="部署" icon="deploy">
-
-[软硬件环境需求](https://docs.pingcap.com/zh/tidb/v8.5/hardware-and-software-requirements)
-
-[使用 TiUP 部署 TiDB（推荐）](https://docs.pingcap.com/zh/tidb/v8.5/production-deployment-using-tiup)
-
-[在 Kubernetes 上部署 TiDB](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable)
+[Import Example Database](https://docs.pingcap.com/tidb/v8.5/import-example-data)
 
 </LearningPath>
 
-<LearningPath label="迁移" icon="cloud3">
+<LearningPath label="Develop" icon="doc8">
 
-[数据迁移概览](https://docs.pingcap.com/zh/tidb/v8.5/migration-overview)
+[Developer Guide Overview](https://docs.pingcap.com/tidb/v8.5/dev-guide-overview)
 
-[迁移工具](https://docs.pingcap.com/zh/tidb/v8.5/migration-tools)
+[Quick Start](https://docs.pingcap.com/tidb/v8.5/dev-guide-build-cluster-in-cloud)
 
-[应用场景](https://docs.pingcap.com/zh/tidb/v8.5/migrate-aurora-to-tidb)
-
-</LearningPath>
-
-<LearningPath label="运维" icon="maintain">
-
-[升级集群](https://docs.pingcap.com/zh/tidb/v8.5/upgrade-tidb-using-tiup)
-
-[扩容集群](https://docs.pingcap.com/zh/tidb/v8.5/scale-tidb-using-tiup)
-
-[备份与恢复](https://docs.pingcap.com/zh/tidb/v8.5/backup-and-restore-overview)
-
-[日常巡检](https://docs.pingcap.com/zh/tidb/v8.5/daily-check)
-
-[使用 TiUP 运维](https://docs.pingcap.com/zh/tidb/v8.5/maintain-tidb-using-tiup)
+[Example Application](https://docs.pingcap.com/tidb/v8.5/dev-guide-sample-application-java-spring-boot)
 
 </LearningPath>
 
-<LearningPath label="监控" icon="cloud6">
+<LearningPath label="Deploy" icon="deploy">
 
-[使用 Prometheus、Grafana 和 TiDB Dashboard](https://docs.pingcap.com/zh/tidb/v8.5/tidb-monitoring-framework)
+[Software and Hardware Requirements](https://docs.pingcap.com/tidb/v8.5/hardware-and-software-requirements)
 
-[监控 API](https://docs.pingcap.com/zh/tidb/v8.5/tidb-monitoring-api)
+[Deploy a TiDB Cluster Using TiUP](https://docs.pingcap.com/tidb/v8.5/production-deployment-using-tiup)
 
-[报警规则](https://docs.pingcap.com/zh/tidb/v8.5/alert-rules)
-
-</LearningPath>
-
-<LearningPath label="调优" icon="tidb-cloud-tune">
-
-[调优概述](https://docs.pingcap.com/zh/tidb/v8.5/performance-tuning-overview)
-
-[调优方法](https://docs.pingcap.com/zh/tidb/v8.5/performance-tuning-methods)
-
-[调优实践](https://docs.pingcap.com/zh/tidb/v8.5/performance-tuning-practices)
-
-[操作系统性能参数调优](https://docs.pingcap.com/zh/tidb/v8.5/tune-operating-system)
-
-[内存调优](https://docs.pingcap.com/zh/tidb/v8.5/configure-memory-usage)
-
-[SQL 调优](https://docs.pingcap.com/zh/tidb/v8.5/sql-tuning-overview)
+[Deploy a TiDB Cluster on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable)
 
 </LearningPath>
 
-<LearningPath label="工具" icon="doc7">
+<LearningPath label="Migrate" icon="cloud3">
 
-[TiUP](https://docs.pingcap.com/zh/tidb/v8.5/tiup-overview)
+[Migration Overview](https://docs.pingcap.com/tidb/v8.5/migration-overview)
 
-[TiDB Operator](https://docs.pingcap.com/zh/tidb/v8.5/tidb-operator-overview)
+[Migration Tools](https://docs.pingcap.com/tidb/v8.5/migration-tools)
 
-[TiDB Data Migration (DM)](https://docs.pingcap.com/zh/tidb/v8.5/dm-overview)
-
-[TiDB Lightning](https://docs.pingcap.com/zh/tidb/v8.5/tidb-lightning-overview)
-
-[Dumpling](https://docs.pingcap.com/zh/tidb/v8.5/dumpling-overview)
-
-[TiCDC](https://docs.pingcap.com/zh/tidb/v8.5/ticdc-overview)
-
-[Backup & Restore (BR)](https://docs.pingcap.com/zh/tidb/v8.5/backup-and-restore-overview)
-
-[PingCAP Clinic](https://docs.pingcap.com/zh/tidb/v8.5/clinic-introduction)
+[Typical Scenarios](https://docs.pingcap.com/tidb/v8.5/migrate-aurora-to-tidb)
 
 </LearningPath>
 
-<LearningPath label="参考" icon="cloud-dev">
+<LearningPath label="Maintain" icon="maintain">
 
-[TiDB 配置文件参数](https://docs.pingcap.com/zh/tidb/v8.5/tidb-configuration-file)
+[Upgrade a Cluster](https://docs.pingcap.com/tidb/v8.5/upgrade-tidb-using-tiup)
 
-[TiDB 命令行参数](https://docs.pingcap.com/zh/tidb/v8.5/command-line-flags-for-tidb-configuration)
+[Scale a Cluster](https://docs.pingcap.com/tidb/v8.5/scale-tidb-using-tiup)
 
-[TiDB Control](https://docs.pingcap.com/zh/tidb/v8.5/tidb-control)
+[Back Up and Restore Cluster Data](https://docs.pingcap.com/tidb/v8.5/backup-and-restore-overview)
 
-[系统变量](https://docs.pingcap.com/zh/tidb/v8.5/system-variables)
+[Daily Check](https://docs.pingcap.com/tidb/v8.5/daily-check)
 
-[发布历史](https://docs.pingcap.com/zh/releases/tidb-self-managed/)
+[Maintain TiDB Using TiUP](https://docs.pingcap.com/tidb/v8.5/maintain-tidb-using-tiup)
 
-[常见问题](https://docs.pingcap.com/zh/tidb/v8.5/faq-overview)
+</LearningPath>
+
+<LearningPath label="Monitor" icon="cloud6">
+
+[Use Prometheus, Grafana, and TiDB Dashboard](https://docs.pingcap.com/tidb/v8.5/tidb-monitoring-framework)
+
+[Monitoring API](https://docs.pingcap.com/tidb/v8.5/tidb-monitoring-api)
+
+[Alert Rules](https://docs.pingcap.com/tidb/v8.5/alert-rules)
+
+</LearningPath>
+
+<LearningPath label="Tune" icon="tidb-cloud-tune">
+
+[Tuning Overview](https://docs.pingcap.com/tidb/v8.5/performance-tuning-overview)
+
+[Tuning Methods](https://docs.pingcap.com/tidb/v8.5/performance-tuning-methods)
+
+[Tune OLTP Performance](https://docs.pingcap.com/tidb/v8.5/performance-tuning-practices)
+
+[Tune Operating System](https://docs.pingcap.com/tidb/v8.5/tune-operating-system)
+
+[Tune Configurations](https://docs.pingcap.com/tidb/v8.5/configure-memory-usage)
+
+[Tune SQL Performance](https://docs.pingcap.com/tidb/v8.5/sql-tuning-overview)
+
+</LearningPath>
+
+<LearningPath label="Tools" icon="doc7">
+
+[TiUP](https://docs.pingcap.com/tidb/v8.5/tiup-overview)
+
+[TiDB Operator](https://docs.pingcap.com/tidb/v8.5/tidb-operator-overview)
+
+[TiDB Data Migration (DM)](https://docs.pingcap.com/tidb/v8.5/dm-overview)
+
+[TiDB Lightning](https://docs.pingcap.com/tidb/v8.5/tidb-lightning-overview)
+
+[Dumpling](https://docs.pingcap.com/tidb/v8.5/dumpling-overview)
+
+[TiCDC](https://docs.pingcap.com/tidb/v8.5/ticdc-overview)
+
+[Backup & Restore (BR)](https://docs.pingcap.com/tidb/v8.5/backup-and-restore-overview)
+
+[PingCAP Clinic](https://docs.pingcap.com/tidb/v8.5/clinic-introduction)
+
+</LearningPath>
+
+<LearningPath label="Reference" icon="cloud-dev">
+
+[TiDB Roadmap](https://docs.pingcap.com/tidb/dev/tidb-roadmap)
+
+[TiDB Configuration File Parameters](https://docs.pingcap.com/tidb/v8.5/tidb-configuration-file)
+
+[TiDB Command-line Flags](https://docs.pingcap.com/tidb/v8.5/command-line-flags-for-tidb-configuration)
+
+[TiDB Control](https://docs.pingcap.com/tidb/v8.5/tidb-control)
+
+[System Variables](https://docs.pingcap.com/tidb/v8.5/system-variables)
+
+[Release Notes](https://docs.pingcap.com/tidb/v8.5/release-notes)
+
+[FAQ Summary](https://docs.pingcap.com/tidb/v8.5/faq-overview)
 
 </LearningPath>
 

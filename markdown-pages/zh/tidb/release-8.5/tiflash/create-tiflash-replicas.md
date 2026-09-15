@@ -1,27 +1,31 @@
 ---
-title: 构建 TiFlash 副本
-summary: 了解如何构建 TiFlash 副本。
+title: 创建 TiFlash 副本
+summary: 了解如何创建 TiFlash 副本。
 ---
 
-# 构建 TiFlash 副本
+# 创建 TiFlash 副本
 
-本文档介绍如何按表和库构建 TiFlash 副本，以及如何设置可用区来调度副本。
+本文介绍如何为表和数据库创建 TiFlash 副本，以及如何为副本调度设置可用区。
 
-## 按表构建 TiFlash 副本
+## 为表创建 TiFlash 副本
 
-TiFlash 接入 TiKV 集群后，默认不会开始同步数据。可通过 MySQL 客户端向 TiDB 发送 DDL 命令来为特定的表建立 TiFlash 副本：
+TiFlash 连接到 TiKV 集群后，默认不会开始数据复制。你可以通过 MySQL 客户端向 TiDB 发送 DDL 语句，为指定表创建 TiFlash 副本：
 
 ```sql
 ALTER TABLE table_name SET TIFLASH REPLICA count;
 ```
 
-该命令的参数说明如下：
+上述命令的参数说明如下：
 
-- count 表示副本数，0 表示删除。
+- `count` 表示副本数量。当该值为 `0` 时，表示删除副本。
 
-对于相同表的多次 DDL 命令，仅保证最后一次能生效。例如下面给出的操作 `tpch50` 表的两条 DDL 命令中，只有第二条删除副本的命令能生效：
+> **Note:**
+>
+> 对于 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 实例，TiFlash 副本的 `count` 只能为 `2`。如果你设置为 `1`，会自动调整为 `2` 执行。如果你设置为大于 2 的数值，则会报副本数量的错误。
 
-为表建立 2 个副本：
+如果你对同一张表执行多条 DDL 语句，只有最后一条语句会生效。如下例所示，对表 `tpch50` 执行了两条 DDL 语句，但只有第二条（删除副本）生效。
+
+为表创建两个副本：
 
 ```sql
 ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 2;
@@ -29,159 +33,163 @@ ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 2;
 
 删除副本：
 
-
 ```sql
 ALTER TABLE `tpch50`.`lineitem` SET TIFLASH REPLICA 0;
 ```
 
-注意事项：
+**注意事项：**
 
-* 假设有一张表 t 已经通过上述的 DDL 语句同步到 TiFlash，则通过以下语句创建的表也会自动同步到 TiFlash：
+* 如果通过上述 DDL 语句将表 `t` 复制到 TiFlash，则使用如下语句创建的表也会自动复制到 TiFlash：
 
-    
     ```sql
     CREATE TABLE table_name like t;
     ```
 
-* 如果集群版本 < v4.0.6，若先对表创建 TiFlash 副本，再使用 TiDB Lightning 导入数据，会导致数据导入失败。需要在使用 TiDB Lightning 成功导入数据至表后，再对相应的表创建 TiFlash 副本。
+* 在 v4.0.6 之前的版本中，如果你在使用 TiDB Lightning 导入数据前就创建了 TiFlash 副本，数据导入会失败。你必须先向表中导入数据，再为该表创建 TiFlash 副本。
 
-* 如果 TiDB 和 TiDB Lightning 版本均 >= v4.0.6，无论一个表是否有 TiFlash 副本，你均可以使用 TiDB Lightning 导入数据至该表。但注意此情况可能会导致 TiDB Lightning 导入过程变慢，具体取决于 TiDB Lightning 部署机器的网卡带宽、TiFlash 节点的 CPU 及磁盘负载、TiFlash 副本数等因素。
+* 如果 TiDB 和 TiDB Lightning 都是 v4.0.6 或更高版本，无论表是否有 TiFlash 副本，你都可以使用 TiDB Lightning 向该表导入数据。需要注意的是，这可能会导致 TiDB Lightning 过程变慢，具体取决于 TiDB Lightning 主机的网卡带宽、TiFlash 节点的 CPU 和磁盘负载，以及 TiFlash 副本的数量。
 
-* 不推荐同步 1000 张以上的表，这会降低 PD 的调度性能。这个限制将在后续版本去除。
+* 建议不要复制超过 1,000 张表，否则会降低 PD 的调度性能。该限制将在后续版本中移除。
 
-* v5.1 版本及后续版本将不再支持设置系统表的 replica。在集群升级前，需要清除相关系统表的 replica，否则升级到较高版本后将无法再修改系统表的 replica 设置。
+* 在 v5.1 及以上版本，不再支持为系统表设置副本。在升级集群前，你需要清除相关系统表的副本。否则，升级到新版本后将无法修改系统表的副本设置。
 
-> **注意：**
->
-> 目前，使用 TiCDC 同步表到下游 TiDB 集群时，不支持为表创建 TiFlash 副本，即 TiCDC 不支持同步 TiFlash 相关的 DDL，例如:
->
-> * `ALTER TABLE table_name SET TIFLASH REPLICA count;`
-> * `ALTER DATABASE db_name SET TIFLASH REPLICA count;`
+* 当前，使用 TiCDC 将表同步到下游 TiDB 集群时，不支持为这些表创建 TiFlash 副本，即 TiCDC 不支持同步与 TiFlash 相关的 DDL 语句，例如：
 
-### 查看表同步进度
+    * `ALTER TABLE table_name SET TIFLASH REPLICA count;`
+    * `ALTER DATABASE db_name SET TIFLASH REPLICA count;`
 
-可通过如下 SQL 语句查看特定表（通过 WHERE 语句指定，去掉 WHERE 语句则查看所有表）的 TiFlash 副本的状态：
+### 查看复制进度
+
+你可以使用以下语句查看指定表的 TiFlash 副本状态。表通过 `WHERE` 子句指定。如果去掉 `WHERE` 子句，则会查看所有表的副本状态。
 
 ```sql
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = '<db_name>' and TABLE_NAME = '<table_name>';
 ```
 
-查询结果中：
+上述语句的结果中：
 
-* AVAILABLE 字段表示该表的 TiFlash 副本是否可用。1 代表可用，0 代表不可用。副本状态为可用之后就不再改变，如果通过 DDL 命令修改副本数则会重新计算同步进度。
-* PROGRESS 字段代表同步进度，在 0.0~1.0 之间，1 代表至少 1 个副本已经完成同步。
+* `AVAILABLE` 表示该表的 TiFlash 副本是否可用。`1` 表示可用，`0` 表示不可用。一旦副本变为可用，该状态不会再变化。如果你通过 DDL 语句修改副本数量，复制状态会重新计算。
+* `PROGRESS` 表示复制进度。取值范围为 `0.0` 到 `1.0`。`1` 表示至少有一个副本已完成复制。
 
-## 按库构建 TiFlash 副本
+## 为数据库创建 TiFlash 副本
 
-类似于按表构建 TiFlash 副本的方式，你可以在 MySQL 客户端向 TiDB 发送 DDL 命令来为指定数据库中的所有表建立 TiFlash 副本：
+与为表创建 TiFlash 副本类似，你可以通过 MySQL 客户端向 TiDB 发送 DDL 语句，为指定数据库下的所有表创建 TiFlash 副本：
 
 ```sql
 ALTER DATABASE db_name SET TIFLASH REPLICA count;
 ```
 
-在该命令中，`count` 表示 TiFlash 的副本数。当设置 `count` 值为 0 时，表示删除现有的 TiFlash 副本。
+在该语句中，`count` 表示副本数量。当你设置为 `0` 时，表示删除副本。
 
-命令示例：
+示例：
 
-执行以下命令可以为 `tpch50` 库中的所有表建立 2 个 TiFlash 副本。
+- 为数据库 `tpch50` 下的所有表创建两个副本：
 
-```sql
-ALTER DATABASE `tpch50` SET TIFLASH REPLICA 2;
-```
+    ```sql
+    ALTER DATABASE `tpch50` SET TIFLASH REPLICA 2;
+    ```
 
-执行以下命令可以删除为 `tpch50` 库建立的 TiFlash 副本：
+- 删除为数据库 `tpch50` 创建的 TiFlash 副本：
 
-```sql
-ALTER DATABASE `tpch50` SET TIFLASH REPLICA 0;
-```
+    ```sql
+    ALTER DATABASE `tpch50` SET TIFLASH REPLICA 0;
+    ```
 
-> **注意：**
+> **Note:**
 >
-> - 该命令实际是为用户执行一系列 DDL 操作，对资源要求比较高。如果在执行过程中出现中断，已经执行成功的操作不会回退，未执行的操作不会继续执行。
+> - 该语句实际会执行一系列 DDL 操作，资源消耗较大。如果执行过程中被中断，已执行的操作不会回滚，未执行的操作也不会继续。
 >
-> - 从命令执行开始到该库中所有表都已**同步完成**之前，不建议执行和该库相关的 TiFlash 副本数量设置或其他 DDL 操作，否则最终状态可能非预期。非预期场景包括：
->     - 先设置 TiFlash 副本数量为 2，在库中所有的表都同步完成前，再设置 TiFlash 副本数量为 1，不能保证最终所有表的 TiFlash 副本数量都为 1 或都为 2。
->     - 在命令执行到结束期间，如果在该库下创建表，则**可能**会对这些新增表创建 TiFlash 副本。
->     - 在命令执行到结束期间，如果为该库下的表添加索引，则该命令可能陷入等待，直到添加索引完成。
+> - 执行该语句后，在**所有表都完成副本复制之前**，不要再设置 TiFlash 副本数量或对该数据库执行 DDL 操作。否则，可能会出现以下异常情况：
+>     - 如果你将 TiFlash 副本数设置为 2，但在所有表都复制完成前又改为 1，则最终所有表的 TiFlash 副本数不一定是 1 或 2。
+>     - 执行该语句后，如果在语句执行完成前在该数据库中创建新表，这些新表**可能会**也可能不会创建 TiFlash 副本。
+>     - 执行该语句后，如果在语句执行完成前为数据库中的表添加索引，语句可能会卡住，直到索引添加完成后才会继续。
 >
-> - 该命令执行结束后，在该库中新建的表不会自动创建 TiFlash 副本。
+> - 如果在语句执行**完成后**再在该数据库中创建新表，这些新表不会自动创建 TiFlash 副本。
 >
-> - 该命令会跳过系统表、视图、临时表以及包含了 TiFlash 不支持字符集的表。
->
-> - 通过设置 [`tidb_batch_pending_tiflash_count`](/system-variables.md#tidb_batch_pending_tiflash_count-从-v60-版本开始引入) 系统变量可以控制执行过程中允许的尚未同步完成的表的数量。调小该值有助于减低同步时集群受到的压力。注意，因为这个限制不是实时的，所以设置完后仍有可能存在尚未同步完成的表的数量超过限制的情况。
+> - 该语句会跳过系统表、视图、临时表以及 TiFlash 不支持字符集的表。
 
-### 查看库同步进度
+> - 你可以通过设置 [`tidb_batch_pending_tiflash_count`](/system-variables.md#tidb_batch_pending_tiflash_count-new-in-v60) 系统变量，控制执行过程中允许处于不可用状态的表的数量。降低该值有助于减少复制期间对集群的压力。需要注意的是，该限制并非实时生效，因此设置后仍有可能出现不可用表数量超过限制的情况。
 
-类似于按表构建，按库构建 TiFlash 副本的命令执行成功，不代表所有表都已同步完成。可以执行下面的 SQL 语句检查数据库中所有已设置 TiFlash Replica 表的同步进度：
+### 查看复制进度
+
+与为表创建 TiFlash 副本类似，DDL 语句执行成功并不代表复制已完成。你可以执行以下 SQL 语句，查看目标表的复制进度：
 
 ```sql
 SELECT * FROM information_schema.tiflash_replica WHERE TABLE_SCHEMA = '<db_name>';
 ```
 
-可以执行下面的 SQL 语句检查数据库中尚未设置 TiFlash Replica 的表名：
+如需查看数据库中没有 TiFlash 副本的表，可以执行以下 SQL 语句：
 
 ```sql
 SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>" and TABLE_NAME not in (SELECT TABLE_NAME FROM information_schema.tiflash_replica where TABLE_SCHEMA = "<db_name>");
 ```
 
-## 加快 TiFlash 副本同步速度
+## 加速 TiFlash 复制
 
-当你执行以下任一操作时，TiDB 集群会触发 TiFlash 副本同步流程：
+<CustomContent platform="tidb-cloud">
 
-* 为某个表添加 TiFlash 副本
-* 新增 TiFlash 节点，PD 会将 TiFlash 副本从原有节点调度至新节点
+> **Note:**
+>
+> 本节内容不适用于 TiDB Cloud。
 
-在此过程中，各个 TiKV 实例将进行全表数据扫描，并将扫描得到的数据快照发送给 TiFlash 从而形成副本。默认情况下，为了降低对 TiKV 及 TiFlash 线上业务的影响，TiFlash 新增副本速度较慢、占用资源较少。如果集群中 TiKV 及 TiFlash 的 CPU 和磁盘 IO 资源有富余，你可以按以下步骤操作来提升 TiFlash 副本同步速度：
+</CustomContent>
 
-1. 通过 [SQL 语句在线修改配置](/dynamic-config.md)，临时调高各个 TiKV 及 TiFlash 实例的数据快照写入速度：
+当你执行以下任一操作时，TiDB 集群会触发 TiFlash 副本的复制流程：
+
+* 为表添加 TiFlash 副本。
+* 新增 TiFlash 实例，导致 PD 将 TiFlash 副本从原有实例调度到新 TiFlash 实例。
+
+在此过程中，每个 TiKV 实例会对全表进行扫描，并将扫描到的数据快照发送到 TiFlash 以创建副本。默认情况下，为了尽量减少对 TiKV 和 TiFlash 生产负载的影响，TiFlash 以较慢的速率添加副本，并使用较少的资源。如果你的 TiKV 和 TiFlash 节点有充足的 CPU 和磁盘 I/O 资源，可以通过以下步骤加速 TiFlash 复制。
+
+1. 通过 [动态配置 SQL 语句](https://docs.pingcap.com/tidb/stable/dynamic-config) 临时提升每个 TiKV 和 TiFlash 实例的快照写入速度上限：
 
     ```sql
-    -- 这两个参数默认值都为 100MiB，即用于副本同步的快照最大占用的磁盘带宽不超过 100MiB/s。
+    -- 这两个配置的默认值均为 100MiB，即写入快照的最大磁盘带宽不超过 100MiB/s。
     SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '300MiB';
     SET CONFIG tiflash `raftstore-proxy.server.snap-io-max-bytes-per-sec` = '300MiB';
     ```
 
-    以上 SQL 语句执行后，配置修改立即生效，无需重启集群。但由于副本同步速度还受到 PD 副本速度控制，因此当前你还无法观察到副本同步速度提升。
+    执行上述 SQL 语句后，配置会立即生效，无需重启集群。但由于复制速度仍受 PD 全局限制，目前还无法观察到加速效果。
 
-2. 使用 [PD Control](/pd-control.md) 逐步放开副本调度速度限制：
+2. 使用 [PD Control](https://docs.pingcap.com/tidb/stable/pd-control) 逐步放宽副本调度速率限制。
 
-    TiFlash 默认副本调度速度是 30，即在每个 TiFlash 实例上，每分钟大约有 30 个 Region 的 TiFlash 副本被添加或删除。执行以下命令将调整所有 TiFlash 实例的新增副本速度到 60，即原来的 2 倍速度：
+    新副本的默认速率限制为 30，即每分钟每个 TiFlash 实例大约有 30 个 Region 添加或移除 TiFlash 副本。执行以下命令可将所有 TiFlash 实例的限制调整为 60，速度提升一倍：
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 add-peer
     ```
 
-    > 上述命令中，需要将 `v<CLUSTER_VERSION>` 替换为该集群版本，例如 `v8.5.8`，`<PD_ADDRESS>:2379` 替换为任一 PD 节点的地址。替换后样例为：
+    > 在上述命令中，你需要将 `v<CLUSTER_VERSION>` 替换为实际的集群版本，如 `v8.5.3`，将 `<PD_ADDRESS>:2379` 替换为任意 PD 节点的地址。例如：
     >
     > ```shell
-    > tiup ctl:v8.5.8 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
+    > tiup ctl:v8.5.3 pd -u http://192.168.1.4:2379 store limit all engine tiflash 60 add-peer
     > ```
 
-    如果集群中已经有大量的 Region 存在旧的 TiFlash 节点，需要将 Region 从旧的 TiFlash 节点均衡调度到新的 TiFlash 节点，则需要同时修改 `remove-peer` 的限制。
+    如果集群中旧 TiFlash 节点上有大量 Region，PD 需要将它们重新平衡到新 TiFlash 节点。你需要相应调整 `remove-peer` 的限制。
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 60 remove-peer
     ```
 
-    执行完毕后，几分钟内，你将观察到 TiFlash 节点的 CPU 及磁盘 IO 资源占用显著提升，TiFlash 将更快地创建副本。同时，TiKV 节点的 CPU 及磁盘 IO 资源占用也将有所上升。
+    几分钟后，你会观察到 TiFlash 节点的 CPU 和磁盘 IO 资源使用率明显上升，TiFlash 副本创建速度加快。同时，TiKV 节点的 CPU 和磁盘 IO 资源使用率也会提升。
 
-    如果此时 TiKV 及 TiFlash 节点的资源仍有富余，且线上业务的延迟没有显著上升，则可以考虑进一步放开调度速度，例如将副本调度的速度增加为原来的 3 倍：
+    如果此时 TiKV 和 TiFlash 节点仍有剩余资源，且你的在线服务延迟没有明显增加，可以进一步放宽限制，例如将速度提升至原来的三倍：
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 90 add-peer
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 90 remove-peer
     ```
 
-3. 在副本同步完毕后，恢复到默认配置，减少在线业务受到的影响。
+3. TiFlash 复制完成后，恢复默认配置以减少对在线服务的影响。
 
-    执行以下 PD Control 命令可恢复默认的副本调度速度：
+    执行以下 PD Control 命令，恢复副本调度速率的默认限制：
 
     ```shell
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 30 add-peer
     tiup ctl:v<CLUSTER_VERSION> pd -u http://<PD_ADDRESS>:2379 store limit all engine tiflash 30 remove-peer
     ```
 
-    执行以下 SQL 语句可恢复默认的数据快照写入速度：
+    执行以下 SQL 语句，恢复快照写入速率的默认值：
 
     ```sql
     SET CONFIG tikv `server.snap-io-max-bytes-per-sec` = '100MiB';
@@ -190,14 +198,21 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
 
 ## 设置可用区
 
-在配置副本时，如果为了考虑容灾，需要将 TiFlash 的不同数据副本分布到多个数据中心，则可以按如下步骤进行配置：
+<CustomContent platform="tidb-cloud">
 
-1. 在集群配置文件中为 TiFlash 节点指定 label：
+> **Note:**
+>
+> 本节内容不适用于 TiDB Cloud。
+
+</CustomContent>
+
+在配置副本时，如果你需要将 TiFlash 副本分布到多个数据中心以实现容灾，可以按照以下步骤配置可用区：
+
+1. 在集群配置文件中为 TiFlash 节点指定 labels。
 
     ```
     tiflash_servers:
       - host: 172.16.5.81
-        config:
           logger.level: "info"
         learner_config:
           server.labels:
@@ -216,26 +231,24 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
             zone: "z2"
     ```
 
-    注：旧版本中的 `flash.proxy.labels` 配置无法处理可用区名字中的特殊字符，建议使用 `learner_config` 中的 `server.labels` 来进行配置。
+    注意，早期版本中的 `flash.proxy.labels` 配置无法正确处理可用区名称中的特殊字符。建议使用 `learner_config` 下的 `server.labels` 配置可用区名称。
 
-2. 启动集群后，在创建副本时指定满足高可用需求的 TiFlash 副本个数，语法如下：
+2. 启动集群后，指定 TiFlash 副本数量以实现高可用。语法如下：
 
-    
     ```sql
     ALTER TABLE table_name SET TIFLASH REPLICA count;
     ```
 
     例如：
 
-    
     ```sql
     ALTER TABLE t SET TIFLASH REPLICA 2;
     ```
 
-3. 此时 PD 会根据 TiFlash 节点 `learner_config` 的 `server.labels` 以及表的副本数 `count` 进行调度，将表 `t` 的副本分别调度到不同的可用区中，保证可用性。详情请参考[通过拓扑 label 进行副本调度](/schedule-replicas-by-topology-labels.md)。可以通过下列 SQL 来验证某个表 Region 在 TiFlash 节点上的分布：
+3. PD 会根据 TiFlash 节点 `learner_config` 中的 `server.labels` 以及表副本数量（`count`），将表 `t` 的副本调度到不同的可用区，以保证可用性。更多信息可参考 [通过拓扑标签调度副本](https://docs.pingcap.com/tidb/stable/schedule-replicas-by-topology-labels/)。你可以使用以下 SQL 语句，验证某张表的 Region 在 TiFlash 节点上的分布情况：
 
     ```sql
-    -- Non-partitioned table
+    -- 非分区表
     SELECT table_id, p.store_id, address, COUNT(p.region_id) 
     FROM
       information_schema.tikv_region_status r,
@@ -249,7 +262,7 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
       AND JSON_EXTRACT(s.label, '$[0].value') = 'tiflash'
     GROUP BY table_id, p.store_id, address;
 
-    -- Partitioned table
+    -- 分区表
     SELECT table_id, r.partition_name, p.store_id, address, COUNT(p.region_id)
     FROM
       information_schema.tikv_region_status r,
@@ -266,10 +279,14 @@ SELECT TABLE_NAME FROM information_schema.tables where TABLE_SCHEMA = "<db_name>
     ORDER BY table_id, r.partition_name, p.store_id;
     ```
 
-关于使用 label 进行副本调度划分可用区的更多内容，可以参考[通过拓扑 label 进行副本调度](/schedule-replicas-by-topology-labels.md)，[同城多数据中心部署 TiDB](/multi-data-centers-in-one-city-deployment.md) 与[两地三中心部署](/three-data-centers-in-two-cities-deployment.md)。
+<CustomContent platform="tidb">
 
-TiFlash 支持设置不同区域的副本选择策略，具体请参考变量 [`tiflash_replica_read`](/system-variables.md#tiflash_replica_read-从-v730-版本开始引入)。
+关于使用标签调度副本的更多信息，请参见 [通过拓扑标签调度副本](/schedule-replicas-by-topology-labels.md)、[同城多数据中心部署](/multi-data-centers-in-one-city-deployment.md) 和 [两地三中心部署](/three-data-centers-in-two-cities-deployment.md)。
 
-> **注意：**
+TiFlash 支持为不同可用区配置副本选择策略。更多信息请参见 [`tiflash_replica_read`](/system-variables.md#tiflash_replica_read-new-in-v730)。
+
+</CustomContent>
+
+> **Note:**
 >
-> `ALTER TABLE table_name SET TIFLASH REPLICA count LOCATION LABELS location_labels;` 语法中的 `location_labels` 如果涉及多个 label，无法被正确解析并设置 Placement Rule 规则，因此不建议使用 `LOCATION LABELS` 配置 TiFlash 副本。
+> 在语法 `ALTER TABLE table_name SET TIFLASH REPLICA count LOCATION LABELS location_labels;` 中，如果你为 `location_labels` 指定了多个标签，TiDB 无法正确解析并设置 placement rules。因此，不要使用 `LOCATION LABELS` 配置 TiFlash 副本。

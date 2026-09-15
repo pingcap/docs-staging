@@ -1,68 +1,68 @@
 ---
-title: TiFlash 报警规则
-summary: TiFlash 报警规则介绍了 TiFlash 集群的报警规则。包括了TiFlash_schema_error、TiFlash_schema_apply_duration、TiFlash_raft_read_index_duration 和 TiFlash_raft_wait_index_duration 四种报警规则，以及它们的规则描述和处理方法。报警规则主要用于监控TiFlash集群的运行状态，及时发现问题并联系 TiFlash 开发人员进行处理。
+title: TiFlash Alert Rules
+summary: Learn the alert rules of the TiFlash cluster.
 ---
 
-# TiFlash 报警规则
+# TiFlash Alert Rules
 
-本文介绍了 TiFlash 集群的报警规则。
+This document introduces the alert rules of the TiFlash cluster.
 
 ## `TiFlash_schema_error`
 
-- 报警规则：
+- Alert rule:
 
     `increase(tiflash_schema_apply_count{type="failed"}[15m]) > 0`
 
-- 规则描述：
+- Description:
 
-    出现 schema apply 错误时报警。
+    When the schema apply error occurs, an alert is triggered.
 
-- 处理方法：
+- Solution:
 
-    可能是逻辑问题，联系 TiFlash 开发人员。
+    The error might be caused by some wrong logic. [Get support](/support.md) from PingCAP or the community.
 
 ## `TiFlash_schema_apply_duration`
 
-- 报警规则：
+- Alert rule:
 
     `histogram_quantile(0.99, sum(rate(tiflash_schema_apply_duration_seconds_bucket[1m])) BY (le, instance)) > 20`
 
-- 规则描述：
+- Description:
 
-    apply 时间超过 20 秒的概率超过 99% 时报警。
+    When the probability that the apply duration exceeds 20 seconds is over 99%, an alert is triggered.
 
-- 处理方法：
+- Solution:
 
-    可能是 TiFlash 存储引擎内部问题，联系 TiFlash 开发人员。
+    It might be caused by the internal problems of the TiFlash storage engine. [Get support](/support.md) from PingCAP or the community.
 
 ## `TiFlash_raft_read_index_duration`
 
-- 报警规则：
+- Alert rule:
 
     `histogram_quantile(0.99, sum(rate(tiflash_raft_read_index_duration_seconds_bucket[1m])) BY (le, instance)) > 3`
 
-- 规则描述：
+- Description:
 
-    read index 时间超过 3 秒的概率超过 99% 时报警。
+    When the probability that the read index duration exceeds 3 seconds is over 99%, an alert is triggered.
 
-    > **注意：**
+    > **Note:**
     >
-    > read index 请求是发送给 TiKV leader 的 kvproto 请求，TiKV region 的重试，或 Store 的繁忙/网络问题都可能导致 read index 请求时间过长。
+    > `read index` is the kvproto request sent to the TiKV leader. TiKV region retries, busy store, or network problems might lead to long request time of `read index`.
 
-- 处理方法：
+- Solution:
 
-    可能 TiKV 集群分裂/迁移频繁，导致频繁重试，可以查看 TiKV 集群状态确认。
+    The frequent retries might be caused by frequent splitting or migration of the TiKV cluster. You can check the TiKV cluster status to identify the retry reason.
 
 ## `TiFlash_raft_wait_index_duration`
 
-- 报警规则：
+- Alert rule:
 
     `histogram_quantile(0.99, sum(rate(tiflash_raft_wait_index_duration_seconds_bucket[1m])) BY (le, instance)) > 2`
 
-- 规则描述：
+- Description:
 
-    TiFlash 等待 Region Raft Index 的时间超过 2 秒的概率超过 99% 时报警。
+    When the probability that the waiting time for Region Raft Index in TiFlash exceeds 2 seconds is over 99%, an alert is triggered.
 
-- 处理方法：
+- Solution:
 
-    可能 TiKV 和 Proxy 的通信出现问题，联系 TiFlash 开发人员确认。
+    It might be caused by a communication error between TiKV and the proxy. [Get support](/support.md) from PingCAP or the community.

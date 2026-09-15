@@ -1,13 +1,13 @@
 ---
-title: SHOW PRIVILEGES
-summary: TiDB 数据库中 SHOW PRIVILEGES 的使用概况。
+title: SHOW PRIVILEGES | TiDB SQL 语句参考
+summary: 关于在 TiDB 数据库中使用 SHOW PRIVILEGES 的概述。
 ---
 
 # SHOW PRIVILEGES
 
-`SHOW PRIVILEGES` 语句用于显示 TiDB 中可分配权限的列表。此列表为静态列表，不反映当前用户的权限。
+此语句显示 TiDB 中可分配权限的列表。它是一个静态列表，不反映当前用户的权限。
 
-## 语法图
+## 概要
 
 ```ebnf+diagram
 ShowPrivilegesStmt ::=
@@ -20,7 +20,7 @@ ShowPrivilegesStmt ::=
 SHOW PRIVILEGES;
 ```
 
-```sql
+```
 +---------------------------------+---------------------------------------+-------------------------------------------------------+
 | Privilege                       | Context                               | Comment                                               |
 +---------------------------------+---------------------------------------+-------------------------------------------------------+
@@ -80,10 +80,22 @@ SHOW PRIVILEGES;
 
 ## MySQL 兼容性
 
-`SHOW PRIVILEGES` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
+TiDB 中的 `SHOW PRIVILEGES` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，请[报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
 
-## 另请参阅
+## 相关链接
+
+<CustomContent platform="tidb">
 
 * [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
-* [权限管理](/privilege-management.md)
+* [Privilege Management](/privilege-management.md)
 * [`GRANT <privileges>`](/sql-statements/sql-statement-grant-privileges.md)
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+* [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
+* [Privilege Management](https://docs.pingcap.com/tidb/stable/privilege-management)
+* [`GRANT <privileges>`](/sql-statements/sql-statement-grant-privileges.md)
+
+</CustomContent>

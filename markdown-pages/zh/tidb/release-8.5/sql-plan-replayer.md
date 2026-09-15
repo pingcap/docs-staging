@@ -1,45 +1,45 @@
 ---
-title: 使用 PLAN REPLAYER 保存和恢复集群现场信息
-summary: 了解如何使用 PLAN REPLAY 命令保存和恢复集群现场信息。
+title: Use PLAN REPLAYER to Save and Restore the On-Site Information of a Cluster
+summary: Learn how to use PLAN REPLAYER to save and restore the on-site information of a cluster.
 ---
 
-# 使用 PLAN REPLAYER 保存和恢复集群现场信息
+# Use PLAN REPLAYER to Save and Restore the On-Site Information of a Cluster
 
-用户在定位排查 TiDB 集群问题时，经常需要提供系统和查询计划相关的信息。为了帮助用户更方便地获取相关信息，更高效地排查集群问题，TiDB 在 v5.3.0 中引入了 `PLAN REPLAYER` 命令，用于“一键”保存和恢复现场问题的相关信息，提升查询计划问题诊断的效率，同时方便将问题归档管理。
+When you locate and troubleshoot the issues of a TiDB cluster, you often need to provide information on the system and the execution plan. To help you get the information and troubleshoot cluster issues in a more convenient and efficient way, the `PLAN REPLAYER` command is introduced in TiDB v5.3.0. This command enables you to easily save and restore the on-site information of a cluster, improves the efficiency of troubleshooting, and helps you more easily archive the issue for management.
 
-`PLAN REPLAYER` 主要功能如下：
+The features of `PLAN REPLAYER` are as follows:
 
-- 导出排查现场 TiDB 集群的相关信息，导出为 ZIP 格式的文件用于保存。
-- 在任意 TiDB 集群上导入另一 TiDB 集群现场信息的 ZIP 文件。
+- Exports the information of a TiDB cluster at an on-site troubleshooting to a ZIP-formatted file for storage.
+- Imports into a cluster the ZIP-formatted file exported from another TiDB cluster. This file contains the information of the latter TiDB cluster at an on-site troubleshooting.
 
-## 使用 `PLAN REPLAYER` 导出集群信息
+## Use `PLAN REPLAYER` to export cluster information
 
-你可以使用 `PLAN REPLAYER` 来保存 TiDB 集群的现场信息。导出接口如下：
+You can use `PLAN REPLAYER` to save the on-site information of a TiDB cluster. The export interface is as follows:
 
 ```sql
 PLAN REPLAYER DUMP [WITH STATS AS OF TIMESTAMP expression] EXPLAIN [ANALYZE] sql-statement;
 ```
 
-TiDB 根据 `sql-statement` 整理出以下集群现场信息：
+Based on `sql-statement`, TiDB sorts out and exports the following on-site information:
 
-- TiDB 版本信息
-- TiDB 配置信息
-- TiDB Session 系统变量
-- TiDB 执行计划绑定信息（SQL Binding）
-- `sql-statement` 中所包含的表结构
-- `sql-statement` 中所包含表的统计信息
-- `EXPLAIN [ANALYZE] sql-statement` 的结果
-- 优化器进行查询优化的一些内部步骤的记录
+- TiDB version
+- TiDB configuration
+- TiDB session variables
+- TiDB SQL bindings
+- The table schema in `sql-statement`
+- The statistics of the table in `sql-statement`
+- The result of `EXPLAIN [ANALYZE] sql-statement`
+- Some internal procedures of query optimization
 
-当[启用历史统计信息](/system-variables.md#tidb_enable_historical_stats)时，可以在 `PLAN REPLAYER` 语句中指定时间来获取对应时间的统计信息。该语法支持直接指定日期时间或指定时间戳。此时，TiDB 会查找指定时间之前的历史统计信息，并导出其中最新的一份。
+If historical statistics are [enabled](/system-variables.md#tidb_enable_historical_stats), you can specify a time in the `PLAN REPLAYER` statement to get the historical statistics for the corresponding time. You can directly specify a time and date or specify a timestamp. TiDB looks for the historical statistics before the specified time and exports the latest one among them.
 
-如果没有找到指定时间之前的历史统计信息，TiDB 会直接导出最新统计信息（和未指定时间时的行为一致），并且在导出的 `ZIP` 文件中的 `errors.txt` 中输出错误信息。
+If there are no historical statistics before the specified time, TiDB exports the latest statistics, which is consistent with the behavior when no time is specified. In addition, TiDB prints the error messages in the `errors.txt` file within the exported `ZIP` file.
 
-> **注意：**
+> **Note:**
 >
-> `PLAN REPLAYER` **不会**导出表中数据
+> `PLAN REPLAYER` **DOES NOT** export any table data.
 
-### `PLAN REPLAYER` 导出示例
+### Examples of exporting cluster information
 
 
 ```sql
@@ -53,11 +53,11 @@ plan replayer dump with stats as of timestamp '2023-07-17 12:00:00' explain sele
 plan replayer dump with stats as of timestamp '442012134592479233' explain select * from t;
 ```
 
-`PLAN REPLAYER DUMP` 会将以上信息打包整理成 `ZIP` 文件，并返回文件标识作为执行结果。
+`PLAN REPLAYER DUMP` packages the table information above into a `ZIP` file and returns the file identifier as the execution result.
 
-> **注意：**
+> **Note:**
 >
-> `ZIP` 文件最多会在 TiDB 集群中保存一个小时，超时后 TiDB 会将其删除。
+> The `ZIP` file is stored in a TiDB cluster for at most one hour. After one hour, TiDB will delete it.
 
 ```sql
 MySQL [test]> plan replayer dump explain select * from t;
@@ -72,13 +72,14 @@ MySQL [test]> plan replayer dump explain select * from t;
 1 row in set (0.015 sec)
 ```
 
-你同样可以通过 [`tidb_last_plan_replayer_token`](/system-variables.md#tidb_last_plan_replayer_token-从-v630-版本开始引入) 这个会话变量来获取上一次 `PLAN REPLAYER dump` 执行的结果。
+Alternatively, you can use the session variable [`tidb_last_plan_replayer_token`](/system-variables.md#tidb_last_plan_replayer_token-new-in-v630) to obtain the result of the last `PLAN REPLAYER DUMP` execution.
 
 ```sql
 SELECT @@tidb_last_plan_replayer_token;
 ```
 
 ```sql
++-----------------------------------------------------------+
 | @@tidb_last_plan_replayer_token                           |
 +-----------------------------------------------------------+
 | replayer_Fdamsm3C7ZiPJ-LQqgVjkA==_1663304195885090000.zip |
@@ -86,10 +87,14 @@ SELECT @@tidb_last_plan_replayer_token;
 1 row in set (0.00 sec)
 ```
 
-对于多条 SQL 的情况，你可以通过文件的方式来获取 plan replayer dump 的结果，多条 SQL 语句在文件中以 `;` 进行分隔。
+When there are multiple SQL statements, you can obtain the result of the `PLAN REPLAYER DUMP` execution using a file. The results of multiple SQL statements are separated by `;` in this file.
 
 ```sql
 plan replayer dump explain 'sqls.txt';
+```
+
+```sql
+Query OK, 0 rows affected (0.03 sec)
 ```
 
 ```sql
@@ -105,53 +110,53 @@ SELECT @@tidb_last_plan_replayer_token;
 1 row in set (0.00 sec)
 ```
 
-因为 MySQL Client 无法下载文件，所以需要通过 TiDB HTTP 接口和文件标识下载文件：
+Because the file cannot be downloaded on MySQL Client, you need to use the TiDB HTTP interface and the file identifier to download the file:
 
 
 ```shell
 http://${tidb-server-ip}:${tidb-server-status-port}/plan_replayer/dump/${file_token}
 ```
 
-其中，`${tidb-server-ip}:${tidb-server-status-port}` 是集群中任意 TiDB server 的地址。示例如下：
+`${tidb-server-ip}:${tidb-server-status-port}` is the address of any TiDB server in the cluster. For example:
 
 
 ```shell
 curl http://127.0.0.1:10080/plan_replayer/dump/replayer_JOGvpu4t7dssySqJfTtS4A==_1635750890568691080.zip > plan_replayer.zip
 ```
 
-## 使用 `PLAN REPLAYER` 导入集群信息
+## Use `PLAN REPLAYER` to import cluster information
 
-> **警告：**
+> **Warning:**
 >
-> `PLAN REPLAYER` 在一个 TiDB 集群上导入另一集群的现场信息，会修改导入集群的 TiDB Session 系统变量、执行计划绑定信息、表结构和统计信息。
+> When you import the on-site information of a TiDB cluster to another cluster, the TiDB session variables, SQL bindings, table schemas and statistics of the latter cluster are modified.
 
-有 `PLAN REPLAYER` 导出的 `ZIP` 文件后，用户便可以通过 `PLAN REPLAYER` 导入接口在任意 TiDB 集群上恢复另一集群地现场信息。语法如下：
+With an existing `ZIP` file exported using `PLAN REPLAYER`, you can use the `PLAN REPLAYER` import interface to restore the on-site information of a cluster to any other TiDB cluster. The syntax is as follows:
 
 
 ```sql
 PLAN REPLAYER LOAD 'file_name';
 ```
 
-以上语句中，`file_name` 为要导入的 `ZIP` 文件名。
+In the statement above, `file_name` is the name of the `ZIP` file to be imported.
 
-示例如下：
+For example:
 
 
 ```sql
 PLAN REPLAYER LOAD 'plan_replayer.zip';
 ```
 
-> **注意：**
+> **Note:**
 >
-> 你需要禁止 `auto analyze`，否则导入的统计信息会被 `analyze` 覆盖。
+> You need to disable auto analyze. Otherwise the imported statistics will be overwritten by analyze.
 
-你可以通过将 [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-从-v610-版本开始引入) 系统变量设置为 `OFF` 来禁用 `auto analyze`。
+You can disable auto analyze by setting the [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610) system variable to `OFF`:
 
 ```sql
 set @@global.tidb_enable_auto_analyze = OFF;
 ```
 
-导入完毕后，该 TiDB 集群就载入了所需要的表结构、统计信息等其他影响构造 Plan 所需要的信息。你可以通过以下方式查看执行计划以及验证统计信息:
+After the cluster information is imported, the TiDB cluster is loaded with the required table schema, statistics and other information that affects the construction of the execution plan. You can view the execution plan and verify statistics in the following way:
 
 ```sql
 mysql> desc t;
@@ -182,41 +187,45 @@ mysql> show stats_meta;
 1 row in set (0.04 sec)
 ```
 
-加载并还原所需现场后，即可在该现场诊断和改进执行计划。
+After the scene is loaded and restored, you can diagnose and improve the execution plan for the cluster.
 
-## 使用 `PLAN REPLAYER CAPTURE` 抓取目标计划
+> **Note:**
+>
+> If you use the `mysql` command-line client and encounter `ERROR 2068 (HY000): LOAD DATA LOCAL INFILE file request rejected due to restrictions on access.`, you can add `--local-infile=true` in the connection string.
 
-在用户定位 TiDB 执行计划的部分场景中，目标 SQL 语句与目标计划可能仅在查询中偶尔出现，无法使用 `PLAN REPLAYER` 直接抓取。此时你可以使用 `PLAN REPLAYER CAPTURE` 来帮助定向抓取目标 SQL 语句与目标计划的优化器信息。
+## Use `PLAN REPLAYER CAPTURE` to capture target plans
 
-`PLAN REPLAYER CAPTURE` 主要功能如下：
+When you locate the execution plan of TiDB in some scenarios, the target SQL statement and the target execution plan might only appear occasionally in the query, so you cannot directly capture the statement and the plan using `PLAN REPLAYER`. In such cases, you can use `PLAN REPLAYER CAPTURE` to help you capture the optimizer information of the target SQL statement and the target plan.
 
-- 在 TiDB 集群内部提前注册目标 SQL 语句与执行计划的 Digest，并开始匹配目标查询。
-- 当目标查询匹配成功时，直接抓取其优化器相关信息，导出为 ZIP 格式的文件用于保存。
-- 针对匹配到的每组 SQL 和执行计划，信息只抓取一次。
-- 通过系统表显示正在进行的匹配任务，以及生成的文件。
-- 定时清理历史文件。
+`PLAN REPLAYER CAPTURE` has the following main features:
 
-### 开启 `PLAN REPLAYER CAPTURE`
+- Registers the target SQL statement and the digest of the target execution plan in the TiDB cluster in advance, and starts matching the target query.
+- When the target query is matched successfully, directly captures its optimizer-related information and exports it as a ZIP file.
+- For each matched SQL and execution plan, the information is only captured once.
+- Displays the ongoing matching tasks and generated files through the system table.
+- Periodically cleans up historical files.
 
-`PLAN REPLAYER CAPTURE` 功能通过系统变量 [`tidb_enable_plan_replayer_capture`](/system-variables.md#tidb_enable_plan_replayer_capture) 控制。要开启 `PLAN REPLAYER CAPTURE`，将变量值设为 `ON`。
+### Enable `PLAN REPLAYER CAPTURE`
 
-### 使用 `PLAN REPLAYER CAPTURE` 功能
+`PLAN REPLAYER CAPTURE` is controlled by the system variable [`tidb_enable_plan_replayer_capture`](/system-variables.md#tidb_enable_plan_replayer_capture). To enable `PLAN REPLAYER CAPTURE`, set the value of the system variable to `ON`.
 
-你可以通过以下方式向 TiDB 集群注册目标 SQL 语句和计划的 Digest:
+### Use `PLAN REPLAYER CAPTURE`
+
+You can register the digest of the target SQL statement and execution plan in the TiDB cluster using the following statement:
 
 ```sql
 PLAN REPLAYER CAPTURE 'sql_digest' 'plan_digest';
 ```
 
-当你的目标 SQL 语句对应多种执行计划，且你想抓取所有执行计划时，你可以通过以下 SQL 语句一键注册:
+If the target SQL statement has multiple execution plans and you want to capture all execution plans, you can register all the execution plans at once using the following statement:
 
 ```sql
 PLAN REPLAYER CAPTURE 'sql_digest' '*';
 ```
 
-### 查看 `PLAN REPLAYER CAPTURE` 抓取任务
+### View the capture tasks
 
-你可以通过以下方式查看集群中目前正在工作的 `PLAN REPLAYER CAPTURE` 的抓取任务:
+You can view the ongoing capture tasks of `PLAN REPLAYER CAPTURE` in the TiDB cluster using the following statement:
 
 ```sql
 mysql> PLAN REPLAYER CAPTURE 'example_sql' 'example_plan';
@@ -231,9 +240,9 @@ mysql> SELECT * FROM mysql.plan_replayer_task;
 1 row in set (0.01 sec)
 ```
 
-### 查看 `PLAN REPLAYER CAPTURE` 抓取结果
+### View the capture results
 
-当 `PLAN REPLAYER CAPTURE` 成功抓取到结果后，可以通过以下 SQL 语句查看用于下载的文件标识：
+After `PLAN REPLAYER CAPTURE` successfully captures the result, you can view the token used for file download using the following SQL statement:
 
 ```sql
 mysql> SELECT * FROM mysql.plan_replayer_status;
@@ -247,15 +256,15 @@ mysql> SELECT * FROM mysql.plan_replayer_status;
 3 rows in set (0.00 sec)
 ```
 
-下载 `PLAN REPLAYER CAPTURE` 的文件方法与 `PLAN REPLAYER` 相同，请参考 [`PLAN REPLAYER` 导出示例](#plan-replayer-导出示例)。
+The method of downloading the file of `PLAN REPLAYER CAPTURE` is the same as that of `PLAN REPLAYER`. For details, see [Examples of exporting cluster information](#examples-of-exporting-cluster-information).
 
-> **注意：**
+> **Note:**
 >
-> `PLAN REPLAYER CAPTURE` 的结果文件最多会在 TiDB 集群中保存一周，超时后 TiDB 会将其删除。
+> The result file of `PLAN REPLAYER CAPTURE` is kept in the TiDB cluster for up to one week. After one week, TiDB deletes the file.
 
-### 移除 `PLAN REPLAYER CAPTURE` 抓取任务
+### Remove the capture tasks
 
-不再需要某个 `PLAN REPLAYER CAPTURE` 抓取任务后，你可以通过 `PLAN REPLAYER CAPTURE REMOVE` 语句将其移除。示例如下：
+If a capture task is no longer needed, you can remove it using the `PLAN REPLAYER CAPTURE REMOVE` statement. For example:
 
 ```sql
 mysql> PLAN REPLAYER CAPTURE '077a87a576e42360c95530ccdac7a1771c4efba17619e26be50a4cfd967204a0' '4838af52c1e07fc8694761ad193d16a689b2128bc5ced9d13beb31ae27b370ce';
@@ -276,14 +285,14 @@ mysql> SELECT * FROM mysql.plan_replayer_task;
 Empty set (0.01 sec)
 ```
 
-## 使用 `PLAN REPLAYER CONTINUOUS CAPTURE`
+## Use `PLAN REPLAYER CONTINUOUS CAPTURE`
 
-开启 `PLAN REPLAYER CONTINUOUS CAPTURE` 功能后，TiDB 将以 SQL DIGEST 和 PLAN DIGEST 为维度异步地将业务 SQL 语句以 `PLAN REPLAYER` 的方式进行记录，对于相同 DIGEST 的 SQL 语句与执行计划，`PLAN REPLAYER CONTINUOUS CAPTURE` 不会重复记录。
+After `PLAN REPLAYER CONTINUOUS CAPTURE` is enabled, TiDB asynchronously records the applications' SQL statements with the `PLAN REPLAYER` method according to their `SQL DIGEST` and `PLAN DIGEST`. For SQL statements and execution plans that share the same DIGEST, `PLAN REPLAYER CONTINUOUS CAPTURE` does not record them repeatedly.
 
-### 开启 `PLAN REPLAYER CONTINUOUS CAPTURE`
+### Enable `PLAN REPLAYER CONTINUOUS CAPTURE`
 
-`PLAN REPLAYER CONTINUOUS CAPTURE` 功能通过系统变量 [`tidb_enable_plan_replayer_continuous_capture`](/system-variables.md#tidb_enable_plan_replayer_continuous_capture-从-v700-版本开始引入) 控制。要开启 `PLAN REPLAYER CONTINUOUS CAPTURE`，将变量值设为 `ON`。
+`PLAN REPLAYER CONTINUOUS CAPTURE` is controlled by the system variable [`tidb_enable_plan_replayer_continuous_capture`](/system-variables.md#tidb_enable_plan_replayer_continuous_capture-new-in-v700). To enable `PLAN REPLAYER CONTINUOUS CAPTURE`, set the value of the system variable to `ON`.
 
-### 查看 `PLAN REPLAYER CONTINUOUS CAPTURE` 抓取结果
+### View the capture results
 
-查看 `PLAN REPLAYER CONTINUOUS CAPTURE` 抓取结果的方法同[查看 `PLAN REPLAYER CAPTURE` 抓取结果](#查看-plan-replayer-capture-抓取结果)。
+The method of viewing the capture results of `PLAN REPLAYER CONTINUOUS CAPTURE` is the same as that of [Viewing the capture results of `PLAN REPLAYER CAPTURE`](#view-the-capture-results).

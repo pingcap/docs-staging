@@ -1,28 +1,28 @@
 ---
 title: tiup dm help
-summary: tiup-dm 提供丰富的命令行界面帮助信息，可通过 `help` 命令或 `--help` 参数获取。`tiup dm help <command>` 等同于 `tiup dm <command> --help`。语法：`tiup dm help [command] [flags]`。`[command]` 用于指定要查看的命令帮助信息，若不指定，则查看 tiup-dm 自身的帮助信息。使用 `-h, --help` 输出帮助信息，数据类型为 `BOOLEAN`，默认关闭。输出为 `[command]` 或 tiup-dm 的帮助信息。
+summary: The tiup-dm command-line interface provides a wealth of help information, which can be accessed using the `help` command or the `--help` option. The syntax for accessing help is `tiup dm help [command] [flags]`, where `[command]` specifies the command for which help information is needed. The `-h` or `--help` option prints the help information. The output is the help information for the specified command or `tiup-dm`.
 ---
 
 # tiup dm help
 
-tiup-dm 在命令行界面为用户提供了丰富的帮助信息，这些帮助信息可以通过 `help` 命令或者 `--help` 参数获得。基本上，`tiup dm help <command>` 等价于 `tiup dm <command> --help`。
+tiup-dm command-line interface provides users with a wealth of help information. You can view it via the `help` command or the `--help` option. Basically, `tiup dm help <command>` is equivalent to `tiup dm <command> --help`.
 
-## 语法
+## Syntax
 
 ```shell
 tiup dm help [command] [flags]
 ```
 
-`[command]` 用于指定要查看哪个命令的帮助信息，若不指定，则查看 tiup-dm 自身的帮助信息。
+`[command]` is used to specify the help information of which command that users need to view. If it is not specified, the help information of `tiup-dm` is viewed.
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints the help information.
+- Data type: `BOOLEAN`
+- Default: false
 
-## 输出
+## Output
 
-`[command]` 或 tiup-dm 的帮助信息。
+The help information of `[command]` or `tiup-dm`.
 
-[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)
+[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)

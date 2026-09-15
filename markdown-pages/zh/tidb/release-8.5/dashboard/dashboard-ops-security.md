@@ -1,101 +1,98 @@
 ---
-title: 提高 TiDB Dashboard 安全性
-summary: TiDB Dashboard 需要提高安全性。建议为 `root` 用户设置强密码或禁用 `root` 账户，并为 TiDB Dashboard 创建最小权限用户。使用防火墙阻止不可信访问，配置反向代理仅代理 TiDB Dashboard，并为反向代理开启 TLS。其他建议的安全措施包括为组件间通信和客户端服务端间通信开启加密传输。
+title: Secure TiDB Dashboard
+summary: TiDB Dashboard requires enhanced security measures, including setting a strong password for the root user, creating a least-privileged user, and using a firewall to block untrusted access. It is also recommended to use a reverse proxy and enable TLS for further security.
 ---
 
-# 提高 TiDB Dashboard 安全性
+# Secure TiDB Dashboard
 
-尽管访问 TiDB Dashboard 需要登录，但它被设计为默认供可信的用户实体访问。当你希望将 TiDB Dashboard 提供给外部网络用户或不可信用户访问时，需要注意采取以下措施以避免安全漏洞。
+Although you need to sign into TiDB Dashboard before accessing it, TiDB Dashboard is designed to be accessed by trusted user entities by default. When you want to provide TiDB Dashboard to external network users or untrusted users for access, take the following measures to avoid security vulnerabilities.
 
-## 提高 TiDB 用户安全性
+## Enhance security of TiDB users
 
-### 为 `root` 用户设置强密码
+### Set a strong password for the TiDB `root` user
 
-TiDB Dashboard 的账号体系与 TiDB SQL 用户一致。默认部署情况下，TiDB 的 `root` 用户没有密码，因而访问 TiDB Dashboard 也不需要密码验证。这将会给恶意访问者极大的集群权限，包括执行特权 SQL 等。
+The account system of TiDB Dashboard is consistent with that of TiDB SQL users. By default, TiDB's `root` user has no password, so accessing TiDB Dashboard does not require password authentication, which will give the malicious visitor high privileges, including executing privileged SQL statements.
 
-建议的措施：
+It is recommended that you set a strong password for the TiDB `root` user. See [TiDB User Account Management](/user-account-management.md) for details. Alternatively, you can disable the TiDB `root` user.
 
-- 为 TiDB 的 `root` 用户设置一个强密码（请参见 [TiDB 用户账户管理](/user-account-management.md)了解详情），或禁用 `root` 账户。
+### Create a least-privileged user for TiDB Dashboard
 
-### 为 TiDB Dashboard 创建最小权限用户
+The account system of TiDB Dashboard is consistent with that of TiDB SQL. Users accessing TiDB Dashboard are authenticated and authorized based on TiDB SQL user's privileges. Therefore, TiDB Dashboard requires limited privileges, or merely the read-only privilege. You can configure users to access TiDB Dashboard based on the principle of least privilege, thus avoiding access of high-privileged users.
 
-TiDB Dashboard 的账号体系与 TiDB SQL 用户一致，并基于 TiDB SQL 用户的权限进行 TiDB Dashboard 授权验证。TiDB Dashboard 所需的权限较少，甚至可以只有只读权限。可以基于最小权限原则配置合适的用户访问 TiDB Dashboard，减少高权限用户的使用场景。
+It is recommended that you create a least-privileged SQL user to access and sign in to TiDB Dashboard. This avoids access of high-privileged users and improves security. See [TiDB Dashboard User Management](/dashboard/dashboard-user.md) for details.
 
-建议的措施：
+## Use a firewall to block untrusted access
 
-- 为访问 TiDB Dashboard 创建一个最小权限的 SQL 用户，并用该用户登录 TiDB Dashboard，避免使用高权限用户，提升安全性。请参见 [TiDB Dashboard 用户管理](/dashboard/dashboard-user.md)了解详情。
-
-## 使用防火墙阻止不可信访问
-
-> **注意：**
+> **Note:**
 >
-> TiDB v6.5.0 且 TiDB Operator v1.4.0 之后，在 Kubernetes 上支持将 TiDB Dashboard 作为独立的 Pod 部署。在 TiDB Operator 环境，可直接访问该 Pod 的 IP 来打开 TiDB Dashboard，该端口不与其他 PD 内部特权接口关联，对外提供该端口不需要额外的防火墙操作。具体信息，参考 [TiDB Operator 部署独立的 TiDB Dashboard](https://docs.pingcap.com/zh/tidb-in-kubernetes/v1.6/get-started#部署独立的-tidb-dashboard)。
+> TiDB v6.5.0 (and later) and TiDB Operator v1.4.0 (and later) support deploying TiDB Dashboard as an independent Pod on Kubernetes. Using TiDB Operator, you can access the IP address of this Pod to start TiDB Dashboard. This port does not communicate with other privileged interfaces of PD and no extra firewall is required if provided externally. For details, see [Deploy TiDB Dashboard independently in TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/dev/get-started#deploy-tidb-dashboard-independently).
 
-TiDB Dashboard 通过 PD Client 端口提供服务，默认为 <http://IP:2379/dashboard/>。尽管 TiDB Dashboard 需要验证身份，但 PD Client 端口上承载的其他 PD 内部特权接口不需要验证身份，且能进行特权操作，例如 <http://IP:2379/pd/api/v1/members>。因此，将 PD Client 端口直接暴露给外部网络具有极大的风险。
+TiDB Dashboard provides services through the PD client port, which defaults to <http://IP:2379/dashboard/>. Although TiDB Dashboard requires identity authentication, other privileged interfaces (such as <http://IP:2379/pd/api/v1/members>) in PD carried on the PD client port do not require identity authentication and can perform privileged operations. Therefore, exposing the PD client port directly to the external network is extremely risky.
 
-建议的措施：
+It is recommended that you take the following measures:
 
-1. 使用防火墙禁止组件外部网络或不可信网络访问**任何** PD 组件的 Client 端口。
++ Use a firewall to prohibit a component from accessing **any** client port of the PD component via the external network or untrusted network.
 
-   注意，TiDB、TiKV 等组件需要通过 PD Client 端口与 PD 组件进行通信，因此请勿对组件内部网络阻止访问，这将导致集群不可用。
+    > **Note:**
+    >
+    > TiDB, TiKV, and other components need to communicate with the PD component through the PD client port, so do not block access to the internal network between components. Otherwise, the cluster will become unavailable.
 
-2. 参见[通过反向代理使用 TiDB Dashboard](/dashboard/dashboard-ops-reverse-proxy.md) 了解如何配置反向代理将 TiDB Dashboard 服务在另一个端口上安全地提供给外部网络。
++ See [Use TiDB Dashboard behind a Reverse Proxy](/dashboard/dashboard-ops-reverse-proxy.md) to learn how to configure the reverse proxy to safely provide the TiDB Dashboard service on another port to the external network.
 
-### 如何在多 PD 实例部署时开放 TiDB Dashboard 端口访问
+### How to open access to TiDB Dashboard port when deploying multiple PD instances
 
-> **警告：**
+> **Warning:**
 >
-> 本章节描述了一个不安全的访问方案，仅供测试环境使用。在生产环境中，不要使用本方案。请参见本文的其余章节。
+> This section describes an unsafe access solution, which is for the test environment only. **DO NOT** use this solution in the production environment.
 
-在测试环境中，您可能需要配置防火墙开放 TiDB Dashboard 端口供外部访问。
+In the test environment, you might need to configure the firewall to open the TiDB Dashboard port for external access.
 
-当部署了多个 PD 实例时，其中仅有一个 PD 实例会真正运行 TiDB Dashboard，访问其他 PD 实例时会发生浏览器重定向，因此需要确保防火墙配置了正确的 IP 地址。关于该机制的详情，可参阅 [TiDB Dashboard 多 PD 实例部署](/dashboard/dashboard-ops-deploy.md#多-pd-实例部署)章节。
+When multiple PD instances are deployed, only one of the PD instances actually runs TiDB Dashboard, and browser redirection occurs when you access other PD instances. Therefore, you need to ensure that the firewall is configured with the correct IP address. For details of this mechanism, see [Deployment with multiple PD instances](/dashboard/dashboard-ops-deploy.md#deployment-with-multiple-pd-instances).
 
-使用 TiUP 部署工具时，可使用以下命令查看实际运行 TiDB Dashboard 的 PD 实例地址（将 `CLUSTER_NAME` 替换为集群名称）：
+When using the TiUP deployment tool, you can view the address of the PD instance that actually runs TiDB Dashboard by running the following command (replace `CLUSTER_NAME` with the cluster name):
+
 
 ```bash
 tiup cluster display CLUSTER_NAME --dashboard
 ```
 
-输出即为实际 TiDB Dashboard 地址。
+The output is the actual TiDB Dashboard address.
 
-> **注意：**
+> **Note:**
 >
-> 该功能在 TiUP Cluster v1.0.3 或更高版本部署工具中提供。
+> This feature is available only in the later version of the `tiup cluster` deployment tool (v1.0.3 or later).
 >
 > <details>
-> <summary>升级 TiUP Cluster 步骤</summary>
+> <summary>Upgrade TiUP Cluster</summary>
 >
-> ```shell
+> ```bash
 > tiup update --self
 > tiup update cluster --force
 > ```
 >
 > </details>
 
-以下是一个样例输出：
+The following is a sample output:
 
-```
+```bash
 http://192.168.0.123:2379/dashboard/
 ```
 
-在这个样例中，需要为防火墙配置开放 IP `192.168.0.123` 的 `2379` 端口入站访问，并通过 <http://192.168.0.123:2379/dashboard/> 访问 TiDB Dashboard。
+In this example, the firewall needs to be configured with inbound access for the `2379` port of the `192.168.0.123` open IP, and the TiDB Dashboard is accessed via <http://192.168.0.123:2379/dashboard/>.
 
-## 反向代理仅代理 TiDB Dashboard
+## Reverse proxy only for TiDB Dashboard
 
-如前文所述，PD Client 端口下提供的服务不仅有 TiDB Dashboard（位于 <http://IP:2379/dashboard/>），还有其他 PD 内部特权接口（如 <http://IP:2379/pd/api/v1/members>）。因此，使用反向代理将 TiDB Dashboard 提供给外部网络时，应当确保仅提供 `/dashboard` 前缀下的服务，而非该端口下所有服务，避免外部网络能通过反向代理访问到 PD 内部特权接口。
+As mentioned in [Use a firewall to block untrusted access](#use-a-firewall-to-block-untrusted access), the services provided under the PD client port include not only TiDB Dashboard (located at <http://IP:2379/dashboard/>), but also other privileged interfaces in PD (such as <http://IP:2379/pd/api/v1/members>). Therefore, when using a reverse proxy to provide TiDB Dashboard to the external network, ensure that the services **ONLY** with the `/dashboard` prefix are provided (**NOT** all services under the port) to avoid that the external network can access the privileged interface in PD through the reverse proxy.
 
-建议的措施：
+It is recommended that you see [Use TiDB Dashboard behind a Reverse Proxy](/dashboard/dashboard-ops-reverse-proxy.md) to learn a safe and recommended reverse proxy configuration.
 
-- 参见[通过反向代理使用 TiDB Dashboard](/dashboard/dashboard-ops-reverse-proxy.md) 了解安全且推荐的反向代理配置。
+## Enable TLS for reverse proxy
 
-## 为反向代理开启 TLS
+To further enhance the security of the transport layer, you can enable TLS for reverse proxy, and even introduce mTLS to authenticate user certificates.
 
-为了进一步加强传输层安全性，可以为反向代理开启 TLS，甚至可以引入 mTLS 实现访问用户的证书验证。
+See [Configuring HTTPS servers](http://nginx.org/en/docs/http/configuring_https_servers.html) and [HAProxy SSL Termination](https://www.haproxy.com/blog/haproxy-ssl-termination/) for more details.
 
-请参阅 [NGINX 文档](http://nginx.org/en/docs/http/configuring_https_servers.html)或 [HAProxy 文档](https://www.haproxy.com/blog/haproxy-ssl-termination/)了解如何为它们开启 TLS。
+## Other recommended safety measures
 
-## 其他建议的安全措施
-
-- [为 TiDB 组件间通信开启加密传输](/enable-tls-between-components.md)
-- [为 TiDB 客户端服务端间通信开启加密传输](/enable-tls-between-clients-and-servers.md)
+- [Enable TLS Authentication and Encrypt the Stored Data](/enable-tls-between-components.md)
+- [Enable TLS Between TiDB Clients and Servers](/enable-tls-between-clients-and-servers.md)

@@ -1,215 +1,185 @@
 ---
-title: sync-diff-inspector 用户文档
-summary: sync-diff-inspector 是一个用于校验 MySQL/TiDB 中数据一致性的工具，提供修复数据的功能。它支持对比表结构和数据，生成用于修复数据的 SQL 语句。需要注意的是，在校验数据时会消耗一定的服务器资源，需要避免在业务高峰期间校验。生成的 SQL 文件仅作为修复数据的参考，需要确认后再执行这些 SQL 修复数据。
+title: sync-diff-inspector User Guide
+summary: Use sync-diff-inspector to compare data and repair inconsistent data.
 ---
 
-# sync-diff-inspector 用户文档
+# sync-diff-inspector User Guide
 
-[sync-diff-inspector](https://github.com/pingcap/tiflow/tree/master/sync_diff_inspector) 是一个用于校验兼容 MySQL 的数据库（包括 MySQL 和 TiDB）之间数据一致性的工具。例如，它可以比较 MySQL 和 TiDB 中的数据、MySQL 和 MySQL 中的数据，或者 TiDB 和 TiDB 中的数据。此外，在少量数据不一致的场景下，你还可以使用该工具修复数据。
+[sync-diff-inspector](https://github.com/pingcap/tidb-tools/tree/master/sync_diff_inspector) is a tool used to compare data stored in the databases with the MySQL protocol. For example, it can compare the data in MySQL with that in TiDB, the data in MySQL with that in MySQL, or the data in TiDB with that in TiDB. In addition, you can also use this tool to repair data in the scenario where a small amount of data is inconsistent.
 
-本文介绍 sync-diff-inspector 的主要功能，并说明如何配置以及使用该工具。
+This guide introduces the key features of sync-diff-inspector and describes how to configure and use this tool. To download sync-diff-inspector, use one of the following methods:
 
-## 主要功能
++ Binary package. The sync-diff-inspector binary package is included in the TiDB Toolkit. To download the TiDB Toolkit, see [Download TiDB Tools](/download-ecosystem-tools.md).
++ Docker image. Execute the following command to download:
 
-* 对比表结构和数据
-* 如果数据不一致，则生成用于修复数据的 SQL 语句
-* 支持[不同库名或表名的数据校验](/sync-diff-inspector/route-diff.md)
-* 支持[分库分表场景下的数据校验](/sync-diff-inspector/shard-diff.md)
-* 支持 [TiDB 主从集群的数据校验](/ticdc/ticdc-upstream-downstream-check.md)
-* 支持[从 TiDB DM 拉取配置的数据校验](/sync-diff-inspector/dm-diff.md)
-
-## 安装 sync-diff-inspector
-
-sync-diff-inspector 的安装方法取决于 TiDB 版本。
-
-对于 TiDB v8.5.6 及以上版本，你可通过以下方式下载 sync-diff-inspector：
-
-+ 使用 TiUP 安装：
-
-    ```shell
-    tiup install sync-diff-inspector
-    ```
-
-+ 下载 Binary 包。sync-diff-inspector 的安装包位于 TiDB 离线工具包中。下载方式，请参考 [TiDB 工具下载](/download-ecosystem-tools.md)。
-
-+ 使用 Docker 镜像。执行以下命令进行下载：
-
-    ```shell
-    docker pull pingcap/sync-diff-inspector:latest
-    ```
-
-对于 TiDB v8.5.6 之前版本，你可通过以下方式下载 sync-diff-inspector：
-
-+ 下载来自 [`tidb-tools`](https://github.com/pingcap/tidb-tools) 仓库的 Binary 包。sync-diff-inspector 的安装包位于 TiDB 离线工具包中。下载方式，请参考 [TiDB 工具下载](/download-ecosystem-tools.md)。
-
-+ 使用 Docker 镜像。执行以下命令进行下载：
-
+    
     ```shell
     docker pull pingcap/tidb-tools:latest
     ```
 
-## sync-diff-inspector 的使用限制
+## Key features
 
-* 对于 MySQL 和 TiDB 之间的数据同步不支持在线校验，需要保证上下游校验的表中没有数据写入，或者保证某个范围内的数据不再变更，通过配置 `range` 来校验这个范围内的数据。
+* Compare the table schema and data
+* Generate the SQL statements used to repair data if the data inconsistency exists
+* Support [data check for tables with different schema or table names](/sync-diff-inspector/route-diff.md)
+* Support [data check in the sharding scenario](/sync-diff-inspector/shard-diff.md)
+* Support [data check for TiDB upstream-downstream clusters](/ticdc/ticdc-upstream-downstream-check.md)
+* Support [data check in the DM replication scenario](/sync-diff-inspector/dm-diff.md)
 
-* 数据类型支持说明：
+## Restrictions of sync-diff-inspector
 
-    * **FLOAT/DOUBLE**：TiDB 与 MySQL 对浮点类型的实现存在差异。计算校验和时，`FLOAT` 和 `DOUBLE` 分别采用 6 位和 15 位有效数字。如果不希望使用该特性，可以通过设置 `ignore-columns` 跳过这些列的检查。
-    * **JSON**：支持比较。需要注意的是，上下游之间 `JSON` 字符串值的排序规则 (collation) 和字符集差异可能导致误报数据不一致。
-    * **BLOB/VARBINARY**：支持比较，按二进制数据逐字节进行校验。
-    * **BIT**：支持 MySQL 与 TiDB 之间的数据比较。已验证支持位宽为 1、8、16 和 64 的 `BIT` 类型。如果你的表结构使用了非标准位宽，或应用层对数据进行了转换，建议先进行针对性的验证测试。
+* Online check is not supported for data migration between MySQL and TiDB. Ensure that no data is written into the upstream-downstream checklist, and that data in a certain range is not changed. You can check data in this range by setting `range`.
 
-* 支持对不包含主键或者唯一索引的表进行校验，但是如果数据不一致，生成的用于修复的 SQL 可能无法正确修复数据。
+* In TiDB and MySQL, `FLOAT`, `DOUBLE` and other floating-point types are implemented differently. `FLOAT` and `DOUBLE` respectively take 6 and 15 significant digits for calculating checksum. If you do not want to use this feature, set `ignore-columns` to skip checking these columns.
 
-## sync-diff-inspector 所需的数据库权限
+* Support checking tables that do not contain the primary key or the unique index. However, if data is inconsistent, the generated SQL statements might not be able to repair the data correctly.
 
-sync-diff-inspector 需要具备特定的数据库权限以获取表结构信息、查询数据。你需要在上游数据库和下游数据库中授予以下权限：
+## Database privileges for sync-diff-inspector
 
-- `SELECT`：用于对比数据。
-- `RELOAD`：用于查看表结构。
-- `PROCESS`：当上下游都是 TiDB 时需要该权限，用于查询 `INFORMATION_SCHEMA.CLUSTER_INFO` 表。
+To access table schemas and query data, sync-diff-inspector requires specific database privileges. Grant the following privileges on both the upstream and downstream databases:
 
-> **注意：**
->
-> - **请勿**在所有数据库 (`*.*`) 上授予 [`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md) 权限。否则，sync-diff-inspector 会尝试访问无权限的数据库，导致报错。
-> - 对于 MySQL 数据源，请确保系统变量 [`skip_show_database`](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_skip_show_database) 设置为 `OFF`。如果该变量设置为 `ON`，检查可能会失败。
+- `SELECT`: required to compare data.
+- `RELOAD`: required to view table schemas.
 
-## 配置文件说明
+> **Note**:
+> 
+> - **DO NOT** grant the [`SHOW DATABASES`](/sql-statements/sql-statement-show-databases.md) privilege on all databases (`*.*`). Otherwise, sync-diff-inspector will attempt to access inaccessible databases, which causes errors.
+> - For MySQL data sources, ensure that the [`skip_show_database`](https://dev.mysql.com/doc/refman/8.4/en/server-system-variables.html#sysvar_skip_show_database) system variable is set to `OFF`. If this variable is set to `ON`, the check might fail.
 
-sync-diff-inspector 的配置总共分为五个部分：
+## Configuration file description
 
-- Global config：通用配置，包括校验的线程数量、是否输出修复 SQL、是否比对数据、是否跳过校验上游或下游不存在的表等。
-- Datasource config：配置上下游数据库实例。
-- Routes：上游多表名通过正则匹配下游单表名的规则。**（可选）**
-- Task config：配置校验哪些表，如果有的表在上下游有一定的映射关系或者有一些特殊要求，则需要对指定的表进行配置。
-- Table config：对具体表的特殊配置，例如指定范围、忽略的列等等。**（可选）**
+The configuration of sync-diff-inspector consists of the following parts:
 
-下面是一个完整配置文件的说明：
+- `Global config`: General configurations, such as number of threads to check, whether to export SQL statement to fix inconsistent tables, whether to compare the data, and whether to skip checking tables that do not exist in the upstream or downstream.
+- `Databases config`: Configures the instances of the upstream and downstream databases.
+- `Routes`: Rules for upstream multiple schema names to match downstream single schema names **(optional)**.
+- `Task config`: Configures the tables for checking. If some tables have a certain mapping relationship between the upstream and downstream databases or have some special requirements, you must configure these tables.
+- `Table config`: Special configurations for specific tables, such as specified ranges and columns to be ignored **(optional)**.
 
-- 提示：配置名后带 `s` 的配置项允许拥有多个配置值，因此需要使用方括号 `[]` 来包含配置值。
+Below is the description of a complete configuration file:
 
-```toml
+- Note: configurations with `s` after their name can have multiple values, so you need to use square brackets `[]` to contain the configuration values.
+
+``` toml
 # Diff Configuration.
 
 ######################### Global config #########################
-
-# 检查数据的线程数量，上下游数据库的连接数会略大于该值。
+# The number of goroutines created to check data. The number of connections between sync-diff-inspector and upstream/downstream databases is slightly greater than this value.
 check-thread-count = 4
 
-# 如果开启，若表存在不一致，则输出用于修复的 SQL 语句。
+# If enabled, SQL statements is exported to fix inconsistent tables.
 export-fix-sql = true
 
-# 只对比数据而不对比表结构，该配置项目前为实验特性，不建议在生产环境中使用。
+# Only compares the data instead of the table structure. This configuration item is an experimental feature. It is not recommended that you use it in the production environment.
 check-data-only = false
 
-# 只对比表结构而不对比数据。
+# Only compares the table structure instead of the data.
 check-struct-only = false
 
-# 如果开启，会跳过校验上游或下游不存在的表。
+# If enabled, sync-diff-inspector skips checking tables that do not exist in the upstream or downstream.
 skip-non-existing-table = false
 
 ######################### Datasource config #########################
 [data-sources]
-[data-sources.mysql1] # mysql1 是该数据库实例唯一标识的自定义 id，用于下面 task.source-instances/task.target-instance 中
+[data-sources.mysql1] # mysql1 is the only custom ID for the database instance. It is used for the following `task.source-instances/task.target-instance` configuration.
     host = "127.0.0.1"
     port = 3306
     user = "root"
-    password = "" # 设置连接上游数据库的密码，可为明文或 Base64 编码。
+    password = ""  # The password for connecting to the upstream database. It can be plain text or Base64-encoded.
 
-    #（可选）使用映射规则来匹配上游多个分表，其中 rule1 和 rule2 在下面 Routes 配置栏中定义
+    # (optional) Use mapping rules to match multiple upstream sharded tables. Rule1 and rule2 are configured in the following Routes section.
     route-rules = ["rule1", "rule2"]
 
 [data-sources.tidb0]
     host = "127.0.0.1"
     port = 4000
     user = "root"
-    password = "" # 设置连接下游数据库的密码，可为明文或 Base64 编码。
+    password = ""  # The password for connecting to the downstream database. It can be plain text or Base64-encoded.
 
-    #（可选）使用 TLS 连接 TiDB
+    # (optional) Use TLS to connect TiDB.
     # security.ca-path = ".../ca.crt"
     # security.cert-path = ".../cert.crt"
     # security.key-path = ".../key.crt"
 
-    #（可选）使用 TiDB 的 snapshot 功能，如果开启的话会使用历史数据进行对比
+    # (optional) Use the snapshot feature. If enabled, historical data is used for comparison.
     # snapshot = "386902609362944000"
-    # 当 snapshot 设置为 "auto" 时，使用 TiCDC 在上下游的同步时间点，具体参考 <https://github.com/pingcap/tidb-tools/issues/663>
+    # When "snapshot" is set to "auto", the last syncpoints generated by TiCDC in the upstream and downstream are used for comparison. For details, see <https://github.com/pingcap/tidb-tools/issues/663>.
     # snapshot = "auto"
 
-########################### Routes ###########################
-# 如果需要对比大量的不同库名或者表名的表的数据，或者用于校验上游多个分表与下游总表的数据，可以通过 table-rule 来设置映射关系
-# 可以只配置 schema 或者 table 的映射关系，也可以都配置
+########################### Routes ##############################
+# To compare the data of a large number of tables with different schema names or table names, or check the data of multiple upstream sharded tables and downstream table family, use the table-rule to configure the mapping relationship. You can configure the mapping rule only for the schema or table. Also, you can configure the mapping rules for both the schema and the table.
 [routes]
-[routes.rule1] # rule1 是该配置的唯一标识的自定义 id，用于上面 data-sources.route-rules 中
-schema-pattern = "test_*"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "t_*"          # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test"         # 目标库名
-target-table = "t" # 目标表名
-
+[routes.rule1] # rule1 is the only custom ID for the configuration. It is used for the above `data-sources.route-rules` configuration.
+schema-pattern = "test_*"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "t_*"          # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test"         # The name of the schema in the target database
+target-table = "t"             # The name of the target table
 [routes.rule2]
-schema-pattern = "test2_*"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "t2_*"          # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test2"         # 目标库名
-target-table = "t2" # 目标表名
+schema-pattern = "test2_*"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "t2_*"          # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test2"         # The name of the schema in the target database
+target-table = "t2"             # The name of the target table
 
-######################### Task config #########################
-# 配置需要对比的*目标数据库*中的表
+######################### task config #########################
+# Configures the tables of the target database that need to be compared.
 [task]
-    # output-dir 会保存如下信息
-    # 1 sql：检查出错误后生成的修复 SQL 文件，并且一个 chunk 对应一个文件
-    # 2 log：sync-diff.log 保存日志信息
-    # 3 summary：summary.txt 保存总结
-    # 4 checkpoint：a dir 保存断点续传信息
+    # output-dir saves the following information:
+    # 1 sql: The SQL file to fix tables that is generated after error is detected. One chunk corresponds to one SQL file.
+    # 2 log: sync-diff.log
+    # 3 summary: summary.txt
+    # 4 checkpoint: a dir
     output-dir = "./output"
-
-    # 上游数据库，内容是 data-sources 声明的唯一标识 id
+    # The upstream database. The value is the unique ID declared by data-sources.
     source-instances = ["mysql1"]
-
-    # 下游数据库，内容是 data-sources 声明的唯一标识 id
+    # The downstream database. The value is the unique ID declared by data-sources.
     target-instance = "tidb0"
-
-    # 需要比对的下游数据库的表，每个表需要包含数据库名和表名，两者由 `.` 隔开
-    # 使用 ? 来匹配任意一个字符；使用 * 来匹配任意；详细匹配规则参考 golang regexp pkg: https://github.com/google/re2/wiki/Syntax
+    # The tables of downstream databases to be compared. Each table needs to contain the schema name and the table name, separated by '.'
+    # Use "?" to match any character and "*" to match characters of any length.
+    # For detailed match rules, refer to golang regexp pkg: https://github.com/google/re2/wiki/Syntax.
     target-check-tables = ["schema*.table*", "!c.*", "test2.t2"]
-
-    #（可选）对部分表的额外配置，其中 config1 在下面 Table config 配置栏中定义
+    # (optional) Extra configurations for some tables, Config1 is defined in the following table config example.
     target-configs = ["config1"]
 
 ######################### Table config #########################
-# 对部分表进行特殊的配置，配置的表必须包含在 task.target-check-tables 中
-[table-configs.config1] # config1 是该配置的唯一标识自定义 id，用于上面 task.target-configs 中
-# 目标表名称，可以使用正则来匹配多个表，但不允许存在一个表同时被多个特殊配置匹配。
+# Special configurations for specific tables. The tables to be configured must be in `task.target-check-tables`.
+[table-configs.config1] # config1  is the only custom ID for this configuration. It is used for the above `task.target-configs` configuration.
+# The name of the target table, you can use regular expressions to match multiple tables, but one table is not allowed to be matched by multiple special configurations at the same time.
 target-tables = ["schema*.test*", "test2.t2"]
-#（可选）指定检查的数据的范围，需要符合 sql 中 where 条件的语法
+# (optional) Specifies the range of the data to be checked
+# It needs to comply with the syntax of the WHERE clause in SQL.
 range = "age > 10 AND age < 20"
-#（可选）指定用于划分 chunk 的列，如果不配置该项，sync-diff-inspector 会选取一些合适的列（主键／唯一键／索引）
+# (optional) Specifies the column used to divide data into chunks. If you do not configure it,
+# sync-diff-inspector chooses an appropriate column (primary key, unique key, or a field with index).
 index-fields = ["col1","col2"]
-#（可选）忽略你希望排除的数据列，不参与一致性校验。
-# 例如，已知在不同实现之间存在差异的列（如浮点类型），或者希望单独验证的列。
+# (optional) Ignores checking some columns such as some types (json, bit, blob, etc.)
+# that sync-diff-inspector does not currently support.
+# The floating-point data type behaves differently in TiDB and MySQL. You can use
+# `ignore-columns` to skip checking these columns.
 ignore-columns = ["",""]
-#（可选）指定划分该表的 chunk 的大小，若不指定可以删去或者将其配置为 0。
+# (optional) Specifies the size of the chunk for dividing the table. If not specified, this configuration can be deleted or be set as 0.
 chunk-size = 0
-#（可选）指定该表的 collation，若不指定可以删去或者将其配置为空字符串。
+# (optional) Specifies the "collation" for the table. If not specified, this configuration can be deleted or be set as an empty string.
 collation = ""
 ```
 
-## 运行 sync-diff-inspector
+## Run sync-diff-inspector
 
-执行如下命令：
+Run the following command:
 
 
 ```bash
 ./sync_diff_inspector --config=./config.toml
 ```
 
-该命令最终会在 `config.toml` 中的 `output-dir` 输出目录输出本次比对的检查报告 `summary.txt` 和日志 `sync_diff.log`。在输出目录下还会生成由 `config.toml` 文件内容哈希值命名的文件夹，该文件夹下包括断点续传 checkpoint 结点信息以及数据存在不一致时生成的 SQL 修复数据。
+This command outputs a check report `summary.txt` in the `output-dir` of `config.toml` and the log `sync_diff.log`. In the `output-dir`, a folder named by the hash value of the `config. toml` file is also generated. This folder includes the checkpoint node information of breakpoints and the SQL file generated when the data is inconsistent.
 
-### 前台输出
+### Progress information
 
-sync-diff-inspector 在执行过程中会往 `stdout` 发送进度信息。进度信息包括表的结构比较结果、表的数据比较结果以及进度条。
+sync-diff-inspector sends progress information to `stdout` when running. Progress information includes the comparison results of table structures, comparison results of table data and the progress bar.
 
-> **注意：**
+> **Note:**
 >
-> 为了达成显示效果，请保持显示窗口宽度在 80 字符以上。
+> To ensure the display effect, keep the display window width above 80 characters.
 
 ```
 A total of 2 tables need to be compared
@@ -242,66 +212,65 @@ The patch file has been generated in
 You can view the comparison details through 'output/sync_diff.log'
 ```
 
-### 输出文件
+### Output file
 
-输出文件目录结构如下：
+The directory structure of the output file is as follows:
 
 ```
 output/
-|-- checkpoint # 保存断点续传信息
-| |-- bbfec8cc8d1f58a5800e63aa73e5 # config hash 占位文件，标识该输出目录（output/）对应的配置文件
+|-- checkpoint # Saves the breakpoint information
+| |-- bbfec8cc8d1f58a5800e63aa73e5 # Config hash. The placeholder file which identifies the configuration file corresponding to the output directory (output/)
 │ |-- DO_NOT_EDIT_THIS_DIR
-│ └-- sync_diff_checkpoints.pb # 断点续传信息
+│ └-- sync_diff_checkpoints.pb # The breakpoint information
 |
-|-- fix-on-target # 保存用于修复不一致的 SQL 文件
+|-- fix-on-target # Saves SQL files to fix data inconsistency
 | |-- xxx.sql
 | |-- xxx.sql
 | └-- xxx.sql
 |
-|-- summary.txt # 保存校验结果的总结
-└-- sync_diff.log # 保存 sync-diff-inspector 执行过程中输出的日志信息
+|-- summary.txt # Saves the summary of the check results
+└-- sync_diff.log # Saves the output log information when sync-diff-inspector is running
 ```
 
-#### 日志
+### Log
 
-sync-diff-inspector 的日志存放在 `${output}/sync_diff.log` 中，其中 `${output}` 是 `config.toml` 文件中 `output-dir` 的值。
+The log of sync-diff-inspector is saved in `${output}/sync_diff.log`, among which `${output}` is the value of `output-dir` in the `config.toml` file.
 
-#### 校验进度
+### Progress
 
-sync-diff-inspector 会在运行时定期（间隔 10s）输出校验进度到 checkpoint 中（位于 `${output}/checkpoint/sync_diff_checkpoints.pb`），其中 `${output}` 是 `config.toml` 文件中 `output-dir` 的值。
+The running sync-diff-inspector periodically (every 10 seconds) prints the progress in checkpoint, which is located at `${output}/checkpoint/sync_diff_checkpoints.pb`, among which `${output}` is the value of `output-dir` in the `config.toml` file.
 
-#### 校验结果
+### Result
 
-当校验结束时，sync-diff-inspector 会输出一份校验报告，位于 `${output}/summary.txt` 中，其中 `${output}` 是 `config.toml` 文件中 `output-dir` 的值。
+After the check is finished, sync-diff-inspector outputs a report. It is located at `${output}/summary.txt`, and `${output}` is the value of `output-dir` in the `config.toml` file.
 
 ```
-+---------------------+---------+--------------------+----------------+---------+-----------+
-|        TABLE        | RESULT  | STRUCTURE EQUALITY | DATA DIFF ROWS | UPCOUNT | DOWNCOUNT |
-+---------------------+---------+--------------------+----------------+---------+-----------+
-| `sbtest`.`sbtest99` | succeed | true               | +97/-97        |  999999 |    999999 |
-| `sbtest`.`sbtest96` | succeed | true               | +0/-101        |  999999 |   1000100 |
-| `sbtest`.`sbtest97` | skipped | false              | +999999/-0     |  999999 |         0 |
-+---------------------+---------+--------------------+----------------+---------+-----------+
++---------------------+--------------------+----------------+---------+-----------+
+|        TABLE        | STRUCTURE EQUALITY | DATA DIFF ROWS | UPCOUNT | DOWNCOUNT |
++---------------------+--------------------+----------------+---------+-----------+
+| `sbtest`.`sbtest99` | true               | +97/-97        |  999999 |    999999 |
+| `sbtest`.`sbtest96` | true               | +0/-101        |  999999 |   1000100 |
++---------------------+--------------------+----------------+---------+-----------+
 Time Cost: 16.75370462s
 Average Speed: 113.277149MB/s
 ```
 
-- `TABLE`：该列表示对应的数据库及表名
-- `RESULT`：校验是否完成。如果设置了 `skip-non-existing-table = true`，对于上游或下游不存在的表，该列的值将为 `skipped`
-- `STRUCTURE EQUALITY`：表结构是否相同
-- `DATA DIFF ROWS`：即 `rowAdd`/`rowDelete`，表示该表修复需要增加/删除的行数
-- `UPCOUNT`：表示该表在上游数据源的行数
-- `DOWNCOUNT`：表示该表在下游数据源的行数
+- `TABLE`: The corresponding database and table names
+- `RESULT`: Whether the check is completed. If you have configured `skip-non-existing-table = true`, the value of this column is `skipped` for tables that do not exist in the upstream or downstream
+- `STRUCTURE EQUALITY`: Checks whether the table structure is the same
+- `DATA DIFF ROWS`: `rowAdd`/`rowDelete`. Indicates the number of rows that need to be added/deleted to fix the table
+- `UPCOUNT`: The number of rows in this table in the upstream data source
+- `DOWNCOUNT`: The number of rows in this table in the downstream data source
 
-#### SQL 修复
+### SQL statements to fix inconsistent data
 
-校验过程中遇到不同的行，会生成修复数据的 SQL 语句。一个 chunk 如果出现数据不一致，就会生成一个以 `chunk.Index` 命名的 SQL 文件。文件位于 `${output}/fix-on-${instance}` 文件夹下。其中 `${instance}` 为 `config.toml` 中 `task.target-instance` 的值。
+If different rows exist during the data checking process, the SQL statements will be generated to fix them. If the data inconsistency exists in a chunk, a SQL file named by `chunk.Index` will be generated. The SQL file is located at `${output}/fix-on-${instance}`, and `${instance}` is the value of `task.target-instance` in the `config.toml` file.
 
-一个 SQL 文件会包含该 chunk 的所属表以及表示的范围信息。对每个修复 SQL 语句，有三种情况：
+A SQL file contains the tale to which the chunk belong and the range information. For the SQL files, you should consider the following three situations:
 
-- 下游数据库缺失行，则是 REPLACE 语句
-- 下游数据库冗余行，则是 DELETE 语句
-- 下游数据库行部分数据不一致，则是 REPLACE 语句，但会在 SQL 文件中通过注释的方法标明不同的列
+- If the rows in the downstream database are missing, REPLACE statements will be applied
+- If the rows in the downstream database are redundant, DELETE statements will be applied
+- If some data of the rows in the downstream database is inconsistent, REPLACE statements will be applied and inconsistent columns will be marked with annotation in the SQL file
 
 ```sql
 -- table: sbtest.sbtest99
@@ -317,23 +286,11 @@ Average Speed: 113.277149MB/s
 REPLACE INTO `sbtest`.`sbtest99`(`id`,`k`,`c`,`pad`) VALUES (3700000,2501808,'hello','world');
 ```
 
-## 注意事项
+## Note
 
-* sync-diff-inspector 在校验数据时会消耗一定的服务器资源，需要避免在业务高峰期间校验。
-* 在比较 MySQL 与 TiDB 之间的数据之前，请先确认表的字符集和 `collation` 配置一致。这一点对于包含 UTF-8 数据的 `VARCHAR`、`TEXT` 或 `JSON` 列尤为重要，尤其是这些列属于主键或唯一键时。MySQL 8.0 默认使用 `utf8mb4_0900_ai_ci`（大小写不敏感、重音不敏感），而 TiDB 通常使用 `utf8mb4_bin`（二进制、大小写敏感）。这种差异可能导致 sync-diff-inspector 将内容完全相同的 UTF-8 字符串或 JSON 字符串值误判为不一致。为避免误报，建议上下游表使用相同的排序规则（例如 `utf8mb4_bin`），或者通过 `ignore-columns` 排除受影响的 UTF-8 文本列和 JSON 列。
-* 如果你在 sync-diff-inspector 配置文件中设置了 `collation`，并在基于 Chunk 的比较过程中显式指定上下游使用相同的排序规则，需要注意：索引字段的排序顺序取决于表本身的 `collation` 配置。如果上下游的排序规则不同，其中一侧可能无法使用索引。此外，如果上下游字符集不同（例如 MySQL 使用 `utf8`，而 TiDB 使用 `utf8mb4`），则无法统一 `collation` 配置。
-* 即使数据在逻辑上完全一致，以下场景仍可能导致误报数据差异：
-    * 上下游 VARCHAR 或 TEXT 列使用不同的排序规则（例如 `utf8mb4_0900_ai_ci` 与 `utf8mb4_bin`），相同的字符串值也可能被判定为不同。
-    * 包含字符串值的 JSON 列同样会受到排序规则差异的影响。
-    * 自动填充的 TIMESTAMP 列（例如使用 `DEFAULT CURRENT_TIMESTAMP` 或 `ON UPDATE CURRENT_TIMESTAMP`）在不同时间导入数据，或比较存在轻微时间差的数据时，可能产生无意义的差异。
-* 如果待校验的数据集包含自动填充的 TIMESTAMP 列，建议在构造验证数据时使用固定的 TIMESTAMP 值，而不要依赖 `DEFAULT CURRENT_TIMESTAMP`。如果这些列的精确值并非验证重点，也可以通过 `ignore-columns` 将其排除，以减少误报。
-* 如果上下游表的主键不一致，例如在 MySQL 中进行分表后合并到 TiDB，并使用原主键和分片键组成复合主键的场景，sync-diff-inspector 将不会使用原主键列来划分 chunk。此时，你需要通过 `index-fields` 配置原主键列，并将 `check-data-only` 设置为 `true`。
-* sync-diff-inspector 会优先使用 TiDB 的统计信息来划分 chunk，需要尽量保证统计信息精确，可以在**业务空闲期**手动执行 `analyze table {table_name}`。
-* table-rule 的规则需要特殊注意，例如设置了 `schema-pattern="test1"`，`table-pattern = "t_1"`，`target-schema="test2"`，`target-table = "t_2"`，会对比 source 中的表 `test1`.`t_1` 和 target 中的表 `test2`.`t_2`。sync-diff-inspector 默认开启 sharding，如果 source 中还有表 `test2`.`t_2`，则会把 source 端的表 `test1`.`t_1` 和表 `test2`.`t_2` 作为 sharding 与 target 中的表 `test2`.`t_2` 进行一致性校验。
-* 生成的 SQL 文件仅作为修复数据的参考，需要确认后再执行这些 SQL 修复数据。
-
-## 相关资源
-
-<RelatedResources>
-  <ResourceCard title="管理 TiDB 实验 9: 使用 sync-diff-inspector 进行数据检查" type="lab" link="https://labs.pingcap.com/labs/dba_303_lab_ff8" imgSrc="https://lab-static.pingcap.com/quick-demo/dba_303_ch10_en.png" duration="60 分钟" />
-</RelatedResources>
+- sync-diff-inspector consumes a certain amount of server resources when checking data. Avoid using sync-diff-inspector to check data during peak business hours.
+- Before comparing the data in MySQL with that in TiDB, check the character set and `collation` configuration of the tables. This is especially important when the primary key or unique key of a table is the `varchar` type. If collation rules differ between upstream and downstream databases, sorting issues might occur, leading to inaccurate verification results. For example, MySQL's default collation is case-insensitive, while TiDB's default collation is case-sensitive. This inconsistency might cause identical delete and insert records in the repair SQL. To avoid this issue, use the `index-fields` configuration to specify index columns that are not affected by case sensitivity. If you configure `collation` in the sync-diff-inspector configuration file and explicitly use the same collation for both upstream and downstream during chunk-based comparison, note that the order of index fields depends on the table's collation configuration. If the collations differ, one side might be unable to use the index. Additionally, if the character sets differ between upstream and downstream (for example, MySQL uses UTF-8 while TiDB uses UTF-8MB4), it is not possible to unify the collation configuration.
+- If the primary key differs between upstream and downstream tables, sync-diff-inspector does not use the original primary key column to divide chunks. For example, when sharded tables in MySQL are merged into TiDB using a composite primary key that includes the original primary key and a shard key. In this case, configure the original primary key column using `index-fields` and set `check-data-only` to `true`.
+- sync-diff-inspector divides data into chunks first according to TiDB statistics and you need to guarantee the accuracy of the statistics. You can manually run the `analyze table {table_name}` command when the TiDB server's *workload is light*.
+- Pay special attention to `table-rules`. If you configure `schema-pattern="test1"`, `table-pattern = "t_1"`, `target-schema="test2"` and `target-table = "t_2"`, the `test1`.`t_1` schema in the source database and the `test2`.`t_2` schema in the target database are compared. Sharding is enabled by default in sync-diff-inspector, so if the source database has a `test2`.`t_2` table, the `test1`.`t_1` table and `test2`.`t_2` table in the source database serving as sharding are compared with the `test2`.`t_2` table in the target database.
+- The generated SQL file is only used as a reference for repairing data, and you need to confirm it before executing these SQL statements to repair data.

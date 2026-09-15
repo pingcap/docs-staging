@@ -1,135 +1,111 @@
 ---
-title: 本地快速部署 TiDB 集群
-summary: TiDB 集群是分布式系统，由多个组件构成。想要快速体验 TiDB，可以使用 TiUP 中的 playground 组件快速搭建本地测试环境。通过命令行参数可以设置各组件的数量和配置，也可以启动多个组件实例。使用 `tiup client` 可以快速连接到本地启动的 TiDB 集群。还可以查看已启动集群的信息，扩容或缩容集群。
+title: Quickly Deploy a Local TiDB Cluster
+summary: Learn how to quickly deploy a local TiDB cluster using the playground component of TiUP.
 ---
 
-# 本地快速部署 TiDB 集群
+# Quickly Deploy a Local TiDB Cluster
 
-TiDB 集群是由多个组件构成的分布式系统，一个典型的 TiDB 集群至少由 3 个 PD 节点、3 个 TiKV 节点和 2 个 TiDB 节点构成。对于想要快速体验 TiDB 的用户来说，手工部署这么多组件是非常耗时且麻烦的事情。本文介绍 TiUP 中的 playground 组件，以及如何通过 playground 组件快速搭建一套本地的 TiDB 测试环境。
+The TiDB cluster is a distributed system that consists of multiple components. A typical TiDB cluster consists of at least three PD nodes, three TiKV nodes, and two TiDB nodes. If you want to have a quick experience on TiDB, you might find it time-consuming and complicated to manually deploy so many components. This document introduces the playground component of TiUP and how to use it to quickly build a local TiDB test environment.
 
-## playground 组件介绍
+## TiUP playground overview
 
-playground 组件的基本用法：
+The basic usage of the playground component is shown as follows:
 
 ```bash
 tiup playground ${version} [flags]
 ```
 
-如果直接执行 `tiup playground` 命令，则 TiUP playground 会使用本地安装的 TiDB/TiKV/PD 组件或者安装这些组件的稳定版本，来启动一个由 1 个 TiKV、1 个 TiDB、1 个 PD 和 1 个 TiFlash 实例构成的集群。该命令实际做了以下事情：
+If you directly execute the `tiup playground` command, TiUP uses the locally installed TiDB, TiKV, and PD components or installs the stable version of these components to start a TiDB cluster that consists of one TiKV instance, one TiDB instance, one PD instance, and one TiFlash instance.
 
-- 因为该命令没有指定 playground 的版本，TiUP 会先查找已安装的 playground 的最新版本，假设已安装的 playground 最新版为 v1.12.3，则该命令相当于 tiup playground:v1.12.3
-- 如果 playground 从未安装过任何版本的 TiDB/TiKV/PD 组件，TiUP 会先安装这些组件的最新稳定版，然后再启动运行这些组件的实例
-- 因为该命令没有指定 TiDB/PD/TiKV 各组件的版本，默认情况下，它会使用各组件的最新发布版本，假设当前为 v8.5.8，则该命令相当于 tiup playground:1.12.3 v8.5.8
-- 因为该命令也没有指定各组件的个数，默认情况下，它会启动由 1 个 TiDB、1 个 TiKV、1 个 PD 和 1 个 TiFlash 实例构成的最小化集群
-- 在依次启动完各个 TiDB 组件后，playground 会提醒集群启动成功，并告诉你一些有用的信息，譬如如何通过 MySQL 客户端连接集群、如何访问 [TiDB Dashboard](/dashboard/dashboard-intro.md) 等
+This command actually performs the following operations:
 
-可以使用以下命令查看 playground 的命令行参数说明：
+- Because this command does not specify the version of the playground component, TiUP first checks the latest version of the installed playground component. Assume that the latest version is v1.12.3, then this command works the same as `tiup playground:v1.12.3`.
+- If you have not used TiUP playground to install the TiDB, TiKV, and PD components, the playground component installs the latest stable version of these components, and then start these instances.
+- Because this command does not specify the version of the TiDB, PD, and TiKV component, TiUP playground uses the latest version of each component by default. Assume that the latest version is 8.5.8, then this command works the same as `tiup playground:v1.12.3 8.5.8`.
+- Because this command does not specify the number of each component, TiUP playground, by default, starts a smallest cluster that consists of one TiDB instance, one TiKV instance, one PD instance, and one TiFlash instance.
+- After starting each TiDB component, TiUP playground reminds you that the cluster is successfully started and provides you some useful information, such as how to connect to the TiDB cluster through the MySQL client and how to access the [TiDB Dashboard](/dashboard/dashboard-intro.md).
+
+You can use the following command to view the command-line flags of the playground component:
 
 ```shell
 tiup playground --help
 ```
 
-## 使用示例
+## Examples
 
-### 查看可用的 TiDB 版本
-
+### Check available TiDB versions
 
 ```shell
 tiup list tidb
 ```
 
-### 启动一个指定版本的 TiDB 集群
-
+### Start a TiDB cluster of a specific version
 
 ```shell
 tiup playground ${version}
 ```
 
-将 `${version}` 替换为所需的版本号。
+Replace `${version}` with the target version number.
 
-### 启动一个每日构建版的 TiDB 集群
-
+### Start a TiDB cluster of the nightly version
 
 ```shell
 tiup playground nightly
 ```
 
-nightly 就是这个集群的版本号，这里指定为每日构建版本。
+In the command above, `nightly` indicates the latest development version of TiDB.
 
-### 覆盖 PD 的默认配置
+### Override PD's default configuration
 
-首先，你需要复制 PD 的[配置模版](https://github.com/tikv/pd/blob/release-8.5/conf/config.toml)。假设你将复制的配置文件放置在 `~/config/pd.toml`，按需修改一些内容后，执行以下命令可以覆盖 PD 的默认配置：
-
+First, you need to copy the [PD configuration template](https://github.com/pingcap/pd/blob/master/conf/config.toml). Assume you place the copied file to `~/config/pd.toml` and make some changes according to your need, then you can execute the following command to override PD's default configuration:
 
 ```shell
 tiup playground --pd.config ~/config/pd.toml
 ```
 
-### 替换默认的二进制文件
+### Replace the default binary files
 
-默认启动 playground 时，各个组件都是使用官方镜像组件包中的二进制文件启动的，如果本地编译了一个临时的二进制文件想要放入集群中测试，可以使用 `--{comp}.binpath` 这个参数替换，例如执行以下命令替换 TiDB 的二进制文件：
-
+By default, when playground is started, each component is started using the binary files from the official mirror. If you want to put a temporarily compiled local binary file into the cluster for testing, you can use the `--{comp}.binpath` flag for replacement. For example, execute the following command to replace the binary file of TiDB:
 
 ```shell
 tiup playground --db.binpath /xx/tidb-server
 ```
 
-### 启动多个组件实例
+### Start multiple component instances
 
-默认情况下各启动一个 TiDB、TiKV 和 PD 实例，如果希望启动多个，可以加上如下参数：
-
+By default, only one instance is started for each TiDB, TiKV, and PD component. To start multiple instances for each component, add the following flag:
 
 ```shell
 tiup playground --db 3 --pd 3 --kv 3
 ```
 
-### 启动集群时指定 `tag` 以保留数据
+### Specify a tag when starting the TiDB cluster to store the data
 
-Playground 集群在命令行退出时，会默认清空所有的集群数据。如果想要启动一个数据不被自动删除的 Playground 集群，需要在启动时指定集群 tag，指定后可以在 `~/.tiup/data` 路径下找到该集群的数据。在集群启动时指定 tag 的方法如下：
+After you stop a TiDB cluster started using TiUP playground, all cluster data is cleaned up as well. To start a TiDB cluster using TiUP playground and ensure that the cluster data is not cleaned up automatically, you can specify a tag when starting the cluster. After specifying the tag, you can find the cluster data in the `~/.tiup/data` directory. Run the following command to specify a tag:
 
 ```shell
 tiup playground --tag ${tag_name}
 ```
 
-以这种方式启动的集群，在集群关闭以后，数据文件会保留。下一次可以继续使用该 tag 启动集群，从而使用从上一次集群关闭时的数据。
+For a cluster started in this way, the data files are retained after the cluster is stopped. You can use this tag to start the cluster next time so that you can use the data kept since the cluster was stopped.
 
-## 访问 TiDB Dashboard 和 Grafana
+## Quickly connect to the TiDB cluster started by playground
 
-使用 TiUP Playground 启动 TiDB 集群后，可以在浏览器中通过以下地址访问 [TiDB Dashboard](/dashboard/dashboard-intro.md) 和 Grafana：
-
-- TiDB Dashboard：`http://127.0.0.1:2379/dashboard`
-
-    - 默认用户名：`root`
-    - 默认密码：``（空，直接回车即可）
-
-- Grafana：`http://127.0.0.1:3000`
-
-    - 默认用户名：`admin`
-    - 默认密码：`admin`
-
-> **注意：**
->
-> 如果你修改过数据库的 `root` 密码，登录 TiDB Dashboard 时需要使用修改后的密码。
-
-## 快速连接到由 playground 启动的 TiDB 集群
-
-TiUP 提供了 `client` 组件，用于自动寻找并连接 playground 在本地启动的 TiDB 集群，使用方式为：
-
+TiUP provides the `client` component, which is used to automatically find and connect to a local TiDB cluster started by playground. The usage is as follows:
 
 ```shell
 tiup client
 ```
 
-该命令会在控制台上提供当前机器上由 playground 启动的 TiDB 集群列表，选中需要连接的 TiDB 集群，点击回车后，可以打开一个自带的 MySQL 客户端以连接 TiDB。
+This command provides a list of TiDB clusters that are started by playground on the current machine on the console. Select the TiDB cluster to be connected. After clicking <kbd>Enter</kbd>, a built-in MySQL client is opened to connect to TiDB.
 
-## 查看已启动集群的信息
-
+## View information of the started cluster
 
 ```shell
 tiup playground display
 ```
 
-可以看到如下信息：
+The command above returns the following results:
 
 ```
 Pid    Role     Uptime
@@ -140,70 +116,68 @@ Pid    Role     Uptime
 86526  tidb     34m28.293148663s
 ```
 
-## 扩容集群
+## Scale out a cluster
 
-扩容集群的命令行参数与启动集群的相似。以下命令可以扩容两个 TiDB：
-
+The command-line parameter for scaling out a cluster is similar to that for starting a cluster. You can scale out two TiDB instances by executing the following command:
 
 ```shell
 tiup playground scale-out --db 2
 ```
 
-## 缩容集群
+## Scale in a cluster
 
-可在 `tiup playground scale-in` 命令中指定 `pid`，以缩容对应的实例。可以通过 `tiup playground display` 命令查看 `pid`。
-
+You can specify a `pid` in the `tiup playground scale-in` command to scale in the corresponding instance. To view the `pid`, execute `tiup playground display`.
 
 ```shell
 tiup playground scale-in --pid 86526
 ```
 
-## 部署 TiProxy
+## Deploy TiProxy
 
-[TiProxy](/tiproxy/tiproxy-overview.md) 是 PingCAP 的官方代理组件，位于客户端和 TiDB server 之间，为 TiDB 提供负载均衡、连接保持、服务发现等功能。
+[TiProxy](/tiproxy/tiproxy-overview.md) is the official proxy component from PingCAP, placed between the client and the TiDB server to provide load balancing, connection persistence, service discovery, and other features for TiDB.
 
-从 TiUP v1.15.0 版本起，你可以通过 TiUP Playground 为集群部署 TiProxy。
+Starting from TiUP v1.15.0, you can deploy TiProxy for your cluster using TiUP Playground.
 
-1. 创建 `tidb.toml` 文件，并添加如下配置：
+1. Create a `tidb.toml` file and add the following configuration:
 
     ```
     graceful-wait-before-shutdown=15
     ```
 
-    该配置项用于控制关闭服务器时 TiDB 等待的秒数，避免缩容集群时客户端断连。
+    This configuration item controls the duration (in seconds) that TiDB waits before shutting down the server, avoiding client disconnections during cluster scaling-in operations.
 
-2. 启动 TiDB 集群：
+2. Start the TiDB cluster:
 
     ```shell
-    tiup playground v8.5.8 --tiproxy 1 --db.config tidb.toml
+    tiup playground 8.5.8 --tiproxy 1 --db.config tidb.toml
     ```
 
-    `tiup playground` 命令行中与 TiProxy 相关的选项说明：
+    In the playground component, TiProxy-related command-line flags are as follows:
 
     ```bash
     Flags:
-          --tiproxy int                设置集群中 TiProxy 节点的数量。如果未指定，不会部署 TiProxy。
-          --tiproxy.binpath string     指定 TiProxy 的二进制文件位置。
-          --tiproxy.config string      指定 TiProxy 的配置文件。
-          --tiproxy.host host          Playground 的 TiProxy host。如果没有提供，TiProxy 会使用 host 参数作为它的 host。
-          --tiproxy.port int           Playground 的 TiProxy 端口。如果没有提供，TiProxy 会使用 6000 作为它的端口。
-          --tiproxy.timeout int        TiProxy 最长等待超时时间，单位为秒。若配置为 0，则永不超时（默认为 60）。
-          --tiproxy.version string     指定 TiProxy 的版本号。如果没有提供，会部署最新的 TiProxy 版本。
+          --tiproxy int                  The number of TiProxy nodes in the cluster. If not specified, TiProxy is not deployed.
+          --tiproxy.binpath string       TiProxy instance binary path.
+          --tiproxy.config string        TiProxy instance configuration file.
+          --tiproxy.host host            Playground TiProxy host. If not provided, TiProxy will still use host flag as its host.
+          --tiproxy.port int             Playground TiProxy port. If not provided, TiProxy will use 6000 as its port.
+          --tiproxy.timeout int          TiProxy maximum wait time in seconds for starting. 0 means no limit (default 60).
+          --tiproxy.version string       The version of TiProxy. If not specified, the latest version of TiProxy is deployed.
     ```
 
-关于 TiProxy 的部署和使用详情，请参考[安装和使用 TiProxy](/tiproxy/tiproxy-overview.md#安装和使用)。
+For more information about deploying and using TiProxy, see [TiProxy installation and usage](/tiproxy/tiproxy-overview.md#installation-and-usage).
 
-如需使用 TiProxy 客户端程序 `tiproxyctl`，请参考[安装 TiProxy Control](/tiproxy/tiproxy-command-line-flags.md#安装-tiproxy-control)。
+To use the TiProxy client program `tiproxyctl`, see [Install TiProxy Control](/tiproxy/tiproxy-command-line-flags.md#install-tiproxy-control).
 
-## 部署 PD 微服务
+## Deploy PD microservices
 
-从 v8.2.0 起，[PD 微服务](/pd-microservices.md)（实验特性）支持通过 TiUP 部署。你可以通过 TiUP Playground 为集群部署 `tso` 微服务和 `scheduling` 微服务。
+Starting from v8.2.0, [PD microservice mode](/pd-microservices.md) (experimental) can be deployed using TiUP. You can deploy the `tso` microservice and `scheduling` microservice for your cluster using TiUP Playground as follows:
 
 ```shell
-tiup playground v8.5.8 --pd.mode ms --pd 3 --tso 2 --scheduling 2
+tiup playground 8.5.8 --pd.mode ms --pd 3 --tso 2 --scheduling 2
 ```
 
-- `--pd.mode`：当指定 `--pd.mode` 为 `ms` 时，代表启用 PD 微服务模式。
-- `--pd <num>`：指定 PD 微服务 API 的数量，需要大于等于 `1`。
-- `--tso <num>`：指定要部署的 `tso` 微服务的实例数量。
-- `--scheduling <num>`：指定要部署的 `scheduling` 微服务的实例数量。
+- `--pd.mode`: setting it to `ms` means enabling the microservice mode for PD.
+- `--pd <num>`: specifies the number of APIs for PD microservices. It must be at least `1`.
+- `--tso <num>`: specifies the number of instances to be deployed for the `tso` microservice.
+- `--scheduling <num>`: specifies the number of instances to be deployed for the `scheduling` microservice.

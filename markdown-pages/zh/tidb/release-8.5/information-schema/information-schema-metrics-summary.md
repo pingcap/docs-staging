@@ -1,16 +1,20 @@
 ---
 title: METRICS_SUMMARY
-summary: 了解 TiDB 系统表 `METRICS_SUMMARY`。
+summary: Learn the METRICS_SUMMARY system table.
 ---
 
 # METRICS_SUMMARY
 
-由于 TiDB 集群的监控指标数量较多，为了方便用户从众多监控中找出异常的监控项，TiDB 4.0 提供了以下监控汇总表：
+The TiDB cluster has many monitoring metrics. To make it easy to detect abnormal monitoring metrics, TiDB 4.0 introduces the following two monitoring summary tables:
 
 * `information_schema.metrics_summary`
 * `information_schema.metrics_summary_by_label`
 
-这两张表用于汇总所有监控数据，用户排查各个监控指标会更有效率。其中 `information_schema.metrics_summary_by_label` 会对不同的 label 进行区分统计。
+> **Note:**
+>
+> The preceding two monitoring summary tables are only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+
+The two tables summarize all monitoring data for you to check each monitoring metric efficiently. Compared with `information_schema.metrics_summary`, the `information_schema.metrics_summary_by_label` table has an additional `label` column and performs differentiated statistics according to different labels.
 
 
 ```sql
@@ -33,18 +37,18 @@ DESC metrics_summary;
 7 rows in set (0.00 sec)
 ```
 
-字段解释：
+Field description:
 
-* `METRICS_NAME`：监控表名。
-* `QUANTILE`：百分位。可以通过 SQL 语句指定 `QUANTILE`，例如：
-    * `select * from metrics_summary where quantile=0.99` 指定查看百分位为 0.99 的数据。
-    * `select * from metrics_summary where quantile in (0.80, 0.90, 0.99, 0.999)` 同时查看百分位为 0.80, 0.90, 0.99, 0.999 的数据。
-* `SUM_VALUE、AVG_VALUE、MIN_VALUE、MAX_VALUE` 分别表示总和、平均值、最小值、最大值。
-* `COMMENT`：对应监控的解释。
+* `METRICS_NAME`: The monitoring table name.
+* `QUANTILE`: The percentile. You can specify `QUANTILE` using SQL statements. For example:
+    * `select * from metrics_summary where quantile=0.99` specifies viewing the data of the 0.99 percentile.
+    * `select * from metrics_summary where quantile in (0.80, 0.90, 0.99, 0.999)` specifies viewing the data of the 0.8, 0.90, 0.99, 0.999 percentiles at the same time.
+* `SUM_VALUE`, `AVG_VALUE`, `MIN_VALUE`, and `MAX_VALUE` respectively mean the sum, the average value, the minimum value, and the maximum value.
+* `COMMENT`: The comment for the corresponding monitoring table.
 
-具体查询示例：
+For example:
 
-查询 `'2020-03-08 13:23:00', '2020-03-08 13:33:00'` 时间范围内 TiDB 集群中平均耗时最高的三组监控项。可直接查询 `information_schema.metrics_summary` 表，并通过 `/*+ time_range() */` 这个 hint 来指定时间范围，构造的 SQL 语句如下：
+To query the three groups of monitoring items with the highest average time consumption in the TiDB cluster within the time range of `'2020-03-08 13:23:00', '2020-03-08 13: 33: 00'`, you can directly query the `information_schema.metrics_summary` table and use the `/*+ time_range() */` hint to specify the time range. The SQL statement is as follows:
 
 
 ```sql
@@ -84,7 +88,7 @@ MAX_VALUE    | 0.013
 COMMENT      | The quantile of kv requests durations by store
 ```
 
-类似的，查询 `metrics_summary_by_label` 监控汇总表示例如下：
+Similarly, the following example queries the `metrics_summary_by_label` monitoring summary table:
 
 
 ```sql
@@ -130,14 +134,14 @@ MAX_VALUE    | 0.008241
 COMMENT      | The quantile of TiDB query durations(second)
 ```
 
-前文提到 `metrics_summary_by_label` 表结构相对于 `metrics_summary` 多了一列 `LABEL`。以上面查询结果的第 2、3 行分别表示 `tidb_query_duration` 的 `Select` 和 `Rollback` 类型的语句平均耗时非常高。
+The second and third rows of the query results above indicate that the `Select` and `Rollback` statements on `tidb_query_duration` have a long average execution time.
 
-除以上示例之外，监控汇总表可以通过对比两个时间段的全链路监控，迅速找出监控数据中变化最大的模块，快速定位瓶颈。以下示例对比两个时间段的所有监控（其中 t1 为 baseline），并按照差别最大的监控排序：
+In addition to the example above, you can use the monitoring summary table to quickly find the module with the largest change from the monitoring data by comparing the full link monitoring items of the two time periods, and quickly locate the bottleneck. The following example compares all monitoring items in two periods (where t1 is the baseline) and sorts these items according to the greatest difference:
 
-* 时间段 t1：`("2020-03-03 17:08:00", "2020-03-03 17:11:00")`
-* 时间段 t2：`("2020-03-03 17:18:00", "2020-03-03 17:21:00")`
+* Period t1: `("2020-03-03 17:08:00", "2020-03-03 17:11:00")`
+* Period t2: `("2020-03-03 17:18:00", "2020-03-03 17:21:00")`
 
-对两个时间段的监控按照 `METRICS_NAME` 进行 join，并按照差异值大小排序。其中 `TIME_RANGE` 是用于指定查询时间的 hint。
+The monitoring items of the two time periods are joined according to `METRICS_NAME` and sorted according to the difference value. `TIME_RANGE` is the hint that specifies the query time.
 
 
 ```sql
@@ -174,14 +178,13 @@ ORDER BY ratio DESC LIMIT 10;
 +----------------+------------------------------------------+----------------+------------------+---------------------------------------------------------------------------------------------+
 ```
 
-上面查询结果表示：
+From the query result above, you can get the following information:
 
-* t2 时间段内的 `tidb_slow_query_cop_process_total_time`（TiDB 慢查询中的 `cop process` 耗时）比 t1 时间段高了 5865 倍。
-* t2 时间段内的 `tidb_distsql_partial_scan_key_total_num`（TiDB 的 `distsql` 请求扫描 key 的数量）比 t1 时间段高了 3648 倍。
-* t2 时间段内的 `tidb_slow_query_cop_wait_total_time`（TiDB 慢查询中的 cop 请求排队等待的耗时）比 t1 时间段高了 267 倍。
-* t2 时间段内的 `tikv_cop_total_response_size`（TiKV 的 cop 请求结果的大小）比 t1 时间段高了 192 倍。
-* t2 时间段内的 `tikv_cop_scan_details`（TiKV 的 cop 请求的 scan）比 t1 时间段高了 105 倍。
+* `tib_slow_query_cop_process_total_time` (the time consumption of `cop process` in TiDB slow queries) in the period t2 is 5,865 times higher than that in period t1.
+* `tidb_distsql_partial_scan_key_total_num` (the number of keys to scan requested by TiDB's `distsql`) in period t2 is 3,648 times higher than that in period t1. During period t2, `tidb_slow_query_cop_wait_total_time` (the waiting time of Coprocessor requesting to queue up in the TiDB slow query) is 267 times higher than that in period t1.
+* `tikv_cop_total_response_size` (the size of the TiKV Coprocessor request result) in period t2 is 192 times higher than that in period t1.
+* `tikv_cop_scan_details` in period t2 (the scan requested by the TiKV Coprocessor) is 105 times higher than that in period t1.
 
-综上，可以马上知道 t2 时间段的 cop 请求要比 t2 时间段高很多，导致 TiKV 的 Coprocessor 过载，出现了 `cop task` 等待，可以猜测可能是 t2 时间段出现了一些大查询，或者是查询较多的负载。
+From the result above, you can see that the Coprocessor requests in period t2 are much more than those in period t1. This causes TiKV Coprocessor to be overloaded, and the `cop task` has to wait. It might be that some large queries appear in period t2 that bring more load.
 
-实际上，在 t1 ~ t2 整个时间段内都在跑 `go-ycsb` 的压测，然后在 t2 时间段跑了 20 个 `tpch` 的查询，所以是因为 `tpch` 大查询导致了出现很多的 cop 请求。
+In fact, during the entire time period from t1 to t2, the `go-ycsb` pressure test is running. Then 20 `tpch` queries are running during period t2. So it is the `tpch` queries that cause many Coprocessor requests.

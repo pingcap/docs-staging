@@ -1,192 +1,207 @@
 ---
-title: TiDB Data Migration 故障及处理方法
-summary: 了解 DM 的错误系统及常见故障的处理方法。
+title: Handle Errors in TiDB Data Migration
+summary: Learn about the error system and how to handle common errors when you use DM.
 ---
 
-# TiDB Data Migration 故障及处理方法
+# Handle Errors in TiDB Data Migration
 
-本文档介绍 TiDB Data Migration (DM) 的错误系统及常见故障的处理方法。
+This document introduces the error system and how to handle common errors when you use DM.
 
-## DM 错误系统
+## Error system
 
-在 DM 的错误系统中，对于一条特定的错误，通常主要包含以下信息：
+In the error system, usually, the information of a specific error is as follows:
 
-- `code`：错误码。
+- `code`: error code.
 
-    同一种错误都使用相同的错误码。错误码不随 DM 版本改变。
+    DM uses the same error code for the same error type. An error code does not change as the DM version changes.
 
-    在 DM 迭代过程中，部分错误可能会被移除，但错误码不会。新增的错误会使用新的错误码，不会复用已有的错误码。
+    Some errors might be removed during the DM iteration, while the error codes are not. DM uses a new error code instead of an existing one for a new error.
 
-- `class`：发生错误的类别。
+- `class`: error type.
 
-    用于标记出现错误的系统子模块。
+    It is used to mark the component where an error occurs (error source).
 
-    下表展示所有的错误类别、错误对应的系统子模块、错误样例：
+    The following table displays all error types, error sources, and error samples.
 
-    |  <div style="width: 100px;">错误类别</div>    | 错误对应的系统子模块             | 错误样例                                                     |
+    |  <div style="width: 100px;">Error Type</div>    |   Error Source            | Error Sample                                                     |
     | :-------------- | :------------------------------ | :------------------------------------------------------------ |
-    | `database`       | 执行数据库操作出现错误         | `[code=10003:class=database:scope=downstream:level=medium] database driver: invalid connection` |
-    | `functional`     | 系统底层的基础函数错误           | `[code=11005:class=functional:scope=internal:level=high] not allowed operation: alter multiple tables in one statement` |
-    | `config`         | 配置错误                       | `[code=20005:class=config:scope=internal:level=medium] empty source-id not valid` |
-    | `binlog-op`      | binlog 操作出现错误            | `[code=22001:class=binlog-op:scope=internal:level=high] empty UUIDs not valid` |
-    | `checkpoint`     | checkpoint 相关操作出现错误    | `[code=24002:class=checkpoint:scope=internal:level=high] save point bin.1234 is older than current pos bin.1371` |
-    | `task-check`     | 进行任务检查时出现错误       | `[code=26003:class=task-check:scope=internal:level=medium] new table router error` |
-    | `relay-event-lib`| 执行 relay 模块基础功能时出现错误 | `[code=28001:class=relay-event-lib:scope=internal:level=high] parse server-uuid.index` |
-    | `relay-unit`     | relay 处理单元内出现错误     | `[code=30015:class=relay-unit:scope=upstream:level=high] TCPReader get event: ERROR 1236 (HY000): Could not open log file` |
-    | `dump-unit`      | dump 处理单元内出现错误      | `[code=32001:class=dump-unit:scope=internal:level=high] mydumper runs with error: CRITICAL **: 15:12:17.559: Error connecting to database: Access denied for user 'root'@'172.17.0.1' (using password: NO)` |
-    | `load-unit`      | load 处理单元内出现错误      | `[code=34002:class=load-unit:scope=internal:level=high] corresponding ending of sql: ')' not found` |
-    | `sync-unit`      | sync 处理单元内出现错误      | `[code=36027:class=sync-unit:scope=internal:level=high] Column count doesn't match value count: 9 (columns) vs 10 (values)` |
-    | `dm-master`      | DM-master 服务内部出现错误   | `[code=38008:class=dm-master:scope=internal:level=high] grpc request error: rpc error: code = Unavailable desc = all SubConns are in TransientFailure, latest connection error: connection error: desc = "transport: Error while dialing dial tcp 172.17.0.2:8262: connect: connection refused"` |
-    | `dm-worker`      | DM-worker 服务内部出现错误   | `[code=40066:class=dm-worker:scope=internal:level=high] ExecuteDDL timeout, try use query-status to query whether the DDL is still blocking` |
-    | `dm-tracer`      | DM-tracer 服务内部出现错误   | `[code=42004:class=dm-tracer:scope=internal:level=medium] trace event test.1 not found` |
-    | `schema-tracker` | 增量复制时记录 schema 变更出现错误   | `[code=44006:class=schema-tracker:scope=internal:level=high],"cannot track DDL: ALTER TABLE test DROP COLUMN col1"` |
-    | `scheduler`      | 数据迁移任务调度相关操作出错操作   | `[code=46001:class=scheduler:scope=internal:level=high],"the scheduler has not started"` |
-    | `dmctl`          | dmctl 内部或与其他组件交互出现错误   | `[code=48001:class=dmctl:scope=internal:level=high],"can not create grpc connection"` |
+    | `database`       |  Database operations         | `[code=10003:class=database:scope=downstream:level=medium] database driver: invalid connection` |
+    | `functional`     |  Underlying functions of DM           | `[code=11005:class=functional:scope=internal:level=high] not allowed operation: alter multiple tables in one statement` |
+    | `config`         |  Incorrect configuration                      | `[code=20005:class=config:scope=internal:level=medium] empty source-id not valid` |
+    | `binlog-op`      |  Binlog operations          | `[code=22001:class=binlog-op:scope=internal:level=high] empty UUIDs not valid` |
+    | `checkpoint`     |  checkpoint operations  | `[code=24002:class=checkpoint:scope=internal:level=high] save point bin.1234 is older than current pos bin.1371` |
+    | `task-check`     |  Performing task check       | `[code=26003:class=task-check:scope=internal:level=medium] new table router error` |
+    | `relay-event-lib`|  Executing the basic functions of the relay module | `[code=28001:class=relay-event-lib:scope=internal:level=high] parse server-uuid.index` |
+    | `relay-unit`     |  relay processing unit    | `[code=30015:class=relay-unit:scope=upstream:level=high] TCPReader get event: ERROR 1236 (HY000): Could not open log file` |
+    | `dump-unit`      |   dump processing unit    | `[code=32001:class=dump-unit:scope=internal:level=high] mydumper runs with error: CRITICAL **: 15:12:17.559: Error connecting to database: Access denied for user 'root'@'172.17.0.1' (using password: NO)` |
+    | `load-unit`      |  load processing unit    | `[code=34002:class=load-unit:scope=internal:level=high] corresponding ending of sql: ')' not found` |
+    | `sync-unit`      |  sync processing unit     | `[code=36027:class=sync-unit:scope=internal:level=high] Column count doesn't match value count: 9 (columns) vs 10 (values)` |
+    | `dm-master`      |   DM-master service | `[code=38008:class=dm-master:scope=internal:level=high] grpc request error: rpc error: code = Unavailable desc = all SubConns are in TransientFailure, latest connection error: connection error: desc = "transport: Error while dialing dial tcp 172.17.0.2:8262: connect: connection refused"` |
+    | `dm-worker`      |  DM-worker service  | `[code=40066:class=dm-worker:scope=internal:level=high] ExecuteDDL timeout, try use query-status to query whether the DDL is still blocking` |
+    | `dm-tracer`      |  DM-tracer service  | `[code=42004:class=dm-tracer:scope=internal:level=medium] trace event test.1 not found` |
+    | `schema-tracker` | schema-tracker (during incremental data replication)   | `[code=44006:class=schema-tracker:scope=internal:level=high],"cannot track DDL: ALTER TABLE test DROP COLUMN col1"` |
+    | `scheduler`      | Scheduling operations (of data migration tasks)   | `[code=46001:class=scheduler:scope=internal:level=high],"the scheduler has not started"` |
+    | `dmctl`          | An error occurs within dmctl or when it interacts with other components | `[code=48001:class=dmctl:scope=internal:level=high],"can not create grpc connection"` |
 
-- `scope`：错误作用域。
+- `scope`: Error scope.
 
-    用于标识错误发生时 DM 作用对象的范围和来源，包括未设置 (`not-set`)、上游数据库 (`upstream`)、下游数据库 (`downstream`)、内部 (`internal`) 四种类型。
+    It is used to mark the scope and source of DM objects when an error occurs. `scope` includes four types: `not-set`, `upstream`, `downstream`, and `internal`.
 
-    如果错误发生的逻辑直接涉及到上下游数据库请求，作用域会设置为 `upstream` 或 `downstream`，其他出错场景目前都设置为 `internal`。
+    If the logic of the error directly involves requests between upstream and downstream databases, the scope is set to `upstream` or `downstream`; otherwise, it is currently set to `internal`.
 
-- `level`：错误级别。
+- `level`: Error level.
 
-    错误的严重级别，包括低级别 (`low`)、中级别 (`medium`)、高级别 (`high`) 三种。
+    The severity level of the error, including `low`, `medium`, and `high`.
 
-    低级别通常是用户操作、输入错误，不影响正常迁移任务；中级别通常是用户配置等错误，会影响部分新启动服务，不影响已有系统迁移状态；高级别通常是用户需要关注的一些错误，可能存在迁移任务中断等风险，需要用户进行处理。
+    - The `low` level error usually relates to user operations and incorrect inputs. It does not affect migration tasks.
+    - The `medium` level error usually relates to user configurations. It affects some newly started services; however, it does not affect the existing DM migration status.
+    - The `high` level error usually needs your attention, since you need to resolve it to avoid the possible interruption of a migration task.
 
-- `message`：错误描述。
+- `message`: Error descriptions.
 
-    错误的详细描述信息。对于错误调用链上每一层额外增加的错误 message，采用 [errors.Wrap](https://godoc.org/github.com/pkg/errors#hdr-Adding_context_to_an_error) 的模式来叠加和保存错误 message。wrap 最外层的 message 是 DM 内部对该错误的描述，wrap 最内层的 message 是该错误最底层出错位置的错误描述。
+    Detailed descriptions of the error. To wrap and store every additional layer of error message on the error call chain, the [errors.Wrap](https://godoc.org/github.com/pkg/errors#hdr-Adding_context_to_an_error) mode is adopted. The message description wrapped at the outermost layer indicates the error in DM and the message description wrapped at the innermost layer indicates the error source.
 
-- `workaround`: 错误处理方法（可选）。
+- `workaround`: Error handling methods (optional)
 
-    对该错误的处理方法。对于部分明确的错误（如：配置信息错误等），DM 会在 `workaround` 中给出相应的人为处理方法。
+    The handling methods for this error. For some confirmed errors (such as configuration errors), DM gives the corresponding manual handling methods in `workaround`.
 
-- 错误堆栈信息（可选）。
+- Error stack information (optional)
 
-    DM 根据错误的严重程度和必要性来选择是否输出错误堆栈。错误堆栈记录了错误发生时完整的堆栈调用信息。如果用户通过错误基本信息和错误 message 描述不能完全诊断出错误发生的原因，可以通过错误堆栈进一步跟进出错时代码的运行路径。
+    Whether DM outputs the error stack information depends on the error severity and the necessity. The error stack records the complete stack call information when the error occurs. If you cannot figure out the error cause based on the basic information and the error message, you can trace the execution path of the code when the error occurs using the error stack.
 
-可在 DM 代码仓库[已发布的错误码](https://github.com/pingcap/tiflow/blob/release-8.5/dm/_utils/terror_gen/errors_release.txt)中查询完整的错误码列表。
+For the complete list of error codes, refer to the [error code lists](https://github.com/pingcap/tiflow/blob/release-8.5/dm/_utils/terror_gen/errors_release.txt).
 
-## DM 故障诊断
+## Troubleshooting
 
-如果在运行 DM 工具时出现了错误，请尝试以下解决方案：
+If you encounter an error while running DM, take the following steps to troubleshoot this error:
 
-1. 执行 `query-status` 命令查看任务运行状态以及相关错误输出。
+1. Execute the `query-status` command to check the task running status and the error output.
 
-2. 查看与该错误相关的日志文件。日志文件位于 DM-master、DM-worker 部署节点上，通过 [DM 错误系统](#dm-错误系统)获取错误的关键信息，然后查看[常见故障处理方法](#常见故障处理方法)以寻找相应的解决方案。
+2. Check the log files related to the error. The log files are on the DM-master and DM-worker nodes. To get key information about the error, refer to the [error system](#error-system). Then check the [Handle Common Errors](#handle-common-errors) section to find the solution.
 
-3. 如果该错误还没有相应的解决方案，并且你无法通过查询日志或监控指标自行解决此问题，请从 PingCAP 官方或 TiDB 社区[获取支持](/support.md)。
+3. If the error is not covered in this document, and you cannot solve the problem by checking the log or monitoring metrics, [get support](/support.md) from PingCAP or the community.
 
-4. 一般情况下，错误处理完成后，只需使用 dmctl 重启任务即可。
+4. After the error is resolved, restart the task using dmctl.
 
     
     ```bash
     resume-task ${task name}
     ```
 
-但在某些情况下，你还需要重置数据迁移任务。有关何时需要重置以及如何重置，详见[重置数据迁移任务](/dm/dm-faq.md#如何重置数据迁移任务)。
+However, you need to reset the data migration task in some cases. For details, refer to [Reset the Data Migration Task](/dm/dm-faq.md#how-to-reset-the-data-migration-task).
 
-## 常见故障处理方法
+## Handle common errors
 
-| <div style="width: 100px;">错误码</div>       | 错误说明                                                     | 解决方法                                                     |
+| <div style="width: 100px;">Error Code</div>       | Error Description                                                     |  How to Handle                                                    |
 | :----------- | :------------------------------------------------------------ | :----------------------------------------------------------- |
-| `code=10001` | 数据库操作异常                                               | 进一步分析错误信息和错误堆栈                                 |
-| `code=10002` | 数据库底层的 `bad connection` 错误，通常表示 DM 到下游 TiDB 的数据库连接出现了异常（如网络故障、TiDB 重启等）且当前请求的数据暂时未能发送到 TiDB。 | DM 提供针对此类错误的自动恢复。如果长时间未恢复，需要用户检查网络或 TiDB 状态。 |
-| `code=10003` | 数据库底层 `invalid connection` 错误，通常表示 DM 到下游 TiDB 的数据库连接出现了异常（如网络故障、TiDB 重启、TiKV busy 等）且当前请求已有部分数据发送到了 TiDB。 | DM 提供针对此类错误的自动恢复。如果未能正常恢复，需要用户进一步检查错误信息并根据具体场景进行分析。 |
-| `code=10005` | 数据库查询类语句出错                                         |                                                              |
-| `code=10006` | 数据库 `EXECUTE` 类型语句出错，包括 DDL 和 `INSERT`/`UPDATE`/`DELETE` 类型的 DML。更详细的错误信息可通过错误 message 获取。错误 message 中通常包含操作数据库所返回的错误码和错误信息。 |                                                              |
-| `code=11006` |  DM 内置的 parser 解析不兼容的 DDL 时出错              |  可参考 [Data Migration 故障诊断-处理不兼容的 DDL 语句](/dm/dm-faq.md#如何处理不兼容的-ddl-语句)提供的解决方案 |
-| `code=20010` | 处理任务配置时，解密数据库的密码出错                             |  检查任务配置中提供的下游数据库密码是否有[使用 dmctl 正确加密](/dm/dm-manage-source.md#加密数据库密码) |
-| `code=26002` | 任务检查创建数据库连接失败。更详细的错误信息可通过错误 message 获取。错误 message 中包含操作数据库所返回的错误码和错误信息。 |  检查 DM-master 所在的机器是否有权限访问上游 |
-| `code=32001` | dump 处理单元异常                                            | 如果报错 `msg` 包含 `mydumper: argument list too long.`，则需要用户根据 block-allow-list，在 `task.yaml` 的 dump 处理单元的 `extra-args` 参数中手动加上 `--regex` 正则表达式设置要导出的库表。例如，如果要导出所有库中表名字为 `hello` 的表，可加上 `--regex '.*\\.hello$'`，如果要导出所有表，可加上 `--regex '.*'`。 |
-| `code=38008` | DM 组件间的 gRPC 通信出错                                      |  检查 `class`，定位错误发生在哪些组件的交互环节，根据错误 message 判断是哪类通信错误。如果是 gRPC 建立连接出错，可检查通信服务端是否运行正常。 |
+| `code=10001` |  Abnormal database operation.                                              |  Further analyze the error message and error stack.                                |
+| `code=10002` | The `bad connection` error from the underlying database. It usually indicates that the connection between DM and the downstream TiDB instance is abnormal (possibly caused by network failure or TiDB restart) and the currently requested data is not sent to TiDB. |  DM provides automatic recovery for such error. If the recovery is not successful for a long time, check the network or TiDB status. |
+| `code=10003` | The `invalid connection` error from the underlying database. It usually indicates that the connection between DM and the downstream TiDB instance is abnormal (possibly caused by network failure or TiDB restart) and the currently requested data is partly sent to TiDB.  | DM provides automatic recovery for such error. If the recovery is not successful for a long time, further check the error message and analyze the information based on the actual situation. |
+| `code=10005` |  Occurs when performing the `QUERY` type SQL statements.                                         |                                                              |
+| `code=10006` |  Occurs when performing the `EXECUTE` type SQL statements, including DDL statements and DML statements of the `INSERT`, `UPDATE`or `DELETE` type. For more detailed error information, check the error message which usually includes the error code and error information returned for database operations.
+|                                                              |
+| `code=11006` |  Occurs when the built-in parser of DM parses the incompatible DDL statements.          |  Refer to [Data Migration - incompatible DDL statements](/dm/dm-faq.md#how-to-handle-incompatible-ddl-statements) for solution. |
+| `code=20010` |   Occurs when decrypting the database password that is provided in task configuration.                   |  Check whether the downstream database password provided in the configuration task is [correctly encrypted using dmctl](/dm/dm-manage-source.md#encrypt-the-database-password). |
+| `code=26002` |  The task check fails to establish database connection. For more detailed error information, check the error message which usually includes the error code and error information returned for database operations. |  Check whether the machine where DM-master is located has permission to access the upstream. |
+| `code=32001` |   Abnormal dump processing unit                                            |  If the error message contains `mydumper: argument list too long.`, configure the table to be exported by manually adding the `--regex` regular expression in the Mydumper argument `extra-args` in the `task.yaml` file according to the block-allow list. For example, to export all tables named `hello`, add `--regex '.*\\.hello$'`; to export all tables, add `--regex '.*'`. |
+| `code=38008` |  An error occurs in the gRPC communication among DM components.                                     |   Check `class`. Find out the error occurs in the interaction of which components. Determine the type of communication error. If the error occurs when establishing gRPC connection, check whether the communication server is working normally. |
 
-### 迁移任务中断并包含 `invalid connection` 错误
+### What can I do when a migration task is interrupted with the `invalid connection` error returned?
 
-#### 原因
+#### Reason
 
-发生 `invalid connection` 错误时，通常表示 DM 到下游 TiDB 的数据库连接出现了异常（如网络故障、TiDB 重启、TiKV busy 等）且当前请求已有部分数据发送到了 TiDB。
+The `invalid connection` error indicates that anomalies have occurred in the connection between DM and the downstream TiDB database (such as network failure, TiDB restart, and TiKV busy) and that a part of the data for the current request has been sent to TiDB.
 
-#### 解决方案
+#### Solutions
 
-由于 DM 中存在迁移任务并发向下游复制数据的特性，因此在任务中断时可能同时包含多个错误（可通过 `query-status` 查询当前错误）。
+Because DM has the feature of concurrently migrating data to the downstream in migration tasks, several errors might occur when a task is interrupted. You can check these errors by using `query-status`.
 
-- 如果错误中仅包含 `invalid connection` 类型的错误且当前处于增量复制阶段，则 DM 会自动进行重试。
-- 如果 DM 由于版本问题等未自动进行重试或自动重试未能成功，则可尝试先使用 `stop-task` 停止任务，然后再使用 `start-task` 重启任务。
+- If only the `invalid connection` error occurs during the incremental replication process, DM retries the task automatically.
+- If DM does not or fails to retry automatically because of version problems, use `stop-task` to stop the task and then use `start-task` to restart the task.
 
-### 迁移任务中断并包含 `driver: bad connection` 错误
+### A migration task is interrupted with the `driver: bad connection` error returned
 
-#### 原因
+#### Reason
 
-发生 `driver: bad connection` 错误时，通常表示 DM 到下游 TiDB 的数据库连接出现了异常（如网络故障、TiDB 重启等）且当前请求的数据暂时未能发送到 TiDB。
+The `driver: bad connection` error indicates that anomalies have occurred in the connection between DM and the upstream TiDB database (such as network failure and TiDB restart) and that the data of the current request has not yet been sent to TiDB at that moment.
 
-#### 解决方案
+#### Solution
 
-当前版本 DM 会自动进行重试，如果由于版本问题等未自动重试，可先使用 `stop-task` 停止任务后再使用 `start-task` 重启任务。
+The current version of DM automatically retries on error. If you use the previous version which does not support automatically retry, you can execute the `stop-task` command to stop the task. Then execute `start-task` to restart the task.
 
-### relay 处理单元报错 `event from * in * diff from passed-in event *` 或迁移任务中断并包含 `get binlog error ERROR 1236 (HY000)`、`binlog checksum mismatch, data may be corrupted` 等 binlog 获取或解析失败错误
+### The relay unit throws error `event from * in * diff from passed-in event *` or a migration task is interrupted with failing to get or parse binlog errors like `get binlog error ERROR 1236 (HY000)` and `binlog checksum mismatch, data may be corrupted` returned
 
-#### 原因
+#### Reason
 
-在 DM 进行 relay log 拉取与增量复制过程中，如果遇到了上游超过 4GB 的 binlog 文件，就可能出现这两个错误。
+During the DM process of relay log pulling or incremental replication, this two errors might occur if the size of the upstream binlog file exceeds **4 GB**.
 
-原因是 DM 在写 relay log 时需要依据 binlog position 及文件大小对 event 进行验证，且需要保存迁移的 binlog position 信息作为 checkpoint。但是 MySQL binlog position 官方定义使用 uint32 存储，所以超过 4G 部分的 binlog position 的 offset 值会溢出，进而出现上面的错误。
+**Cause:** When writing relay logs, DM needs to perform event verification based on binlog positions and the size of the binlog file, and store the replicated binlog positions as checkpoints. However, the official MySQL uses `uint32` to store binlog positions. This means the binlog position for a binlog file over 4 GB overflows, and then the errors above occur.
 
-#### 解决方案
+#### Solutions
 
-对于 relay 处理单元，可通过以下步骤手动恢复：
+For relay units, manually recover migration using the following solution:
 
-1. 在上游确认出错时对应的 binlog 文件的大小超出了 4GB。
-2. 停止 DM-worker。
-3. 将上游对应的 binlog 文件复制到 relay log 目录作为 relay log 文件。
-4. 更新 relay log 目录内对应的 `relay.meta` 文件以从下一个 binlog 开始拉取。如果 DM worker 已开启 `enable_gtid`，那么在修改 `relay.meta` 文件时，同样需要修改下一个 binlog 对应的 GTID。如果未开启 `enable_gtid` 则无需修改 GTID。
+1. Identify in the upstream that the size of the corresponding binlog file has exceeded 4GB when the error occurs.
 
-    例如：报错时有 `binlog-name = "mysql-bin.004451"` 与 `binlog-pos = 2453`，则将其分别更新为 `binlog-name = "mysql-bin.004452"` 和 `binlog-pos = 4`，同时更新 `binlog-gtid = "f0e914ef-54cf-11e7-813d-6c92bf2fa791:1-138218058"`。
+2. Stop the DM-worker.
 
-5. 重启 DM-worker。
+3. Copy the corresponding binlog file in the upstream to the relay log directory as the relay log file.
 
-对于 binlog replication 处理单元，可通过以下步骤手动恢复：
+4. In the relay log directory, update the corresponding `relay.meta` file to pull from the next binlog file. If you have specified `enable_gtid` to `true` for the DM-worker, you need to modify the GTID corresponding to the next binlog file when updating the `relay.meta` file. Otherwise, you don't need to modify the GTID.
 
-1. 在上游确认出错时对应的 binlog 文件的大小超出了 4GB。
-2. 通过 `stop-task` 停止迁移任务。
-3. 将下游 `dm_meta` 数据库中 global checkpoint 与每个 table 的 checkpoint 中的 `binlog_name` 更新为出错的 binlog 文件，将 `binlog_pos` 更新为已迁移过的一个合法的 position 值，比如 4。
+    Example: when the error occurs, `binlog-name = "mysql-bin.004451"` and `binlog-pos = 2453`. Update them respectively to `binlog-name = "mysql-bin.004452"` and `binlog-pos = 4`, and update `binlog-gtid` to `f0e914ef-54cf-11e7-813d-6c92bf2fa791:1-138218058`.
 
-    例如：出错任务名为 `dm_test`，对应的 `source-id` 为 `replica-1`，出错时对应的 binlog 文件为 `mysql-bin|000001.004451`，则执行 `UPDATE dm_test_syncer_checkpoint SET binlog_name='mysql-bin|000001.004451', binlog_pos = 4 WHERE id='replica-1';`。
+5. Restart the DM-worker.
 
-4. 在迁移任务配置中为 `syncers` 部分设置 `safe-mode: true` 以保证可重入执行。
-5. 通过 `start-task` 启动迁移任务。
-6. 通过 `query-status` 观察迁移任务状态，当原造成出错的 relay log 文件迁移完成后，即可还原 `safe-mode` 为原始值并重启迁移任务。
+For binlog replication processing units, manually recover migration using the following solution:
 
-### 执行 `query-status` 或查看日志时出现 `Access denied for user 'root'@'172.31.43.27' (using password: YES)`
+1. Identify in the upstream that the size of the corresponding binlog file has exceeded 4GB when the error occurs.
 
-在所有 DM 配置文件中，数据库相关的密码都推荐使用经 dmctl 加密后的密文（若数据库密码为空，则无需加密）。有关如何使用 dmctl 加密明文密码，参见[使用 dmctl 加密数据库密码](/dm/dm-manage-source.md#加密数据库密码)。
+2. Stop the migration task using `stop-task`.
 
-此外，在 DM 运行过程中，上下游数据库的用户必须具备相应的读写权限。在启动迁移任务过程中，DM 会自动进行相应权限的前置检查，详见[上游 MySQL 实例配置前置检查](/dm/dm-precheck.md)。
+3. Update the `binlog_name` in the global checkpoints and in each table checkpoint of the downstream `dm_meta` database to the name of the binlog file in error; update `binlog_pos` to a valid position value for which migration has completed, for example, 4.
 
-### load 处理单元报错 `packet for query is too large. Try adjusting the 'max_allowed_packet' variable`
+    Example: the name of the task in error is `dm_test`, the corresponding s`source-id` is `replica-1`, and the corresponding binlog file is `mysql-bin|000001.004451`. Execute the following command:
 
-#### 原因
+    
+    ```sql
+    UPDATE dm_test_syncer_checkpoint SET binlog_name='mysql-bin|000001.004451', binlog_pos = 4 WHERE id='replica-1';
+    ```
 
-* MySQL client 和 MySQL/TiDB Server 都有 `max_allowed_packet` 配额的限制，如果在使用过程中违反其中任何一个 `max_allowed_packet` 配额，客户端程序就会收到对应的报错。目前最新版本的 DM 和 TiDB Server 的默认 `max_allowed_packet` 配额都为 `64M`。
+4. Specify `safe-mode: true` in the `syncers` section of the migration task configuration to ensure re-entrant.
 
-* DM 的全量数据导入处理模块不支持对 dump 处理模块导出的 SQL 文件进行切分。
+5. Start the migration task using `start-task`.
 
-#### 解决方案
+6. View the status of the migration task using `query-status`. You can restore `safe-mode` to the original value and restart the migration task when migration is done for the original error-triggering relay log files.
 
-* 推荐在 DM 的 dump 处理单元提供的配置 `extra-args` 中设置 `statement-size`:
+### `Access denied for user 'root'@'172.31.43.27' (using password: YES)` shows when you query the task or check the log
 
-    依据默认的 `--statement-size` 设置，DM 的 dump 处理单元默认生成的 `Insert Statement` 大小一般会在 `1M` 左右，使用默认值就可以确保绝大部分情况 load 处理单元不会报错 `packet for query is too large. Try adjusting the 'max_allowed_packet' variable`。
+For database related passwords in all the DM configuration files, it is recommended to use the passwords encrypted by `dmctl`. If a database password is empty, it is unnecessary to encrypt it. For how to encrypt the plaintext password, see [Encrypt the database password using dmctl](/dm/dm-manage-source.md#encrypt-the-database-password).
 
-    有时候在 dump 过程中会出现下面的 `WARN` log。这个 `WARN` log 不影响 dump 的过程，只是说明 dump 的表可能是宽表。
+In addition, the user of the upstream and downstream databases must have the corresponding read and write privileges. Data Migration also [prechecks the corresponding privileges automatically](/dm/dm-precheck.md) while starting the data migration task.
+
+### The `load` processing unit reports the error `packet for query is too large. Try adjusting the 'max_allowed_packet' variable`
+
+#### Reasons
+
+* Both MySQL client and MySQL/TiDB server have the quota limits for `max_allowed_packet`. If any `max_allowed_packet` exceeds a limit, the client receives the error message. Currently, for the latest version of DM and TiDB server, the default value of `max_allowed_packet` is `64M`.
+
+* The full data import processing unit in DM does not support splitting the SQL file exported by the Dump processing unit in DM.
+
+#### Solutions
+
+* It is recommended to set the `statement-size` option of `extra-args` for the Dump processing unit:
+
+    According to the default `--statement-size` setting, the default size of `Insert Statement` generated by the Dump processing unit is about `1M`. With this default setting, the load processing unit does not report the error `packet for query is too large. Try adjusting the 'max_allowed_packet' variable` in most cases.
+
+    Sometimes you might receive the following `WARN` log during the data dump. This `WARN` log does not affect the dump process. This only means that wide tables are dumped.
 
     ```
     Row bigger than statement_size for xxx
     ```
 
-* 如果宽表的单行超过了 `64M`，需要修改以下两项配置，并且确保其生效。
+* If the single row of the wide table exceeds `64M`, you need to modify the following configurations and make sure the configurations take effect.
 
-    * 在 TiDB Server 执行 `set @@global.max_allowed_packet=134217728` （`134217728 = 128M`）
+    * Execute `set @@global.max_allowed_packet=134217728` (`134217728` = 128 MB) in the TiDB server.
 
-    * 根据实际情况为 DM 的任务配置文件中的 `target-database` 增加配置 `max-allowed-packet: 134217728` (128M)，执行 `stop-task` 后再重新 `start-task`。
+    * First add the `max-allowed-packet: 134217728` (128 MB) to the `target-database` section in the DM task configuration file. Then, execute the `stop-task` command and execute the `start-task` command.

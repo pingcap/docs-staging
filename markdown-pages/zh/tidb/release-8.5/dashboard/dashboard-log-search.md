@@ -1,71 +1,71 @@
 ---
-title: TiDB Dashboard 日志搜索页面
-summary: 在集群中搜索所有节点上的日志
+title: TiDB Dashboard Log Search Page
+summary: TiDB Dashboard log search page allows users to search logs, preview results, and download logs. Users can access the page after logging in, and specify time range, log level, keywords, and components for the search. The search result page displays parameter options, search progress, and search results. Users can download selected logs, cancel running tasks, and retry failed tasks. The search history list shows details of past searches and allows users to delete unnecessary history.
 ---
 
-# TiDB Dashboard 日志搜索页面
+# TiDB Dashboard Log Search Page
 
-该页面上允许用户在集群中搜索所有节点上的日志，在页面上预览搜索结果和下载日志。
+On the log search page of TiDB Dashboard, you can search logs of all nodes, preview the search result and download logs.
 
-## 访问
+## Access the page
 
-登录 Dashboard 后点击左侧导航的**日志搜索**可以进入此功能页面：
+After logging in to TiDB Dashboard, you can click **Search Logs** to enter this log search homepage.
 
-![日志搜索首页](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-log-search-home.png)
+![Log Search Page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-home.png)
 
-该页面提供 4 个搜索参数，包括：
+This page provides the following search parameters:
 
-- 时间范围：限定搜索时间范围内的日志，默认值为最近 30 分钟
-- 日志等级：限定最低日志等级，搜索该日志等级以上的所有日志，默认值为 INFO 等级
-- 关键词：任何合法的任何字符串，可选，关键词之间以空格分割，支持正则表达式（大小写不敏感）
-- 组件：选择要搜索的集群组件，多选，非空，默认选中所有组件
+- Time range: Specifies the time range of logs to search. The default value is the recent 30 minutes.
+- Log level: Specifies the minimum log level. All logs above this log level are searched. The default value is the `INFO`.
+- Keywords: The parameter is optional and its value can be any legal string. Multiple keywords are separated by a space. Regular expressions are supported (case-insensitive).
+- Components: Selects the cluster components to search, which are multi-select and non-empty. By default, all components are selected.
 
-点击**搜索**按钮后，会进入搜索结果的详情页。
+After clicking the **Search** button, you enter the detail page of the search results.
 
-## 搜索结果详情
+## Page of search result
 
-搜索结果详情页面如下图所示：
+The following image shows the page of the search results.
 
-![搜索结果](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-log-search-result.png)
+![Search result](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-result.png)
 
-整个页面分为三个部分：
+This page consists of the following three areas:
 
-- 搜索参数选项：与搜索页面的参数选项相同，可以在表单中重新选择参数并开始一次新的搜索（对应上图中框选的区域 1）
-- 搜索进度：在页面右侧，展示当前搜索的进度，包括每个节点日志搜索状态和统计等（对应上图中框选的区域 2）
-- 搜索结果（对应上图中框选的区域 3）：
-    - 时间：日志产生的时间，时区与前端用户所处时区相同
-    - 日志等级：日志等级
-    - 组件类型：显示组件名及其地址
-    - 日志：每条日志记录的正文部分，不包含日志的时间和日志等级。过长的日志会自动截断，鼠标单击该行可以展开查看完整内容，完整日志最长显示 512 个字符
+- Parameter options (area 1 in the image above): These options are the same as the parameter options on the search homepage. You can re-select the parameters in the boxes and start a new search.
+- Progress (area 2 in the image above): The current search progress is shown on the right side of this page, including the log search status and statistics of each node.
+- Search results (area 3 in the image above):
+    - Time: The time at which the log is generated. The time zone is the same as the time zone of the front-end user.
+    - Level: log level.
+    - Component: Shows the component name and its address.
+    - Log: The body part of each log record, excluding the log time and log level. Logs that are too long are automatically truncated. Click a row to expand the full content. The full log can show up to 512 characters.
 
-> **注意：**
+> **Note:**
 >
-> 在该页面上最多只显示 500 条搜索结果，完整的搜索结果可以通过下载得到。
+> At most 500 search results can be previewed on this page. You can get the complete search results by downloading them.
 
-### 搜索进度
+### Search progress
 
-在搜索进度区域中，对一个节点的搜索称为一次搜索任务，对搜索任务的状态分为：
+In the search progress area, a search on a node is called a search task. A search task might have the following statuses:
 
-- 运行中：开始搜索后，所有任务会进入**运行中**状态
-- 成功：任务完成后自动转到**成功**，此时日志已缓存在 Dashboard 后端所在的本地磁盘中，可以提供给前端下载
-- 失败：用户主动取消，或者某种原因报错退出的任务进入**失败**状态。任务失败时会自动清理本地临时文件
+- Running: After starting the search, all tasks enter the **Running** status.
+- Success: After the task is completed, it automatically enters the **Success** status. At this time, the logs have been cached in the local disk where the Dashboard backend is located, and can be provided to the frontend to download.
+- Failed: When you cancel the search task, or the task exits with an error, the task enters the **Failed** status. When the task fails, the local temporary files are automatically cleaned.
 
-搜索进度区域包含三个控制按钮：
+The search progress area has the following three control buttons:
 
-- 下载选中日志：下载被勾选组件的日志（只有已完成的才能被勾选），返回 tar 文件，解压得到一个或多个 zip 文件（每个组件对应一个 zip 文件），解压 zip 得到 log 文本文件
-- 取消：取消所有正在运行的任务，只能在有运行中的任务时才能点击
-- 重试：重试所有失败的任务，只有在有失败任务且无正在运行的任务时才能点击
+- **Download Selected**: Click this button to download logs of the selected components (only the completed ones can be selected), and you will get a tar file. Unzip this tar file to get one or more zip files (each component corresponds to a zip file). Unzip the zip file(s) to get the log text file.
+- **Cancel**: Click this button to cancel all running tasks. You can click this button only when there are running tasks.
+- **Retry**: Click this button to retry all failed tasks. You can click this button only when there are failed tasks and no running tasks.
 
-## 搜索历史列表
+## Search history list
 
-在日志搜索首页点击**查看搜索历史**链接，进入搜索历史列表页面：
+Click the **View search history** link on the log search homepage to enter page of search history list:
 
-![搜索历史入口](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-log-search-history-entry.png)
+![Search history entry](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history-entry.png)
 
-![搜索历史列表](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-log-search-history.png)
+![Search history list](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-history.png)
 
-该列表显示每次搜索的日志的时间范围、日志等级、组件、关键字以及搜索状态等信息。点击**操作**列的**查看详情**链接将跳转到此次搜索的结果详情页面。
+The history list shows the time range, log level, components, keywords, and search status of each search log. Click the **Detail** link in the **Action** column to see the search result details:
 
-可以对不再需要的搜索历史执行删除操作，点击右上角的**删除全部任务**，或者先选中需要删除的某些行后再点击**删除选中的任务**进行删除：
+You can delete the search history that you no longer need. Click **Delete All** in the upper right corner, or select the rows to be deleted and then click **Delete selected** to delete the history:
 
-![删除搜索历史](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-log-search-delete-history.png)
+![Delete search history](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-log-search-delete-history.png)

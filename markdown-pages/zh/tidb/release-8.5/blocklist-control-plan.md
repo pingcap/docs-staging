@@ -1,82 +1,86 @@
 ---
-title: 优化规则与表达式下推的黑名单
-summary: 了解优化规则与表达式下推的黑名单。
+title: 优化规则黑名单与表达式下推
+summary: 了解关于控制优化规则和表达式下推行为的黑名单机制。
 ---
 
-# 优化规则与表达式下推的黑名单
+# 优化规则黑名单与表达式下推
 
-本文主要介绍优化规则的黑名单与表达式下推的黑名单。
+本文介绍如何使用优化规则黑名单和表达式下推黑名单来控制 TiDB 的行为。
 
 ## 优化规则黑名单
 
-**优化规则黑名单**是针对优化规则的调优手段之一，主要用于手动禁用一些优化规则。
+优化规则黑名单是一种调优优化规则的方法，主要用于手动禁用某些优化规则。
 
 ### 重要的优化规则
 
-|**优化规则**|**规则名称**|**简介**|
+|**优化规则**|**规则名称**|**描述**|
 | :--- | :--- | :--- |
-| 列裁剪 | column_prune | 对于上层算子不需要的列，不在下层算子输出该列，减少计算 |
-| 子查询去关联 | decorrelate | 尝试对相关子查询进行改写，将其转换为普通 join 或 aggregation 计算 |
-| 聚合消除 | aggregation_eliminate | 尝试消除执行计划中的某些不必要的聚合算子 |
-| 投影消除 | projection_eliminate |  消除执行计划中不必要的投影算子 |
-| 最大最小消除 | max_min_eliminate | 改写聚合中的 max/min 计算，转化为 `order by` + `limit 1` |
-| 谓词下推 | predicate_push_down | 尝试将执行计划中过滤条件下推到离数据源更近的算子上 |
-| 外连接消除 | outer_join_eliminate | 尝试消除执行计划中不必要的 left join 或者 right join |
-| 分区裁剪 | partition_processor | 将分区表查询改成为用 union all，并裁剪掉不满足过滤条件的分区 |
-| 聚合下推 | aggregation_push_down | 尝试将执行计划中的聚合算子下推到更底层的计算节点 |
-| TopN 下推 | topn_push_down | 尝试将执行计划中的 TopN 算子下推到离数据源更近的算子上 |
-| Join 重排序 | join_reorder | 对多表 join 确定连接顺序 |
-| 从窗口函数中推导 TopN 或 Limit | derive_topn_from_window | 从窗口函数中推导出 TopN 或者 Limit |
+| 列裁剪 | column_prune | 如果上层执行器不需要某列，则会裁剪该列。 |
+| 去相关子查询 | decorrelate | 尝试将相关子查询重写为非相关的连接或聚合。 |
+| 聚合消除 | aggregation_eliminate | 尝试从执行计划中移除不必要的聚合操作符。 |
+| 投影消除 | projection_eliminate | 移除执行计划中不必要的投影操作符。 |
+| Max/Min 消除 | max_min_eliminate | 将某些 Max/Min 函数重写为 `order by` + `limit 1` 形式。 |
+| predicate 下推 | predicate_push_down | 尝试将谓词下推到更接近数据源的操作符。 |
+| 外连接消除 | outer_join_eliminate | 尝试移除执行计划中不必要的左连接或右连接。 |
+| 分区裁剪 | partition_processor | 裁剪被谓词拒绝的分区，并将分区表查询重写为 `UnionAll + Partition Datasource` 形式。 |
+| 聚合下推 | aggregation_push_down | 尝试将聚合操作下推到其子节点。 |
+| TopN 下推 | topn_push_down | 尝试将 TopN 操作符下推到更接近数据源的位置。 |
+| 连接重排序 | join_reorder | 决定多表连接的执行顺序。 |
+| 从窗口函数派生 TopN 或 Limit | derive_topn_from_window | 从窗口函数中派生出 TopN 或 Limit 操作符。 |
 
 ### 禁用优化规则
 
-当某些优化规则在一些特殊查询中的优化结果不理想时，可以使用**优化规则黑名单**禁用一些优化规则。
+你可以使用优化规则黑名单禁用某些规则，以避免某些规则导致的特殊查询执行计划不理想。
 
 #### 使用方法
 
 > **注意：**
 >
-> 以下操作都需要数据库的 super privilege 权限。每个优化规则都有各自的名字，比如列裁剪的名字是 "column_prune"。所有优化规则的名字都可以在[重要的优化规则](#重要的优化规则)表格中第二列查到。
+> 以下所有操作都需要拥有数据库的 `super privilege` 权限。每个优化规则都有一个名称，例如，列裁剪的名称是 `column_prune`。所有优化规则的名称可以在表 [重要优化规则](#important-optimization-rules) 的第二列中找到。
 
-- 如果你想禁用某些规则，可以在 `mysql.opt_rule_blacklist` 表中写入规则的名字，例如：
+- 如果你想禁用某些规则，可以将其名称写入 `mysql.opt_rule_blacklist` 表。例如：
 
     
     ```sql
     INSERT INTO mysql.opt_rule_blacklist VALUES("join_reorder"), ("topn_push_down");
     ```
 
-    执行以下 SQL 语句可让禁用规则立即生效，包括相应 TiDB Server 的所有旧链接：
+    执行以下 SQL 语句可以立即生效。生效范围包括所有旧连接的 TiDB 实例：
 
     
     ```sql
-    ADMIN reload opt_rule_blacklist;
+    admin reload opt_rule_blacklist;
     ```
 
     > **注意：**
     >
-    > `admin reload opt_rule_blacklist` 只对执行该 SQL 语句的 TiDB server 生效。若需要集群中所有 TiDB server 生效，需要在每台 TiDB server 上执行该 SQL 语句。
+    > `admin reload opt_rule_blacklist` 只在执行该语句的 TiDB 服务器上生效。如果希望集群中的所有 TiDB 服务器都生效，需要在每个 TiDB 服务器上执行此命令。
 
-- 需要解除一条规则的禁用时，需要删除表中禁用该条规则的相应数据，再执行 `admin reload`：
+- 如果想重新启用某个规则，可以删除对应的表中的数据，然后运行 `admin reload` 语句：
 
     
     ```sql
     DELETE FROM mysql.opt_rule_blacklist WHERE name IN ("join_reorder", "topn_push_down");
+    ```
+
+    
+    ```sql
     admin reload opt_rule_blacklist;
     ```
 
 ## 表达式下推黑名单
 
-**表达式下推黑名单**是针对表达式下推的调优手段之一，主要用于对于某些存储类型手动禁用一些表达式。
+表达式下推黑名单是一种调优表达式下推的方法，主要用于手动禁用某些特定数据类型的表达式。
 
-### 已支持下推的表达式
+### 支持下推的表达式
 
-目前已经支持下推的表达式信息，请参考[表达式列表](/functions-and-operators/expressions-pushed-down.md#已支持下推的表达式列表)。
+关于支持下推到 TiKV 的表达式的详细信息，请参见 [Supported expressions for pushdown to TiKV](/functions-and-operators/expressions-pushed-down.md#supported-expressions-for-pushdown-to-tikv)。
 
-### 禁止特定表达式下推
+### 禁用特定表达式的下推
 
-当函数的计算过程由于下推而出现异常时，可通过黑名单功能禁止其下推来快速恢复业务。具体而言，你可以将上述支持的函数或运算符名加入黑名单 `mysql.expr_pushdown_blacklist` 中，以禁止特定表达式下推。
+当因表达式下推导致结果错误时，你可以使用黑名单快速恢复应用的正确性。具体来说，可以将部分支持的函数或操作符添加到 `mysql.expr_pushdown_blacklist` 表中，以禁用特定表达式的下推。
 
-`mysql.expr_pushdown_blacklist` 的 schema 如下：
+`mysql.expr_pushdown_blacklist` 表的结构如下：
 
 
 ```sql
@@ -94,44 +98,46 @@ DESC mysql.expr_pushdown_blacklist;
 3 rows in set (0.00 sec)
 ```
 
-以上结果字段解释如下：
+每个字段的说明如下：
 
-+ `name`：禁止下推的函数名。
-+ `store_type`：用于指明希望禁止该函数下推到哪些组件进行计算。组件可选 `tidb`、`tikv` 和 `tiflash`。`store_type` 不区分大小写，如果需要禁止向多个存储引擎下推，各个存储之间需用逗号隔开。
-    - `store_type` 为 `tidb` 时表示在读取 TiDB 内存表时，是否允许该函数在其他 TiDB Server 上执行。
-    - `store_type` 为 `tikv` 时表示是否允许该函数在 TiKV Server 的 Coprocessor 模块中执行。
-    - `store_type` 为 `tiflash` 时表示是否允许该函数在 TiFlash Server 的 Coprocessor 模块中执行。
-+ `reason`：用于记录该函数被加入黑名单的原因。
++ `name`：被禁用下推的函数或操作符的名称。
++ `store_type`：指定你希望阻止该函数在何种组件中被下推计算。可用的组件有 `tidb`、`tikv` 和 `tiflash`。`store_type` 不区分大小写。如果需要指定多个组件，用逗号分隔。
+    - 当 `store_type` 为 `tidb` 时，表示在读取 TiDB 内存表时，是否允许在其他 TiDB 服务器上执行该函数。
+    - 当 `store_type` 为 `tikv` 时，表示是否允许在 TiKV 服务器的 Coprocessor 组件中执行该函数。
+    - 当 `store_type` 为 `tiflash` 时，表示是否允许在 TiFlash 服务器的 Coprocessor 组件中执行该函数。
++ `reason`：记录将该函数加入黑名单的原因。
 
 ### 使用方法
 
-#### 加入黑名单
+本节介绍如何使用表达式下推黑名单。
 
-如果要将一个或多个函数或运算符加入黑名单，执行以下步骤：
+#### 添加到黑名单
 
-1. 向 `mysql.expr_pushdown_blacklist` 插入对应的函数名或运算符名以及希望禁止下推的存储引擎集合。
+将一个或多个表达式（函数或操作符）加入黑名单，步骤如下：
 
-2. 执行 `admin reload expr_pushdown_blacklist;`。
+1. 将对应的函数名或操作符名，以及你希望禁用下推的组件集，插入到 `mysql.expr_pushdown_blacklist` 表中。
 
-#### 移出黑名单
+2. 执行 `admin reload expr_pushdown_blacklist`。
 
-如果要将一个或多个函数及运算符移出黑名单，执行以下步骤：
+### 从黑名单中移除
 
-1. 从 `mysql.expr_pushdown_blacklist` 表中删除对应的函数名或运算符名。
+将一个或多个表达式从黑名单中移除，步骤如下：
 
-2. 执行 `admin reload expr_pushdown_blacklist;`。
+1. 从 `mysql.expr_pushdown_blacklist` 表中删除对应的函数名或操作符名，以及你希望禁用下推的组件集。
+
+2. 执行 `admin reload expr_pushdown_blacklist`。
 
 > **注意：**
 >
-> `admin reload expr_pushdown_blacklist` 只对执行该 SQL 语句的 TiDB server 生效。若需要集群中所有 TiDB server 生效，需要在每台 TiDB server 上执行该 SQL 语句。
+> `admin reload expr_pushdown_blacklist` 只在执行该语句的 TiDB 服务器上生效。如果希望集群中的所有 TiDB 服务器都生效，需要在每个 TiDB 服务器上执行此命令。
 
-### 表达式黑名单用法示例
+## 表达式黑名单使用示例
 
-以下示例首先将运算符 `<` 及 `>` 加入黑名单，然后将运算符 `>` 从黑名单中移出。
+以下示例中，将 `<` 和 `>` 操作符加入黑名单，然后将 `>` 操作符从黑名单中移除。
 
-黑名单是否生效可以从 `explain` 结果中进行观察（参见 [TiDB 执行计划概览](/explain-overview.md)）。
+为了判断黑名单是否生效，可以观察 `EXPLAIN` 的结果（详见 [TiDB 查询执行计划概述](/explain-overview.md)）。
 
-1. 对于以下 SQL 语句，`where` 条件中的 `a < 2` 和 `a > 2` 可以下推到 TiKV 进行计算。
+1. 以下 SQL 语句的 `WHERE` 子句中的谓词 `a < 2` 和 `a > 2` 可以被下推到 TiKV。
 
     
     ```sql
@@ -149,7 +155,7 @@ DESC mysql.expr_pushdown_blacklist;
     3 rows in set (0.00 sec)
     ```
 
-2. 往 `mysql.expr_pushdown_blacklist` 表中插入禁用表达式，并且执行 `admin reload expr_pushdown_blacklist`。
+2. 将表达式插入到 `mysql.expr_pushdown_blacklist` 表中，并执行 `admin reload expr_pushdown_blacklist`。
 
     
     ```sql
@@ -163,14 +169,14 @@ DESC mysql.expr_pushdown_blacklist;
 
     
     ```sql
-    ADMIN reload expr_pushdown_blacklist;
+    admin reload expr_pushdown_blacklist;
     ```
 
     ```sql
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-3. 重新观察执行计划，发现表达式下推黑名单生效，`where` 条件中的 `<` 和 `>` 没有被下推到 TiKV Coprocessor 上。
+3. 再次观察执行计划，发现 `<` 和 `>` 操作符都没有被下推到 TiKV Coprocessor。
 
     
     ```sql
@@ -188,7 +194,7 @@ DESC mysql.expr_pushdown_blacklist;
     3 rows in set (0.00 sec)
     ```
 
-4. 将某一表达式（`>` 大于）禁用规则从黑名单表中删除，并且执行 `admin reload expr_pushdown_blacklist`。
+4. 从黑名单中移除一个表达式（这里是 `>`），并执行 `admin reload expr_pushdown_blacklist`。
 
     
     ```sql
@@ -201,14 +207,14 @@ DESC mysql.expr_pushdown_blacklist;
 
     
     ```sql
-    ADMIN reload expr_pushdown_blacklist;
+    admin reload expr_pushdown_blacklist;
     ```
 
     ```sql
     Query OK, 0 rows affected (0.00 sec)
     ```
 
-5. 重新观察执行计划，可以看到只有 `>` 表达式被重新下推到 TiKV Coprocessor，`<` 表达式仍然被禁用下推。
+5. 再次观察执行计划，发现 `<` 不被下推，而 `>` 被下推到 TiKV Coprocessor。
 
     
     ```sql

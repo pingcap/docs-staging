@@ -1,24 +1,24 @@
 ---
-title: TiDB Dashboard 用户管理
-summary: 了解如何创建 SQL 用户用于访问 TiDB Dashboard
+title: TiDB Dashboard User Management
+summary: TiDB Dashboard uses the same user privilege system as TiDB. SQL users need specific privileges to access the dashboard, including PROCESS, SHOW DATABASES, CONFIG, DASHBOARD_CLIENT, and more. It's recommended to create users with only the required privileges to prevent unintended operations. Users with high privileges can also sign in. To create a least-privileged SQL user, grant the necessary privileges and use role-based access control (RBAC) if needed.
 ---
 
-# TiDB Dashboard 用户管理
+# TiDB Dashboard User Management
 
-TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式。你可以通过控制和管理 TiDB SQL 用户，从而限制和约束这些用户对 TiDB Dashboard 的访问。本文描述了 TiDB SQL 用户访问 TiDB Dashboard 所需的最小权限，并提供了如何创建最小权限 SQL 用户、如何通过 RBAC 授权 SQL 用户登录的示例。
+TiDB Dashboard uses the same user privilege system and sign-in authentication as TiDB. You can control and manage TiDB SQL users to limit their access to TiDB Dashboard. This document describes the least privileges required for TiDB SQL users to access TiDB Dashboard and exemplifies how to create a least-privileged SQL user and how to authorize via RBAC.
 
-要了解如何控制和管理 TiDB SQL 用户，请参见 [TiDB 用户账户管理](/user-account-management.md)。
+For details about how to control and manage TiDB SQL users, see [TiDB User Account Management](/user-account-management.md).
 
-## 所需权限说明
+## Required privileges
 
-- 当所连接的 TiDB 服务器未启用[安全增强模式 (SEM)](/system-variables.md#tidb_enable_enhanced_security) 时，要访问 TiDB Dashboard，SQL 用户应当拥有以下**所有**权限：
+- To access TiDB Dashboard when [Security Enhanced Mode (SEM)](/system-variables.md#tidb_enable_enhanced_security) is not enabled on the connected TiDB server, the SQL user should have **all** the following privileges:
 
     - PROCESS
     - SHOW DATABASES
     - CONFIG
     - DASHBOARD_CLIENT
 
-- 当所连接的 TiDB 服务器启用了[安全增强模式 (SEM)](/system-variables.md#tidb_enable_enhanced_security) 时，要访问 TiDB Dashboard，SQL 用户应当拥有以下**所有**权限：
+- To access TiDB Dashboard when [Security Enhanced Mode (SEM)](/system-variables.md#tidb_enable_enhanced_security) is enabled on the connected TiDB server, the SQL user should have **all** the following privileges:
 
     - PROCESS
     - SHOW DATABASES
@@ -28,26 +28,26 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
     - RESTRICTED_STATUS_ADMIN
     - RESTRICTED_VARIABLES_ADMIN
 
-- 若希望 SQL 用户在登录 TiDB Dashboard 后允许修改界面上的各项配置，SQL 用户还应当拥有以下权限：
+- To modify the configurations on the interface after signing in to TiDB Dashboard, the SQL user must also have the following privilege:
 
     - SYSTEM_VARIABLES_ADMIN
 
-- 若希望 SQL 用户在登录 TiDB Dashboard 后允许使用[快速绑定执行计划](/dashboard/dashboard-statement-details.md#快速绑定执行计划)功能。
+- To use the [Fast Bind Executions Plan](/dashboard/dashboard-statement-details.md#fast-plan-binding) feature on the interface after signing in to TiDB Dashboard, the SQL user must also have the following privileges:
 
     - SYSTEM_VARIABLES_ADMIN
     - SUPER
 
-> **注意：**
+> **Note:**
 >
-> 拥有 `ALL PRIVILEGES` 或 `SUPER` 等粗粒度高权限的用户同样可以登录 TiDB Dashboard。出于最小权限原则，强烈建议创建用户时仅使用上述精细权限，从而防止用户执行非预期操作。请参阅[权限管理](/privilege-management.md)了解这些权限的详细信息。
+> Users with high privileges such as `ALL PRIVILEGES` or `SUPER` can sign in to TiDB Dashboard as well. Therefore, to comply with the least privilege principle, it is highly recommended that you create users with the required privileges only to prevent unintended operations. See [Privilege Management](/privilege-management.md) for more information on these privileges.
 
-如果登录 TiDB Dashboard 时指定的 SQL 用户未满足上述权限需求，则登录将失败，如下图所示：
+If an SQL user does not meet the preceding privilege requirements, the user fails to sign in to TiDB Dashboard, as shown below.
 
-![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-user-insufficient-privileges.png)
+![insufficient-privileges](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-user-insufficient-privileges.png)
 
-## 示例：创建一个最小权限 SQL 用户用于登录 TiDB Dashboard
+## Example: Create a least-privileged SQL user to access TiDB Dashboard
 
-- 当所连接的 TiDB 服务器未启用[安全增强模式 (SEM)](/system-variables.md#tidb_enable_enhanced_security) 时，你可以通过执行以下示例 SQL 语句创建一个允许登录 TiDB Dashboard 的 SQL 用户 `dashboardAdmin`：
+- When [Security Enhanced Mode (SEM)](/system-variables.md#tidb_enable_enhanced_security) is not enabled on the connected TiDB server, to create an SQL user `dashboardAdmin` that can sign in to TiDB Dashboard, execute the following SQL statements:
 
     ```sql
     CREATE USER 'dashboardAdmin'@'%' IDENTIFIED BY '<YOUR_PASSWORD>';
@@ -55,15 +55,15 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
     GRANT SHOW DATABASES ON *.* TO 'dashboardAdmin'@'%';
     GRANT DASHBOARD_CLIENT ON *.* TO 'dashboardAdmin'@'%';
 
-    -- 如果要使自定义的 SQL 用户能修改 TiDB Dashboard 界面上的各项配置，可以增加以下权限
+    -- To modify the configuration items on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privilege.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     
-    -- 如果要使用快速绑定执行计划（具体参见 https://docs.pingcap.com/zh/tidb/dev/dashboard-statement-details#快速绑定执行计划）功能，可以增加以下权限
+    -- To use the Fast Bind Executions Plan feature (https://docs.pingcap.com/tidb/dev/dashboard-statement-details#fast-plan-binding) on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privileges.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
     ```
 
-- 当所连接的 TiDB 服务器启用了[安全增强模式 (SEM)](/system-variables.md#tidb_enable_enhanced_security) 时，先关闭 SEM，然后执行以下示例 SQL 语句创建一个允许登录 TiDB Dashboard 的 SQL 用户 `dashboardAdmin`，创建完成后，再重新开启 SEM：
+- When [Security Enhanced Mode (SEM)](/system-variables.md#tidb_enable_enhanced_security) is enabled on the connected TiDB server, disable SEM first and execute the following SQL statements to create an SQL user `dashboardAdmin` that can sign in to TiDB Dashboard. After creating the user, enable SEM again:
 
     ```sql
     CREATE USER 'dashboardAdmin'@'%' IDENTIFIED BY '<YOUR_PASSWORD>';
@@ -74,19 +74,19 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
     GRANT RESTRICTED_TABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     GRANT RESTRICTED_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
 
-    -- 如果要使自定义的 SQL 用户能修改 TiDB Dashboard 界面上的各项配置，可以增加以下权限
-    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
+    -- To modify the configuration items on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privilege.
+    GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     
-    -- 如果要使用快速绑定执行计划（具体参见 https://docs.pingcap.com/zh/tidb/dev/dashboard-statement-details#快速绑定执行计划）功能，可以增加以下权限
+    -- To use the Fast Bind Executions Plan feature (https://docs.pingcap.com/tidb/dev/dashboard-statement-details#fast-plan-binding) on the interface after signing in to TiDB Dashboard, the user-defined SQL user must be granted with the following privileges.
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboardAdmin'@'%';
     GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';
     ```
 
-## 示例：通过 RBAC 授权 SQL 用户登录 TiDB Dashboard
+## Example: Authorize SQL user to access TiDB Dashboard via RBAC
 
-以下示例演示了如何在[基于角色的访问控制 (RBAC)](/role-based-access-control.md) 机制下创建角色及用户来登录 TiDB Dashboard。
+The following example demonstrates how to create a role and a user to access TiDB Dashboard through the [role-based access control (RBAC)](/role-based-access-control.md) mechanism.
 
-1. 创建一个包含 TiDB Dashboard 所有功能所需权限的角色 `dashboard_access`：
+1. Create a `dashboard_access` role that meets all privilege requirements of TiDB Dashboard:
 
     ```sql
     CREATE ROLE 'dashboard_access';
@@ -94,20 +94,20 @@ TiDB Dashboard 与 TiDB 使用相同的用户权限体系和登录验证方式�
     GRANT SHOW DATABASES ON *.* TO 'dashboard_access'@'%';
     GRANT DASHBOARD_CLIENT ON *.* TO 'dashboard_access'@'%';
     GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'dashboard_access'@'%';
-    GRANT SUPER ON *.* TO 'dashboard_access'@'%';
+    GRANT SUPER ON *.* TO 'dashboardAdmin'@'%';    
     ```
 
-2. 为其他用户授权 `dashboard_access` 角色并设置为默认启用：
+2. Grant the `dashboard_access` role to other users and set `dashboard_access` as the default role:
 
     ```sql
     CREATE USER 'dashboardAdmin'@'%' IDENTIFIED BY '<YOUR_PASSWORD>';
     GRANT 'dashboard_access' TO 'dashboardAdmin'@'%';
-    -- 需要默认启用 dashboard_access 角色
+    -- You need to set dashboard_access as the default role to the user
     SET DEFAULT ROLE dashboard_access to 'dashboardAdmin'@'%';
     ```
 
-完成以上步骤后，可以用 `dashboardAdmin` 用户登录 TiDB Dashboard。
+After the above steps, you can use the `dashboardAdmin` user to sign in to TiDB Dashboard.
 
-## 登录 TiDB Dashboard
+## Sign in to TiDB Dashboard
 
-创建满足 TiDB Dashboard 权限要求的 SQL 用户后，你可以使用该用户[登录](/dashboard/dashboard-access.md#登录) TiDB Dashboard。
+After creating an SQL user that meets the privilege requirements of TiDB Dashboard, you can use this user to [Sign in](/dashboard/dashboard-access.md#sign-in) to TiDB Dashboard.

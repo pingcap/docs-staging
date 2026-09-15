@@ -1,11 +1,11 @@
 ---
 title: COLLATIONS
-summary: 了解 information_schema 表 `COLLATIONS`。
+summary: 了解 `COLLATIONS` information_schema 表。
 ---
 
 # COLLATIONS
 
-`COLLATIONS` 表提供了 `CHARACTER_SETS` 表中字符集对应的排序规则列表。目前 TiDB 包含该表仅为兼容 MySQL。
+`COLLATIONS` 表提供了与 `CHARACTER_SETS` 表中的字符集对应的排序规则列表。目前，该表仅用于与 MySQL 的兼容性。
 
 ```sql
 USE information_schema;
@@ -44,17 +44,17 @@ SELECT * FROM collations WHERE character_set_name='utf8mb4';
 5 rows in set (0.001 sec)
 ```
 
-`COLLATIONS` 表中列的含义如下：
+`COLLATIONS` 表中各列的描述如下：
 
-* `COLLATION_NAME`：排序规则名称。
-* `CHARACTER_SET_NAME`：排序规则所属的字符集名称。
+* `COLLATION_NAME`：排序规则的名称。
+* `CHARACTER_SET_NAME`：所属字符集的名称。
 * `ID`：排序规则的 ID。
-* `IS_DEFAULT`：该排序规则是否是所属字符集的默认排序规则。
-* `IS_COMPILED`：字符集是否编译到服务器中。
-* `SORTLEN`：排序规则在对字符进行排序时，所分配内存的最小长度。
-* `PAD_ATTRIBUTE`：在比较字符串时是否忽略末尾空格。`PAD SPACE` 表示忽略末尾空格（例如 `'abc'` 等于 `'abc '`），而 `NO PAD` 表示末尾空格会影响比较结果（例如 `'abc'` 不等于 `'abc '`）。
+* `IS_DEFAULT`：该排序规则是否为所属字符集的默认排序规则。
+* `IS_COMPILED`：字符集是否已编译到服务器中。
+* `SORTLEN`：排序规则在排序字符时分配的最小内存长度。
+* `PAD_ATTRIBUTE`：在字符串比较时是否忽略尾部空格。`PAD SPACE` 表示忽略尾部空格（例如， `'abc'` 等于 `'abc   '`），而 `NO PAD` 表示尾部空格是有意义的（例如， `'abc'` 不等于 `'abc   '`）。
 
-## 另请参阅
+## 相关链接
 
 - [`SHOW CHARACTER SET`](/sql-statements/sql-statement-show-character-set.md)
 - [`SHOW COLLATION`](/sql-statements/sql-statement-show-collation.md)

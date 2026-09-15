@@ -1,116 +1,123 @@
 ---
 title: tiup cluster patch
-summary: tiup cluster patch 命令用于在集群运行过程中动态替换某个服务的二进制文件。它会上传替换的二进制包到目标机器，并通过 API 下线节点，停止目标服务，解压替换二进制包，最后启动目标服务。在使用命令前需要准备二进制包，包括确定组件名、版本、操作系统和平台，下载组件包，创建临时打包目录，解压原二进制包，复制要替换的文件到临时目录，最后打包所有文件。命令还包括一些选项，如 --overwrite、--transfer-timeout、-N、-R、--offline 等。
+summary: The `tiup cluster patch` command allows for dynamic replacement of binaries in a running cluster. It uploads the binary package, stops the target service, replaces the binary, and starts the service. Preparation involves packing the binary package and using options like `--overwrite`, `--transfer-timeout`, `-N, --node`, `-R, --role`, and `--offline`. The output is the execution log of the tiup-cluster.
 ---
 
 # tiup cluster patch
 
-在集群运行过程中，如果需要动态替换某个服务的二进制文件（即替换过程中保持集群可用），那么可以使用 `tiup cluster patch` 命令，它会完成以下几件事情：
+If you need to dynamically replace the binaries of a service while the cluster is running (namely, keep the cluster available during the replacement process), you can use the `tiup cluster patch` command. After the command is executed, TiUP does the following things:
 
-- 将用于替换的二进制包上传到目标机器
-- 如果目标服务是 TiKV 或者 TiFlash 之类的存储服务，则先通过 API 下线节点
-- 停止目标服务
-- 解压二进制包，替换服务
-- 启动目标服务
+- Uploads the binary package for replacement to the target machine.
+- If the target service is a storage service such as TiKV or TiFlash, TiUP first takes the related nodes offline via the API.
+- Stops the target service.
+- Unpacks the binary package and replace the service.
+- Starts the target service.
 
-## 语法
+## Syntax
 
 ```shell
 tiup cluster patch <cluster-name> <package-path> [flags]
 ```
 
-- `<cluster-name>` 代表要操作的集群名
-- `<package-path>` 为用于替换的二进制包路径
+- `<cluster-name>`: The name of the cluster to be operated.
+- `<package-path>`: The path to the binary package used for replacement.
 
-### 准备二进制包
+### Preparation
 
-在运行 `tiup cluster patch` 命令之前，你需要打包所需的二进制文件。请按照以下步骤操作：
+Before running the `tiup cluster patch` command, you need to pack the binary package required. Take the following steps:
 
-1. 确定以下变量的值：
+1. Determine the following variables:
 
-    - `${component}`：需要替换的组件名（例如 `tidb`、`tikv`、`pd`）。
-    - `${version}`：组件的版本（例如 `v8.5.8`、`v7.5.4`）。
-    - `${os}`：操作系统 (`linux`)。
-    - `${arch}`：组件运行的平台 (`amd64`、`arm64`)。
-2. 下载当前的组件包：
+    - `${component}`: the name of the component to be replaced (such as `tidb`, `tikv`, or `pd`).
+    - `${version}`: the version of the component (such as `8.5.8` or `v7.5.4`).
+    - `${os}`: the operating system (`linux`).
+    - `${arch}`: the platform on which the component runs (`amd64`, `arm64`).
+
+2. Download the current component package using the command:
 
     ```shell
     wget https://tiup-mirrors.pingcap.com/${component}-${version}-${os}-${arch}.tar.gz -O /tmp/${component}-${version}-${os}-${arch}.tar.gz
     ```
 
-3. 创建临时打包目录：
+3. Create a temporary directory to pack files and change to it:
 
     ```shell
     mkdir -p /tmp/package && cd /tmp/package
     ```
 
-4. 解压原来的二进制包：
+4. Extract the original binary package:
 
     ```shell
     tar xf /tmp/${component}-${version}-${os}-${arch}.tar.gz
     ```
 
-5. 查看临时打包目录中的文件结构：
+5. Check out the file structure in the temporary directory:
 
     ```shell
     find .
     ```
 
-6. 将要替换的二进制文件或配置文件复制到临时目录的对应位置。
-7. 将临时目录中的所有文件打包：
+6. Copy the binary files or configuration files to their corresponding locations in the temporary directory.
+7. Pack all files in the temporary directory:
 
     ```shell
     tar czf /tmp/${component}-hotfix-${os}-${arch}.tar.gz *
     ```
 
-完成上述步骤后，你可以在 `tiup cluster patch` 命令中使用 `/tmp/${component}-hotfix-${os}-${arch}.tar.gz` 作为 `<package-path>`。
+After you have completed the preceding steps, you can use `/tmp/${component}-hotfix-${os}-${arch}.tar.gz` as the `<package-path>` in the `tiup cluster patch` command.
 
-## 选项
+## Options
 
 ### --overwrite
 
-- 对某个组件（比如 TiDB，TiKV）进行 patch 后，如果要在该集群扩容该组件，tiup-cluster 会默认使用 patch 前的版本。如果希望后续扩容的时候也使用 patch 之后的版本，需要指定 `--overwrite` 选项。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- After you patch a certain component (such as TiDB or TiKV), when the tiup cluster scales out the component, TiUP uses the original component version by default. To use the version that you patch when the cluster scales out in the future, you need to specify the option `--overwrite` in the command.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-### --transfer-timeout（uint，默认 600）
+### --transfer-timeout
 
-在重启 PD 或 TiKV 时，会先将被重启节点的 leader 迁移到其他节点，迁移过程会需要一定时间，可以通过设置 `--transfer-timeout` 设置最长等待时间（单位为秒），超时之后会跳过等待直接重启服务。
+- When restarting the PD or TiKV service, TiKV/PD first transfers the leader of the node to be restarted to another node. Because the transfer process takes some time, you can use the option `--transfer-timeout` to set the maximum waiting time (in seconds). After the timeout, TiUP directly restarts the service.
+- Data type: `UINT`
+- If this option is not specified, TiUP directly restarts the service after waiting for `600` seconds.
 
-> **注意：**
+> **Note:**
 >
-> 若出现跳过等待直接重启的情况，服务性能可能会出现抖动。
+> If TiUP directly restarts the service after the timeout, the service performance might jitter.
 
-### -N, --node（strings，默认为 []，未选中任何节点）
+### -N, --node
 
-指定要替换的节点，该选项的值为以逗号分割的节点 ID 列表，节点 ID 为[集群状态](/tiup/tiup-component-cluster-display.md)表格的第一列。
+- Specifies nodes to be replaced. The value of this option is a comma-separated list of node IDs. You can get the node ID from the first column of the [cluster status table](/tiup/tiup-component-cluster-display.md) returned by the `tiup cluster display` command.
+- Data type: `STRINGS`
+- If this option is not specified, TiUP does not select any nodes to replace by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-R, --role`，那么将替换它们的交集中的服务。
+> If the option `-R, --role` is specified at the same time, TiUP then replaces service nodes that match both the requirements of `-N, --node` and `-R, --role`.
 
-### -R, --role（strings，默认为 []，未选中任何角色）
+### -R, --role
 
-指定要替换的角色，该选项的值为以逗号分割的节点角色列表，角色为[集群状态](/tiup/tiup-component-cluster-display.md)表格的第二列。
+- Specifies the roles to be replaced. The value of this option is a comma-separated list of the roles of the nodes. You can get the role deployed on a node from the second column of the [cluster status table](/tiup/tiup-component-cluster-display.md) returned by the `tiup cluster display` command.
+- Data type: `STRINGS`
+- If this option is not specified, TiUP does not select any roles to replace by default.
 
-> **注意：**
+> **Note:**
 >
-> 若同时指定了 `-N, --node`，那么将替换它们的交集中的服务。
+> If the option `-N, --node` is specified at the same time, TiUP then replaces service nodes that match both the requirements of `-N, --node` and `-R, --role`.
 
 ### --offline
 
-- 声明当前集群处于停止状态。指定该选项时，TiUP Cluster 仅原地替换集群组件的二进制文件，不执行迁移 Leader 以及重启服务等操作。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Declares that the current cluster is not running. When the option is specified, TiUP does not evict the service leader to another node or restart the service, but only replaces the binary files of cluster components.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
 ### -h, --help
 
-- 输出帮助信息。
-- 数据类型：`BOOLEAN`
-- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
+- Prints help information.
+- Data type: `BOOLEAN`
+- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
 
-## 输出
+## Outputs
 
-tiup-cluster 的执行日志。
+The execution log of the tiup-cluster.
 
-[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)
+[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)

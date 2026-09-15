@@ -1,74 +1,74 @@
 ---
-title: Scheduling 配置参数
-summary: Scheduling 配置参数可以通过命令行参数或环境变量配置。
+title: Scheduling Configuration Flags
+summary: The scheduling configuration flags can be configured via command line flags or environment variables.
 ---
 
-# Scheduling 配置参数
+# Scheduling Configuration Flags
 
-Scheduling 节点用于提供 PD 的 `scheduling` 微服务。你可以通过命令行参数或环境变量配置 Scheduling 节点。
+The Scheduling node is used for providing the `scheduling` microservice for PD. You can configure it using command-line flags or environment variables.
 
 ## `--advertise-listen-addr`
 
-- 用于外部访问 Scheduling 节点的 URL。
-- 默认：`${listen-addr}`
-- 在某些情况下，例如 Docker 或者 NAT 网络环境，客户端并不能通过 Scheduling 节点自己监听的地址来访问 Scheduling 节点。此时，你可以设置 `--advertise-listen-addr` 来让客户端访问。
-- 例如，Docker 内部 IP 地址为 `172.17.0.1`，而宿主机的 IP 地址为 `192.168.100.113` 并且设置了端口映射 `-p 3379:3379`，那么可以设置 `--advertise-listen-addr="http://192.168.100.113:3379"`，然后客户端就可以通过 `http://192.168.100.113:3379` 来找到这个服务。
+- The URL for the client to access the Scheduling node.
+- Default: `${listen-addr}`
+- In some situations such as in Docker or NAT network environments, if a client cannot access the Scheduling node through the default client URLs listened to by `scheduling`, you must manually set `--advertise-listen-addr` for client access.
+- For example, the internal IP address of Docker is `172.17.0.1`, while the IP address of the host is `192.168.100.113` and the port mapping is set to `-p 3379:3379`. In this case, you can set `--advertise-listen-addr="http://192.168.100.113:3379"`. Then, the client can find this service through `http://192.168.100.113:3379`.
 
 ## `--backend-endpoints`
 
-- Scheduling 节点监听其他 Scheduling 节点的 URL 列表。
-- 默认：`http://127.0.0.1:2379`
+- The list of backend endpoints of other Scheduling nodes that the current Scheduling node listens to.
+- Default: `http://127.0.0.1:2379`
 
 ## `--cacert`
 
-- CA 文件路径，用于开启 TLS。
-- 默认：""
+- The file path of CA, used to enable TLS.
+- Default: `""`
 
 ## `--cert`
 
-- 包含 X.509 证书的 PEM 文件路径，用于开启 TLS。
-- 默认：""
+- The path of the PEM file including the X.509 certificate, used to enable TLS.
+- Default: `""`
 
 ## `--config`
 
-- 配置文件。
-- 默认：""
-- 如果你指定了配置文件，Scheduling 节点会首先读取配置文件的配置。然后如果对应的配置在命令行参数里面也存在，Scheduling 节点就会使用命令行参数的配置来覆盖配置文件里面的配置。
+- The configuration file.
+- Default: `""`
+- If you specify a configuration file, the Scheduling node first reads configurations from that file. If the same configurations are also specified via command line flags, the Scheduling node uses the command line flag configurations to overwrite those in the configuration file.
 
 ## `--data-dir`
 
-- Scheduling 节点上的数据存储路径。
-- 默认：`default.${name}`
+- The path to the data directory on the Scheduling node.
+- Default: `"default.${name}"`
 
 ## `--key`
 
-- 包含 X.509 key 的 PEM 文件路径，用于开启 TLS。
-- 默认：""
+- The path of the PEM file including the X.509 key, used to enable TLS.
+- Default: `""`
 
 ## `--listen-addr`
 
-- Scheduling 节点监听的客户端 URL。
-- 默认：`http://127.0.0.1:3379`
-- 部署集群时，`--listen-addr` 必须指定当前主机的 IP 地址，例如 `http://192.168.100.113:3379`。如果运行在 Docker 中，则需要指定为 `http://0.0.0.0:3379`。
+- The client URL that the current Scheduling node listens to.
+- Default: `"http://127.0.0.1:3379"`
+- When deploying a cluster, you must specify the IP address of the current host as `--listen-addr` (for example, `"http://192.168.100.113:3379"`). If the node runs on Docker, specify the Docker IP address as `"http://0.0.0.0:3379"`.
 
 ## `--log-file`
 
-- Log 文件。
-- 默认：""
-- 如果未设置该参数，log 会默认输出到 "stderr"。如果设置了该参数，log 将输出到指定的文件。
+- The log file.
+- Default: `""`
+- If this flag is not set, logs are output to "stderr". If this flag is set, logs are output to the corresponding file.
 
-## `--name` <span class="version-mark">从 v8.3.0 版本开始引入</span>
+## `--name` <span class="version-mark">New in v8.3.0</span>
 
-+ 当前 Scheduling 节点的名字。
-+ 默认：`"scheduling-${hostname}"`
-+ 如果你需要启动多个 Scheduling 节点，建议为不同 Scheduling 节点设置不同的名字，以方便区分。
++ The name of the current Scheduling node.
++ Default: `"scheduling-${hostname}"`
++ If you need to start multiple Scheduling nodes, it is recommended to configure different names for different nodes for easier identification.
 
 ## `-L`
 
-- Log 级别。
-- 默认："info"
-- 可选："debug"，"info"，"warn"，"error"，"fatal"
+- The log level.
+- Default: `"info"`
+- Optional values: `"debug"`, `"info"`, `"warn"`, `"error"`, `"fatal"`
 
 ## `-V`, `--version`
 
-- 输出版本信息并退出。
+- Output the version information and exit.

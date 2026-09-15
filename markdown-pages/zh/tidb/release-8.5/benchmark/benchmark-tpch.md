@@ -1,63 +1,63 @@
 ---
-title: TiDB TPC-H 50G 性能测试报告
-summary: TiDB TPC-H 50G 性能测试报告显示，TiDB 2.0 在大部分查询中表现优于 TiDB 1.0。然而，部分查询在 TiDB 1.0 中未能完成或因内存占用过多而被终止。测试环境包括不同操作系统和硬件信息，测试结果以图表形式展示。
+title: TiDB TPC-H 50G Performance Test Report V2.0
+summary: TiDB TPC-H 50G Performance Test compared TiDB 1.0 and TiDB 2.0 in an OLAP scenario. Test results show that TiDB 2.0 outperformed TiDB 1.0 in most queries, with significant improvements in query processing time. Some queries in TiDB 1.0 did not return results, while others had high memory consumption. Future releases plan to support VIEW and address these issues.
 ---
 
-# TiDB TPC-H 50G 性能测试报告
+# TiDB TPC-H 50G Performance Test Report
 
-## 测试目的
+## Test purpose
 
-测试 TiDB 在 OLAP 场景下 1.0 和 2.0 版本的性能对比。
+This test aims to compare the performances of TiDB 1.0 and TiDB 2.0 in the OLAP scenario.
 
-> **注意：**
+> **Note:**
 >
-> 不同的测试环境可能使测试结果发生改变。
+> Different test environments might lead to different test results.
 
-## 测试环境
+## Test environment
 
-### 测试机器信息
+### Machine information
 
-1. 系统信息
+System information:
 
-    | 机器 IP      | 操作系统               | 内核版本                     | 文件系统类型 |
-    |--------------|------------------------|------------------------------|--------------|
-    | 172.16.31.2  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
-    | 172.16.31.3  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
-    | 172.16.31.4  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
-    | 172.16.31.6  | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
-    | 172.16.31.8  | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
-    | 172.16.31.10 | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
+| Machine IP      | Operation system              | Kernel version     | File system type |
+|--------------|------------------------|------------------------------|--------------|
+| 172.16.31.2  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
+| 172.16.31.3  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
+| 172.16.31.4  | Ubuntu 17.10 64bit     | 4.13.0-16-generic            | ext4         |
+| 172.16.31.6  | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
+| 172.16.31.8  | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
+| 172.16.31.10 | CentOS 7.4.1708 64bit  | 3.10.0-693.11.6.el7.x86\_64  | ext4         |
 
-2. 硬件信息
+Hardware information:
 
-    | 类别       |  名称                                                |
-    |------------|------------------------------------------------------|
-    | CPU        | 40 vCPUs, Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz  |
-    | 内存       | 128GB, 8条16GB RDIMM, 2400MT/s, 双列, x8 带宽        |
-    | 磁盘       | 2 块 Intel P4500 系列 4T SSD 硬盘                    |
-    | 网卡       | 万兆网卡                                             |
+| Type       |  Name                                                |
+|------------|------------------------------------------------------|
+| CPU        | 40 vCPUs, Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz  |
+| RAM        | 128GB, 16GB RDIMM * 8, 2400MT/s, dual channel, x8 bitwidth        |
+| DISK       | Intel P4500 4T SSD * 2      |
+| Network Card  | 10 Gigabit Ethernet |
 
 ### TPC-H
 
 [tidb-bench/tpch](https://github.com/pingcap/tidb-bench/tree/master/tpch)
 
-### 集群拓扑
+### Cluster topology
 
-| 机器 IP      | 部署的实例 |
-|--------------|------------|
-| 172.16.31.2  | TiKV \* 2  |
-| 172.16.31.3  | TiKV \* 2  |
-| 172.16.31.6  | TiKV \* 2  |
-| 172.16.31.8  | TiKV \* 2  |
-| 172.16.31.10 | TiKV \* 2  |
-| 172.16.31.10 | PD \* 1    |
-| 172.16.31.4  | TiDB \* 1  |
+| Machine IP   | Deployment Instance |
+|--------------|---------------------|
+| 172.16.31.2  | TiKV \* 2           |
+| 172.16.31.3  | TiKV \* 2           |
+| 172.16.31.6  | TiKV \* 2           |
+| 172.16.31.8  | TiKV \* 2           |
+| 172.16.31.10 | TiKV \* 2           |
+| 172.16.31.10 | PD \* 1             |
+| 172.16.31.4  | TiDB \* 1           |
 
-### TiDB 版本信息
+### Corresponding TiDB version information
 
 TiDB 1.0:
 
-| 组件名 | 版本号      | commit hash                                |
+| Component | Version | Commit Hash                                 |
 |--------|-------------|--------------------------------------------|
 | TiDB   | v1.0.9      | 4c7ee3580cd0a69319b2c0c08abdc59900df7344   |
 | TiKV   | v1.0.8      | 2bb923a4cd23dbf68f0d16169fd526dc5c1a9f4a   |
@@ -65,18 +65,18 @@ TiDB 1.0:
 
 TiDB 2.0:
 
-| 组件名 | 版本号      | commit hash                                |
+| Component | Version      | Commit Hash                            |
 |--------|-------------|--------------------------------------------|
 | TiDB   | v2.0.0-rc.6 | 82d35f1b7f9047c478f4e1e82aa0002abc8107e7   |
 | TiKV   | v2.0.0-rc.6 | 8bd5c54966c6ef42578a27519bce4915c5b0c81f   |
 | PD     | v2.0.0-rc.6 | 9b824d288126173a61ce7d51a71fc4cb12360201   |
 
-## 测试结果
+## Test result
 
 | Query ID  | TiDB 2.0           | TiDB 1.0         |
 |-----------|--------------------|------------------|
 | 1         | 33.915s            | 215.305s         |
-| 2         | 25.575s            | NaN              |
+| 2         | 25.575s            | Nan              |
 | 3         | 59.631s            | 196.003s         |
 | 4         | 30.234s            | 249.919s         |
 | 5         | 31.666s            | OOM              |
@@ -89,7 +89,7 @@ TiDB 2.0:
 | 12        | 27.962s            | 124.641s         |
 | 13        | 27.676s            | 174.695s         |
 | 14        | 19.676s            | 110.602s         |
-| 15        | View Required      | View Required    |
+| 15        | NaN                | Nan              |
 | 16        | 24.890s            | 40.529s          |
 | 17        | 245.796s           | NaN              |
 | 18        | 91.256s            | OOM              |
@@ -98,11 +98,11 @@ TiDB 2.0:
 | 21        | 31.466s            | OOM              |
 | 22        | 31.539s            | 125.471s         |
 
-![TPC-H Query Result](https://docs-download.pingcap.com/media/images/docs-cn/tpch-query-result.png)
+![TPC-H Query Result](https://docs-download.pingcap.com/media/images/docs/tpch-query-result.png)
 
-说明：
+It should be noted that:
 
-- 图中橙色为 Release 1.0，蓝色为 Release 2.0，纵坐标是 Query 的处理时间，越低越好
-- Query 15 因为 1.0 和 2.0 都还未支持视图，所以结果标记为 "View Required"
-- Query 2, 17, 19 因为 TiDB 1.0 长时间未跑出结果，所以结果标记为 "Nan"
-- Query 5, 7, 18, 21 因为 TiDB 1.0 在跑的过程中内存占用过多被 oom-killer 杀死，所以结果标记为 "OOM"
+- In the diagram above, the orange bars represent the query results of Release 1.0 and the blue bars represent the query results of Release 2.0. The y-axis represents the processing time of queries in seconds, the shorter the faster.
+- Query 15 is tagged with "NaN" because VIEW is currently not supported in either TiDB 1.0 or 2.0. We have plans to provide VIEW support in a future release.
+- Queries 2, 17, and 19 in the TiDB 1.0 column are tagged with "NaN" because TiDB 1.0 did not return results for these queries.
+- Queries 5, 7, 18, and 21 in the TiDB 1.0 column are tagged with "OOM" because the memory consumption was too high.

@@ -1,17 +1,17 @@
 ---
-title: 代价模型
-summary: 介绍 TiDB 进行物理优化时所使用的代价模型的原理。
+title: Cost Model
+summary: 了解 TiDB 在物理优化过程中使用的成本模型的工作原理。
 ---
 
-# 代价模型
+# Cost Model
 
-TiDB 在进行[物理优化](/sql-physical-optimization.md)时会使用代价模型来进行索引选择和算子选择，如下图所示：
+TiDB 使用成本模型在 [物理优化](/sql-physical-optimization.md) 过程中选择索引和操作符。该过程在下图中进行了示意：
 
-![CostModel](https://docs-download.pingcap.com/media/images/docs-cn/cost-model.png)
+![CostModel](https://docs-download.pingcap.com/media/images/docs/cost-model.png)
 
-TiDB 会计算每个索引的访问代价和计划中每个物理算子的执行代价（如 HashJoin、IndexJoin 等），选择代价最低的计划。
+TiDB 计算计划中每个索引的访问成本和每个物理操作符（如 HashJoin 和 IndexJoin）的执行成本，并选择成本最低的计划。
 
-下面是一个简化的例子，用来解释代价模型的原理，比如有这样一张表：
+以下是一个简化的示例，用于说明成本模型的工作原理。假设有一张表 `t`：
 
 ```sql
 mysql> SHOW CREATE TABLE t;
@@ -29,23 +29,23 @@ mysql> SHOW CREATE TABLE t;
 1 row in set (0.00 sec)
 ```
 
-在处理查询 `SELECT * FROM t WHERE b < 100 and c < 100` 时，假设 TiDB 对 `b < 100` 和 `c < 100` 的行数估计分别为 20 和 500，`INT` 类型索引行宽为 8，则 TiDB 会分别计算两个索引的代价：
+在执行 `SELECT * FROM t WHERE b < 100 and c < 100` 语句时，假设 TiDB 估算满足 `b < 100` 条件的行数为 20 行，满足 `c < 100` 条件的行数为 500 行，且 `INT` 类型索引的长度为 8。然后，TiDB 计算两个索引的成本：
 
-+ 索引 `b` 的扫描代价 = `b < 100` 的行数 \* 索引 `b` 的行宽 = 20 * 8 = 160
-+ 索引 `c` 的扫描代价 = `c < 100` 的行数 \* 索引 `c` 的行宽 = 500 * 8 = 4000
++ 索引 `b` 的成本 = 行数 `b < 100` \* 索引 `b` 的长度 = 20 \* 8 = 160
++ 索引 `c` 的成本 = 行数 `c < 100` \* 索引 `c` 的长度 = 500 \* 8 = 4000
 
-由于扫描 `b` 的代价更低，因此 TiDB 会选择 `b` 索引。
+由于索引 `b` 的成本较低，TiDB 选择 `b` 作为索引。
 
-上述是一个简化后的例子，只是用于做原理解释，实际 TiDB 的代价模型会更加复杂。
+上述示例为简化示意，仅用以说明基本原理。在实际 SQL 执行中，TiDB 的成本模型会更加复杂。
 
 ## Cost Model Version 2
 
-TiDB v6.2.0 引入了新的代价模型 Cost Model Version 2。
+TiDB v6.2.0 引入了 Cost Model Version 2，这是一个新的成本模型。
 
-Cost Model Version 2 对代价公式进行了更精确的回归校准，调整了部分代价公式，比此前版本的代价公式更加准确。
+Cost Model Version 2 提供了更为准确的成本公式回归校准，调整了部分成本公式，优于之前版本的成本公式的准确性。
 
-你可以通过设置变量 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-从-v620-版本开始引入) 来控制代价模型的版本。
+要切换成本模型的版本，可以设置 [`tidb_cost_model_version`](/system-variables.md#tidb_cost_model_version-new-in-v620) 变量。
 
-> **注意：**
+> **Note:**
 >
-> 切换代价模型版本可能引起执行计划的变动。
+> 切换成本模型的版本可能会导致查询计划的变化。

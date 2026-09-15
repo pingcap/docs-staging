@@ -1,38 +1,38 @@
 ---
-title: 从大数据量 MySQL 迁移数据到 TiDB
-summary: 介绍如何从大数据量 MySQL 迁移数据到 TiDB。
+title: Migrate Large Datasets from MySQL to TiDB
+summary: Learn how to migrate large datasets from MySQL to TiDB.
 ---
 
-# 从大数据量 MySQL 迁移数据到 TiDB
+# Migrate Large Datasets from MySQL to TiDB
 
-通常数据量较低时，使用 DM 进行迁移较为简单，可直接完成全量+持续增量迁移工作。但当数据量较大时，DM 较低的数据导入速度 (30~50 GiB/h) 可能令整个迁移周期过长。本文所称“大数据量”通常指 TiB 级别以上。
+When the data volume to be migrated is small, you can easily [use DM to migrate data](/migrate-small-mysql-to-tidb.md), both for full migration and incremental replication. However, because DM imports data at a slow speed (30~50 GiB/h), when the data volume is large, the migration might take a long time. "Large datasets" in this document usually mean data around one TiB or more.
 
-因此，本文档介绍如何使用 Dumpling 和 TiDB Lightning 进行全量数据迁移。TiDB Lightning [物理导入模式](/tidb-lightning/tidb-lightning-physical-import-mode.md)的导入速度最高可达每小时 500 GiB，注意实际导入速度受硬件配置、表结构、索引数量等多方面因素的影响。完成全量数据迁移后，再使用 DM 完成增量数据迁移。
+This document describes how to perform the full migration using Dumpling and TiDB Lightning. TiDB Lightning [Physical Import Mode](/tidb-lightning/tidb-lightning-physical-import-mode.md) can import data at a speed of up to 500 GiB/h. Note that this speed is affected by various factors such as hardware configuration, table schema, and the number of indexes. After the full migration is completed, you can replicate the incremental data using DM.
 
-## 前提条件
+## Prerequisites
 
-- [部署 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)。
-- [安装 Dumpling 和 TiDB Lightning](/migration-tools.md)。
-- [配置 DM 所需上下游数据库权限](/dm/dm-worker-intro.md#dm-worker-所需权限)。
-- [获取 TiDB Lightning 所需下游数据库权限](/tidb-lightning/tidb-lightning-faq.md#tidb-lightning-对下游数据库的账号权限要求是怎样的)。
-- [获取 Dumpling 所需上游数据库权限](/dumpling-overview.md#从-tidbmysql-导出数据)。
+- [Install DM](/dm/deploy-a-dm-cluster-using-tiup.md).
+- [Install Dumpling and TiDB Lightning](/migration-tools.md).
+- [Grant the source database and target database privileges required for DM](/dm/dm-worker-intro.md).
+- [Grant the target database privileges required for TiDB Lightning](/tidb-lightning/tidb-lightning-faq.md#what-are-the-privilege-requirements-for-the-target-database).
+- [Grant the source database privileges required for Dumpling](/dumpling-overview.md#export-data-from-tidb-or-mysql).
 
-## 资源要求
+## Resource requirements
 
-**操作系统**：本文档示例使用的是若干新的、纯净版 CentOS 7 实例，你可以在本地虚拟化一台主机，或在供应商提供的平台上部署一台小型的云虚拟主机。TiDB Lightning 运行过程中，默认会占满 CPU，建议单独部署在一台主机上。如果条件不允许，你可以将 TiDB Lightning 和其他组件（比如 `tikv-server`）部署在同一台机器上，然后设置 `region-concurrency` 配置项的值为逻辑 CPU 数的 75%，以限制 TiDB Lightning 对 CPU 资源的使用。
+**Operating system**: The example in this document uses fresh CentOS 7 instances. You can deploy a virtual machine either on your local host or in the cloud. Because TiDB Lightning consumes as much CPU resources as needed by default, it is recommended that you deploy it on a dedicated server. If this is not possible, you can deploy it on a single server together with other TiDB components (for example, `tikv-server`) and then configure `region-concurrency` to limit the CPU usage from TiDB Lightning. Usually, you can configure the size to 75% of the logical CPU.
 
-**内存和 CPU**：因为 TiDB Lightning 对计算机资源消耗较高，建议分配 64 GB 以上的内存以及 32 核以上的 CPU，而且确保 CPU 核数和内存（GB）比为 1:2 以上，以获取最佳性能。
+**Memory and CPU**: Because TiDB Lightning consumes high resources, it is recommended to allocate more than 64 GiB of memory and more than 32 CPU cores. To get the best performance, make sure that the CPU core to memory (GiB) ratio is greater than 1:2.
 
-**磁盘空间**：
+**Disk space**:
 
-- Dumpling 需要能够储存整个数据源的存储空间，即可以容纳要导出的所有上游表的空间。计算方式参考[下游数据库所需空间](/tidb-lightning/tidb-lightning-requirements.md#目标数据库所需空间)。
-- TiDB Lightning 导入期间，需要临时空间来存储排序键值对，磁盘空间需要至少能存储数据源的最大单表。
-- 若全量数据量较大，可适当加长上游 binlog 保存时间，以避免增量同步时缺必要 binlog 导致重做。
+- Dumpling requires a disk space that can store the whole data source (or to store all upstream tables to be exported). SSD is recommended. To calculate the required space, see [Downstream storage space requirements](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database).
+- During the import, TiDB Lightning needs temporary space to store the sorted key-value pairs. The disk space should be enough to hold the largest single table from the data source.
+- If the full data volume is large, you can increase the binlog storage time in the upstream. This is to ensure that the binlogs are not lost during the incremental replication.
 
-**说明**：目前无法精确计算 Dumpling 从 MySQL 导出的数据大小，但你可以用下面 SQL 语句统计信息表的 `DATA_LENGTH` 字段估算数据量：
+**Note**: It is difficult to calculate the exact data volume exported by Dumpling from MySQL, but you can estimate the data volume by using the following SQL statement to summarize the `DATA_LENGTH` field in the `information_schema.tables` table:
 
 ```sql
--- 统计所有 schema 大小
+-- Calculate the size of all schemas
 SELECT
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(DATA_LENGTH)) AS 'Data Size',
@@ -42,8 +42,8 @@ FROM
 GROUP BY
   TABLE_SCHEMA;
 
--- 统计最大的 5 个单表
-SELECT
+-- Calculate the 5 largest tables
+SELECT 
   TABLE_NAME,
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(data_length)) AS 'Data Size',
@@ -60,41 +60,42 @@ LIMIT
   5;
 ```
 
-### 目标 TiKV 集群的磁盘空间要求
+### Disk space for the target TiKV cluster
 
-目标 TiKV 集群必须有足够空间接收新导入的数据。除了[标准硬件配置](/hardware-and-software-requirements.md)以外，目标 TiKV 集群的总存储空间必须大于**数据源大小 × [副本数量](/faq/manage-cluster-faq.md#每个-region-的-replica-数量可配置吗调整的方法是) × 2**。例如，集群默认使用 3 副本，那么总存储空间需为数据源大小的 6 倍以上。公式中的 2 倍可能难以理解，其依据是以下因素的估算空间占用：
+The target TiKV cluster must have enough disk space to store the imported data. In addition to [the standard hardware requirements](/hardware-and-software-requirements.md), the storage space of the target TiKV cluster must be larger than **the size of the data source x [the number of replicas](/faq/manage-cluster-faq.md#is-the-number-of-replicas-in-each-region-configurable-if-yes-how-to-configure-it) x 2**. For example, if the cluster uses 3 replicas by default, the target TiKV cluster must have a storage space larger than 6 times the size of the data source. The formula has `x 2` because:
 
-* 索引会占据额外的空间。
-* RocksDB 的空间放大效应。
+- Index might take extra space.
+- RocksDB has a space amplification effect.
 
-## 第 1 步：从 MySQL 导出全量数据
+## Step 1. Export all data from MySQL
 
-1. 运行以下命令，从 MySQL 导出全量数据：
+1. Export all data from MySQL by running the following command:
 
+    
     ```shell
     tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MiB -B my_db1 -f 'my_db1.table[12]' -o 's3://my-bucket/sql-backup'
     ```
 
-    Dumpling 默认导出数据格式为 SQL 文件，你也可以通过设置 `--filetype` 指定导出文件的类型。
+    Dumpling exports data in SQL files by default. You can specify a different file format by adding the `--filetype` option.
 
-    以上命令行中用到的参数描述如下。要了解更多 Dumpling 参数，请参考 [Dumpling 使用文档](/dumpling-overview.md)。
+    The parameters used above are as follows. For more Dumpling parameters, refer to [Dumpling Overview](/dumpling-overview.md).
 
-    | 参数              | 说明 |
-    | -                 | - |
-    | `-u` 或 `--user`       | MySQL 数据库的用户 |
-    | `-p` 或 `--password`   | MySQL 数据库的用户密码 |
-    | `-P` 或 `--port`       | MySQL 数据库的端口 |
-    | `-h` 或 `--host`       | MySQL 数据库的 IP 地址 |
-    | `-t` 或 `--thread`     | 导出的线程数。增加线程数会增加 Dumpling 并发度提高导出速度，但也会加大数据库内存消耗，因此不宜设置过大，一般不超过 64 |
-    | `-o` 或 `--output`     | 存储导出文件的目录，支持本地文件路径或[外部存储服务的 URI 格式](/external-storage-uri.md) |
-    | `-r` 或 `--row`        | 用于指定单个文件的最大行数，指定该参数后 Dumpling 会开启表内并发加速导出，同时减少内存使用 |
-    | `-F`                   | 指定单个文件的最大大小，单位为 MiB。强烈建议使用 `-F` 参数以避免单表过大导致备份过程中断 |
-    | `-B` 或 `--database`   | 导出指定数据库 |
-    | `-f` 或 `--filter`     | 导出能匹配模式的表，语法可参考 [table-filter](/table-filter.md)|
+    |parameters             |Description|
+    |-                      |-|
+    |`-u` or `--user`       |MySQL user|
+    |`-p` or `--password`   |MySQL user password|
+    |`-P` or `--port`       |MySQL port|
+    |`-h` or `--host`       |MySQL IP address|
+    |`-t` or `--thread`     |The number of threads used for export|
+    |`-o` or `--output`     |The directory that stores the exported file. Supports a local path or an [external storage URI](/external-storage-uri.md)|
+    |`-r` or `--row`        |The maximum number of rows in a single file|
+    |`-F`                   |The maximum size of a single file, in MiB. Recommended value: 256 MiB.|
+    |-`B` or `--database`   |Specifies a database to be exported|
+    |`-f` or `--filter`     |Exports tables that match the pattern. Refer to [table-filter](/table-filter.md) for the syntax.|
 
-    请确保 `${data-path}` 的空间可以容纳要导出的所有上游表，计算方式参考[下游数据库所需空间](/tidb-lightning/tidb-lightning-requirements.md#目标数据库所需空间)。强烈建议使用 `-F` 参数以避免单表过大导致备份过程中断。
+    Make sure `${data-path}` has the space to store all exported upstream tables. To calculate the required space, see [Downstream storage space requirements](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database). To prevent the export from being interrupted by a large table consuming all the spaces, it is strongly recommended to use the `-F` option to limit the size of a single file.
 
-2. 查看在 `${data-path}` 目录下的 `metadata` 文件，这是 Dumpling 自动生成的元信息文件，请记录其中的 binlog 位置信息，这将在第 3 步增量同步的时候使用。
+2. View the `metadata` file in the `${data-path}` directory. This is a Dumpling-generated metadata file. Record the binlog position information, which is required for the incremental replication in Step 3.
 
     ```
     SHOW MASTER STATUS:
@@ -103,183 +104,191 @@ LIMIT
     GTID:
     ```
 
-## 第 2 步：导入全量数据到 TiDB
+## Step 2. Import full data to TiDB
 
-1. 编写配置文件 `tidb-lightning.toml`：
+1. Create the `tidb-lightning.toml` configuration file:
 
+    
     ```toml
     [lightning]
-    # 日志
+    # log.
     level = "info"
     file = "tidb-lightning.log"
 
     [tikv-importer]
-    # "local"：默认使用该模式，适用于 TB 级以上大数据量，但导入期间下游 TiDB 无法对外提供服务。
-    # "tidb"：TB 级以下数据量也可以采用 `tidb` 后端模式，下游 TiDB 可正常提供服务。关于后端模式更多信息请参阅：https://docs.pingcap.com/tidb/stable/tidb-lightning-backends
+    # "local": Default backend. The local backend is recommended to import large volumes of data (1 TiB or more). During the import, the target TiDB cluster cannot provide any service.
+    # "tidb": The "tidb" backend is recommended to import data less than 1 TiB. During the import, the target TiDB cluster can provide service normally. For more information on the backends, refer to https://docs.pingcap.com/tidb/stable/tidb-lightning-backends.
     backend = "local"
-    # 设置排序的键值对的临时存放地址，目标路径必须是一个空目录，目录空间须大于待导入数据集的大小。建议设为与 `data-source-dir` 不同的磁盘目录并使用闪存介质，独占 IO 会获得更好的导入性能
+    # Sets the temporary storage directory for the sorted Key-Value files. The directory must be empty, and the storage space must be greater than the size of the dataset to be imported. For better import performance, it is recommended to use a directory different from `data-source-dir` and use flash storage, which can use I/O exclusively.
     sorted-kv-dir = "${sorted-kv-dir}"
 
     [mydumper]
-    # 源数据目录，即第 1 步中 Dumpling 保存数据的路径。
-    data-source-dir = "${data-path}" # 本地或 S3 路径，例如：'s3://my-bucket/sql-backup'
+    # The data source directory. The same directory where Dumpling exports data in "Step 1. Export all data from MySQL".
+    data-source-dir = "${data-path}" # A local path or S3 path. For example, 's3://my-bucket/sql-backup'.
 
     [tidb]
-    # 目标集群的信息
-    host = "${host}"              # 例如：172.16.32.1
-    port = "${port}"              # 例如：4000
-    user = "${user_name}"         # 例如："root"
-    password = "${password}"      # 例如："rootroot"
-    status-port = "${status-port}"  # 导入过程 Lightning 需要在从 TiDB 的“状态端口”获取表结构信息，例如：10080
-    pd-addr = "${ip}:${port}"     # 集群 PD 的地址，Lightning 通过 PD 获取部分信息，例如 172.16.31.3:2379。当 backend = "local" 时 status-port 和 pd-addr 必须正确填写，否则导入将出现异常。
+    # The target TiDB cluster information.
+    host = ${host}                # e.g.: 172.16.32.1
+    port = ${port}                # e.g.: 4000
+    user = "${user_name}"         # e.g.: "root"
+    password = "${password}"      # e.g.: "rootroot"
+    status-port = ${status-port}  # During the import, TiDB Lightning needs to obtain the table schema information from the TiDB status port. e.g.: 10080
+    pd-addr = "${ip}:${port}"     # The address of the PD cluster, e.g.: 172.16.31.3:2379. TiDB Lightning obtains some information from PD. When backend = "local", you must specify status-port and pd-addr correctly. Otherwise, the import will be abnormal.
     ```
 
-    关于更多 TiDB Lightning 的配置，请参考 [TiDB Lightning 配置参数](/tidb-lightning/tidb-lightning-configuration.md)。
+    For more information on TiDB Lightning configuration, refer to [TiDB Lightning Configuration](/tidb-lightning/tidb-lightning-configuration.md).
 
-2. 运行 `tidb-lightning`。如果直接在命令行中启动程序，可能会因为 `SIGHUP` 信号而退出。不推荐在命令行中直接使用 nohup 启动进程。编辑以下脚本内容，如：
+2. Start the import by running `tidb-lightning`. If you launch the program directly in the command line, the process might exit unexpectedly after receiving a SIGHUP signal. In this case, it is recommended to run the program using a `nohup` or `screen` tool. For example:
 
-    若从 Amazon S3 导入，则需将有权限访问该 S3 后端存储的账号的 SecretKey 和 AccessKey 作为环境变量传入 TiDB Lightning 节点。同时还支持从 `~/.aws/credentials` 读取凭证文件。
+    If you import data from S3, pass the SecretKey and AccessKey that have access to the S3 storage path as environment variables to the TiDB Lightning node. You can also read the credentials from `~/.aws/credentials`.
 
+    
     ```shell
-    #!/bin/bash
     export AWS_ACCESS_KEY_ID=${access_key}
     export AWS_SECRET_ACCESS_KEY=${secret_key}
     nohup tiup tidb-lightning -config tidb-lightning.toml > nohup.out 2>&1 &
     ```
 
-    再使用脚本启动 tidb-lightning。
+3. After the import starts, you can check the progress of the import by one of the following methods:
 
-3. 导入开始后，可以采用以下任意方式查看进度：
+    - `grep` the keyword `progress` in the log. The progress is updated every 5 minutes by default.
+    - Check progress in [the monitoring dashboard](/tidb-lightning/monitor-tidb-lightning.md).
+    - Check progress in [the TiDB Lightning web interface](/tidb-lightning/tidb-lightning-web-interface.md).
 
-    - 通过 `grep` 日志关键字 `progress` 查看进度，默认 5 分钟更新一次。
-    - 通过监控面板查看进度，请参考 [TiDB Lightning 监控](/tidb-lightning/monitor-tidb-lightning.md)。
+4. After TiDB Lightning completes the import, it exits automatically. Check whether `tidb-lightning.log` contains `the whole procedure completed` in the last lines. If yes, the import is successful. If no, the import encounters an error. Address the error as instructed in the error message.
 
-4. 导入完毕后，TiDB Lightning 会自动退出。查看 `tidb-lightning.log` 日志末尾是否有 `the whole procedure completed` 信息，如果有，表示导入成功。如果没有，则表示导入遇到了问题，可根据日志中的 error 提示解决遇到的问题。
-
-> **注意：**
+> **Note:**
 >
-> 无论导入成功与否，最后一行都会显示 `tidb lightning exit`。它只是表示 TiDB Lightning 正常退出，不代表任务完成。
+> Whether the import is successful or not, the last line of the log shows `tidb lightning exit`. It means that TiDB Lightning exits normally, but does not necessarily mean that the import is successful.
 
-如果导入过程中遇到问题，请参见 [TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)。
+If the import fails, refer to [TiDB Lightning FAQ](/tidb-lightning/tidb-lightning-faq.md) for troubleshooting.
 
-## 第 3 步：使用 DM 持续复制增量数据到 TiDB
+## Step 3. Replicate incremental data to TiDB
 
-### 添加数据源
+### Add the data source
 
-1. 新建 `source1.yaml` 文件，写入以下内容：
+1. Create a `source1.yaml` file as follows:
 
+    
     ```yaml
-    # 唯一命名，不可重复。
+    # Must be unique.
     source-id: "mysql-01"
 
-    # DM-worker 是否使用全局事务标识符 (GTID) 拉取 binlog。使用前提是上游 MySQL 已开启 GTID 模式。若上游存在主从自动切换，则必须使用 GTID 模式。
+    # Configures whether DM-worker uses the global transaction identifier (GTID) to pull binlogs. To enable this mode, the upstream MySQL must also enable GTID. If the upstream MySQL service is configured to switch master between different nodes automatically, GTID mode is required.
     enable-gtid: true
 
     from:
-      host: "${host}"           # 例如：172.16.10.81
+      host: "${host}"           # e.g.: 172.16.10.81
       user: "root"
-      password: "${password}"   # 支持但不推荐使用明文密码，建议使用 dmctl encrypt 对明文密码进行加密后使用
+      password: "${password}"   # Supported but not recommended to use a plaintext password. It is recommended to use `dmctl encrypt` to encrypt the plaintext password before using it.
       port: 3306
     ```
 
-2. 在终端中执行下面的命令，使用 `tiup dmctl` 将数据源配置加载到 DM 集群中:
+2. Load the data source configuration to the DM cluster using `tiup dmctl` by running the following command:
 
+    
     ```shell
     tiup dmctl --master-addr ${advertise-addr} operate-source create source1.yaml
     ```
 
-    该命令中的参数描述如下：
+    The parameters used in the command above are described as follows:
 
-    |参数           |描述|
-    |-              |-|
-    |`--master-addr`|dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261|
-    |`operate-source create`|向 DM 集群加载数据源|
+    |Parameter              |Description    |
+    |-                      |-              |
+    |`--master-addr`        |The `{advertise-addr}` of any DM-master in the cluster where `dmctl` is to be connected, e.g.: 172.16.10.71:8261|
+    |`operate-source create`|Loads the data source to the DM cluster.|
 
-### 添加同步任务
+### Add a replication task
 
-1. 编辑 `task.yaml`，配置增量同步模式，以及每个数据源的同步起点：
+1. Edit the `task.yaml` file. Configure the incremental replication mode and the starting point of each data source:
 
+    
     ```yaml
-    name: task-test                      # 任务名称，需要全局唯一。
-    task-mode: incremental               # 任务模式，设为 "incremental" 即只进行增量数据迁移。
+    name: task-test                      # Task name. Must be globally unique.
+    task-mode: incremental               # Task mode. The "incremental" mode only performs incremental data replication.
 
-    # 配置下游 TiDB 数据库实例访问信息
-    target-database:                     # 下游数据库实例配置。
-      host: "${host}"                    # 例如：127.0.0.1
+    # Configures the target TiDB database.
+    target-database:                     # The target database instance.
+      host: "${host}"                    # e.g.: 127.0.0.1
       port: 4000
       user: "root"
-      password: "${password}"            # 推荐使用经过 dmctl 加密的密文。
+      password: "${password}"            # It is recommended to use `dmctl encrypt` to encrypt the plaintext password before using it.
 
-    #  使用黑白名单配置需要同步的表
-    block-allow-list:                    # 数据源数据库实例匹配的表的 block-allow-list 过滤规则集，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
-      bw-rule-1:                         # 黑白名单配置项 ID。
-        do-dbs: ["${db-name}"]           # 迁移哪些库。
+    # Use block and allow lists to specify the tables to be replicated.
+    block-allow-list:                    # The collection of filtering rules that matches the tables in the source database instance. If the DM version is earlier than v2.0.0-beta.2, use black-white-list.
+      bw-rule-1:                         # The block-allow-list configuration item ID.
+        do-dbs: ["${db-name}"]           # Name of databases to be replicated.
 
-    # 配置数据源
+    # Configures the data source.
     mysql-instances:
-      - source-id: "mysql-01"            # 数据源 ID，即 source1.yaml 中的 source-id
-        block-allow-list: "bw-rule-1"    # 引入上面黑白名单配置。
-        # syncer-config-name: "global"    # 引用下面的 syncers 增量数据配置。
-        meta:                            # `task-mode` 为 `incremental` 且下游数据库的 `checkpoint` 不存在时 binlog 迁移开始的位置; 如果 checkpoint 存在，则以 `checkpoint` 为准。如果 `meta` 项和下游数据库的 `checkpoint` 都不存在，则从上游当前最新的 binlog 位置开始迁移。
-          # binlog-name: "mysql-bin.000004"  # 第 1 步中记录的日志位置，当上游存在主从切换时，必须使用 gtid。
+      - source-id: "mysql-01"            # Data source ID, i.e., source-id in source1.yaml
+        block-allow-list: "bw-rule-1"    # You can use the block-allow-list configuration above.
+        # syncer-config-name: "global"    # You can use the syncers incremental data configuration below.
+        meta:                            # The position where the binlog replication starts when `task-mode` is `incremental` and the downstream database checkpoint does not exist. If the checkpoint exists, the checkpoint is used. If neither the `meta` configuration item nor the downstream database checkpoint exists, the migration starts from the latest binlog position of the upstream.
+          # binlog-name: "mysql-bin.000004"  # The binlog position recorded in "Step 1. Export all data from MySQL". If the upstream database service is configured to switch master between different nodes automatically, GTID mode is required.
           # binlog-pos: 109227
           binlog-gtid: "09bec856-ba95-11ea-850a-58f2b4af5188:1-9"
 
-    # 【可选配置】 如果增量数据迁移需要重复迁移已经在全量数据迁移中完成迁移的数据，则需要开启 safe mode 避免增量数据迁移报错。
-    #  该场景多见于以下情况：全量迁移的数据不属于数据源的一个一致性快照，随后从一个早于全量迁移数据之前的位置开始同步增量数据。
-    # syncers:            # sync 处理单元的运行配置参数。
-    #  global:           # 配置名称。
-    #    safe-mode: true # 设置为 true，会将来自数据源的 INSERT 改写为 REPLACE，将 UPDATE 改写为 DELETE 与 REPLACE，从而保证在表结构中存在主键或唯一索引的条件下迁移数据时可以重复导入 DML。在启动或恢复增量复制任务的前 1 分钟内 TiDB DM 会自动启动 safe mode。
+    # (Optional) If you need to incrementally replicate data that has already been migrated in the full data migration, you need to enable the safe mode to avoid the incremental data replication error.
+    # This scenario is common in the following case: the full migration data does not belong to the data source's consistency snapshot, and after that, DM starts to replicate incremental data from a position earlier than the full migration.
+    # syncers:            # The running configurations of the sync processing unit.
+    #   global:           # Configuration name.
+    #     safe-mode: true # If this field is set to true, DM changes INSERT of the data source to REPLACE for the target database, and changes UPDATE of the data source to DELETE and REPLACE for the target database. This is to ensure that when the table schema contains a primary key or unique index, DML statements can be imported repeatedly. In the first minute of starting or resuming an incremental replication task, DM automatically enables the safe mode.
     ```
 
-    以上内容为执行迁移的最小任务配置。关于任务的更多配置项，可以参考[DM 任务完整配置文件介绍](/dm/task-configuration-file-full.md)。
+    The YAML above is the minimum configuration required for the migration task. For more configuration items, refer to [DM Advanced Task Configuration File](/dm/task-configuration-file-full.md).
 
-    在你启动数据迁移任务之前，建议使用`check-task`命令检查配置是否符合 DM 的配置要求，以降低后期报错的概率。
+    Before you start the migration task, to reduce the probability of errors, it is recommended to confirm that the configuration meets the requirements of DM by running the `check-task` command:
 
+    
     ```shell
     tiup dmctl --master-addr ${advertise-addr} check-task task.yaml
     ```
 
-2. 使用 `tiup dmctl` 执行以下命令启动数据迁移任务：
+2. Start the migration task by running the following command:
 
+    
     ```shell
     tiup dmctl --master-addr ${advertise-addr} start-task task.yaml
     ```
 
-    该命令中的参数描述如下：
+    The parameters used in the command above are described as follows:
 
-    |参数|描述|
-    |-|-|
-    |`--master-addr`|dmctl 要连接的集群的任意 DM-master 节点的 `{advertise-addr}`，例如：172.16.10.71:8261|
-    |`start-task`|命令用于创建数据迁移任务|
+    |Parameter              |Description    |
+    |-                      |-              |
+    |`--master-addr`        |The {advertise-addr} of any DM-master in the cluster where `dmctl` is to be connected, e.g.: 172.16.10.71:8261|
+    |`start-task`           |Starts the migration task.|
 
-    如果任务启动失败，可根据返回结果的提示进行配置变更，再执行上述命令重新启动任务。遇到问题请参考[故障及处理方法](/dm/dm-error-handling.md)以及[常见问题](/dm/dm-faq.md)。
+    If the task fails to start, check the prompt message and fix the configuration. After that, you can re-run the command above to start the task.
 
-### 查看任务状态
+    If you encounter any problem, refer to [DM error handling](/dm/dm-error-handling.md) and [DM FAQ](/dm/dm-faq.md).
 
-如需了解 DM 集群中是否存在正在运行的迁移任务及任务状态等信息，可使用 `tiup dmctl` 执行 `query-status` 命令进行查询：
+### Check the migration task status
+
+To learn whether the DM cluster has an ongoing migration task and view the task status, run the `query-status` command using `tiup dmctl`:
+
 
 ```shell
 tiup dmctl --master-addr ${advertise-addr} query-status ${task-name}
 ```
 
-关于查询结果的详细解读，请参考[查询状态](/dm/dm-query-status.md)。
+For a detailed interpretation of the results, refer to [Query Status](/dm/dm-query-status.md).
 
-### 监控任务与查看日志
+### Monitor the task and view logs
 
-要查看迁移任务的历史状态以及更多的内部运行指标，可参考以下步骤。
+To view the history status of the migration task and other internal metrics, take the following steps.
 
-如果使用 TiUP 部署 DM 集群时，正确部署了 Prometheus、Alertmanager 与 Grafana，则使用部署时填写的 IP 及端口进入 Grafana，选择 DM 的 dashboard 查看 DM 相关监控项。
+If you have deployed Prometheus, Alertmanager, and Grafana when you deployed DM using TiUP, you can access Grafana using the IP address and port specified during the deployment. You can then select DM dashboard to view DM-related monitoring metrics.
 
-DM 在运行过程中，DM-worker、DM-master 及 dmctl 都会通过日志输出相关信息。各组件的日志目录如下：
+When DM is running, DM-worker, DM-master, and dmctl print the related information in logs. The log directories of these components are as follows:
 
-- DM-master 日志目录：通过 DM-master 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-master-8261/log/`。
-- DM-worker 日志目录：通过 DM-worker 进程参数 `--log-file` 设置。如果使用 TiUP 部署 DM，则日志目录默认位于 `/dm-deploy/dm-worker-8262/log/`。
+- DM-master: specified by the DM-master process parameter `--log-file`. If you deploy DM using TiUP, the log directory is `/dm-deploy/dm-master-8261/log/` by default.
+- DM-worker: specified by the DM-worker process parameter `--log-file`. If you deploy DM using TiUP, the log directory is `/dm-deploy/dm-worker-8262/log/` by default.
 
-## 探索更多
+## What's next
 
-- [暂停数据迁移任务](/dm/dm-pause-task.md)
-- [恢复数据迁移任务](/dm/dm-resume-task.md)
-- [停止数据迁移任务](/dm/dm-stop-task.md)
-- [导出和导入集群的数据源和任务配置](/dm/dm-export-import-config.md)
-- [处理出错的 DDL 语句](/dm/handle-failed-ddl-statements.md)
+- [Pause a Data Migration Task](/dm/dm-pause-task.md)
+- [Resume a Data Migration Task](/dm/dm-resume-task.md)
+- [Stop a Data Migration Task](/dm/dm-stop-task.md)
+- [Export and Import Data Sources and Task Configuration of Clusters](/dm/dm-export-import-config.md)
+- [Handle Failed DDL Statements](/dm/handle-failed-ddl-statements.md)

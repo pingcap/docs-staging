@@ -1,53 +1,53 @@
 ---
 title: tiup telemetry
-summary: TiUP 遥测功能在 v1.11.3 及以上版本默认关闭，以下版本默认开启。开启后会分享使用情况信息给 PingCAP，包括遥测标示符、命令执行情况、部署情况等。不会分享集群准确名字、拓扑结构、配置文件。使用命令 `tiup telemetry` 控制遥测，支持 status、reset、enable、disable 命令。
+summary: TiUP telemetry is now disabled by default in v1.11.3. Usage information is not collected or shared with PingCAP. When enabled, it shares telemetry identifiers and command execution status. It does not share cluster details. Use 'tiup telemetry' command to control telemetry with sub-commands like status, reset, enable, and disable.
 ---
 
 # tiup telemetry
 
-在 v1.11.3 及以上的 TiUP 版本中，遥测功能默认关闭，即默认不收集使用情况信息分享给 PingCAP。在 v1.11.3 以下的 TiUP 版本中，遥测功能默认开启，即默认收集使用情况信息分享给 PingCAP 用于改善产品。
+Starting from v1.11.3, the telemetry is disabled by default in newly deployed TiUP, and usage information is not collected and shared with PingCAP. In versions earlier than v1.11.3, the telemetry is enabled by default in TiUP, and usage information is collected and shared with PingCAP to improve the product.
 
-当 TiUP 遥测功能开启时，执行 TiUP 命令时会将使用情况信息分享给 PingCAP，包括（但不限于）：
+When TiUP telemetry is enabled, usage information is shared with PingCAP when TiUP commands are executed, including (but not limited to):
 
-- 随机生成的遥测标示符
-- TiUP 命令的执行情况，如命令执行是否成功、命令执行耗时等
-- 使用 TiUP 进行部署的情况，如部署的目标机器硬件信息、组件版本号、修改过的部署配置名称等
+- Randomly generated telemetry identifiers.
+- The execution status of the TiUP command, such as whether the command execution is successful and the duration of command execution.
+- Situations using TiUP for deployment, such as target machine hardware information, component version number, and modified deployment configuration name.
 
-以下信息不会被分享：
+The information below is not shared:
 
-- 集群的准确名字
-- 集群的拓扑结构
-- 集群的配置文件
+- The accurate name of the cluster
+- The cluster topology
+- The cluster configuration file
 
-TiUP 使用命令 `tiup telemetry` 来控制遥测。
+TiUP uses the `tiup telemetry` command to control telemetry.
 
-## 语法
+## Syntax
 
 ```shell
 tiup telemetry <command>
 ```
 
-`<command>` 代表子命令，支持的子命令列表请参考下方命令一节。
+`<command>` stands for sub-commands. For the list of supported sub-commands, refer to the commands section below.
 
-## 命令
+## Commands
 
 ### status
 
-命令 `tiup telemetry status` 查看当前的遥测设置，输出以下信息：
+The `tiup telemetry status` command is used to view the current telemetry settings and output the following information:
 
-- `status`: 当前是否开启遥测 `(enable|disable)`
-- `uuid`: 随机生成的遥测标示符
+- `status`: specifies enabling or disabling the telemetry `(enable|disable)`.
+- `uuid`: specifies the randomly generated telemetry identifiers.
 
 ### reset
 
-命令 `tiup telemetry reset` 重置当前的遥测标示符，以一个新的随机标识符代替之。
+The `tiup telemetry reset` command is used to reset the current telemetry identifier and replaces it with a new random identifier.
 
 ### enable
 
-命令 `tiup telemetry enable` 启用遥测。
+The `tiup telemetry enable` command is used to enable the telemetry.
 
 ### disable
 
-命令 `tiup telemetry disable` 停用遥测。
+The `tiup telemetry disable` command is used to disable the telemetry.
 
-[<< 返回上一页 - TiUP 命令清单](/tiup/tiup-reference.md#命令清单)
+[<< Back to the previous page - TiUP Reference command list](/tiup/tiup-reference.md#command-list)

@@ -1,46 +1,58 @@
 ---
 title: SQL 或事务问题
-summary: 学习诊断在应用开发过程中可能产生的 SQL 或事务问题的方法。
-aliases: ['/zh/tidb/dev/troubleshoot-overview','/zh/tidb/stable/dev-guide-troubleshoot-overview/','/zh/tidb/dev/dev-guide-troubleshoot-overview/','/zh/tidbcloud/dev-guide-troubleshoot-overview/']
+summary: 了解在应用开发过程中可能出现的 SQL 或事务问题的排查方法。
 ---
 
 # SQL 或事务问题
 
-本章介绍在开发应用过程中可能遇到的常见问题的诊断处理方法。
+本文介绍在应用开发过程中可能出现的问题及相关文档。
 
-## SQL 操作常见问题
+## 排查 SQL 查询问题
 
-如果你想提高 SQL 的性能，可以阅读 [SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)来避免一些常见的性能问题。
+如果你想提升 SQL 查询性能，请按照 [SQL Performance Tuning](/develop/dev-guide-optimize-sql-overview.md) 中的指引，解决全表扫描、缺少索引等性能问题。
 
-然后如果依然存在性能问题，推荐阅读：
+<CustomContent platform="tidb">
 
-<SimpleTab groupId="platform">
+如果你仍然遇到性能问题，请参考以下文档：
 
-<div label="TiDB Cloud" value="tidb-cloud">
+- [Analyze Slow Queries](/analyze-slow-queries.md)
+- [Identify Expensive Queries Using Top SQL](/dashboard/top-sql.md)
 
-- [慢查询](https://docs.pingcap.com/zh/tidbcloud/tune-performance/#慢查询)
-- [SQL 语句分析](https://docs.pingcap.com/zh/tidbcloud/tune-performance/#语句分析)
-- [Key Visualizer](https://docs.pingcap.com/zh/tidbcloud/tune-performance/#key-visualizer)
+如果你对 SQL 操作有疑问，请参阅 [SQL FAQs](/faq/sql-faq.md)。
 
-</div>
+</CustomContent>
 
-<div label="TiDB" value="tidb">
+<CustomContent platform="tidb-cloud">
 
-- [分析慢查询](/analyze-slow-queries.md)
-- [使用 Top SQL 定位系统资源消耗过多的查询](/dashboard/top-sql.md)
+如果你对 SQL 操作有疑问，请参阅 [SQL FAQs](https://docs.pingcap.com/tidb/stable/sql-faq)。
 
-</div>
-</SimpleTab>
+</CustomContent>
 
-如果你遇到了一些关于 SQL 操作的问题，可以阅读 [SQL 操作常见问题](/faq/sql-faq.md)。
+## 排查事务问题
 
-## 事务错误处理
+请参阅 [Handle transaction errors](/develop/dev-guide-transaction-troubleshoot.md)。
 
-见[事务错误处理](/develop/dev-guide-transaction-troubleshoot.md)。
+## 相关内容
 
-## 推荐阅读
+- [Unsupported features](/mysql-compatibility.md#unsupported-features)
 
-- [不支持的功能特性](/mysql-compatibility.md#不支持的功能特性)
-- [集群管理 FAQ](/faq/manage-cluster-faq.md)
-- [TiDB Cloud 产品 FAQ](https://docs.pingcap.com/zh/tidbcloud/tidb-cloud-faq)
-- [TiDB 产品 FAQ](/faq/tidb-faq.md)
+<CustomContent platform="tidb">
+
+- [Cluster Management FAQs](/faq/manage-cluster-faq.md)
+- [TiDB FAQs](/faq/tidb-faq.md)
+
+</CustomContent>
+
+## 需要帮助？
+
+<CustomContent platform="tidb">
+
+可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

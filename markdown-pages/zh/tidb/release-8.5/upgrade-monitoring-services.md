@@ -1,114 +1,133 @@
 ---
-title: 升级集群监控组件
-summary: 介绍如何升级 TiDB 集群监控组件 Prometheus、Grafana 和 Alertmanager。
+title: Upgrade Cluster Monitoring Services
+summary: Learn how to upgrade the Prometheus, Grafana, and Alertmanager monitoring services for your TiDB cluster.
 ---
 
-# 升级 TiDB 集群监控组件
+# Upgrade TiDB Cluster Monitoring Services
 
-使用 TiUP 部署 TiDB 集群时，TiUP 会同时自动部署 Prometheus、Grafana 和 Alertmanager 等监控组件，并且在集群扩容中自动为新增节点添加监控配置。通过 TiUP 自动部署的监控组件并不是这些三方组件的最新版本，如果你需要使用最新的三方组件，可以按照本文的方法升级所需的监控组件。
+When deploying a TiDB cluster, TiUP automatically deploys monitoring services (such as Prometheus, Grafana, and Alertmanager) for the cluster. If you scale out this cluster, TiUP also automatically adds monitoring configurations for newly added nodes during the scaling. The monitoring services automatically deployed by TiUP are usually not the latest versions of these third-party monitoring services. To use the latest versions, you can follow this document to upgrade the monitoring services.
 
-当管理集群时，TiUP 会使用自己的配置参数覆盖监控组件的配置。如果你直接通过替换监控组件配置文件的方式升级监控组件，在之后对集群进行 `deploy`、`scale-out`、`scale-in`、`reload` 等 TiUP 操作时，该升级可能被 TiUP 所覆盖，导致升级出错。如果需要升级 Prometheus、Grafana 和 Alertmanager，请参考本文介绍的升级步骤，而不是直接替换配置文件。
+When managing a cluster, TiUP uses its own configurations to override the configurations of the monitoring services. If you directly upgrade the monitoring services by replacing their configuration files, any subsequent TiUP operations such as `deploy`, `scale-out`, `scale-in`, and `reload` on the cluster might overwrite your upgrade, leading to errors. To upgrade Prometheus, Grafana, and Alertmanager, follow the steps in this document rather than directly replacing configuration files.
 
-> **注意：**
+> **Note:**
 >
-> - 如果现有的监控组件是[手动部署](/deploy-monitoring-services.md)的，而不是由 TiUP 部署的，你可以直接升级监控组件，无需参考本文。
-> - TiDB 并未对监控组件新版本的兼容性进行测试，可能存在升级后部分功能无法正常使用的问题。如果遇到问题，请在 GitHub 上提 [issue](https://github.com/pingcap/tidb/issues) 反馈。
-> - 本文所述功能在 TiUP v1.9.0 及后续版本支持，使用本功能前请检查 TiUP 版本号。
-> - 使用 TiUP 升级 TiDB 群集时，TiUP 会将监控组件重新部署为其默认版本。因此，你需要在升级 TiDB 后重新升级监控组件。
+> - If your monitoring services are [deployed manually](/deploy-monitoring-services.md) instead of using TiUP, you can directly upgrade them without referring to this document.
+> - The TiDB compatibility with newer versions of monitoring services has not been tested, so some features might not work as expected after the upgrade. For any issues, create an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
+> - The upgrade steps in this document are applicable for TiUP version 1.9.0 and later. Therefore, check your TiUP version before the upgrade.
+> - When you use TiUP to upgrade the TiDB cluster, TiUP will redeploy the monitoring services to the default version. You need to redo the upgrade for monitoring services after the TiDB upgrade. 
 
-## 升级 Prometheus
+## Upgrade Prometheus
 
-为了更好地兼容 TiDB，推荐使用 TiDB 官方安装包中自带的 Prometheus 组件安装包，该组件包中的 Prometheus 版本是固定的。如果你需要使用更高版本的 Prometheus，可以在 Prometheus 官网的 [Release Note 页面](https://github.com/prometheus/prometheus/releases)查看新版本特性，选择适合你生产环境的版本，或者咨询 PingCAP 技术支持服务寻求版本建议。
+For better compatibility with TiDB, it is recommended to use the Prometheus installation package provided in the TiDB installation package. The version of Prometheus in the TiDB installation package is fixed. If you want to use a newer Prometheus version, refer to [Prometheus Release Notes](https://github.com/prometheus/prometheus/releases) for new features of each version and choose a suitable version for your production environment. You can also consult with PingCAP technical staff for a recommended version.
 
-在以下升级步骤中，你需要先从 Prometheus 官网下载所需版本的软件安装包，然后将其构造为可被 TiUP 使用的 Prometheus 组件安装包。
+In the following upgrade steps, you need to download the Prometheus installation package of your desired version from the Prometheus website, and then use it to create a Prometheus package that TiUP can use.
 
-### 第 1 步：从 Prometheus 官网下载新版本安装包
+### Step 1. Download a new Prometheus installation package from the Prometheus website
 
-从 [Prometheus 官网下载页面](https://prometheus.io/download/)下载组件安装包，并解压。
+Download a new installation package from the [Prometheus download page](https://prometheus.io/download/) and extract it.
 
-### 第 2 步：下载 TiDB 官方 Prometheus 安装包
+### Step 2. Download the Prometheus installation package provided by TiDB
 
-1. 在[软件下载中心](https://pingkai.cn/download)下载 `TiDB-community-server` 软件包，并解压。
-2. 在解压文件中，找到 `prometheus-v{version}-linux-amd64.tar.gz`，并解压。
+1. Download the TiDB server package and extract it. Note that your downloading means you agree to the [Privacy Policy](https://www.pingcap.com/privacy-policy/).
+
+    ```
+    https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+    ```
+
+    > **Tip:**
+    >
+    > `{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `8.5.8` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-toolkit-8.5.8-linux-amd64.tar.gz`.
+
+2. In the extracted files, locate `prometheus-v{version}-linux-amd64.tar.gz` and extract it.
 
     ```bash
     tar -xzf prometheus-v{version}-linux-amd64.tar.gz
     ```
 
-### 第 3 步：构造新的适用于 TiUP 的 Prometheus 组件包
+### Step 3. Create a new Prometheus package that TiUP can use
 
-1. 复制第 1 步中解压的文件，替换第 2 步解压后的 `./prometheus-v{version}-linux-amd64/prometheus` 目录下的对应文件。
-2. 重新压缩替换文件后的 `./prometheus-v{version}-linux-amd64` 目录，并将新的压缩包命名为 `prometheus-v{new-version}.tar.gz`。其中，`{new-version}` 可以由你自行指定。
+1. Copy the files extracted in [Step 1](#step-1-download-a-new-prometheus-installation-package-from-the-prometheus-website), and then use the copied files to replace the files in the `./prometheus-v{version}-linux-amd64/prometheus` directory extracted in [Step 2](#step-2-download-the-prometheus-installation-package-provided-by-tidb).
+2. Recompress the `./prometheus-v{version}-linux-amd64` directory and name the new compressed package as `prometheus-v{new-version}.tar.gz`, where `{new-version}` can be specified according to your need.
 
     ```bash
     cd prometheus-v{version}-linux-amd64
     tar -zcvf ../prometheus-v{new-version}.tar.gz ./
     ```
 
-### 第 4 步：使用新的组件包升级 Prometheus
+### Step 4. Upgrade Prometheus using the newly created Prometheus package
 
-执行以下命令升级 Prometheus。
+Execute the following command to upgrade Prometheus:
 
 ```bash
 tiup cluster patch <cluster-name> prometheus-v{new-version}.tar.gz -R prometheus --overwrite
 ```
 
-升级完成后，可以打开 Prometheus 主页（地址通常是 `http://<Prometheus-server-host-name>:9090`），点击顶部导航菜单中的 **Status**，然后打开 **Runtime & Build Information** 页面，查看 Prometheus 的版本信息，确认升级成功。
+After the upgrade, you can go to the home page of the Prometheus server (usually at `http://<Prometheus-server-host-name>:9090`), click **Status** in the top navigation menu, and then open the **Runtime & Build Information** page to check the Prometheus version and confirm whether the upgrade is successful.
 
-## 升级 Grafana
+## Upgrade Grafana
 
-为了更好地兼容 TiDB，推荐使用 TiDB 官方安装包中自带的 Grafana 组件安装包，该组件包中的 Grafana 版本是固定的。如果你需要使用更高版本的 Grafana，可以在 Grafana 官网的 [Release Note 页面](https://grafana.com/docs/grafana/latest/whatsnew/)查看新版本特性，选择适合你生产环境的版本，或者咨询 PingCAP 技术支持服务寻求版本建议。
+For better compatibility with TiDB, it is recommended to use the Grafana installation package provided in the TiDB installation package. The version of Grafana in the TiDB installation package is fixed. If you want to use a newer Grafana version, refer to [Grafana Release Notes](https://grafana.com/docs/grafana/latest/whatsnew/) for new features of each version and choose a suitable version for your production environment. You can also consult with PingCAP technical staff for a recommended version.
 
-在以下升级步骤中，你需要先从 Grafana 官网下载所需版本的软件安装包，然后将其构造为可被 TiUP 使用的 Grafana 组件安装包。
+In the following upgrade steps, you need to download the Grafana installation package of your desired version from the Grafana website, and then use it to create a Grafana package that TiUP can use.
 
-### 第 1 步：从 Grafana 官网的下载新版本安装包
+### Step 1. Download a new Grafana installation package from the Grafana website
 
-1. 从 [Grafana 官网下载页面](https://grafana.com/grafana/download?pg=get&plcmt=selfmanaged-box1-cta1)下载组件安装包。你可以根据需要选择下载 `OSS` 版或 `Enterprise` 版。
-2. 解压下载的软件包。
+1. Download a new installation package from the [Grafana download page](https://grafana.com/grafana/download?pg=get&plcmt=selfmanaged-box1-cta1). You can choose either the `OSS` or `Enterprise` edition according to your needs.
+2. Extract the downloaded package. 
 
-### 第 2 步：下载 TiDB 官方 Grafana 安装包
+### Step 2. Download the Grafana installation package provided by TiDB
 
-1. 在[软件下载中心](https://pingkai.cn/download)下载 `TiDB-community-server` 软件包，并解压。
-2. 在解压文件中，找到 `grafana-v{version}-linux-amd64.tar.gz`，并解压。
+1. Download the TiDB server package and extract it. Note that your downloading means you agree to the [Privacy Policy](https://www.pingcap.com/privacy-policy/).
+
+    ```
+    https://download.pingcap.org/tidb-community-server-{version}-linux-{arch}.tar.gz
+    ```
+
+    > **Tip:**
+    >
+    > `{version}` in the link indicates the version number of TiDB and `{arch}` indicates the architecture of the system, which can be `amd64` or `arm64`. For example, the download link for `8.5.8` in the `amd64` architecture is `https://download.pingcap.org/tidb-community-toolkit-8.5.8-linux-amd64.tar.gz`.
+
+2. In the extracted files, locate `grafana-v{version}-linux-amd64.tar.gz` and extract it.
 
     ```bash
     tar -xzf grafana-v{version}-linux-amd64.tar.gz
     ```
 
-### 第 3 步：构造新的适用于 TiUP 的 Grafana 组件包
+### Step 3. Create a new Grafana package that TiUP can use
 
-1. 复制第 1 步中解压的文件，替换第 2 步解压后的 `./grafana-v{version}-linux-amd64/` 目录下的对应文件。
-2. 重新压缩替换文件后的 `./grafana-v{version}-linux-amd64` 目录，并将新的压缩包命名为 `grafana-v{new-version}.tar.gz`。其中，`{new-version}` 可以由你自行指定。
+1. Copy the files extracted in [Step 1](#step-1-download-a-new-grafana-installation-package-from-the-grafana-website), and then use the copied files to replace the files in the `./grafana-v{version}-linux-amd64/` directory extracted in [Step 2](#step-2-download-the-grafana-installation-package-provided-by-tidb).
+2. Recompress the `./grafana-v{version}-linux-amd64` directory and name the new compressed package as `grafana-v{new-version}.tar.gz`, where `{new-version}` can be specified according to your need.
 
     ```bash
     cd grafana-v{version}-linux-amd64
     tar -zcvf ../grafana-v{new-version}.tar.gz ./
     ```
 
-### 第 4 步：使用新的组件包升级 Grafana
+### Step 4. Upgrade Grafana using the newly created Grafana package
 
-执行以下命令升级 Grafana。
+Execute the following command to upgrade Grafana:
 
 ```bash
 tiup cluster patch <cluster-name> grafana-v{new-version}.tar.gz -R grafana --overwrite
+
 ```
 
-升级完成后，可以打开 Grafana 主页（地址通常是 `http://<Grafana-server-host-name>:3000`），查看 Grafana 的版本信息，确认升级成功。
+After the upgrade, you can go to the home page of the Grafana server (usually at `http://<Grafana-server-host-name>:3000`), and then check the Grafana version on the page to confirm whether the upgrade is successful.
 
-## 升级 Alertmanager
+## Upgrade Alertmanager
 
-TiDB 安装包中直接使用了 Alertmanager 官方组件包，因此升级 Alertmanager 时你只需要下载并安装新版本的官方组件包。
+The Alertmanager package in the TiDB installation package is directly from the Prometheus website. Therefore, when upgrading Alertmanager, you only need to download and install a new version of Alertmanager from the Prometheus website.
 
-### 第 1 步：从 Prometheus 官网下载新版本安装包
+### Step 1. Download a new Alertmanager installation package from the Prometheus website
 
-从 [Prometheus 官网下载页面](https://prometheus.io/download/#alertmanager)下载 `alertmanager` 组件安装包。
+Download the `alertmanager` installation package from the [Prometheus download page](https://prometheus.io/download/#alertmanager).
 
-### 第 2 步：使用新的组件包升级 Alertmanager
+### Step 2. Upgrade Alertmanager using the downloaded installation package
 
-执行以下命令升级 Alertmanager：
+Execute the following command to upgrade Alertmanager:
 
 ```bash
 tiup cluster patch <cluster-name> alertmanager-v{new-version}-linux-amd64.tar.gz -R alertmanager --overwrite
 ```
 
-升级完成后，可以打开 Alertmanager 主页（地址通常是 `http://<Alertmanager-server-host-name>:9093`），点击顶部导航菜单中的 **Status**，然后查看 Alertmanager 的版本信息，确认升级成功。
+After the upgrade, you can go to the home page of the Alertmanager server (usually at `http://<Alertmanager-server-host-name>:9093`), click **Status** in the top navigation menu, and then check the Alertmanager version to confirm whether the upgrade is successful.

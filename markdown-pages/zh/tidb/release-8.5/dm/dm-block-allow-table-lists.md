@@ -1,27 +1,28 @@
 ---
-title: TiDB Data Migration 黑白名单过滤
-summary:  了解 DM 的关键特性黑白名单过滤 (Block & Allow List) 的使用方法和注意事项。
+title: TiDB Data Migration Block and Allow Lists
+summary: Learn how to use the DM block and allow lists feature.
 ---
 
-# TiDB Data Migration 黑白名单过滤
+# TiDB Data Migration Block and Allow Lists
 
-使用 TiDB Data Migration (DM) 迁移数据时，你可以配置上游数据库实例表的黑白名单过滤 (Block & Allow List) 规则，用来过滤或者只迁移某些 `database/table` 的所有操作。
+When you migrate data using TiDB Data Migration (DM), you can configure the block and allow lists to filter or only migrate all operations of some databases or some tables.
 
-## 配置黑白名单
+## Configure the block and allow lists
 
-在迁移任务配置文件中，添加如下配置：
+In the task configuration file, add the following configuration:
 
 ```yaml
-block-allow-list:             # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
+block-allow-list:             # Use black-white-list if the DM version is earlier than or equal to v2.0.0-beta.2.
   rule-1:
-    do-dbs: ["test*"]         # 非 ~ 字符开头，表示规则是通配符；v1.0.5 及后续版本支持通配符规则。
+    do-dbs: ["test*"]         # Starting with characters other than "~" indicates that it is a wildcard;
+                              # v1.0.5 or later versions support the regular expression rules.
     do-tables:
-    - db-name: "test[123]"    # 匹配 test1、test2、test3。
-      tbl-name: "t[1-5]"      # 匹配 t1、t2、t3、t4、t5。
+    - db-name: "test[123]"    # Matches test1, test2, and test3.
+      tbl-name: "t[1-5]"      # Matches t1, t2, t3, t4, and t5.
     - db-name: "test"
       tbl-name: "t"
   rule-2:
-    do-dbs: ["~^test.*"]      # 以 ~ 字符开头，表示规则是正则表达式。
+    do-dbs: ["~^test.*"]      # Starting with "~" indicates that it is a regular expression.
     ignore-dbs: ["mysql"]
     do-tables:
     - db-name: "~^test.*"
@@ -33,70 +34,71 @@ block-allow-list:             # 如果 DM 版本早于 v2.0.0-beta.2 则使用 b
       tbl-name: "log"
 ```
 
-黑白名单支持通配符和正则表达式来匹配，在简单任务场景下，推荐使用通配符匹配库表名：
+In simple scenarios, it is recommended that you use the wildcard for matching schemas and tables. However, note the following version differences:
 
-+ 支持的通配符包括 `*`、`?` 以及 `[]`。注意通配符匹配中的 `*` 符号只能有一个，且必须在末尾，例如 `tbl-name: "t*"` 中的 `"t*"` 表示以 `t` 开头的表。详情请参考[通配符匹配](https://en.wikipedia.org/wiki/Glob_(programming)#Syntax)。
-+ 正则表达式必须以 `~` 字符开头。 
+- Wildcards including `*`, `?`, and `[]` are supported. There can only be one `*` symbol in a wildcard match, and it must be at the end. For example, in `tbl-name: "t*"`, `"t*"` indicates all tables starting with `t`. See [wildcard matching](https://en.wikipedia.org/wiki/Glob_(programming)#Syntax) for details.
 
-## 参数解释
+- A regular expression must begin with the `~` character.
 
-- `do-dbs`：要迁移的库的白名单，类似于 MySQL 中的 [`replicate-do-db`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-do-db)。
-- `ignore-dbs`：要迁移的库的黑名单，类似于 MySQL 中的 [`replicate-ignore-db`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-ignore-db)。
-- `do-tables`：要迁移的表的白名单，类似于 MySQL 中的 [`replicate-do-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-do-table)。必须同时指定 `db-name` 与 `tbl-name`。
-- `ignore-tables`：要迁移的表的黑名单，类似于 MySQL 中的 [`replicate-ignore-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-ignore-table)。必须同时指定 `db-name` 与 `tbl-name`。
+## Parameter descriptions
 
-以上参数值以 `~` 开头时均支持使用[正则表达式](https://golang.org/pkg/regexp/syntax/#hdr-syntax)来匹配库名、表名。
+- `do-dbs`: allow lists of the schemas to be migrated, similar to [`replicate-do-db`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-do-db) in MySQL.
+- `ignore-dbs`: block lists of the schemas to be migrated, similar to [`replicate-ignore-db`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-ignore-db) in MySQL.
+- `do-tables`: allow lists of the tables to be migrated, similar to [`replicate-do-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-do-table) in MySQL. Both `db-name` and `tbl-name` must be specified.
+- `ignore-tables`: block lists of the tables to be migrated, similar to [`replicate-ignore-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-ignore-table) in MySQL. Both `db-name` and `tbl-name` must be specified.
 
-## 过滤规则
+If a value of the above parameters starts with the `~` character, the subsequent characters of this value are treated as a [regular expression](https://golang.org/pkg/regexp/syntax/#hdr-syntax). You can use this parameter to match schema or table names.
 
-- `do-dbs` 与 `ignore-dbs` 对应的过滤规则与 MySQL 中的 [Evaluation of Database-Level Replication and Binary Logging Options](https://dev.mysql.com/doc/refman/8.0/en/replication-rules-db-options.html) 类似。
-- `do-tables` 与 `ignore-tables` 对应的过滤规则与 MySQL 中的 [Evaluation of Table-Level Replication Options](https://dev.mysql.com/doc/refman/8.0/en/replication-rules-table-options.html) 类似。
+## Filtering process
 
-> **注意：**
+- The filtering rules corresponding to `do-dbs` and `ignore-dbs` are similar to the [Evaluation of Database-Level Replication and Binary Logging Options](https://dev.mysql.com/doc/refman/8.0/en/replication-rules-db-options.html) in MySQL.
+- The filtering rules corresponding to `do-tables` and `ignore-tables` are similar to the [Evaluation of Table-Level Replication Options](https://dev.mysql.com/doc/refman/8.0/en/replication-rules-table-options.html) in MySQL.
+
+> **Note:**
 >
-> DM 中黑白名单过滤规则与 MySQL 中相应规则存在以下区别：
+> In DM and in MySQL, the block and allow lists filtering rules are different in the following ways:
 >
-> - MySQL 中存在 [`replicate-wild-do-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-wild-do-table) 与 [`replicate-wild-ignore-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-wild-ignore-table) 用于支持通配符，DM 中各配置参数直接支持以 `~` 字符开头的正则表达式。
-> - DM 当前只支持 `ROW` 格式的 binlog，不支持 `STATEMENT`/`MIXED` 格式的 binlog，因此应与 MySQL 中 `ROW` 格式下的规则对应。
-> - 对于 DDL，MySQL 仅依据默认的 database 名称（`USE` 语句显式指定的 database）进行判断，而 DM 优先依据 DDL 中的 database 名称部分进行判断，并当 DDL 中不包含 database 名称时再依据 `USE` 部分进行判断。假设需要判断的 SQL 为 `USE test_db_2; CREATE TABLE test_db_1.test_table (c1 INT PRIMARY KEY)`，且 MySQL 配置了 `replicate-do-db=test_db_1`、DM 配置了 `do-dbs: ["test_db_1"]`，则对于 MySQL 该规则不会生效，而对于 DM 该规则会生效。
+> - In MySQL, [`replicate-wild-do-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-wild-do-table) and [`replicate-wild-ignore-table`](https://dev.mysql.com/doc/refman/8.0/en/replication-options-replica.html#option_mysqld_replicate-wild-ignore-table) support wildcard characters. In DM, some parameter values directly supports regular expressions that start with the `~` character.
+> - DM currently only supports binlogs in the `ROW` format, and does not support those in the `STATEMENT` or `MIXED` format. Therefore, the filtering rules in DM correspond to those in the `ROW` format in MySQL.
+> - MySQL determines a DDL statement only by the database name explicitly specified in the `USE` section of the statement. DM determines a statement first based on the database name section in the DDL statement. If the DDL statement does not contain such a section, DM determines the statement by the `USE` section. Suppose that the SQL statement to be determined is `USE test_db_2; CREATE TABLE test_db_1.test_table (c1 INT PRIMARY KEY)`; that `replicate-do-db=test_db_1` is configured in MySQL and `do-dbs: ["test_db_1"]` is configured in DM. Then this rule only applies to DM and not to MySQL.
 
-判断 table `test`.`t` 是否应该被过滤的流程如下：
+The filtering process of a `test`.`t` table is as follows:
 
-1. 首先进行 **schema 过滤判断**
+1. Filter at the **schema** level:
 
-    - 如果 `do-dbs` 不为空，判断 `do-dbs` 中是否存在一个匹配的 schema。
+    - If `do-dbs` is not empty, check whether a matched schema exists in `do-dbs`.
 
-        - 如果存在，则进入 **table 过滤判断**。
-        - 如果不存在，则过滤 `test`.`t`。
+        - If yes, continue to filter at the **table** level.
+        - If not, filter `test`.`t`.
 
-    - 如果 `do-dbs` 为空并且 `ignore-dbs` 不为空，判断 `ignore-dbs` 中是否存在一个匹配的 schema。
+    - If `do-dbs` is empty and `ignore-dbs` is not empty, check whether a matched schema exits in `ignore-dbs`.
 
-        - 如果存在，则过滤 `test`.`t`。
-        - 如果不存在，则进入 **table 过滤判断**。
+        - If yes, filter `test`.`t`.
+        - If not, continue to filter at the **table** level.
 
-    - 如果 `do-dbs` 和 `ignore-dbs` 都为空，则进入 **table 过滤判断**。
+    - If both `do-dbs` and `ignore-dbs` are empty, continue to filter at the **table** level.
 
-2. 进行 **table 过滤判断**
+2. Filter at the **table** level:
 
-    1. 如果 `do-tables` 不为空，判断 `do-tables` 中是否存在一个匹配的 table。
+    1. If `do-tables` is not empty, check whether a matched table exists in `do-tables`.
 
-        - 如果存在，则迁移 `test`.`t`。
-        - 如果不存在，则过滤 `test`.`t`。
+        - If yes, migrate `test`.`t`.
+        - If not, filter `test`.`t`.
 
-    2. 如果 `ignore-tables` 不为空，判断 `ignore-tables` 中是否存在一个匹配的 table。
+    2. If `ignore-tables` is not empty, check whether a matched table exists in `ignore-tables`.
 
-        - 如果存在，则过滤 `test`.`t`.
-        - 如果不存在，则迁移 `test`.`t`。
+        - If yes, filter `test`.`t`.
+        - If not, migrate `test`.`t`.
 
-    3. 如果 `do-tables` 和 `ignore-tables` 都为空，则迁移 `test`.`t`。
+    3. If both `do-tables` and `ignore-tables` are empty, migrate `test`.`t`.
 
-> **注意：**
+> **Note:**
 >
-> 如果是判断 schema `test` 是否应该被过滤，则只进行 **schema 过滤判断**。
+> To check whether the schema `test` should be filtered, you only need to filter at the schema level.
 
-## 使用示例
+## Usage examples
 
-假设上游 MySQL 实例包含以下表：
+Assume that the upstream MySQL instances include the following tables:
 
 ```
 `logs`.`messages_2016`
@@ -109,11 +111,10 @@ block-allow-list:             # 如果 DM 版本早于 v2.0.0-beta.2 则使用 b
 `forum_backup_2018`.`messages`
 ```
 
-配置如下：
-
+The configuration is as follows:
 
 ```yaml
-block-allow-list:  # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list。
+block-allow-list:  # Use black-white-list if the DM version is earlier than or equal to v2.0.0-beta.2.
   bw-rule:
     do-dbs: ["forum_backup_2018", "forum"]
     ignore-dbs: ["~^forum_backup_"]
@@ -127,15 +128,15 @@ block-allow-list:  # 如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-
 ​      tbl-name: "^messages.*"
 ```
 
-应用 `bw-rule` 规则后：
+After applying the `bw-rule` rule:
 
-| table | 是否过滤| 过滤的原因 |
+| Table | Whether to filter | Why filter |
 |:----|:----|:--------------|
-| `logs`.`messages_2016` | 是 | schema `logs` 没有匹配到 `do-dbs` 任意一项 |
-| `logs`.`messages_2017` | 是 | schema `logs` 没有匹配到 `do-dbs` 任意一项 |
-| `logs`.`messages_2018` | 是 | schema `logs` 没有匹配到 `do-dbs` 任意一项 |
-| `forum_backup_2016`.`messages` | 是 | schema `forum_backup_2016` 没有匹配到 `do-dbs` 任意一项 |
-| `forum_backup_2017`.`messages` | 是 | schema `forum_backup_2017` 没有匹配到 `do-dbs` 任意一项 |
-| `forum`.`users` | 是 | 1. schema `forum` 匹配到 `do-dbs`，进入 table 过滤判断<br/> 2. schema 和 table 没有匹配到 `do-tables` 和 `ignore-tables` 中任意一项，并且 `do-tables` 不为空，因此过滤 |
-| `forum`.`messages` | 否 | 1. schema `forum` 匹配到 `do-dbs`，进入 table 过滤判断<br/> 2. schema 和 table 匹配到 `do-tables` 的 `db-name: "~^forum.*",tbl-name: "messages"` |
-| `forum_backup_2018`.`messages` | 否 | 1. schema `forum_backup_2018` 匹配到 `do-dbs`，进入 table 过滤判断<br/> 2. schema 和 table 匹配到 `do-tables` 的  `db-name: "~^forum.*",tbl-name: "messages"` |
+| `logs`.`messages_2016` | Yes | The schema `logs` fails to match any `do-dbs`. |
+| `logs`.`messages_2017` | Yes | The schema `logs` fails to match any `do-dbs`. |
+| `logs`.`messages_2018` | Yes | The schema `logs` fails to match any `do-dbs`. |
+| `forum_backup_2016`.`messages` | Yes | The schema `forum_backup_2016` fails to match any `do-dbs`. |
+| `forum_backup_2017`.`messages` | Yes | The schema `forum_backup_2017` fails to match any `do-dbs`. |
+| `forum`.`users` | Yes | 1. The schema `forum` matches `do-dbs` and continues to filter at the table level.<br/> 2. The schema and table fail to match any of `do-tables` and `ignore-tables` and `do-tables` is not empty. |
+| `forum`.`messages` | No | 1. The schema `forum` matches `do-dbs` and continues to filter at the table level.<br/> 2. The table `messages` is in the `db-name: "~^forum.*",tbl-name: "messages"` of `do-tables`. |
+| `forum_backup_2018`.`messages` | No | 1. The schema `forum_backup_2018` matches `do-dbs` and continues to filter at the table level.<br/> 2. The schema and table match the `db-name: "~^forum.*",tbl-name: "messages"` of `do-tables`. |

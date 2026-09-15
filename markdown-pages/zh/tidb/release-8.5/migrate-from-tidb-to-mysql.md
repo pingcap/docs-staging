@@ -1,64 +1,64 @@
 ---
-title: 从 TiDB 集群迁移数据至兼容 MySQL 的数据库
-summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据库。
+title: Migrate Data from TiDB to MySQL-compatible Databases
+summary: Learn how to migrate data from TiDB to MySQL-compatible databases.
 ---
 
-# 从 TiDB 集群迁移数据至兼容 MySQL 的数据库
+# Migrate Data from TiDB to MySQL-compatible Databases
 
-本文档介绍如何将数据从 TiDB 集群迁移至兼容 MySQL 的数据库，如 Aurora、MySQL、MariaDB 等。本文将模拟整个迁移过程，具体包括以下四个步骤：
+This document describes how to migrate data from TiDB clusters to MySQL-compatible databases, such as Aurora, MySQL, and MariaDB. The whole process contains four steps:
 
-1. 搭建环境
-2. 迁移全量数据
-3. 迁移增量数据
-4. 平滑切换业务
+1. Set up the environment.
+2. Migrate full data.
+3. Migrate incremental data.
+4. Migrate services to the MySQL-compatible cluster.
 
-## 第 1 步：搭建环境
+## Step 1. Set up the environment
 
-1. 部署上游 TiDB 集群。
+1. Deploy a TiDB cluster upstream.
 
-    使用 TiUP Playground 快速部署上下游测试集群。更多部署信息，请参考 [TiUP 官方文档](/tiup/tiup-cluster.md)。
+    Deploy a TiDB cluster by using TiUP Playground. For more information, refer to [Deploy and Maintain an Online TiDB Cluster Using TiUP](/tiup/tiup-cluster.md).
 
     ```shell
-    # 创建上游集群
+    # Create a TiDB cluster
     tiup playground --db 1 --pd 1 --kv 1 --tiflash 0 --ticdc 1
-    # 查看集群状态
+    # View cluster status
     tiup status
     ```
 
-2. 部署下游 MySQL 实例。
+2. Deploy a MySQL instance downstream.
 
-    - 在实验环境中，可以使用 Docker 快速部署 MySQL 实例，执行如下命令：
+    - In a lab environment, you can use Docker to quickly deploy a MySQL instance by running the following command:
 
         ```shell
         docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -p 3306:3306 -d mysql
         ```
 
-    - 在生产环境中，可以参考 [Installing MySQL](https://dev.mysql.com/doc/refman/8.0/en/installing.html) 来部署 MySQL 实例。
+    - In a production environment, you can deploy a MySQL instance by following instructions in [Installing MySQL](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
 
-3. 模拟业务负载。
+3. Simulate service workload.
 
-    在测试实验环境下，可以使用 go-tpc 向上游 TiDB 集群写入数据，以让 TiDB 产生事件变更数据。执行如下命令，将首先在上游 TiDB 创建名为 tpcc 的数据库，然后使用 TiUP bench 写入数据到刚创建的 tpcc 数据库中。
+    In the lab environment, you can use `go-tpc` to write data to the TiDB cluster upstream. This is to generate event changes in the TiDB cluster. Run the following command to create a database named `tpcc` in the TiDB cluster, and then use TiUP bench to write data to this database.
 
     ```shell
     tiup bench tpcc -H 127.0.0.1 -P 4000 -D tpcc --warehouses 4 prepare
     tiup bench tpcc -H 127.0.0.1 -P 4000 -D tpcc --warehouses 4 run --time 300s
     ```
 
-    关于 go-tpc 的更多详细内容，可以参考[如何对 TiDB 进行 TPC-C 测试](/benchmark/benchmark-tidb-using-tpcc.md)。
+    For more details about `go-tpc`, refer to [How to Run TPC-C Test on TiDB](/benchmark/benchmark-tidb-using-tpcc.md).
 
-## 第 2 步：迁移全量数据
+## Step 2. Migrate full data
 
-搭建好测试环境后，可以使用 [Dumpling](/dumpling-overview.md) 工具导出上游集群的全量数据。
+After setting up the environment, you can use [Dumpling](/dumpling-overview.md) to export the full data from the upstream TiDB cluster.
 
-> **注意：**
+> **Note:**
 >
-> 在生产集群中，关闭 GC 机制和备份操作会一定程度上降低集群的读性能，建议在业务低峰期进行备份，并设置合适的 `RATE_LIMIT` 限制备份操作对线上业务的影响。
+> In production clusters, performing a backup with GC disabled might affect cluster performance. It is recommended that you complete this step in off-peak hours.
 
-1. 关闭 GC (Garbage Collection)。
+1. Disable Garbage Collection (GC).
 
-    为了保证增量迁移过程中新写入的数据不丢失，在开始全量导出之前，需要关闭上游集群的垃圾回收 (GC) 机制，以确保系统不再清理历史数据。对于 TiDB v4.0.0 及之后的版本，Dumpling 可能会[自动调整 GC 的 safe point 从而阻塞 GC](/dumpling-overview.md#手动设置-tidb-gc-时间)。然而，手动关闭 GC 仍然是必要的，因为在 Dumpling 退出后，GC 可能会被触发，从而导致增量变更迁移失败。
+    To ensure that newly written data is not deleted during incremental migration, you should disable GC for the upstream cluster before exporting full data. In this way, history data is not deleted. For TiDB v4.0.0 and later versions, Dumpling might [automatically adjust the GC safe point to block GC](/dumpling-overview.md#manually-set-the-tidb-gc-time). Nevertheless, manually disabling GC is still necessary because the GC process might begin after Dumpling exits, leading to the failure of incremental changes migration.
 
-    执行如下命令关闭 GC：
+    Run the following command to disable GC:
 
     ```sql
     MySQL [test]> SET GLOBAL tidb_gc_enable=FALSE;
@@ -68,14 +68,14 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
     Query OK, 0 rows affected (0.01 sec)
     ```
 
-    查询 `tidb_gc_enable` 的取值，判断 GC 是否已关闭：
+    To verify that the change takes effect, query the value of `tidb_gc_enable`:
 
     ```sql
     MySQL [test]> SELECT @@global.tidb_gc_enable;
     ```
 
     ```
-    +-------------------------+：
+    +-------------------------+
     | @@global.tidb_gc_enable |
     +-------------------------+
     |                       0 |
@@ -83,15 +83,15 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
     1 row in set (0.00 sec)
     ```
 
-2. 备份数据。
+2. Back up data.
 
-    1. 使用 Dumpling 导出 SQL 格式的数据：
+    1. Export data in SQL format using Dumpling:
 
         ```shell
         tiup dumpling -u root -P 4000 -h 127.0.0.1 --filetype sql -t 8 -o ./dumpling_output -r 200000 -F256MiB
         ```
 
-    2. 导出完毕后，执行如下命令查看导出数据的元信息，metadata 文件中的 `Pos` 就是导出快照的 TSO，将其记录为 BackupTS：
+    2. After finishing exporting data, run the following command to check the metadata. `Pos` in the metadata is the TSO of the export snapshot and can be recorded as the BackupTS.
 
         ```shell
         cat dumpling_output/metadata
@@ -103,46 +103,44 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
                 Log: tidb-binlog
                 Pos: 434217889191428107
                 GTID:
-
         Finished dump at: 2022-06-28 17:49:57
         ```
 
-3. 恢复数据。
+3. Restore data.
 
-    使用开源工具 MyLoader 导入数据到下游 MySQL。MyLoader 的安装和详细用例参见 [MyDumpler/MyLoader](https://github.com/mydumper/mydumper)。注意需要使用 MyLoader v0.10 或更早版本，否则会导致 MyLoader 无法处理 Dumpling 导出的 metadata 文件。
+    Use MyLoader (an open-source tool) to import data to the downstream MySQL instance. For details about how to install and use MyLoader, see [MyDumpler/MyLoader](https://github.com/mydumper/mydumper). Note that you need to use MyLoader v0.10 or earlier versions. Higher versions cannot process metadata files exported by Dumpling.
 
-    执行以下指令，将 Dumpling 导出的上游全量数据导入到下游 MySQL 实例：
+    Run the following command to import full data exported by Dumpling to MySQL:
 
     ```shell
     myloader -h 127.0.0.1 -P 3306 -d ./dumpling_output/
     ```
 
-4. （可选）校验数据。
+4. (Optional) Validate data.
 
-    通过 [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) 工具，可以验证上下游数据在某个时间点的一致性。
+    You can use [sync-diff-inspector](/sync-diff-inspector/sync-diff-inspector-overview.md) to check data consistency between upstream and downstream at a certain time.
 
     ```shell
     sync_diff_inspector -C ./config.yaml
     ```
 
-    关于 sync-diff-inspector 的配置方法，请参考[配置文件说明](/sync-diff-inspector/sync-diff-inspector-overview.md#配置文件说明)。在本文中，相应的配置如下：
+    For details about how to configure the sync-diff-inspector, see [Configuration file description](/sync-diff-inspector/sync-diff-inspector-overview.md#configuration-file-description). In this document, the configuration is as follows:
 
     ```toml
     # Diff Configuration.
     ######################### Datasource config #########################
     [data-sources]
     [data-sources.upstream]
-            host = "127.0.0.1" # 需要替换为实际上游集群 ip
+            host = "127.0.0.1" # Replace the value with the IP address of your upstream cluster
             port = 4000
             user = "root"
             password = ""
-            snapshot = "434217889191428107" # 配置为实际的备份时间点（参见「备份」小节的 BackupTS）
+            snapshot = "434217889191428107" # Set snapshot to the actual backup time (BackupTS in the "Back up data" section in [Step 2. Migrate full data](#step-2-migrate-full-data))
     [data-sources.downstream]
-            host = "127.0.0.1" # 需要替换为实际下游集群 ip
+            host = "127.0.0.1" # Replace the value with the IP address of your downstream cluster
             port = 3306
             user = "root"
             password = ""
-
     ######################### Task config #########################
     [task]
             output-dir = "./output"
@@ -151,34 +149,34 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
             target-check-tables = ["*.*"]
     ```
 
-## 第 3 步：迁移增量数据
+## Step 3. Migrate incremental data
 
-1. 部署 TiCDC。
+1. Deploy TiCDC.
 
-    完成全量数据迁移后，就可以部署并配置 TiCDC 集群同步增量数据，实际生产集群中请参考 [TiCDC 部署](/ticdc/deploy-ticdc.md)。本文在创建测试集群时，已经启动了一个 TiCDC 节点，因此可以直接进行 changefeed 的配置。
+    After finishing full data migration, deploy and configure a TiCDC cluster to replicate incremental data. In production environments, deploy TiCDC as instructed in [Deploy TiCDC](/ticdc/deploy-ticdc.md). In this document, a TiCDC node has been started upon the creation of the test cluster. Therefore, you can skip the step of deploying TiCDC and proceed with the next step to create a changefeed.
 
-2. 创建同步任务。
+2. Create a changefeed.
 
-    在上游集群中，执行以下命令创建从上游到下游集群的同步链路：
+    In the upstream cluster, run the following command to create a changefeed from the upstream to the downstream clusters:
 
     ```shell
     tiup cdc:v<CLUSTER_VERSION> cli changefeed create --server=http://127.0.0.1:8300 --sink-uri="mysql://root:@127.0.0.1:3306" --changefeed-id="upstream-to-downstream" --start-ts="434217889191428107"
     ```
 
-    以上命令中：
+    In this command, the parameters are as follows:
 
-    - `--server`：TiCDC 集群任意一节点地址
-    - `--sink-uri`：同步任务下游的地址
-    - `--changefeed-id`：同步任务的 ID，格式需要符合正则表达式 `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`
-    - `--start-ts`：TiCDC 同步的起点，需要设置为实际的备份时间点，也就是[第 2 步：迁移全量数据](/migrate-from-tidb-to-mysql.md#第-2-步迁移全量数据)中 “备份数据” 提到的 BackupTS
+    - `--server`: IP address of any node in the TiCDC cluster
+    - `--sink-uri`: URI of the downstream cluster
+    - `--changefeed-id`: changefeed ID, must be in the format of a regular expression, `^[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*$`
+    - `--start-ts`: start timestamp of the changefeed, must be the backup time (or BackupTS in the "Back up data" section in [Step 2. Migrate full data](#step-2-migrate-full-data))
 
-    更多关于 changefeed 的配置，请参考 [TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)。
+    For more information about the changefeed configurations, see [Task configuration file](/ticdc/ticdc-changefeed-config.md).
 
-3. 重新开启 GC。
+3. Enable GC.
 
-    TiCDC 可以保证 GC 只回收已经同步的历史数据。因此，创建完从上游到下游集群的 changefeed 之后，就可以执行如下命令恢复集群的垃圾回收功能。详情请参考 [TiCDC GC safepoint 的完整行为](/ticdc/ticdc-faq.md#ticdc-gc-safepoint-的完整行为是什么)。
+    In incremental migration using TiCDC, GC only removes history data that is replicated. Therefore, after creating a changefeed, you need to run the following command to enable GC. For details, see [What is the complete behavior of TiCDC garbage collection (GC) safepoint](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint).
 
-    执行如下命令打开 GC：
+   To enable GC, run the following command:
 
     ```sql
     MySQL [test]> SET GLOBAL tidb_gc_enable=TRUE;
@@ -188,7 +186,7 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
     Query OK, 0 rows affected (0.01 sec)
     ```
 
-    查询 `tidb_gc_enable` 的取值，判断 GC 是否已开启：
+    To verify that the change takes effect, query the value of `tidb_gc_enable`:
 
     ```sql
     MySQL [test]> SELECT @@global.tidb_gc_enable;
@@ -203,17 +201,16 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
     1 row in set (0.00 sec)
     ```
 
-## 第 4 步：平滑切换业务
+## Step 4. Migrate services
 
-通过 TiCDC 创建上下游的同步链路后，原集群的写入数据会以非常低的延迟同步到新集群，此时可以逐步将读流量迁移到新集群了。观察一段时间，如果新集群表现稳定，就可以将写流量接入新集群，步骤如下：
+After creating a changefeed, data written to the upstream cluster is replicated to the downstream cluster with low latency. You can migrate read traffic to the downstream cluster gradually. Observe the read traffic for a period. If the downstream cluster is stable, you can migrate write traffic to the downstream cluster as well in the following steps:
 
-1. 停止上游集群的写业务。确认上游数据已全部同步到下游后，停止上游到下游集群的 changefeed。
+1. Stop write services in the upstream cluster. Make sure that all upstream data are replicated to downstream before stopping the changefeed.
 
     ```shell
-    # 停止旧集群到新集群的 changefeed
+    # Stop the changefeed from the upstream cluster to the downstream cluster
     tiup cdc cli changefeed pause -c "upstream-to-downstream" --pd=http://172.16.6.122:2379
-
-    # 查看 changefeed 状态
+    # View the changefeed status
     tiup cdc cli changefeed list
     ```
 
@@ -222,13 +219,13 @@ summary: 了解如何将数据从 TiDB 集群迁移至与 MySQL 兼容的数据�
       {
         "id": "upstream-to-downstream",
         "summary": {
-        "state": "stopped",  # 需要确认这里的状态为 stopped
+        "state": "stopped",  # Ensure that the status is stopped
         "tso": 434218657561968641,
-        "checkpoint": "2022-06-28 18:38:45.685", # 确认这里的时间晚于停写的时间
+        "checkpoint": "2022-06-28 18:38:45.685", # This time should be later than the time of stopping writing
         "error": null
         }
       }
     ]
     ```
 
-2. 将写业务迁移到下游集群，观察一段时间后，等新集群表现稳定，便可以弃用原集群。
+2. After migrating writing services to the downstream cluster, observe for a period. If the downstream cluster is stable, you can discard the upstream cluster.

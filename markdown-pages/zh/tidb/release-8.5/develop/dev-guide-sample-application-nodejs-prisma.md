@@ -1,95 +1,104 @@
 ---
-title: 使用 Prisma 连接到 TiDB
-summary: 本文描述了 TiDB 和 Prisma 的连接步骤，并给出了简单示例代码片段。
-aliases: ['/zh/tidb/stable/dev-guide-sample-application-nodejs-prisma/','/zh/tidb/dev/dev-guide-sample-application-nodejs-prisma/','/zh/tidbcloud/dev-guide-sample-application-nodejs-prisma/']
+title: 使用 Prisma 连接 TiDB
+summary: 学习如何使用 Prisma 连接 TiDB。本教程提供了适用于 Node.js 的示例代码片段，演示如何通过 Prisma 操作 TiDB。
 ---
 
-# 使用 Prisma 连接到 TiDB
+# 使用 Prisma 连接 TiDB
 
-TiDB 是一个兼容 MySQL 的数据库。[Prisma](https://www.prisma.io/) 是当前流行的 Node.js ORM 框架之一。
+TiDB 是兼容 MySQL 的数据库，[Prisma](https://github.com/prisma/prisma) 是一个流行的开源 Node.js ORM 框架。
 
-本文档将展示如何使用 TiDB 和 Prisma 来构造一个简单的 CRUD 应用程序。
+在本教程中，你可以学习如何使用 TiDB 和 Prisma 完成以下任务：
 
-- 配置你的环境。
-- 使用 Prisma 连接到 TiDB。
-- 构建并运行你的应用程序。你也可以参考[示例代码片段](#示例代码片段)，完成基本的 CRUD 操作。
+- 搭建你的开发环境。
+- 使用 Prisma 连接到你的 TiDB 集群。
+- 构建并运行你的应用程序。你还可以在 [示例代码片段](#sample-code-snippets) 中找到基本 CRUD 操作的代码示例。
 
-> **注意**
+> **Note:**
 >
-> 本文档适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Premium、TiDB Cloud Dedicated 和本地部署的 TiDB。
+> 本教程适用于 TiDB Cloud Starter, TiDB Cloud Essential, TiDB Cloud Dedicated 以及 TiDB 自建集群。
 
-## 前置需求
+## 前置条件
 
-为了能够顺利完成本教程，你需要提前：
+完成本教程，你需要：
 
-- 在你的机器上安装 [Node.js](https://nodejs.org/en) 16.x 或以上版本。
+- 在你的机器上安装 [Node.js](https://nodejs.org/en) >= 16.x。
 - 在你的机器上安装 [Git](https://git-scm.com/downloads)。
-- 准备一个 TiDB 集群。
+- 一个正在运行的 TiDB 集群。
 
-如果你还没有 TiDB 集群，可以按照以下方式创建：
+**如果你还没有 TiDB 集群，可以按如下方式创建：**
 
-- （推荐方式）[创建 TiDB Cloud Starter 实例](/develop/dev-guide-build-cluster-in-cloud.md)。
-- [部署本地测试 TiDB Self-Managed 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署正式 TiDB Self-Managed 集群](/production-deployment-using-tiup.md)。
+<CustomContent platform="tidb">
 
-## 运行代码并连接到 TiDB
+- （推荐）参照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- 参照 [部署本地测试 TiDB 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](/production-deployment-using-tiup.md) 创建本地集群。
 
-本小节演示如何运行示例应用程序的代码，并连接到 TiDB。
+</CustomContent>
+<CustomContent platform="tidb-cloud">
 
-### 第 1 步：克隆示例代码仓库到本地
+- （推荐）参照 [创建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md) 创建你自己的 TiDB Cloud 集群。
+- 参照 [部署本地测试 TiDB 集群](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [部署生产环境 TiDB 集群](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 创建本地集群。
 
-运行以下命令，将示例代码仓库克隆到本地：
+</CustomContent>
 
-```bash
+## 运行示例应用连接 TiDB
+
+本节演示如何运行示例应用代码并连接到 TiDB。
+
+### 步骤 1：克隆示例应用仓库
+
+在终端窗口中运行以下命令，克隆示例代码仓库：
+
+```shell
 git clone https://github.com/tidb-samples/tidb-nodejs-prisma-quickstart.git
 cd tidb-nodejs-prisma-quickstart
 ```
 
-### 第 2 步：安装依赖
+### 步骤 2：安装依赖
 
-运行以下命令，安装示例代码所需要的依赖 (包括 `prisma` 依赖包)：
+运行以下命令，为示例应用安装所需的依赖包（包括 `prisma`）：
 
-```bash
+```shell
 npm install
 ```
 
-在你现有的项目当中，你可以通过以下命令安装所需要的依赖包：
+<details>
+<summary><b>为已有项目安装依赖</b></summary>
 
-```bash
+如果是你的已有项目，运行以下命令安装依赖包：
+
+```shell
 npm install prisma typescript ts-node @types/node --save-dev
 ```
 
-### 第 3 步：配置连接信息
+</details>
 
-根据不同的 TiDB 部署方式，使用不同的方法连接到 TiDB。
+### 步骤 3：配置连接参数
+
+根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
 
 <SimpleTab>
+<div label="TiDB Cloud Starter or Essential">
 
-<div label="TiDB Cloud Starter 或 Essential">
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
-1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，选择你的 TiDB Cloud Starter 或 Essential 实例，进入实例的 **Overview** 页面。
+2. 点击右上角的 **Connect**，弹出连接对话框。
 
-2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+3. 确保连接对话框中的配置与你的操作环境一致。
 
-3. 确认对话框中的选项配置和你的运行环境一致。
+    - **Connection Type** 设置为 `Public`。
+    - **Branch** 设置为 `main`。
+    - **Connect With** 设置为 `Prisma`。
+    - **Operating System** 选择你运行应用的操作系统。
 
-    - **Connection Type** 为 `Public`。
-    - **Branch** 选择 `main`。
-    - **Connect With** 选择 `Prisma`。
-    - **Operating System** 为运行示例代码所在的操作系统。
+4. 如果你还未设置密码，点击 **Generate Password** 生成随机密码。
 
-    > **Note**
-    >
-    > 如果你的程序在 Windows Subsystem for Linux (WSL) 中运行，请切换为对应的 Linux 发行版。
+5. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
 
-4. 如果你还没有设置密码，点击 **Generate Password** 按钮生成一个随机的密码。
-
-5. 运行以下命令，将 `.env.example` 复制并重命名为 `.env`：
-
-    ```bash
+    ```shell
     cp .env.example .env
     ```
 
-6. 编辑 `.env` 文件，按照如下格式设置环境变量 `DATABASE_URL`，将占位符 `{}` 替换为从连接对话框中复制的连接字符串：
+6. 编辑 `.env` 文件，按如下方式设置环境变量 `DATABASE_URL`，并将对应的占位符 `{}` 替换为连接对话框中的连接字符串：
 
     ```dotenv
     DATABASE_URL='{connection_string}'
@@ -97,10 +106,10 @@ npm install prisma typescript ts-node @types/node --save-dev
 
     > **Note**
     >
-    > 在使用 Public Endpoint 连接 TiDB Cloud Starter 集群时，**必须**启用 TLS 连接，请将 `sslaccept` 参数设置为 `strict`。
+    > 对于 TiDB Cloud Starter，使用公网地址时，**必须** 通过设置 `sslaccept=strict` 启用 TLS 连接。
 
 7. 保存 `.env` 文件。
-8. 在 `prisma/schema.prisma` 文件中，将 `provider` 修改为 `mysql`，并将 `url` 修改为 `env("DATABASE_URL")`：
+8. 在 `prisma/schema.prisma` 文件中，将 `mysql` 设置为连接 provider，将 `env("DATABASE_URL")` 作为连接 URL：
 
     ```prisma
     datasource db {
@@ -110,82 +119,36 @@ npm install prisma typescript ts-node @types/node --save-dev
     ```
 
 </div>
-<div label="TiDB Cloud Premium">
+<div label="TiDB Cloud Dedicated">
 
-1. 在 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Premium 实例的名字，进入实例的 **Overview** 页面。
+1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，点击目标集群名称进入集群概览页。
 
-2. 在左侧导航栏中，点击 **Settings** > **Networking**。
+2. 点击右上角的 **Connect**，弹出连接对话框。
 
-3. 在 **Networking** 页面，点击 **Public Endpoint** 的 **Enable**，然后点击 **Add IP Address**。
+3. 在连接对话框中，从 **Connection Type** 下拉列表选择 **Public**，然后点击 **CA cert** 下载 CA 证书。
 
-    确保你的客户端 IP 地址已添加到访问列表中。
+    如果你还未配置 IP 访问列表，点击 **Configure IP Access List**，或参照 [配置 IP 访问列表](https://docs.pingcap.com/tidbcloud/configure-ip-access-list) 进行首次连接前的配置。
 
-4. 在左侧导航栏中，点击 **Overview** 返回实例概览页面。
+    除了 **Public** 连接类型，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。更多信息参见 [连接到你的 TiDB Cloud Dedicated 集群](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
 
-5. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
-
-6. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**。
-
-    - 如果提示 Public Endpoint 正在开启，请等待该过程完成。
-    - 如果你尚未设置密码，请在对话框中点击 **Set Root Password**。
-    - 如果需要验证服务器证书或连接失败且需要 CA 证书，请点击 **CA cert** 下载证书。
-    - 除 **Public** 连接类型外，TiDB Cloud Premium 还支持 **Private Endpoint** 连接。详情请参阅[通过 AWS PrivateLink 连接到 TiDB Cloud Premium](https://docs.pingcap.com/tidbcloud/connect-to-premium-via-aws-private-endpoint/?plan=premium)。
-
-7. 运行以下命令，将 `.env.example` 复制并重命名为 `.env`：
+4. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
 
     ```shell
     cp .env.example .env
     ```
 
-8. 编辑 `.env` 文件，按照如下格式设置 `DATABASE_URL` 环境变量，将占位符 `{}` 替换为从连接对话框中复制的参数值：
-
-    ```dotenv
-    DATABASE_URL='mysql://{user}:{password}@{host}:4000/test'
-    ```
-
-9. 保存 `.env` 文件。
-
-10. 在 `prisma/schema.prisma` 中，将连接提供者设置为 `mysql`，并将连接 URL 设置为 `env("DATABASE_URL")`：
-
-    ```prisma
-    datasource db {
-      provider = "mysql"
-      url      = env("DATABASE_URL")
-    }
-    ```
-
-</div>
-
-<div label="TiDB Cloud Dedicated">
-
-1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，选择你的 TiDB Cloud Dedicated 集群，进入集群的 **Overview** 页面。
-2. 点击右上角的 **Connect** 按钮，将会出现连接对话框。
-3. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**，并点击 **CA cert** 下载 CA 文件。
-
-    如果你尚未配置 IP 访问列表，请在首次连接前点击 **Configure IP Access List** 或按照[配置 IP 访问列表（英文）](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)中的步骤进行配置。
-
-    除 **Public** 连接类型外，TiDB Cloud Dedicated 还支持 **Private Endpoint** 和 **VPC Peering** 连接类型。详情请参阅[连接 TiDB Cloud Dedicated 集群（英文）](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)。
-
-4. 运行以下命令，将 `.env.example` 复制并重命名为 `.env`：
-
-    ```bash
-    cp .env.example .env
-    ```
-
-5. 编辑 `.env` 文件，按照如下格式设置环境变量 `DATABASE_URL`，将占位符 `{}` 替换为从连接对话框中复制的参数值：
+5. 编辑 `.env` 文件，按如下方式设置环境变量 `DATABASE_URL`，并将对应的占位符 `{}` 替换为连接对话框中的连接参数：
 
     ```dotenv
     DATABASE_URL='mysql://{user}:{password}@{host}:4000/test?sslaccept=strict&sslcert={downloaded_ssl_ca_path}'
     ```
 
-   > **Note**
-   >
-   > 推荐在使用 Public Endpoint 连接 TiDB Cloud Dedicated 集群时，启用 TLS 连接。
-   >
-   > 为了启用 TLS (SSL) 连接，将 `DATABASE_URL` 末尾添加 `sslaccept=strict` 参数，并使用 `sslcert=/path/to/ca.pem` 参数指定从连接对话框中下载的 CA 证书的文件路径。
+    > **Note**
+    >
+    > 对于 TiDB Cloud Starter，**推荐** 在使用公网地址时通过设置 `sslaccept=strict` 启用 TLS 连接。当你设置 `sslaccept=strict` 启用 TLS 连接时，**必须** 通过 `sslcert=/path/to/ca.pem` 指定从连接对话框下载的 CA 证书文件路径。
 
 6. 保存 `.env` 文件。
-7. 在 `prisma/schema.prisma` 文件中，将 `provider` 修改为 `mysql`，并将 `url` 修改为 `env("DATABASE_URL")`：
+7. 在 `prisma/schema.prisma` 文件中，将 `mysql` 设置为连接 provider，将 `env("DATABASE_URL")` 作为连接 URL：
 
     ```prisma
     datasource db {
@@ -195,25 +158,25 @@ npm install prisma typescript ts-node @types/node --save-dev
     ```
 
 </div>
+<div label="TiDB Self-Managed">
 
-<div label="本地部署的 TiDB">
+1. 运行以下命令，复制 `.env.example` 并重命名为 `.env`：
 
-1. 运行以下命令，将 `.env.example` 复制并重命名为 `.env`：
-
-    ```bash
+    ```shell
     cp .env.example .env
     ```
 
-2. 编辑 `.env` 文件，按照如下格式设置连接信息，将占位符 `{}` 替换为你的 TiDB 的连接参数值：
+2. 编辑 `.env` 文件，按如下方式设置环境变量 `DATABASE_URL`，并将对应的占位符 `{}` 替换为你的 TiDB 集群连接参数：
 
     ```dotenv
     DATABASE_URL='mysql://{user}:{password}@{host}:4000/test'
     ```
 
-   如果你在本地运行 TiDB 集群，默认的 Host 是 `127.0.0.1`, 默认用户名为 `root`, 密码为空。
+   如果你在本地运行 TiDB，默认主机地址为 `127.0.0.1`，密码为空。
 
 3. 保存 `.env` 文件。
-4. 在 `prisma/schema.prisma` 文件中，将 `provider` 修改为 `mysql`，并将 `url` 修改为 `env("DATABASE_URL")`：
+
+4. 在 `prisma/schema.prisma` 文件中，将 `mysql` 设置为连接 provider，将 `env("DATABASE_URL")` 作为连接 URL：
 
     ```prisma
     datasource db {
@@ -223,21 +186,20 @@ npm install prisma typescript ts-node @types/node --save-dev
     ```
 
 </div>
-
 </SimpleTab>
 
-### 第 4 步：初始化表结构
+### 步骤 4：初始化数据库 schema
 
-运行以下命令，使用 [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate) 根据 `prisma/schema.prisma` 文件中的数据模型定义来初始化数据库表结构：
+运行以下命令，调用 [Prisma Migrate](https://www.prisma.io/docs/concepts/components/prisma-migrate) 根据 `prisma/prisma.schema` 中定义的数据模型初始化数据库：
 
 ```shell
 npx prisma migrate dev
 ```
 
-**`prisma.schema` 文件中的模型定义：**
+**`prisma.schema` 中定义的数据模型：**
 
 ```prisma
-// 定义一个 Player 模型，表示 `players` 表。
+// Define a Player model, which represents the `players` table.
 model Player {
   id        Int      @id @default(autoincrement())
   name      String   @unique(map: "uk_player_on_name") @db.VarChar(50)
@@ -249,21 +211,21 @@ model Player {
   @@map("players")
 }
 
-// 定义一个 Profile 模型，表示 `profiles` 表。
+// Define a Profile model, which represents the `profiles` table.
 model Profile {
   playerId  Int    @id @map("player_id")
   biography String @db.Text
 
-  // 定义 `Player` 和 `Profile` 模型之间的 1:1 关系，并使用外键约束。
+  // Define a 1:1 relation between the `Player` and `Profile` models with foreign key.
   player    Player @relation(fields: [playerId], references: [id], onDelete: Cascade, map: "fk_profile_on_player_id")
 
   @@map("profiles")
 }
 ```
 
-你可以通过查阅 Prisma 的 [Data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) 文档来了解如何在 `prisma.schema` 文件里定义数据模型。
+如需了解如何在 Prisma 中定义数据模型，请查阅 [Data model](https://www.prisma.io/docs/concepts/components/prisma-schema/data-model) 文档。
 
-**预期执行结果：**
+**预期执行输出：**
 
 ```
 Your database is now in sync with your schema.
@@ -271,31 +233,31 @@ Your database is now in sync with your schema.
 ✔ Generated Prisma Client (5.1.1 | library) to ./node_modules/@prisma/client in 54ms
 ```
 
-这个命令同时会根据 `prisma/schema.prisma` 文件中的模型定义，生成用于与数据库交互的 [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client) 的代码。
+该命令还会基于 `prisma/prisma.schema` 为 TiDB 数据库访问生成 [Prisma Client](https://www.prisma.io/docs/concepts/components/prisma-client)。
 
-### 第 5 步：运行代码并查看结果
+### 步骤 5：运行代码
 
-运行下述命令，执行示例代码：
+运行以下命令执行示例代码：
 
-```bash
+```shell
 npm start
 ```
 
-**示例代码中的主要逻辑：**
+**示例代码的主要逻辑：**
 
 ```typescript
-// 步骤 1. 导入自动生成的 `@prisma/client` 依赖包。
+// Step 1. Import the auto-generated `@prisma/client` package.
 import {Player, PrismaClient} from '@prisma/client';
 
 async function main(): Promise<void> {
-  // 步骤 2. 创建一个新的 `PrismaClient` 实例。
+  // Step 2. Create a new `PrismaClient` instance.
   const prisma = new PrismaClient();
   try {
 
-    // 步骤 3. 使用 Prisma Client 执行一些 CRUD 操作。
+    // Step 3. Perform some CRUD operations with Prisma Client ...
 
   } finally {
-    // 步骤 4. 断开 Prisma Client 的连接。
+    // Step 4. Disconnect Prisma Client.
     await prisma.$disconnect();
   }
 }
@@ -303,9 +265,9 @@ async function main(): Promise<void> {
 void main();
 ```
 
-**预期输出结果：**
+**预期执行输出：**
 
-如果连接成功，在你的终端上会输出 TiDB 版本信息。
+如果连接成功，终端会输出 TiDB 集群的版本信息，如下所示：
 
 ```
 🔌 Connected to TiDB cluster! (TiDB version: 8.0.11-TiDB-v8.5.8)
@@ -317,94 +279,107 @@ void main();
 
 ## 示例代码片段
 
-你可参考以下关键代码片段，完成自己的应用开发。
+你可以参考以下示例代码片段，完成你自己的应用开发。
 
-完整代码及其运行方式，见代码仓库 [tidb-samples/tidb-nodejs-prisma-quickstart](https://github.com/tidb-samples/tidb-nodejs-prisma-quickstart)。
+完整示例代码及运行方法请参见 [tidb-samples/tidb-nodejs-prisma-quickstart](https://github.com/tidb-samples/tidb-nodejs-prisma-quickstart) 仓库。
 
 ### 插入数据
 
-下面的查询会创建一条新的 `Player` 记录，并返回一个包含自增 ID 的 `Player` 对象：
+以下查询会创建一条 `Player` 记录，并返回包含 TiDB 生成的 `id` 字段的 `Player` 对象：
 
-```typescript
+```javascript
 const player: Player = await prisma.player.create({
-  data: {
-    name: 'Alice',
-    coins: 100,
-    goods: 200,
-    createdAt: new Date(),
-  }
+   data: {
+      name: 'Alice',
+      coins: 100,
+      goods: 200,
+      createdAt: new Date(),
+   }
 });
-console.log(player.id);
 ```
 
-更多信息参考[插入数据](/develop/dev-guide-insert-data.md)。
+更多信息请参见 [插入数据](/develop/dev-guide-insert-data.md)。
 
 ### 查询数据
 
-下面的查询会返回 ID 为 `101` 的 `Player` 记录，如果没有找到对应的记录，会返回 `null`：
+以下查询会返回 ID 为 `101` 的 `Player` 对象，如果未找到则返回 `null`：
 
 ```javascript
 const player: Player | null = prisma.player.findUnique({
-    where: {
-        id: 101,
-    }
+   where: {
+      id: 101,
+   }
 });
 ```
 
-更多信息参考[查询数据](/develop/dev-guide-get-data-from-single-table.md)。
+更多信息请参见 [查询数据](/develop/dev-guide-get-data-from-single-table.md)。
 
 ### 更新数据
 
-下面的查询会将 ID 为 `101` 的 `Player` 记录的 `coins` 和 `goods` 字段的值分别增加 50：
+以下查询会为 ID 为 `101` 的 `Player` 增加 `50` 个 coins 和 `50` 个 goods：
 
-```typescript
+```javascript
 await prisma.player.update({
-  where: {
-    id: 101,
-  },
-  data: {
-    coins: {
-      increment: 50,
-    },
-    goods: {
-      increment: 50,
-    },
-  }
+   where: {
+      id: 101,
+   },
+   data: {
+      coins: {
+         increment: 50,
+      },
+      goods: {
+         increment: 50,
+      },
+   }
 });
 ```
 
-更多信息参考[更新数据](/develop/dev-guide-update-data.md)。
+更多信息请参见 [更新数据](/develop/dev-guide-update-data.md)。
 
 ### 删除数据
 
-下面的查询会删除 ID 为 `101` 的 `Player` 记录：
+以下查询会删除 ID 为 `101` 的 `Player`：
 
-```typescript
+```javascript
 await prisma.player.delete({
-  where: {
-    id: 101,
-  }
+   where: {
+      id: 101,
+   }
 });
 ```
 
-更多信息参考[删除数据](/develop/dev-guide-delete-data.md)。
+更多信息请参见 [删除数据](/develop/dev-guide-delete-data.md)。
 
-## 注意事项
+## 实用说明
 
-### 外键约束与 Prisma Relation Mode
+### 外键约束 vs Prisma relation mode
 
-你可以使用外键约束或 Prisma Relation Mode 来检查[参照完整性](https://zh.wikipedia.org/wiki/%E5%8F%82%E7%85%A7%E5%AE%8C%E6%95%B4%E6%80%A7)：
+要检查 [参照完整性](https://en.wikipedia.org/wiki/Referential_integrity?useskin=vector)，你可以使用外键约束或 Prisma relation mode：
 
-- [外键](/foreign-key.md)是从 v6.6.0 开始支持的，在 v8.5.0 成为正式功能。外键允许跨表交叉引用相关数据，外键约束则可以保证相关数据的一致性。
+- [外键](https://docs.pingcap.com/tidb/stable/foreign-key) 是 TiDB v6.6.0 开始支持的特性，并在 v8.5.0 起正式可用。外键允许跨表引用相关数据，外键约束可确保相关数据的一致性。
 
-    > **警告：**
+    > **Warning:**
     >
-    > 外键功能通常适用于为**中小规模**的数据提供完整性和一致性约束校验，但是在大数据量和分布式数据库系统下，使用外键可能会导致严重的性能问题，并对系统产生不可预知的影响。如果计划使用外键，请进行充分验证后谨慎使用。
+    > **外键适用于中小数据量场景。** 在大数据量场景下使用外键可能导致严重的性能问题，并可能对系统产生不可预期的影响。如果你计划使用外键，请务必充分验证并谨慎使用。
 
-- [Prisma Relation Mode](https://www.prisma.io/docs/concepts/components/prisma-schema/relations/relation-mode) 是 Prisma Client 端对外键约束的模拟。该特性会对应用程序的性能产生一些影响，因为它需要额外的数据库查询来维护参照完整性。
+- [Prisma relation mode](https://www.prisma.io/docs/concepts/components/prisma-schema/relations/relation-mode) 是在 Prisma Client 端模拟参照完整性。但需要注意的是，这会带来性能影响，因为它需要额外的数据库查询来维护参照完整性。
 
-## 下一步
+## 后续步骤
 
-- 关于 Prisma 的更多使用方法，可以参考 [Prisma 的官方文档](https://www.prisma.io/docs)。
-- 你可以继续阅读开发者文档的其它章节来获取更多 TiDB 应用开发的最佳实践。例如：[插入数据](/develop/dev-guide-insert-data.md)，[更新数据](/develop/dev-guide-update-data.md)，[删除数据](/develop/dev-guide-delete-data.md)，[单表读取](/develop/dev-guide-get-data-from-single-table.md)，[事务](/develop/dev-guide-transaction-overview.md)，[SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)等。
-- 如果你更倾向于参与课程进行学习，我们也提供专业的 [TiDB 开发者课程](https://pingkai.cn/learn)支持，并在考试后提供相应的[资格认证](https://learn.pingkai.cn/learner/certification-center)。
+- 通过 [Prisma 官方文档](https://www.prisma.io/docs) 学习更多 ORM 框架 Prisma driver 的用法。
+- 通过 [开发者指南](/develop/dev-guide-overview.md) 各章节学习 TiDB 应用开发最佳实践，例如：[插入数据](/develop/dev-guide-insert-data.md)、[更新数据](/develop/dev-guide-update-data.md)、[删除数据](/develop/dev-guide-delete-data.md)、[查询数据](/develop/dev-guide-get-data-from-single-table.md)、[事务](/develop/dev-guide-transaction-overview.md)、[SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)。
+- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/) 学习，并在通过考试后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
+
+## 需要帮助？
+
+<CustomContent platform="tidb">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](/support.md)。
+
+</CustomContent>
+
+<CustomContent platform="tidb-cloud">
+
+在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
+
+</CustomContent>

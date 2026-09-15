@@ -1,21 +1,21 @@
 ---
-title: 为 TiDB 落盘文件开启加密
-summary: 了解如何为 TiDB 落盘文件开启加密。
+title: Enable Encryption for Disk Spill
+summary: Learn how to enable encryption for disk spill in TiDB.
 ---
 
-# 为 TiDB 落盘文件开启加密
+# Enable Encryption for Disk Spill
 
-当系统变量 [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) 为 `ON` 时，如果单条 SQL 语句的内存使用超出系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 的限制，某些算子可以将执行时的中间结果作为临时文件落盘保存，直到查询执行完成之后将它们删除。
+When the system variable [`tidb_enable_tmp_storage_on_oom`](/system-variables.md#tidb_enable_tmp_storage_on_oom) is set to `ON`, if the memory usage of a single SQL statement exceeds the limit of the system variable [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query), some operators can save the intermediate results during execution as a temporary file to the disk and delete the file after the query is completed.
 
-用户可以开启落盘文件加密功能，防止攻击者通过读取临时文件来访问数据。
+You can enable encryption for disk spill to prevent attackers from accessing data by reading these temporary files.
 
-## 配置方法
+## Configure
 
-要启用落盘文件加密功能，可以在 TiDB 配置文件中的 `[security]` 部分，配置 [`spilled-file-encryption-method`](/tidb-configuration-file.md#spilled-file-encryption-method) 选项：
+To enable encryption for the disk spill files, you can configure the item [`spilled-file-encryption-method`](/tidb-configuration-file.md#spilled-file-encryption-method) in the `[security]` section of the TiDB configuration file.
 
 ```toml
 [security]
 spilled-file-encryption-method = "aes128-ctr"
 ```
 
-`spilled-file-encryption-method` 的可选值为 `aes128-ctr` 和 `plaintext`。默认值为 `plaintext`，表示不启用加密。
+Value options for `spilled-file-encryption-method` are `aes128-ctr` and `plaintext`. The default value is `plaintext`, which means that encryption is disabled.

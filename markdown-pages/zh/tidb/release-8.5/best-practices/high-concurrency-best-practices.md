@@ -1,47 +1,55 @@
 ---
-title: TiDB 高并发写入场景最佳实践
-summary: 了解 TiDB 在高并发写入场景下的最佳实践。
-aliases: ['/docs-cn/dev/best-practices/high-concurrency-best-practices/','/docs-cn/dev/reference/best-practices/high-concurrency/','/zh/tidb/stable/high-concurrency-best-practices/','/zh/tidb/dev/high-concurrency-best-practices/']
+title: Best Practices for High-Concurrency Writes
+summary: This document provides best practices for handling highly-concurrent write-heavy workloads in TiDB. It addresses challenges and solutions for data distribution, hotspot cases, and complex hotspot problems. The article also discusses parameter configuration for optimizing performance.
 ---
 
-# TiDB 高并发写入场景最佳实践
+# Best Practices for High-Concurrency Writes
 
-在 TiDB 的使用过程中，一个典型场景是高并发批量写入数据到 TiDB。本文阐述了该场景中的常见问题，旨在给出一个业务的最佳实践，帮助读者避免因使用 TiDB 不当而影响业务开发。
+This document describes best practices for handling high-concurrency write-heavy workloads in TiDB, which can help to facilitate your application development.
 
-## 目标读者
+## Target audience
 
-本文假设你已对 TiDB 有一定的了解，推荐先阅读 TiDB 原理相关的三篇文章（[讲存储](https://pingkai.cn/tidbcommunity/blog/dbe4f467)，[说计算](https://pingkai.cn/tidbcommunity/blog/8427565a)，[谈调度](https://pingkai.cn/tidbcommunity/blog/a558961f)），以及 [TiDB Best Practice](https://pingkai.cn/tidbcommunity/blog/7f818fc0)。
+This document assumes that you have a basic understanding of TiDB. It is recommended that you first read the following three blog articles that explain TiDB fundamentals, and [TiDB Best Practices](https://www.pingcap.com/blog/tidb-best-practice/):
 
-## 高并发批量插入场景
++ [Data Storage](https://www.pingcap.com/blog/tidb-internal-data-storage/)
++ [Computing](https://www.pingcap.com/blog/tidb-internal-computing/)
++ [Scheduling](https://www.pingcap.com/blog/tidb-internal-scheduling/)
 
-高并发批量插入的场景通常出现在业务系统的批量任务中，例如清算以及结算等业务。此类场景存在以下特点：
+## Highly-concurrent write-intensive scenario
 
-- 数据量大
-- 需要短时间内将历史数据入库
-- 需要短时间内读取大量数据
+The highly concurrent write scenario often occurs when you perform batch tasks in applications, such as clearing and settlement. This scenario has the following features:
 
-这就对 TiDB 提出了以下挑战：
++ A huge volume of data
++ The need to import historical data into database in a short time
++ The need to read a huge volume of data from database in a short time
 
-- 写入/读取能力是否可以线性水平扩展
-- 随着数据持续大并发写入，数据库性能是否稳定不衰减
+These features pose these challenges to TiDB:
 
-对于分布式数据库来说，除了本身的基础性能外，最重要的就是充分利用所有节点能力，避免让单个节点成为瓶颈。
++ The write or read capacity must be linearly scalable.
++ Database performance is stable and does not decrease as a huge volume of data is written concurrently.
 
-## TiDB 数据分布原理
+For a distributed database, it is important to make full use of the capacity of all nodes and to prevent a single node from becoming the bottleneck.
 
-如果要解决以上挑战，需要从 TiDB 数据切分以及调度的原理开始讲起。这里只作简单说明，详情可参阅[谈调度](https://pingkai.cn/tidbcommunity/blog/a558961f)。
+## Data distribution principles in TiDB
 
-TiDB 以 Region 为单位对数据进行切分，每个 Region 有大小限制（默认 96M）。Region 的切分方式是范围切分。每个 Region 会有多副本，每一组副本，称为一个 Raft Group。每个 Raft Group 中由 Leader 负责执行这块数据的读 & 写（TiDB 支持 [Follower-Read](/follower-read.md)）。Leader 会自动地被 PD 组件均匀调度在不同的物理节点上，用以均分读写压力。
+To address the above challenges, it is necessary to start with the data segmentation and scheduling principle of TiDB. Refer to [Scheduling](https://www.pingcap.com/blog/tidb-internal-scheduling/) for more details.
 
-![TiDB 数据概览](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/tidb-data-overview.png)
+TiDB splits data into Regions, each representing a range of data with a size limit of 96M by default. Each Region has multiple replicas, and each group of replicas is called a Raft Group. In a Raft Group, the Region Leader executes the read and write tasks (TiDB supports [Follower-Read](/follower-read.md)) within the data range. The Region Leader is automatically scheduled by the Placement Driver (PD) component to different physical nodes evenly to distribute the read and write pressure.
 
-从原理上来说，只要没有业务上的写入热点（即业务写入没有 `AUTO_INCREMENT` 的主键和单调递增的索引，更多细节可参阅 [TiDB 正确使用方式](https://zhuanlan.zhihu.com/p/25574778)），依靠这个架构，TiDB 不仅具备线性扩展的读写能力，也能够充分利用分布式资源。从这一点看，TiDB 尤其适合高并发批量写入场景的业务。
+![TiDB Data Overview](https://docs-download.pingcap.com/media/images/docs/best-practices/tidb-data-overview.png)
 
-但理论场景和实际情况往往存在不同。以下实例说明了热点是如何产生的。
+In theory, if an application has no write hotspot, TiDB, by the virtue of its architecture, can not only linearly scale its read and write capacities, but also make full use of the distributed resources. From this point of view, TiDB is especially suitable for the high-concurrent and write-intensive scenario.
 
-## 热点产生的实例
+However, the actual situation often differs from the theoretical assumption.
 
-以下为一张示例表：
+> **Note:**
+>
+> No write hotspot in an application means the write scenario does not have any `AUTO_INCREMENT` primary key or monotonically increasing index.
+
+## Hotspot case
+
+The following case explains how a hotspot is generated. Take the table below as an example:
+
 
 ```sql
 CREATE TABLE IF NOT EXISTS TEST_HOTSPOT(
@@ -52,7 +60,7 @@ CREATE TABLE IF NOT EXISTS TEST_HOTSPOT(
 )
 ```
 
-这个表的结构非常简单，除了 `id` 为主键以外，没有额外的二级索引。将数据写入该表的语句如下，`id` 通过随机数离散生成：
+This table is simple in structure. In addition to `id` as the primary key, no secondary index exists. Execute the following statement to write data into this table. `id` is discretely generated as a random number.
 
 
 ```sql
@@ -60,70 +68,70 @@ SET SESSION cte_max_recursion_depth = 1000000;
 INSERT INTO TEST_HOTSPOT
 SELECT
   n,                                       -- ID
-  RAND()*80,                               -- 0 到 80 之间的随机数
+  RAND()*80,                               -- Number between 0 and 80
   CONCAT('user-',n),
   CONCAT(
-    CHAR(65 + (RAND() * 25) USING ascii),  -- 65 到 65+25 之间的随机数，转换为一个 A-Z 字符
+    CHAR(65 + (RAND() * 25) USING ascii),  -- Number between 65 and 65+25, converted to a character, A-Z
     '-user-',
     n,
     '@example.com'
   )
 FROM
-  (WITH RECURSIVE nr(n) AS
-    (SELECT 1                              -- 从 1 开始 CTE
-      UNION ALL SELECT n + 1               -- 每次循环 n 增加 1
-      FROM nr WHERE n < 1000000            -- 当 n 为 1_000_000 时停止循环
+  (WITH RECURSIVE nr(n) AS 
+    (SELECT 1                              -- Start CTE at 1
+      UNION ALL SELECT n + 1               -- increase n with 1 every loop
+      FROM nr WHERE n < 1000000            -- stop loop at 1_000_000 
     ) SELECT n FROM nr
   ) a;
 ```
 
-负载是短时间内密集地执行以上写入语句。
+The load comes from executing the above statement intensively in a short time.
 
-以上操作看似符合理论场景中的 TiDB 最佳实践，业务上没有热点产生。只要有足够的机器，就可以充分利用 TiDB 的分布式能力。要验证是否真的符合最佳实践，可以在实验环境中进行测试。
+In theory, the above operation seems to comply with the TiDB best practices, and no hotspot is caused in the application. The distributed capacity of TiDB can be fully used with adequate machines. To verify whether it is truly in line with the best practices, a test is conducted in the experimental environment, which is described as follows:
 
-部署拓扑 2 个 TiDB 节点，3 个 PD 节点，6 个 TiKV 节点。请忽略 QPS，因为测试只是为了阐述原理，并非 benchmark。
+For the cluster topology, 2 TiDB nodes, 3 PD nodes and 6 TiKV nodes are deployed. Ignore the QPS performance, because this test is to clarify the principle rather than for benchmark.
 
-![QPS1](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS1.png)
+![QPS1](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS1.png)
 
-客户端在短时间内发起了“密集”的写入，TiDB 收到的请求是 3K QPS。理论上，压力应该均摊给 6 个 TiKV 节点。但是从 TiKV 节点的 CPU 使用情况上看，存在明显的写入倾斜（tikv - 3 节点是写入热点）：
+The client starts "intensive" write requests in a short time, which is 3K QPS received by TiDB. In theory, the load pressure should be evenly distributed to 6 TiKV nodes. However, from the CPU usage of each TiKV node, the load distribution is uneven. The `tikv-3` node is the write hotspot.
 
-![QPS2](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS2.png)
+![QPS2](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS2.png)
 
-![QPS3](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS3.png)
+![QPS3](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS3.png)
 
-[Raft store CPU](/grafana-tikv-dashboard.md) 为 `raftstore` 线程的 CPU 使用率，通常代表写入的负载。在这个场景下 tikv-3 为 Raft Leader，tikv-0 和 tikv-1 是 Raft 的 Follower，其他的 TiKV 节点的负载几乎为空。
+[Raft store CPU](/grafana-tikv-dashboard.md) is the CPU usage rate for the `raftstore` thread, usually representing the write load. In this scenario, `tikv-3` is the Leader of this Raft Group; `tikv-0` and `tikv-1` are the followers. The loads of other nodes are almost empty.
 
-从 PD 的监控中也可以证明热点的产生：
+The monitoring metrics of PD also confirms that hotspot has been caused.
 
-![QPS4](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS4.png)
+![QPS4](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS4.png)
 
-## 热点问题产生的原因
+## Hotspot causes
 
-以上测试并未达到理论场景中最佳实践，因为刚创建表的时候，这个表在 TiKV 中只会对应为一个 Region，范围是：
+In the above test, the operation does not reach the ideal performance expected in the best practices. This is because only one Region is split by default to store the data of each newly created table in TiDB, with the following data range:
 
 ```
 [CommonPrefix + TableID, CommonPrefix + TableID + 1)
 ```
 
-短时间内大量数据会持续写入到同一个 Region 上。
+In a short period of time, a huge volume of data is continuously written to the same Region.
 
-![TiKV Region 分裂流程](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/tikv-Region-split.png)
+![TiKV Region Split](https://docs-download.pingcap.com/media/images/docs/best-practices/tikv-Region-split.png)
 
-上图简单描述了这个过程，随着数据持续写入，TiKV 会将一个 Region 切分为多个。但因为首先发起选举的是原 Leader 所在的 Store，所以新切分好的两个 Region 的 Leader 很可能还会在原 Store 上。新切分好的 Region 2，3 上，也会重复之前发生在 Region 1 上的过程。也就是压力会密集地集中在 TiKV-Node 1 上。
+The above diagram illustrates the Region splitting process. As data is continuously written into TiKV, TiKV splits a Region into multiple Regions. Because the leader election is started on the original store where the Region Leader to be split is located, the leaders of the two newly split Regions might be still on the same store. This splitting process might also happen on the newly split Region 2 and Region 3. In this way, write pressure is concentrated on TiKV-Node 1.
 
-在持续写入的过程中，PD 发现 Node 1 中产生了热点，会将 Leader 均分到其他的 Node 上。如果 TiKV 的节点数多于副本数的话，TiKV 会尽可能将 Region 迁移到空闲的节点上。这两个操作在数据插入的过程中，也能在 PD 监控中得到印证：
+During the continuous write process, after finding that hotspot is caused on Node 1, PD evenly distributes the concentrated Leaders to other nodes. If the number of TiKV nodes is more than the number of Region replicas, TiKV will try to migrate these Regions to idle nodes. These two operations during the write process are also reflected in the PD's monitoring metrics:
 
-![QPS5](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS5.png)
+![QPS5](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS5.png)
 
-在持续写入一段时间后，整个集群会被 PD 自动地调度成一个压力均匀的状态，到那个时候整个集群的能力才会真正被利用起来。在大多数情况下，以上热点产生的过程是没有问题的，这个阶段属于表 Region 的预热阶段。
+After a period of continuous writes, PD automatically schedules the entire TiKV cluster to a state where pressure is evenly distributed. By that time, the capacity of the whole cluster can be fully used.
 
-但是对于高并发批量密集写入场景来说，应该避免这个阶段。
+In most cases, the above process of causing a hotspot is normal, which is the Region warm-up phase of database. However, you need to avoid this phase in highly-concurrent write-intensive scenarios.
 
-## 热点问题的规避方法
+## Hotspot solution
 
-为了达到场景理论中的最佳性能，可跳过这个预热阶段，直接将 Region 切分为预期的数量，提前调度到集群的各个节点中。
+To achieve the ideal performance expected in theory, you can skip the warm-up phase by directly splitting a Region into the desired number of Regions and scheduling these Regions in advance to other nodes in the cluster.
 
-TiDB 在 v3.0.x 以及 v2.1.13 后支持一个叫 [Split Region](/sql-statements/sql-statement-split-region.md) 的新特性。这个特性提供了新的语法：
+In v3.0.x, v2.1.13 and later versions, TiDB supports a new feature called [Split Region](/sql-statements/sql-statement-split-region.md). This new feature provides the following new syntaxes:
 
 
 ```sql
@@ -135,28 +143,28 @@ SPLIT TABLE table_name [INDEX index_name] BETWEEN (lower_value) AND (upper_value
 SPLIT TABLE table_name [INDEX index_name] BY (value_list) [, (value_list)]
 ```
 
-但是 TiDB 并不会自动提前完成这个切分操作。原因如下：
+However, TiDB does not automatically perform this pre-split operation. The reason is related to the data distribution in TiDB.
 
-![Table Region Range](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/table-Region-range.png)
+![Table Region Range](https://docs-download.pingcap.com/media/images/docs/best-practices/table-Region-range.png)
 
-从上图可知，根据行数据 key 的编码规则，行 ID (rowID) 是行数据中唯一可变的部分。在 TiDB 中，rowID 是一个 Int64 整型。但是用户不一定能将 Int64 整型范围均匀切分成需要的份数，然后均匀分布在不同的节点上，还需要结合实际情况。
+From the diagram above, according to the encoding rule of a row's key, the `rowID` is the only variable part. In TiDB, `rowID` is an `Int64` integer. However, you might not need to evenly split the `Int64` integer range to the desired number of ranges and then to distribute these ranges to different nodes, because Region split must also be based on the actual situation.
 
-如果行 ID 的写入是完全离散的，那么上述方式是可行的。如果行 ID 或者索引有固定的范围或者前缀（例如，只在 `[2000w, 5000w)` 的范围内离散插入数据），这种写入依然在业务上不产生热点，但是如果按上面的方式进行切分，那么有可能一开始数据仍只写入到某个 Region 上。
+If the write of `rowID` is completely discrete, the above method will not cause hotspots. If the row ID or index has a fixed range or prefix (for example, discretely insert data into the range of `[2000w, 5000w)`), no hotspot will be caused either. However, if you split a Region using the above method, data might still be written to the same Region at the beginning.
 
-作为一款通用数据库，TiDB 并不对数据的分布作假设，所以开始只用一个 Region 来对应一个表。等到真实数据插入进来以后，TiDB 自动根据数据的分布来作切分。这种方式是较通用的。
+TiDB is a database for general usage and does not make assumptions about the data distribution. So it uses only one Region at the beginning to store the data of a table and automatically splits the Region according to the data distribution after real data is inserted.
 
-所以 TiDB 提供了 `Split Region` 语法，专门针对短时批量写入场景作优化。基于以上案例，下面尝试用 `Split Region` 语法提前切散 Region，再观察负载情况。
+Given this situation and the need to avoid the hotspot problem, TiDB offers the `Split Region` syntax to optimize performance for the highly-concurrent write-heavy scenario. Based on the above case, now scatter Regions using the `Split Region` syntax and observe the load distribution.
 
-由于测试的写入数据在正数范围内完全离散，所以用以下语句，在 Int64 空间内提前将表切分为 128 个 Region：
+Because the data to be written in the test is entirely discrete within the positive range, you can use the following statement to pre-split the table into 128 Regions within the range of `minInt64` and `maxInt64`:
 
 
 ```sql
 SPLIT TABLE TEST_HOTSPOT BETWEEN (0) AND (9223372036854775807) REGIONS 128;
 ```
 
-切分完成以后，可以通过 `SHOW TABLE test_hotspot REGIONS;` 语句查看打散的情况。如果 `SCATTERING` 列值全部为 `0`，代表调度成功。
+After the pre-split operation, execute the `SHOW TABLE test_hotspot REGIONS;` statement to check the status of Region scattering. If the values of the `SCATTERING` column are all `0`, the scheduling is successful.
 
-也可以通过以下 SQL 语句查看 Region 的分布。你需要将 `table_name` 替换为实际的表名。
+You can also check the Region leader distribution using the following SQL statement. You need to replace `table_name` with the actual table name.
 
 
 ```sql
@@ -175,57 +183,59 @@ ORDER BY
     PEER_COUNT DESC;
 ```
 
-再重新运行写入负载：
+Then operate the write load again:
 
-![QPS6](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS6.png)
+![QPS6](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS6.png)
 
-![QPS7](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS7.png)
+![QPS7](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS7.png)
 
-![QPS8](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/QPS8.png)
+![QPS8](https://docs-download.pingcap.com/media/images/docs/best-practices/QPS8.png)
 
-可以看到已经消除了明显的热点问题了。
+You can see that the apparent hotspot problem has been resolved now.
 
-本示例仅为一个简单的表，还有索引热点的问题需要考虑。读者可参阅 [Split Region](/sql-statements/sql-statement-split-region.md) 文档来了解如何预先切散索引相关的 Region。
+In this case, the table is simple. In other cases, you might also need to consider the hotspot problem of index. For more details on how to pre-split the index Region, refer to [Split Region](/sql-statements/sql-statement-split-region.md).
 
-### 更复杂的热点问题
+## Complex hotspot problems
 
-**问题一：**
+**Problem one:**
 
-如果表没有主键或者主键不是整数类型，而且用户也不想自己生成一个随机分布的主键 ID 的话，TiDB 内部有一个隐式的 `_tidb_rowid` 列作为行 ID。在不使用 `SHARD_ROW_ID_BITS` 的情况下，`_tidb_rowid` 列的值基本也为单调递增，此时也会有写热点存在（参阅 [`SHARD_ROW_ID_BITS` 的详细说明](/shard-row-id-bits.md)）。
+If a table does not have a primary key, or the primary key is not the `Int` type and you do not want to generate a randomly distributed primary key ID, TiDB provides an implicit `_tidb_rowid` column as the row ID. Generally, when you do not use the `SHARD_ROW_ID_BITS` parameter, the values of the `_tidb_rowid` column are also monotonically increasing, which might causes hotspots too. Refer to [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md) for more details.
 
-要避免由 `_tidb_rowid` 带来的写入热点问题，可以在建表时，使用 `SHARD_ROW_ID_BITS` 和 `PRE_SPLIT_REGIONS` 这两个建表选项（参阅 [`PRE_SPLIT_REGIONS` 的详细说明](/sql-statements/sql-statement-split-region.md#pre_split_regions)）。
+To avoid the hotspot problem in this situation, you can use `SHARD_ROW_ID_BITS` and `PRE_SPLIT_REGIONS` when creating a table. For more details about `PRE_SPLIT_REGIONS`, refer to [Pre-split Regions](/sql-statements/sql-statement-split-region.md#pre_split_regions).
 
-`SHARD_ROW_ID_BITS` 用于将 `_tidb_rowid` 列生成的行 ID 随机打散。`PRE_SPLIT_REGIONS` 用于在建完表后预先进行 Split region。
+`SHARD_ROW_ID_BITS` is used to randomly scatter the row ID generated in the `_tidb_rowid` column. `PRE_SPLIT_REGIONS` is used to pre-split the Region after a table is created.
 
-> **注意：**
+> **Note:**
 >
-> `PRE_SPLIT_REGIONS` 的值必须小于或等于 `SHARD_ROW_ID_BITS`。
+> The value of `PRE_SPLIT_REGIONS` must be smaller than or equal to that of `SHARD_ROW_ID_BITS`.
 
-以下全局变量会影响 `PRE_SPLIT_REGIONS` 的行为，需要特别注意：
-
-+ [`tidb_scatter_region`](/system-variables.md#tidb_scatter_region)：该变量用于控制建表完成后是否等待预切分和打散 Region 完成后再返回结果。如果建表后有大批量写入，需要设置该变量值为 `global`，表示等待所有 Region 都切分和打散完成后再返回结果给客户端。否则未打散完成就进行写入会对写入性能影响有较大的影响。
-
-示例：
+Example:
 
 
 ```sql
 create table t (a int, b int) SHARD_ROW_ID_BITS = 4 PRE_SPLIT_REGIONS=3;
 ```
 
-- `SHARD_ROW_ID_BITS = 4` 表示 tidb_rowid 的值会随机分布成 16 (16=2^4) 个范围区间。
-- `PRE_SPLIT_REGIONS=3` 表示建完表后提前切分出 8 (2^3) 个 Region。
+- `SHARD_ROW_ID_BITS = 4` means that the values of `tidb_rowid` will be randomly distributed into 16 (16=2^4) ranges.
+- `PRE_SPLIT_REGIONS=3` means that the table will be pre-split into 8 (2^3) Regions after it is created.
 
-开始写数据进表 t 后，数据会被写入提前切分好的 8 个 Region 中，这样也避免了刚开始建表完后因为只有一个 Region 而存在的写热点问题。
+When data starts to be written into table `t`, the data is written into the pre-split 8 Regions, which avoids the hotspot problem that might be caused if only one Region exists after table creation.
 
-**问题二：**
+> **Note:**
+>
+> The [`tidb_scatter_region`](/system-variables.md#tidb_scatter_region) global variable affects the behavior of `PRE_SPLIT_REGIONS`.
+>
+> This variable controls whether to wait for Regions to be pre-split and scattered before returning results after the table creation. If there are intensive writes after creating the table, you need to set the value of this variable to `global`, then TiDB will not return the results to the client until all the Regions are split and scattered. Otherwise, TiDB writes data before the scattering is completed, which will have a significant impact on write performance.
 
-如果表的主键为整数类型，并且该表使用了 `AUTO_INCREMENT` 来保证主键唯一性（不需要连续或递增）的表而言，由于 TiDB 直接使用主键行值作为 `_tidb_rowid`，此时无法使用 `SHARD_ROW_ID_BITS` 来打散热点。
+**Problem two:**
 
-要解决上述热点问题，可以利用 `AUTO_RANDOM` 列属性（参阅 [`AUTO_RANDOM` 的详细说明](/auto-random.md)），将 `AUTO_INCREMENT` 改为 `AUTO_RANDOM`，插入数据时让 TiDB 自动为整型主键列分配一个值，消除行 ID 的连续性，从而达到打散热点的目的。
+If a table's primary key is an integer type, and if the table uses `AUTO_INCREMENT` to ensure the uniqueness of the primary key (not necessarily continuous or incremental), you cannot use `SHARD_ROW_ID_BITS` to scatter the hotspot on this table because TiDB directly uses the row values of the primary key as `_tidb_rowid`.
 
-## 参数配置
+To address the problem in this scenario, you can replace `AUTO_INCREMENT` with [`AUTO_RANDOM`](/auto-random.md) (a column attribute) when inserting data. Then TiDB automatically assigns values to the integer primary key column, which eliminates the continuity of the row ID and scatters the hotspot.
 
-TiDB 2.1 版本中在 SQL 层引入了 latch 机制，用于在写入冲突比较频繁的场景中提前发现事务冲突，减少 TiDB 和 TiKV 事务提交时写写冲突导致的重试。通常，跑批场景使用的是存量数据，所以并不存在事务的写入冲突。可以把 TiDB 的 latch 功能关闭，以减少为细小对象分配内存：
+## Parameter configuration
+
+In v2.1, the [latch mechanism](/tidb-configuration-file.md#txn-local-latches) is introduced in TiDB to identify transaction conflicts in advance in scenarios where write conflicts frequently appear. The aim is to reduce the retry of transaction commits in TiDB and TiKV caused by write conflicts. Generally, batch tasks use the data already stored in TiDB, so the write conflicts of transaction do not exist. In this situation, you can disable the latch in TiDB to reduce memory allocation for small objects:
 
 ```
 [txn-local-latches]

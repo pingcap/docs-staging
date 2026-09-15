@@ -1,13 +1,17 @@
 ---
 title: CLUSTER_LOG
-summary: 了解 information_schema 表 `CLUSTER_LOG`。
+summary: Learn the `CLUSTER_LOG` information_schema table.
 ---
 
 # CLUSTER_LOG
 
-集群日志表 `CLUSTER_LOG` 表用于查询集群当前所有 TiDB/PD/TiKV 节点日志。它通过将查询条件下推到各个节点，降低了日志查询对集群的影响。该表的查询性能优于 grep 命令。
+You can query cluster logs on the `CLUSTER_LOG` cluster log table. By pushing down query conditions to each instance, the impact of the query on cluster performance is less than that of the `grep` command.
 
-TiDB 4.0 版本之前，要获取集群的日志，用户需要逐个登录各个节点汇总日志。TiDB 4.0 的集群日志表提供了一个全局且时间有序的日志搜索结果，为跟踪全链路事件提供了便利的手段。例如按照某一个 `region id` 搜索日志，可以查询该 Region 生命周期内的所有日志；类似地，通过慢日志的 `txn id` 搜索全链路日志，可以查询该事务在各个节点扫描的 key 数量以及流量等信息。
+> **Note:**
+>
+> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+
+To get the logs of the TiDB cluster before v4.0, you need to log in to each instance to summarize logs. This cluster log table in 4.0 provides the global and time-ordered log search result, which makes it easier to track full-link events. For example, by searching logs according to the `region id`, you can query all logs in the life cycle of this Region. Similarly, by searching the full link log through the slow log's `txn id`, you can query the flow and the number of keys scanned by this transaction at each instance.
 
 
 ```sql
@@ -28,21 +32,21 @@ DESC cluster_log;
 5 rows in set (0.00 sec)
 ```
 
-字段解释：
+Field description:
 
-* `TIME`：日志打印时间。
-* `TYPE`：节点的类型，可取值为 `tidb`，`pd` 和 `tikv`。
-* `INSTANCE`：节点的服务地址。
-* `LEVEL`：日志级别。
-* `MESSAGE`：日志内容。
+* `TIME`: The time to print the log.
+* `TYPE`: The instance type. The optional values are `tidb`, `pd`, and `tikv`.
+* `INSTANCE`: The service address of the instance.
+* `LEVEL`: The log level.
+* `MESSAGE`: The log content.
 
-> **注意：**
+> **Note:**
 >
-> + 日志表的所有字段都会下推到对应节点执行，所以为了降低使用集群日志表的开销，必须指定搜索关键字以及时间范围，然后尽可能地指定更多的条件。例如 `select * from cluster_log where message like '%ddl%' and time > '2020-05-18 20:40:00' and time<'2020-05-18 21:40:00' and type='tidb'`。
+> + All fields of the cluster log table are pushed down to the corresponding instance for execution. To reduce the overhead of using the cluster log table, you must specify the keywords used for the search, the time range, and as many conditions as possible. For example, `select * from cluster_log where message like '%ddl%' and time > '2020-05-18 20:40:00' and time<'2020-05-18 21:40:00' and type='tidb'`.
 >
-> + `message` 字段支持 `like` 和 `regexp` 正则表达式，对应的 pattern 会编译为 `regexp`。同时指定多个 `message` 条件，相当于 `grep` 命令的 `pipeline` 形式，例如：`select * from cluster_log where message like 'coprocessor%' and message regexp '.*slow.*' and time > '2020-05-18 20:40:00' and time<'2020-05-18 21:40:00'` 相当于在集群所有节点执行 `grep 'coprocessor' xxx.log | grep -E '.*slow.*'`。
+> + The `message` field supports the `like` and `regexp` regular expressions, and the corresponding pattern is encoded as `regexp`. Specifying multiple `message` conditions is equivalent to the `pipeline` form of the `grep` command. For example, executing the `select * from cluster_log where message like 'coprocessor%' and message regexp '.*slow.*' and time > '2020-05-18 20:40:00' and time<'2020-05-18 21:40:00'` statement is equivalent to executing `grep 'coprocessor' xxx.log | grep -E '.*slow.*'` on all cluster instances.
 
-查询某个 DDL 的执行过程示例如下：
+The following example shows how to query the execution process of a DDL statement using the `CLUSTER_LOG` table:
 
 
 ```sql
@@ -62,8 +66,8 @@ SELECT time,instance,left(message,150) FROM cluster_log WHERE message LIKE '%ddl
 +-------------------------+----------------+--------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-上面查询结果记录了一个 DDL 执行的过程：
+The query results above show the process of executing a DDL statement:
 
-+ 用户将 DDL JOB ID 为 `80` 的请求发给 `127.0.0.1:4002` TiDB 节点。
-+ `127.0.0.1:4000` TiDB 节点处理这个 DDL 请求，说明此时 `127.0.0.1:4000` 节点是 DDL owner。
-+ DDL JOB ID 为 80 的请求处理完成。
+1. The request with a DDL JOB ID of `80` is sent to the `127.0.0.1:4002` TiDB instance.
+2. The `127.0.0.1:4000` TiDB instance processes this DDL request, which indicates that the `127.0.0.1:4000` instance is the DDL owner at that time.
+3. The request with a DDL JOB ID of `80` has been processed.

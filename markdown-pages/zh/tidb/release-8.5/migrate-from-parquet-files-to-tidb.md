@@ -1,128 +1,130 @@
 ---
-title: 从 Parquet 文件迁移数据到 TiDB
-summary: 介绍如何使用 TiDB Lightning 从 Parquet 文件迁移数据到 TiDB。
+title: Migrate Data from Parquet Files to TiDB
+summary: Learn how to migrate data from parquet files to TiDB.
 ---
 
-# 从 Parquet 文件迁移数据到 TiDB
+# Migrate Data from Parquet Files to TiDB
 
-本文介绍如何从 Apache Hive 中生成 Parquet 文件以及如何使用 TiDB Lightning 从 Parquet 文件迁移数据到 TiDB。
+This document describes how to generate parquet files from Apache Hive and how to migrate data from parquet files to TiDB using TiDB Lightning.
 
-如果你从 Amazon Aurora 中导出 Parquet 文件，请参照[从 Amazon Aurora 迁移数据到 TiDB](/migrate-aurora-to-tidb.md)。
+If you export parquet files from Amazon Aurora, refer to [Migrate data from Amazon Aurora to TiDB](/migrate-aurora-to-tidb.md).
 
-## 前提条件
+## Prerequisites
 
-- [使用 TiUP 安装 TiDB Lightning](/migration-tools.md)
-- [获取 TiDB Lightning 所需下游数据库权限](/tidb-lightning/tidb-lightning-requirements.md#目标数据库权限要求)
+- [Install TiDB Lightning using TiUP](/migration-tools.md).
+- [Get the target database privileges required for TiDB Lightning](/tidb-lightning/tidb-lightning-faq.md#what-are-the-privilege-requirements-for-the-target-database).
 
-## 第 1 步：准备 Parquet 文件
+## Step 1. Prepare the parquet files
 
-本节描述如何从 Hive 中导出能被 TiDB Lightning 读取的 Parquet 文件。
+This section describes how to export parquet files from Hive that can be read by TiDB Lightning.
 
-你可以通过指定 `STORED AS PARQUET LOCATION '/path/in/hdfs'` 将 Hive 中的每个表导出为 Parquet 文件。因此，如果你需要导出一张名叫 `test` 的表，请执行以下步骤：
+Each table in Hive can be exported to parquet files by annotating `STORED AS PARQUET LOCATION '/path/in/hdfs'`. Therefore, if you need to export a table named `test`, perform the following steps:
 
-1. 在 Hive 中执行如下 SQL 语句：
+1. Run the following SQL statement in Hive:
 
     ```sql
     CREATE TABLE temp STORED AS PARQUET LOCATION '/path/in/hdfs'
     AS SELECT * FROM test;
     ```
 
-    执行上述语句后，表数据就成功导出到 HDFS 系统里。
+    After executing the preceding statement, the table data is successfully exported to the HDFS system.
 
-2. 使用 `hdfs dfs -get` 命令将 Parquet 文件导出到本地：
+2. Export the parquet files to the local file system using the `hdfs dfs -get` command:
 
     ```shell
     hdfs dfs -get /path/in/hdfs /path/in/local
     ```
 
-    完成导出后，如果你需要将 HDFS 里导出的 Parquet 文件删除，可以直接将这个临时表 (`temp`) 删掉：
+    After the export is complete, if you need to delete the exported parquet files in HDFS, you can directly delete the temporary table (`temp`):
 
     ```sql
     DROP TABLE temp;
     ```
 
-3. 从 Hive 导出的 Parquet 文件可能不带有 `.parquet` 后缀，因此 TiDB Lightning 无法正确识别这些文件。在进行导入之前，需要对这些文件进行重命名，添加 `.parquet` 后缀，将完整的文件名修改为 TiDB Lightning 能识别的格式，例如 `${db_name}.${table_name}.parquet`。更多文件类型和命名规则，请参考 [TiDB Lightning 数据源](/tidb-lightning/tidb-lightning-data-source.md)。你也可以通过设置正确的[自定义表达式](/tidb-lightning/tidb-lightning-data-source.md#自定义文件匹配)匹配数据文件。
+3. The parquet files exported from Hive might not have the `.parquet` suffix and cannot be correctly identified by TiDB Lightning. Therefore, before importing the files, you need to rename the exported files and add the `.parquet` suffix to change the full filename to a format that TiDB Lightning recognizes, for example, `${db_name}. ${table_name}.parquet`. For more information about file types and patterns, see [TiDB Lightning Data Sources](/tidb-lightning/tidb-lightning-data-source.md). You can also match data files by setting correct [customized expressions](/tidb-lightning/tidb-lightning-data-source.md#match-customized-files).
 
-4. 将所有 Parquet 文件放到统一目录下，例如 `/data/my_datasource/` 或 `s3://my-bucket/sql-backup`。TiDB Lightning 将递归搜索该目录及其子目录内的所有 `.parquet` 文件。
+4. Put all the parquet files in a unified directory, for example, `/data/my_datasource/` or `s3://my-bucket/sql-backup`. TiDB Lightning will recursively search for all `.parquet` files in this directory and its subdirectories.
 
-## 第 2 步：创建目标表结构
+## Step 2. Create the target table schema
 
-在将 Parquet 文件导入 TiDB 前，你必须为 Parquet 文件提供表结构。你可以通过以下任一方法创建表结构：
+Before importing data from parquet files into TiDB, you need to create the target table schema. You can create the target table schema by either of the following two methods:
 
-* **方法一**：使用 TiDB Lightning 创建表结构。
+* **Method 1**: create the target table schema using TiDB Lightning.
 
-    编写包含 DDL 语句的 SQL 文件：
+    Create SQL files that contain the required DDL statements:
 
-    - 文件名格式为 `${db_name}-schema-create.sql`，其内容需包含 `CREATE DATABASE` 语句。
-    - 文件名格式为 `${db_name}.${table_name}-schema.sql`，其内容需包含 `CREATE TABLE` 语句。
+    - Add `CREATE DATABASE` statements in the `${db_name}-schema-create.sql` files.
+    - Add `CREATE TABLE` statements in the `${db_name}.${table_name}-schema.sql` files.
 
-* **方法二**：手动在下游 TiDB 建库和表。
+* **Method 2**: create the target table schema manually.
 
-## 第 3 步：编写配置文件
+## Step 3. Create the configuration file
 
-新建文件 `tidb-lightning.toml`，包含以下内容：
+Create a `tidb-lightning.toml` file with the following content:
 
 ```toml
 [lightning]
-# 日志
+# Log
 level = "info"
 file = "tidb-lightning.log"
 
 [tikv-importer]
-# "local"：默认使用该模式，适用于 TiB 级以上大数据量，但导入期间下游 TiDB 无法对外提供服务。
+# "local": Default backend. The local backend is recommended to import large volumes of data (1 TiB or more). During the import, the target TiDB cluster cannot provide any service.
 backend = "local"
-# # "tidb"：TiB 级以下数据量也可以采用 `tidb` 后端模式，下游 TiDB 可正常提供服务。关于导入模式更多信息请参阅：https://docs.pingcap.com/zh/tidb/stable/tidb-lightning-overview#tidb-lightning-整体架构
-# 设置排序的键值对的临时存放地址，目标路径必须是一个空目录，目录空间须大于待导入数据集的大小。建议设为与 `data-source-dir` 不同的磁盘目录并使用闪存介质，独占 I/O 会获得更好的导入性能。
+# "tidb": The "tidb" backend is recommended to import data less than 1 TiB. During the import, the target TiDB cluster can provide service normally.
+# For more information on import mode, refer to <https://docs.pingcap.com/tidb/stable/tidb-lightning-overview#tidb-lightning-architecture>
+# Set the temporary storage directory for the sorted Key-Value files. The directory must be empty, and the storage space must be greater than the size of the dataset to be imported. For better import performance, it is recommended to use a directory different from `data-source-dir` and use flash storage, which can use I/O exclusively.
 sorted-kv-dir = "${sorted-kv-dir}"
 
 [mydumper]
-# 源数据目录
-data-source-dir = "${data-path}" # 本地或 S3 路径，例如：'s3://my-bucket/sql-backup'
+# Directory of the data source.
+data-source-dir = "${data-path}" # A local path or S3 path. For example, 's3://my-bucket/sql-backup'.
 
 [tidb]
-# 目标集群的信息
-host = "${host}"              # 例如：172.16.32.1
-port = "${port}"              # 例如：4000
-user = "${user_name}"         # 例如："root"
-password = "${password}"      # 例如："rootroot"
-status-port = "${status-port}"  # 导入过程 Lightning 需要在从 TiDB 的“状态端口”获取表结构信息，例如：10080
-pd-addr = "${ip}:${port}"     # 集群 PD 的地址，Lightning 通过 PD 获取部分信息，例如 172.16.31.3:2379。当 backend = "local" 时 status-port 和 pd-addr 必须正确填写，否则导入将出现异常。
+# The target cluster.
+host = ${host}            # e.g.: 172.16.32.1
+port = ${port}            # e.g.: 4000
+user = "${user_name}"     # e.g.: "root"
+password = "${password}"  # e.g.: "rootroot"
+status-port = ${status-port} # During the import, TiDB Lightning needs to obtain the table schema information from the TiDB status port. e.g.: 10080
+pd-addr = "${ip}:${port}" # The address of the PD cluster, e.g.: 172.16.31.3:2379. TiDB Lightning obtains some information from PD. When backend = "local", you must specify status-port and pd-addr correctly. Otherwise, the import will be abnormal.
 ```
 
-关于配置文件更多信息，可参阅 [TiDB Lightning 配置参数](/tidb-lightning/tidb-lightning-configuration.md)。
+For more information on the configuration file, refer to [TiDB Lightning configuration](/tidb-lightning/tidb-lightning-configuration.md).
 
-## 第 4 步：执行导入
+## Step 4. Import the data
 
-1. 运行 `tidb-lightning`。
+1. Run `tidb-lightning`.
 
-    - 如果从 Amazon S3 导入，需先将有权限访问该 S3 后端存储的账号的 SecretKey 和 AccessKey 作为环境变量传入 Lightning 节点。
+    - If you import data from Amazon S3, you need to set the SecretKey and AccessKey of the account that has permission to access the S3 backend storage as environment variables before running TiDB Lightning.
 
         ```shell
         export AWS_ACCESS_KEY_ID=${access_key}
         export AWS_SECRET_ACCESS_KEY=${secret_key}
         ```
 
-        此外，TiDB Lightning 还支持从 `~/.aws/credentials` 读取凭证文件。
+        In addition to the preceding method, TiDB Lightning also supports reading the credential file from `~/.aws/credentials`.
 
-    - 如果直接在命令行中启动程序，可能会因为 `SIGHUP` 信号而退出，建议配合 `nohup` 或 `screen` 等工具运行 `tidb-lightning`：
+    - If you launch the program in the command line, the process might exit unexpectedly after receiving a `SIGHUP` signal. In this case, it is recommended to run the program using a `nohup` or `screen` tool. For example:
 
         ```shell
         nohup tiup tidb-lightning -config tidb-lightning.toml > nohup.out 2>&1 &
         ```
 
-2. 导入开始后，可以采用以下任意方式查看进度：
+2. After the import starts, you can check the progress of the import by either of the following methods:
 
-    - 通过 `grep` 日志关键字 `progress` 查看进度，默认 5 分钟更新一次。
-    - 通过监控面板查看进度，请参考 [TiDB Lightning 监控](/tidb-lightning/monitor-tidb-lightning.md)。
+    - Search for the keyword `progress` in the log using `grep`. The progress is updated every 5 minutes by default.
+    - Check progress in the [monitoring dashboard](/tidb-lightning/monitor-tidb-lightning.md).
+    - Check progress in [TiDB Lightning web interface](/tidb-lightning/tidb-lightning-web-interface.md).
 
-    导入完毕后，TiDB Lightning 会自动退出。
+    After TiDB Lightning completes the import, it exits automatically.
 
-3. 检查导入是否成功。
+3. Check if the import is successful.
 
-    查看 `tidb-lightning.log` 日志末尾是否有 `the whole procedure completed` 信息，如果有，表示导入成功。如果没有，则表示导入遇到了问题，可根据日志中的 error 提示解决遇到的问题。
+    Check whether `tidb-lightning.log` contains `the whole procedure completed` in the last lines. If yes, the import is successful. If no, the import encounters an error. Address the error as instructed in the error message.
 
-    > **注意：**
+    > **Note:**
     >
-    > 无论导入成功与否，最后一行都会显示 `tidb lightning exit`。它只是表示 TiDB Lightning 正常退出，不代表任务完成。
+    > Whether the import is successful or not, the last line of the log shows `tidb lightning exit`. It means that TiDB Lightning exits normally, but does not necessarily mean that the import is successful.
 
-如果导入过程中遇到问题，请参见 [TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)。
+If the import fails, refer to [TiDB Lightning FAQ](/tidb-lightning/tidb-lightning-faq.md) for troubleshooting.

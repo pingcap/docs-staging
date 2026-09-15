@@ -5,19 +5,19 @@ summary: 了解返回 JSON 值的 JSON 函数。
 
 # 返回 JSON 值的 JSON 函数
 
-TiDB 支持使用 MySQL 8.0 中提供的所有[用于返回 JSON 值属性的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-attribute-functions.html)。
+TiDB 支持 MySQL 8.0 中所有 [返回 JSON 值属性的 JSON 函数](https://dev.mysql.com/doc/refman/8.0/en/json-attribute-functions.html)。
 
 ## `JSON_DEPTH()`
 
-`JSON_DEPTH(json_doc)` 函数返回 JSON 文档的最大深度。
+`JSON_DEPTH(json_doc)` 函数返回一个 JSON 文档的最大嵌套层级。
 
 示例：
 
-在下面的示例中，`JSON_DEPTH()` 返回 `3`，因为有三层：
+在以下示例中，`JSON_DEPTH()` 返回 `3`，因为有三级嵌套：
 
-- root (`$`)
-- weather (`$.weather`)
-- weather current (`$.weather.sunny`)
+- 根节点（`$`）
+- weather（`$.weather`）
+- weather current（`$.weather.sunny`）
 
 ```sql
 SELECT JSON_DEPTH('{"weather": {"current": "sunny"}}');
@@ -34,11 +34,11 @@ SELECT JSON_DEPTH('{"weather": {"current": "sunny"}}');
 
 ## `JSON_LENGTH()`
 
-`JSON_LENGTH(json_doc [,path])` 函数返回 JSON 文档的长度。如果指定了 `path` 参数，则返回路径中的值的长度。
+`JSON_LENGTH(json_doc [,path])` 函数返回 JSON 文档的长度。如果指定了 `path` 参数，则返回该路径下值的长度。
 
 示例：
 
-在下面的示例中，返回值是 `1`，因为文档根目录下仅有一个元素  `weather`。
+在以下示例中，返回值为 `1`，因为文档根节点下只有一个项 `weather`。
 
 ```sql
 SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$');
@@ -53,7 +53,7 @@ SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$'
 1 row in set (0.00 sec)
 ```
 
-在下面的示例中，`$.weather` 包含两个元素 `current` 和`tomorrow`，因此返回值为 `2`。
+在以下示例中，返回值为 `2`，因为 `$.weather` 下有两个项：`current` 和 `tomorrow`。
 
 ```sql
 SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$.weather');
@@ -70,19 +70,19 @@ SELECT JSON_LENGTH('{"weather": {"current": "sunny", "tomorrow": "cloudy"}}','$.
 
 ## `JSON_TYPE()`
 
-`JSON_TYPE(json_val)` 函数返回一个字符串，表示 [JSON 值的类型](/data-type-json.md#json-值的类型)。
+`JSON_TYPE(json_val)` 函数返回一个字符串，指示 [JSON 值的类型](/data-type-json.md#json-value-types)。
 
 示例：
 
 ```sql
 WITH demo AS (
-    SELECT 'null' AS 'v'
-    UNION SELECT '"foobar"'
-    UNION SELECT 'true'
-    UNION SELECT '5'
-    UNION SELECT '1.14'
-    UNION SELECT '[]'
-    UNION SELECT '{}'
+    SELECT 'null' AS 'v' 
+    UNION SELECT '"foobar"' 
+    UNION SELECT 'true' 
+    UNION SELECT '5' 
+    UNION SELECT '1.14' 
+    UNION SELECT '[]' 
+    UNION SELECT '{}' 
     UNION SELECT POW(2,63)
 )
 SELECT v, JSON_TYPE(v) FROM demo ORDER BY 2;
@@ -104,7 +104,7 @@ SELECT v, JSON_TYPE(v) FROM demo ORDER BY 2;
 8 rows in set (0.00 sec)
 ```
 
-请注意，看起来相同的值可能属于不同的类型，如下例所示。
+需要注意的是，看起来相同的值，其类型可能不同，如下例所示。
 
 ```sql
 SELECT '"2025-06-14"',CAST(CAST('2025-06-14' AS date) AS json);
@@ -134,7 +134,7 @@ SELECT JSON_TYPE('"2025-06-14"'),JSON_TYPE(CAST(CAST('2025-06-14' AS date) AS js
 
 ## `JSON_VALID()`
 
-`JSON_VALID(str)` 函数检查输入的参数是否为有效的 JSON 格式。该函数对于在将列转换为 `JSON` 类型之前进行检查非常有用。
+`JSON_VALID(str)` 函数用于检查参数是否为合法的 JSON。这在将某一列转换为 `JSON` 类型前进行检查时非常有用。
 
 ```sql
 SELECT JSON_VALID('{"foo"="bar"}');
@@ -162,7 +162,7 @@ SELECT JSON_VALID('{"foo": "bar"}');
 1 row in set (0.01 sec)
 ```
 
-## 另请参考
+## 参见
 
-- [JSON 函数](/functions-and-operators/json-functions.md)
+- [JSON 函数概览](/functions-and-operators/json-functions.md)
 - [JSON 数据类型](/data-type-json.md)

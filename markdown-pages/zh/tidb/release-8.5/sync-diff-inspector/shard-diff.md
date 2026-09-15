@@ -1,34 +1,31 @@
 ---
-title: 分库分表场景下的数据校验
-summary: sync-diff-inspector 支持对分库分表场景进行数据校验。使用 Datasource config 进行配置，设置对应 rules，配置上游表与下游表的映射关系。当上游分表较多且符合一定规则时，可以使用 table-rules 进行配置。注意事项：如果上游数据库有 test.table-0 也会被下游数据库匹配到。
+title: Data Check in the Sharding Scenario
+summary: Learn the data check in the sharding scenario.
 ---
 
-# 分库分表场景下的数据校验
+# Data Check in the Sharding Scenario
 
-sync-diff-inspector 支持对分库分表场景进行数据校验。例如有多个 MySQL 实例，当你使用同步工具 [TiDB DM](/dm/dm-overview.md) 同步到一个 TiDB 时，可以使用 sync-diff-inspector 对上下游数据进行校验。
+sync-diff-inspector supports data check in the sharding scenario. Assume that you use the [TiDB Data Migration](/dm/dm-overview.md) tool to replicate data from multiple MySQL instances into TiDB, you can use sync-diff-inspector to check upstream and downstream data.
 
-## 使用 datasource config 进行配置
+For scenarios where the number of upstream sharded tables is small and the naming rules of sharded tables do not have a pattern as shown below, you can use `Datasource config` to configure `table-0`, set corresponding `rules` and configure the tables that have the mapping relationship between the upstream and downstream databases. This configuration method requires setting all sharded tables.
 
-使用 `Datasource config` 对 `table-0` 进行特殊配置，设置对应 `rules`，配置上游表与下游表的映射关系。这种配置方式需要对所有分表进行设置，适合上游分表数量较少，且分表的命名规则没有规律的场景。场景如图所示：
+![shard-table-replica-1](https://docs-download.pingcap.com/media/images/docs/shard-table-replica-1.png)
 
-![shard-table-sync-1](https://docs-download.pingcap.com/media/images/docs-cn/shard-table-sync-1.png)
+Below is a complete example of the sync-diff-inspector configuration.
 
-sync-diff-inspector 完整的示例配置如下：
-
-```toml
+``` toml
 # Diff Configuration.
 
 ######################### Global config #########################
 
-# 检查数据的线程数量，上下游数据库的连接数会略大于该值
+# The number of goroutines created to check data. The number of connections between upstream and downstream databases are slightly greater than this value
 check-thread-count = 4
 
-# 如果开启，若表存在不一致，则输出用于修复的 SQL 语句
+# If enabled, SQL statements is exported to fix inconsistent tables
 export-fix-sql = true
 
-# 只对比表结构而不对比数据
+# Only compares the table structure instead of the data
 check-struct-only = false
-
 
 ######################### Datasource config #########################
 [data-sources.mysql1]
@@ -55,16 +52,16 @@ check-struct-only = false
 
 ########################### Routes ###########################
 [routes.rule1]
-schema-pattern = "test"        # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "table-[1-2]"  # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test"         # 目标库名
-target-table = "table-0"       # 目标表名
+schema-pattern = "test"        # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "table-[1-2]"  # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test"         # The name of the schema in the target database
+target-table = "table-0"       # The name of the target table
 
 [routes.rule2]
-schema-pattern = "test"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "table-3"    # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test"       # 目标库名
-target-table = "table-0"     # 目标表名
+schema-pattern = "test"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "table-3"    # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test"       # The name of the schema in the target database
+target-table = "table-0"     # The name of the target table
 
 ######################### Task config #########################
 [task]
@@ -74,30 +71,28 @@ target-table = "table-0"     # 目标表名
 
     target-instance = "tidb0"
 
-    # 需要比对的下游数据库的表，每个表需要包含数据库名和表名，两者由 `.` 隔开
+    # The tables of downstream databases to be compared. Each table needs to contain the schema name and the table name, separated by '.'
     target-check-tables = ["test.table-0"]
 ```
 
-当上游分表较多，且所有分表的命名都符合一定的规则时，则可以使用 `table-rules` 进行配置。场景如图所示：
+You can use `table-rules` for configuration when there are a large number of upstream sharded tables and the naming rules of all sharded tables have a pattern, as shown below:
 
-![shard-table-sync-2](https://docs-download.pingcap.com/media/images/docs-cn/shard-table-sync-2.png)
+![shard-table-replica-2](https://docs-download.pingcap.com/media/images/docs/shard-table-replica-2.png)
 
-sync-diff-inspector 完整的示例配置如下：
+Below is a complete example of the sync-diff-inspector configuration.
 
 ```toml
 # Diff Configuration.
-
 ######################### Global config #########################
 
-# 检查数据的线程数量，上下游数据库的连接数会略大于该值
+# The number of goroutines created to check data. The number of connections between upstream and downstream databases are slightly greater than this value.
 check-thread-count = 4
 
-# 如果开启，若表存在不一致，则输出用于修复的 SQL 语句
+# If enabled, SQL statements is exported to fix inconsistent tables.
 export-fix-sql = true
 
-# 只对比表结构而不对比数据
+# Only compares the table structure instead of the data.
 check-struct-only = false
-
 
 ######################### Datasource config #########################
 [data-sources.mysql1]
@@ -106,15 +101,11 @@ check-struct-only = false
     user = "root"
     password = ""
 
-    route-rules = ["rule1"]
-
 [data-sources.mysql2]
     host = "127.0.0.1"
     port = 3306
     user = "root"
     password = ""
-
-    route-rules = ["rule1"]
 
 [data-sources.tidb0]
     host = "127.0.0.1"
@@ -124,23 +115,22 @@ check-struct-only = false
 
 ########################### Routes ###########################
 [routes.rule1]
-schema-pattern = "test"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
-table-pattern = "table-*"    # 匹配数据源的表名，支持通配符 "*" 和 "?"
-target-schema = "test"       # 目标库名
-target-table = "table-0"     # 目标表名
+schema-pattern = "test"      # Matches the schema name of the data source. Supports the wildcards "*" and "?"
+table-pattern = "table-*"    # Matches the table name of the data source. Supports the wildcards "*" and "?"
+target-schema = "test"       # The name of the schema in the target database
+target-table = "table-0"     # The name of the target table
 
 ######################### Task config #########################
 [task]
     output-dir = "./output"
-
     source-instances = ["mysql1", "mysql2"]
 
     target-instance = "tidb0"
 
-    # 需要比对的下游数据库的表，每个表需要包含数据库名和表名，两者由 `.` 隔开
+    # The tables of downstream databases to be compared. Each table needs to contain the schema name and the table name, separated by '.'
     target-check-tables = ["test.table-0"]
 ```
 
-## 注意事项
+## Note
 
-如果上游数据库有 `test`.`table-0` 也会被下游数据库匹配到。
+If `test.table-0` exists in the upstream database, the downstream database also compares this table.
