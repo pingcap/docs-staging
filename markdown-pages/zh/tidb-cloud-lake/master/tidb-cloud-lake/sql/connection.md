@@ -1,6 +1,6 @@
 ---
 title: Connection
-summary: TiDB Cloud Lake 中的 connection 是一种指定配置，用于封装与外部存储服务交互所需的详细信息。它作为一组集中且可复用的参数集合，例如访问凭证、端点 URL 和存储类型，从而便于 TiDB Cloud Lake 与各种存储服务集成。
+summary: "TiDB Cloud Lake 中的 connection 是一种指定配置，用于封装与外部存储服务交互所需的详细信息。它作为一组集中且可复用的参数集合，例如访问凭证、端点 URL 和存储类型，从而便于 TiDB Cloud Lake 与各种存储服务集成。"
 ---
 
 # Connection

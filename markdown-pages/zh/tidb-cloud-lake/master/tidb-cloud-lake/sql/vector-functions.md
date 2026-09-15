@@ -1,6 +1,6 @@
 ---
 title: 向量函数
-summary: TiDB Cloud Lake 中用于向量操作和分析的向量函数。
+summary: "TiDB Cloud Lake 中用于向量操作和分析的向量函数。"
 ---
 
 # 向量函数

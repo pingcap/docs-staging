@@ -1,6 +1,6 @@
 ---
 title: 数据集成概览
-summary: TiDB Cloud Lake 中的数据集成功能提供了一个可视化、无代码的接口，用于将外部系统中的数据导入或同步到 TiDB Cloud Lake。
+summary: "TiDB Cloud Lake 中的数据集成功能提供了一个可视化、无代码的接口，用于将外部系统中的数据导入或同步到 TiDB Cloud Lake。"
 ---
 
 # 数据集成概览

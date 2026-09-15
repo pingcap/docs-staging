@@ -1,6 +1,6 @@
 ---
 title: 计算集群 (Warehouse)
-summary: TiDB Cloud Lake 的计算集群相关 SQL 命令。
+summary: "TiDB Cloud Lake 的计算集群相关 SQL 命令。"
 ---
 
 # 计算集群 (Warehouse)

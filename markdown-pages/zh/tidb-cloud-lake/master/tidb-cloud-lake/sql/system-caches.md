@@ -1,6 +1,6 @@
 ---
 title: system.caches
-summary: TiDB Cloud Lake 中管理的各种缓存概览。
+summary: "TiDB Cloud Lake 中管理的各种缓存概览。"
 ---
 
 # system.caches
