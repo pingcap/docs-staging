@@ -59,8 +59,8 @@ SQL実行フェーズは緑色で、その他のフェーズは全体的に赤�
 
 ### Queries Using Plan Cache OPS {#queries-using-plan-cache-ops}
 
-- avg-hit: すべての TiDB インスタンスで 1秒あたりに実行計画 キャッシュを使用するクエリの数
-- avg-miss: すべての TiDB インスタンスにおける、実行計画 キャッシュを使用していないクエリの数 (1秒あたり)
+- avg-hit: すべての TiDB インスタンスで 1秒あたりに実行プランキャッシュを使用するクエリの数
+- avg-miss: すべての TiDB インスタンスにおける、実行プランキャッシュを使用していないクエリの数 (1秒あたり)
 
 `avg-hit + avg-miss`は`StmtExecute`に等しく、これは 1秒あたりに実行されるすべてのクエリの数です。
 
@@ -108,7 +108,7 @@ SQL実行フェーズは緑色で、その他のフェーズは全体的に赤�
 
 ### Connection Idle Duration {#connection-idle-duration}
 
-接続アイドル期間は、接続がアイドル状態にある期間を示します。
+Connection Idle Duration は、接続がアイドル状態にある期間を示します。
 
 - avg-in-txn: トランザクション内の接続の平均アイドル時間
 - avg-not-in-txn: 接続がトランザクション内にない場合の平均接続アイドル期間
