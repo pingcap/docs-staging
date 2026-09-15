@@ -15,7 +15,7 @@ This tutorial demonstrates how to integrate [TiDB Vector Search](/ai/guides/vect
 > **Note:**
 >
 > - The vector search feature in public preview. It might be changed without prior notice. If you find a bug, you can report an [issue](https://github.com/pingcap/tidb/issues) on GitHub.
-> - The vector search feature is available on [TiDB Self-Managed](/overview.md) and [TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter). For TiDB Self-Managed, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
+> - The vector search feature is available on [TiDB Self-Managed](/overview.md) and [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier/?plan=starter#starter). For TiDB Self-Managed, the TiDB version must be v8.4.0 or later (v8.5.0 or later is recommended).
 
 > **Tip**
 >
@@ -37,7 +37,7 @@ To complete this tutorial, you need:
 
 - A TiDB Cloud Starter instance
 
-    [Create a TiDB Cloud Starter instance](/tidb-cloud/select-cluster-tier.md#starter) if you don't have one.
+    [Create a TiDB Cloud Starter instance](https://docs.pingcap.com/tidbcloud/select-cluster-tier/?plan=starter#starter) if you don't have one.
 
 - An AWS account with the [required permissions for Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/security_iam_id-based-policy-examples.html) and access to the following models:
 
