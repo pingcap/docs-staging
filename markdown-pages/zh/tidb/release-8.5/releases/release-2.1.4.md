@@ -1,40 +1,41 @@
 ---
 title: TiDB 2.1.4 Release Notes
-summary: TiDB 2.1.4 and TiDB Ansible 2.1.4 were released on February 15, 2019. The release includes improvements in stability, SQL optimizer, statistics, and execution engine. Fixes include issues with the SQL optimizer/executor, server, DDL, and TiKV. Lightning tool optimizations include memory usage, chunk separation removal, I/O concurrency limitation, batch data import support, and auto compactions in TiKV import mode. Additionally, support for disabling TiKV periodic Level-1 compaction parameter and limiting the number of import engines is added. Sync-diff-inspector now supports splitting chunks using TiDB statistics.
+summary: TiDB 2.1.4 版本发布，对系统稳定性、优化器、统计信息和执行引擎做了很多改进。修复了多个函数处理结果不正确的问题，优化了服务器日志和 DDL 操作。TiKV 修复了关闭时可能发生重复写的问题和事件监听器处理异常的问题。工具方面优化了内存使用，减少了对 dump 文件的解析，提高了导入稳定性。数据同步对比统计支持使用 TiDB 统计信息来划分 chunk。
+aliases: ['/zh/tidb/dev/release-2.1.4/','/zh/tidb/v2.1/release-2.1.4','/docs-cn/dev/releases/release-2.1.4/','/docs-cn/dev/releases/2.1.4/','/zh/tidb/v5.4/release-2.1.4','/zh/tidb/v6.1/release-2.1.4','/zh/tidb/v6.5/release-2.1.4','/zh/tidb/v7.1/release-2.1.4','/zh/tidb/v7.5/release-2.1.4','/zh/tidb/v8.1/release-2.1.4']
 ---
 
 # TiDB 2.1.4 Release Notes
 
-On February 15, 2019, TiDB 2.1.4 is released. The corresponding TiDB Ansible 2.1.4 is also released. Compared with TiDB 2.1.3, this release has greatly improved the stability, the SQL optimizer, statistics, and the execution engine.
+2019 年 2 月 15 日，TiDB 发布 2.1.4 版，TiDB Ansible 相应发布 2.1.4 版本。相比 2.1.3 版本，该版本对系统稳定性、优化器、统计信息以及执行引擎做了很多改进。
 
 ## TiDB
 
-+ SQL Optimizer/Executor
-    - Fix the issue that the `VALUES` function does not handle the FLOAT type correctly [#9223](https://github.com/pingcap/tidb/pull/9223)
-    - Fix the wrong result issue when casting Float to String in some cases [#9227](https://github.com/pingcap/tidb/pull/9227)
-    - Fix the wrong result issue of the `FORMAT` function in some cases [#9235](https://github.com/pingcap/tidb/pull/9235)
-    - Fix the panic issue when handling the Join query in some cases [#9264](https://github.com/pingcap/tidb/pull/9264)
-    - Fix the issue that the `VALUES` function does not handle the ENUM type correctly [#9280](https://github.com/pingcap/tidb/pull/9280)
-    - Fix the wrong result issue of `DATE_ADD`/`DATE_SUB` in some cases [#9284](https://github.com/pingcap/tidb/pull/9284)
++ 优化器/执行器
+    - 修复 `VALUES` 函数未正确处理 FLOAT 类型的问题 [#9223](https://github.com/pingcap/tidb/pull/9223)
+    - 修复某些情况下 `CAST` 浮点数成字符串结果不正确的问题 [#9227](https://github.com/pingcap/tidb/pull/9227)
+    - 修复 `FORMAT` 函数在某些情况下结果不正确的问题 [#9235](https://github.com/pingcap/tidb/pull/9235)
+    - 修复某些情况下处理 Join 查询时 panic 的问题 [#9264](https://github.com/pingcap/tidb/pull/9264)
+    - 修复 `VALUES` 函数未正确处理 ENUM 类型的问题 [#9280](https://github.com/pingcap/tidb/pull/9280)
+    - 修复 `DATE_ADD`/`DATE_SUB` 在某些情况下结果不正确的问题 [#9284](https://github.com/pingcap/tidb/pull/9284)
 + Server
-    - Optimize the "reload privilege success" log and change it to the DEBUG level [#9274](https://github.com/pingcap/tidb/pull/9274)
+    - 优化 reload privilege success 日志，将其调整为 DEBUG 级别 [#9274](https://github.com/pingcap/tidb/pull/9274)
 + DDL
-    - Change `tidb_ddl_reorg_worker_cnt` and `tidb_ddl_reorg_batch_size` to global variables [#9134](https://github.com/pingcap/tidb/pull/9134)
-    - Fix the bug caused by adding an index to a generated column in some abnormal conditions [#9289](https://github.com/pingcap/tidb/pull/9289)
+    - `tidb_ddl_reorg_worker_cnt` 和 `tidb_ddl_reorg_batch_size` 变成 GLOBAL 变量 [#9134](https://github.com/pingcap/tidb/pull/9134)
+    - 修复某些异常情况下，在 Generated column 增加索引导致的 Bug [#9289](https://github.com/pingcap/tidb/pull/9289)
 
 ## TiKV
 
-- Fix the duplicate write issue when closing TiKV [#4146](https://github.com/tikv/tikv/pull/4146)
-- Fix the abnormal result issue of the event listener in some cases [#4132](https://github.com/tikv/tikv/pull/4132)
+- 修复在 TiKV 关闭时可能发生重复写的问题 [#4146](https://github.com/tikv/tikv/pull/4146)
+- 修复某些情况下 event listener 结果处理异常的问题 [#4132](https://github.com/tikv/tikv/pull/4132)
 
 ## Tools
 
 + Lightning
-    - Optimize the memory usage [#107](https://github.com/pingcap/tidb-lightning/pull/107), [#108](https://github.com/pingcap/tidb-lightning/pull/108)
-    - Remove the chunk separation of dump files to avoid an extra parsing of dump files [#109](https://github.com/pingcap/tidb-lightning/pull/109)
-    - Limit the I/O concurrency of reading dump files, to avoid performance degradation caused by too many cache misses [#110](https://github.com/pingcap/tidb-lightning/pull/110)
-    - Support importing data in batches for a single table, to improve import stability [#110](https://github.com/pingcap/tidb-lightning/pull/113)
-    - Enable auto compactions in the import mode in TiKV [#4199](https://github.com/tikv/tikv/pull/4199)
-    - Support disabling the TiKV periodic Level-1 compaction parameter, because the Level-1 compaction is automatically executed in the import mode when the TiKV cluster version is 2.1.4 or later [#119](https://github.com/pingcap/tidb-lightning/pull/119)
-    - Limit the number of import engines to avoid consuming too much importer disk space [#119](https://github.com/pingcap/tidb-lightning/pull/119)
-+ Support splitting chunks using the TiDB statistics in sync-diff-inspector [#197](https://github.com/pingcap/tidb-tools/pull/197)
+    - 优化内存使用 [#107](https://github.com/pingcap/tidb-lightning/pull/107)，[#108](https://github.com/pingcap/tidb-lightning/pull/108)
+    - 去掉 dump files 的 chunk 划分，减少对 dump files 的一次额外解析 [#109](https://github.com/pingcap/tidb-lightning/pull/109)
+    - 限制读取 dump files 的 I/O 并发，避免过多的 cache miss 导致性能下降 [#110](https://github.com/pingcap/tidb-lightning/pull/110)
+    - 对单个表实现 batch 导入，提高导入的稳定性 [#110](https://github.com/pingcap/tidb-lightning/pull/113)
+    - TiKV 在 import 模式下开启 auto compactions [#4199](https://github.com/tikv/tikv/pull/4199)
+    - 增加禁用 TiKV periodic Level-1 compaction 参数，因为当 TiKV 集群为 2.1.4 或更高版本时，在导入模式下会自动执行 Level-1 compaction [#119](https://github.com/pingcap/tidb-lightning/pull/119)
+    - 限制 import engines 数量，避免过大占用 importer 磁盘空间 [#119](https://github.com/pingcap/tidb-lightning/pull/119)
++ 数据同步对比统计 (sync-diff-inspector) 支持使用 TiDB 统计信息来划分 chunk [#197](https://github.com/pingcap/tidb-tools/pull/197)

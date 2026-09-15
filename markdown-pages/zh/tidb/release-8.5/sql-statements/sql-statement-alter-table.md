@@ -1,17 +1,17 @@
 ---
-title: ALTER TABLE | TiDB SQL Statement Reference
-summary: TiDB 数据库中 ALTER TABLE 的用法概述。
+title: ALTER TABLE
+summary: TiDB 数据库中 ALTER TABLE 的使用概况。
 ---
 
 # ALTER TABLE
 
-该语句用于修改已存在的表，使其符合新的表结构。`ALTER TABLE` 语句可以用于：
+`ALTER TABLE` 语句用于对已有表进行修改，以符合新表结构。`ALTER TABLE` 语句可用于：
 
-- [`ADD`](/sql-statements/sql-statement-add-index.md)、[`DROP`](/sql-statements/sql-statement-drop-index.md) 或 [`RENAME`](/sql-statements/sql-statement-rename-index.md) 索引
-- [`ADD`](/sql-statements/sql-statement-add-column.md)、[`DROP`](/sql-statements/sql-statement-drop-column.md)、[`MODIFY`](/sql-statements/sql-statement-modify-column.md) 或 [`CHANGE`](/sql-statements/sql-statement-change-column.md) 列
+- [`ADD`](/sql-statements/sql-statement-add-index.md)，[`DROP`](/sql-statements/sql-statement-drop-index.md)，或 [`RENAME`](/sql-statements/sql-statement-rename-index.md) 索引
+- [`ADD`](/sql-statements/sql-statement-add-column.md)，[`DROP`](/sql-statements/sql-statement-drop-column.md)，[`MODIFY`](/sql-statements/sql-statement-modify-column.md) 或 [`CHANGE`](/sql-statements/sql-statement-change-column.md) 列
 - [`COMPACT`](/sql-statements/sql-statement-alter-table-compact.md) 表数据
 
-## 语法
+## 语法图
 
 ```ebnf+diagram
 AlterTableStmt ::=
@@ -64,7 +64,8 @@ PlacementPolicyOption ::=
 
 ## 示例
 
-创建一个包含初始数据的表：
+创建一张表，并插入初始数据：
+
 
 ```sql
 CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
@@ -73,12 +74,12 @@ INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
 
 ```sql
 Query OK, 0 rows affected (0.11 sec)
-
 Query OK, 5 rows affected (0.03 sec)
 Records: 5  Duplicates: 0  Warnings: 0
 ```
 
-以下查询由于 c1 列未建立索引，因此需要进行全表扫描：
+执行以下查询需要扫描全表，因为 `c1` 列未被索引：
+
 
 ```sql
 EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
@@ -95,7 +96,8 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 3 rows in set (0.00 sec)
 ```
 
-可以使用 [`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-add-index.md) 语句为表 t1 添加索引。`EXPLAIN` 结果显示，原有查询现在使用了索引区间扫描，效率更高：
+你可以使用 [`ALTER TABLE .. ADD INDEX`](/sql-statements/sql-statement-add-index.md) 语句在 `t1` 表上添加索引。添加后，`EXPLAIN` 的分析结果显示 `SELECT * FROM t1 WHERE c1 = 3;` 查询已使用效率更高的索引范围扫描：
+
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1);
@@ -104,7 +106,6 @@ EXPLAIN SELECT * FROM t1 WHERE c1 = 3;
 
 ```sql
 Query OK, 0 rows affected (0.30 sec)
-
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
 | id                     | estRows | task      | access object          | operator info                               |
 +------------------------+---------+-----------+------------------------+---------------------------------------------+
@@ -114,7 +115,8 @@ Query OK, 0 rows affected (0.30 sec)
 2 rows in set (0.00 sec)
 ```
 
-TiDB 支持断言 DDL 变更使用特定的 `ALTER` 算法。注意，这只是一个断言，并不会改变实际用于修改表的算法：
+TiDB 允许用户为 DDL 操作指定使用某一种 `ALTER` 算法。注意这仅为一种指定，并不改变实际的用于更改表的算法：
+
 
 ```sql
 ALTER TABLE t1 DROP INDEX c1, ALGORITHM=INSTANT;
@@ -124,7 +126,8 @@ ALTER TABLE t1 DROP INDEX c1, ALGORITHM=INSTANT;
 Query OK, 0 rows affected (0.24 sec)
 ```
 
-在需要 `INPLACE` 算法的操作上使用 `ALGORITHM=INSTANT` 断言会导致语句报错：
+如果某一 DDL 操作要求使用 `INPLACE` 算法，而用户指定 `ALGORITHM=INSTANT`，会导致报错：
+
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=INSTANT;
@@ -134,7 +137,8 @@ ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=INSTANT;
 ERROR 1846 (0A000): ALGORITHM=INSTANT is not supported. Reason: Cannot alter table by INSTANT. Try ALGORITHM=INPLACE.
 ```
 
-然而，对于 `INPLACE` 操作使用 `ALGORITHM=COPY` 断言时，会产生警告而不是报错。这是因为 TiDB 将该断言解释为 _此算法或更优_。这种行为差异有助于与 MySQL 兼容，因为 TiDB 实际使用的算法可能与 MySQL 不同：
+但如果为 `INPLACE` 操作指定 `ALGORITHM=COPY`，会产生警告而非错误，这是因为 TiDB 将该指定解读为*该算法或更好的算法*。由于 TiDB 使用的算法可能不同于 MySQL，所以这一行为可用于 MySQL 兼容性。
+
 
 ```sql
 ALTER TABLE t1 ADD INDEX (c1), ALGORITHM=COPY;
@@ -143,7 +147,6 @@ SHOW WARNINGS;
 
 ```sql
 Query OK, 0 rows affected, 1 warning (0.25 sec)
-
 +-------+------+---------------------------------------------------------------------------------------------+
 | Level | Code | Message                                                                                     |
 +-------+------+---------------------------------------------------------------------------------------------+
@@ -154,33 +157,26 @@ Query OK, 0 rows affected, 1 warning (0.25 sec)
 
 ## MySQL 兼容性
 
-在 TiDB 中，`ALTER TABLE` 受以下主要限制：
+TiDB 中的 `ALTER TABLE` 语法主要存在以下限制：
 
-- 在单条 `ALTER TABLE` 语句中修改多个 schema 对象时：
-
-    - 不支持对同一对象进行多次变更。
-    - TiDB 会根据 **执行前** 的表结构校验语句。例如，执行 `ALTER TABLE t ADD COLUMN c1 INT, ADD COLUMN c2 INT AFTER c1;` 时会报错，因为列 `c1` 在表中尚不存在。
-    - 对于一条 `ALTER TABLE` 语句，TiDB 的执行顺序是从左到右依次变更，这在某些情况下与 MySQL 不兼容。
-
-- 不支持对主键列进行 [Reorg-Data](/sql-statements/sql-statement-modify-column.md#reorg-data-change) 类型的变更。
-
-- 不支持对分区表的列类型进行变更。
-
-- 不支持对生成列的列类型进行变更。
-
-- 由于 TiDB 与 MySQL 在 `CAST` 函数行为上的兼容性问题，不支持某些数据类型（如部分 TIME、Bit、Set、Enum 和 JSON 类型）的变更。
-
-- `AFFINITY` 选项是 TiDB 扩展语法。为表启用 `AFFINITY` 后，不能再修改该表的分区方案（如添加、删除、重组或交换分区）。如需修改分区方案，必须先移除 `AFFINITY`。
-
+- 使用 `ALTER TABLE` 语句修改一个表的多个模式对象（如列、索引）时：
+    - 不允许在多个更改中指定同一个模式对象。
+    - TiDB 根据**执行前**的表结构检查合法性。例如 `ALTER TABLE t ADD COLUMN c1 INT, ADD COLUMN c2 INT AFTER c1;` 会报错，因为表结构中不存在名字为 `c1` 的列。
+    - TiDB 的执行顺序是从左往右逐个执行更改，该行为在个别场景下和 MySQL 不兼容。
+- 不支持主键列上 [Reorg-Data](/sql-statements/sql-statement-modify-column.md#reorg-data-change) 类型的变更。
+- 不支持分区表上的列类型变更。
+- 不支持生成列上的列类型变更。
+- 不支持部分数据类型（例如，部分时间类型、Bit、Set、Enum、JSON 等）的变更，因为 TiDB 中的 `CAST` 函数与 MySQL 的行为存在兼容性问题。
+- `AFFINITY` 选项为 TiDB 扩展语法。开启 `AFFINITY` 后，不支持变更该表的分区方案（如添加、删除、重组或交换分区），需要先移除 `AFFINITY`。
 - 不支持空间数据类型。
+- `ALTER TABLE t CACHE | NOCACHE` 不是 MySQL 标准语法，而是 TiDB 扩展功能，参见[缓存表](/cached-tables.md)。
 
-- `ALTER TABLE t CACHE | NOCACHE` 是 TiDB 对 MySQL 语法的扩展。详情参见 [缓存表](/cached-tables.md)。
-
-更多限制，参见 [MySQL 兼容性](/mysql-compatibility.md#ddl-operations)。
+其它限制可参考：[TiDB 中 DDL 语句与 MySQL 的兼容性情况](/mysql-compatibility.md#ddl-的限制)。
 
 ## 另请参阅
 
-- [MySQL 兼容性](/mysql-compatibility.md#ddl-operations)
+- [与 MySQL 兼容性对比](/mysql-compatibility.md#ddl-的限制)
+- [ALTER TABLE ... COMPACT](/sql-statements/sql-statement-alter-table-compact.md)
 - [ADD COLUMN](/sql-statements/sql-statement-add-column.md)
 - [DROP COLUMN](/sql-statements/sql-statement-drop-column.md)
 - [ADD INDEX](/sql-statements/sql-statement-add-index.md)

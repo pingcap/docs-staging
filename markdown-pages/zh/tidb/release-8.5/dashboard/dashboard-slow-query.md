@@ -1,134 +1,135 @@
 ---
-title: Slow Queries Page of TiDB Dashboard
-summary: TiDB Dashboard's Slow Queries page allows users to search and view slow queries in the cluster. Queries with an execution time over 300 milliseconds are considered slow. Users can adjust the threshold and access the page through the dashboard or a browser. They can also change filters, display more columns, export queries, and view execution details.
+title: TiDB Dashboard 慢查询页面
+summary: 了解如何在 TiDB Dashboard 中查看慢查询。
 ---
 
-# Slow Queries Page of TiDB Dashboard
+# TiDB Dashboard 慢查询页面
 
-On the Slow Queries page of TiDB Dashboard, you can search and view all slow queries in the cluster.
+该页面上能检索和查看集群中所有慢查询。
 
-By default, SQL queries with an execution time of more than 300 milliseconds are considered as slow queries. These queries are recorded in the [slow query logs](/identify-slow-queries.md) and can be searched via TiDB Dashboard. You can adjust the threshold of slow queries through the [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold) session variable or the [`instance.tidb_slow_log_threshold`](/tidb-configuration-file.md#tidb_slow_log_threshold) TiDB parameter.
+默认情况下，执行时间超过 300ms 的 SQL 查询就会被视为慢查询，被记录到[慢查询日志](/identify-slow-queries.md)中，并可通过本功能对记录到的慢查询进行查询。可调整 [`tidb_slow_log_threshold`](/system-variables.md#tidb_slow_log_threshold) SESSION 变量或 TiDB [`instance.tidb_slow_log_threshold`](/tidb-configuration-file.md#tidb_slow_log_threshold) 参数调整慢查询阈值。
 
-> **Note:**
+> **注意：**
 >
-> If the slow query log is disabled, this feature will be unavailable. The slow query log is enabled by default, and you can enable or disable it through the system variable [`tidb_enable_slow_log`](/system-variables.md#tidb_enable_slow_log).
+> 若关闭了慢查询日志，则本功能不可用。慢查询日志默认开启，可通过修改 TiDB 系统变量 [`tidb_enable_slow_log`](/system-variables.md#tidb_enable_slow_log) 开启或禁用。
 
-## Access the page
+## 访问列表页面
 
-You can use one of the following two methods to access the slow query page:
+可以通过以下两种方法访问慢查询页面：
 
-* After logging in to TiDB Dashboard, click **Slow Queries** in the left navigation menu.
+* 登录 TiDB Dashboard 后，在左侧导航栏中点击**慢查询** (Slow Queries)。
 
-* Visit <http://127.0.0.1:2379/dashboard/#/slow_query> in your browser. Replace `127.0.0.1:2379` with the actual PD address and port.
+* 在浏览器中访问 <http://127.0.0.1:2379/dashboard/#/slow_query>（将 `127.0.0.1:2379` 替换为你的实际 PD 地址和端口）。
 
-All data displayed on the slow query page comes from TiDB slow query system tables and slow query logs. See [slow query logs](/identify-slow-queries.md) for details.
+慢查询页面所展示的所有数据都来自于 TiDB 慢查询系统表及慢查询日志，参见[慢查询日志](/identify-slow-queries.md)文档了解详细情况。
 
-### Change filters
+### 修改列表过滤条件
 
-You can filter slow queries based on the time range, the related database, SQL keywords, SQL types, the number of slow queries to be displayed. In the image below, 100 slow queries over the recent 30 minutes are displayed by default.
+可按时间范围、慢查询语句关联的数据库、SQL 关键字、SQL 类型、显示的慢查询语句数量等条件过滤，筛选慢查询句。如下所示，默认显示 30 分钟内最近 100 条慢查询。
 
-![Modify list filters](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list1-v620.png)
+![修改列表过滤条件](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list1-v620.png)
 
-### Display more columns
+### 显示更多列信息
 
-Click **Columns** on the page and you can choose to see more columns. You can move your mouse to the **(i)** icon at the right side of a column name to view the description of this column:
+页面顶部**选择列** (**Columns**) 选项中可选择显示更多列，可将鼠标移动到列名右侧的 **(i)** 图标处查看列的说明：
 
-![Show more columns](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list2-v620.png)
+![显示更多列信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list2-v620.png)
 
-### Export slow queries locally
+### 导出慢查询到本地
 
-Click ☰ (**More**) in the upper-right corner of the page to display the **Export** option. After you click **Export**, TiDB Dashboard exports slow queries in the current list as a CSV file.
+点击页面右上角 ☰ (**更多**) 可以显示**导出** (**Export**) 选项。点击**导出** (**Export**) 后，TiDB Dashboard 会将当前列表中的慢查询以 CSV 文件的格式进行导出。
 
-![Export slow queries locally](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-export-v651.png)
+![导出慢查询到本地](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-export-v651.png)
 
-### Sort by column
+### 修改列表排序依据
 
-By default, the list is sorted by **Finish Time** in the descending order. Click column headings to sort by the column or switch the sorting order:
+列表默认以**结束运行时间** (**Finish Time**) 逆序排序，点击不同的列标题可以修改排序依据或切换排序顺序：
 
-![Modify sorting basis](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-list3-v620.png)
+![修改列表排序依据](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-list3-v620.png)
 
-## View execution details
+## 查看执行详情
 
-Click any item in the list to display detailed execution information of the slow query, including:
+在列表中点击任意一行可以显示该慢查询的详细执行信息，包含：
 
-- Query: The text of the SQL statement (area 1 in the following figure)
-- Plan: The execution plan of the slow query (area 2 in the following figure)
-- Other sorted SQL execution information (area 3 in the following figure)
+- SQL：慢查询 SQL 文本（下图中区域 1）
+- 执行计划：慢查询的执行计划（下图中区域 2）
+- 其他分类好的 SQL 执行信息（下图中区域 3）
 
-![View execution details](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail1-v620.png)
+![查看执行详情](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail1-v620.png)
 
 ### SQL
 
-> **Note:**
+>**注意：**
 >
-> The maximum length of the query recorded in the `Query` column is limited by the [`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-new-in-v40) system variable.
+> - 记录在 `Query` 中的查询的长度会受到 [`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-从-v40-版本开始引入) 系统变量的限制。
+> - 对于预处理语句，参数会在查询末尾列出，例如：`[arguments: "foo", 123]`。不可打印的参数会以十六进制字面量显示，例如 `0x01`。
 
-Click the **Expand** button to view the detailed information of an item. Click the **Copy** button to copy the detailed information to the clipboard.
+点击**展开** (**Expand**) 可以展开相应项的完整内容，点击**复制** (**Copy**) 可以复制内容到剪贴板。
 
-### Execution plans
+### 执行计划
 
-On TiDB Dashboard, you can view execution plans in three ways: table, text, and graph. To learn how to read an execution plan, see [Understand the query execution plan](/explain-overview.md).
+TiDB Dashboard 提供三种方式查看执行计划：表格、文本和图形。关于如何解读执行计划，请参考[理解 TiDB 执行计划](/explain-overview.md)。
 
-#### Execution plan in table format
+#### 表格形态的执行计划
 
-The table format provides detailed information about the execution plan, which helps you quickly identify abnormal operator metrics and compare the status of different operators. The following figure shows an execution plan in table format:
+表格形态的执行计划提供详细的执行计划信息，便于你快速识别算子指标的异常情况，以及对比不同算子的状态。下图是一个表格形态的执行计划示例：
 
-![Execution plan in table format](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-table-plan.png)
+![表格形态的执行计划](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan.png)
 
-The table format displays similar information to the text format but provides more user-friendly interactions:
+表格形态展示的内容与文本形态类似，但具有更易用的交互：
 
-- You can adjust the column width freely.
-- When content exceeds the column width, it is automatically truncated and a tooltip is shown for the full information.
-- If the execution plan is large, you can download it as a text file for local analysis.
-- You can hide and manage columns using the column picker.
+- 支持自由调整列宽
+- 当内容超出列宽时，支持自动截断并提供悬浮窗展示完整信息
+- 如果执行计划内容较多，可以下载 txt 格式到本地分析
+- 允许隐藏任意列，并且能够在列选择中进行管理
 
-![Execution plan in table format - column picker](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-table-plan-columnpicker.png)
+![表格形态的执行计划-选择列](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-table-plan-columnpicker.png)
 
-#### Execution plan in graph format
+#### 图形形态的执行计划
 
-The graph format is more suitable for viewing the execution plan tree of a complex SQL statement and understanding each operator and its corresponding content in detail. The following figure shows an execution plan in graph format:
+图形形态的执行计划更适合宏观地查看一个复杂 SQL 的执行计划树，并且详细了解每个算子及对应的内容。下图是一个图形形态的执行计划示例：
 
-![Execution plan in graph format](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-2.png)
+![可视化执行计划弹窗](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-2.png)
 
-- The graph shows the execution from left to right, and from top to bottom.
-- Upper nodes are parent operators and lower nodes are child operators.
-- The color of the title bar indicates the component where the operator is executed: yellow stands for TiDB, blue stands for TiKV, and pink stands for TiFlash.
-- The title bar shows the operator name and the text shown below is the basic information of the operator.
+- 执行计划的展示顺序是从左到右，从上到下。
+- 上面的节点是父算子，下面的节点是子算子。
+- 节点顶栏的颜色代表算子执行的组件：黄色代表 TiDB，蓝色代表 TiKV，粉色代表 TiFlash。
+- 节点的顶栏为算子的名称，正文为算子的基本信息。
 
-Click the node area, and the detailed operator information is displayed on the right sidebar.
+点击节点区域，右侧将弹出算子的详细信息。
 
-![Execution plan in graph format - sidebar](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-visual-plan-popup.png)
+![可视化执行计划弹窗-侧栏](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-visual-plan-popup.png)
 
-### SQL execution details
+### SQL 执行相关信息
 
-For basic information, execution time, Coprocessor read, transaction, and slow query of the SQL statement, you can click the corresponding tab titles to switch among different information.
+其他关于该 SQL 的基本信息、执行时间、Coprocessor 读取、事务、报错等信息，可点击相应标签页标题切换。
 
-![Show different execution information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail2-v620.png)
+![显示不同分类执行信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail2-v620.png)
 
-#### Basic tab
+#### 基本信息
 
-The basic information of a SQL execution includes the table names, index name, execution count, and total latency. The **Description** column provides detailed description of each field.
+包含关于表名、索引名、执行次数、累计耗时等信息。**描述** (Description) 列对各个字段进行了具体描述。
 
-![Basic information](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail-plans-basic.png)
+![基本信息](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-basic.png)
 
-#### Time tab
+#### 执行时间
 
-Click the **Time** tab, and you can see how long each stage of the execution plan lasts.
+显示执行计划执行的各阶段所耗费时间。
 
-> **Note:**
+> **注意：**
 >
-> Because some operations might be performed in parallel within a single SQL statement, the cumulative duration of each stage might exceed the actual execution time of the SQL statement.
+> 由于单个 SQL 语句内部可能有并行执行的操作，因此各阶段累加时间可能超出该 SQL 语句的实际执行时间。
 
-![Execution time](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail-plans-time.png)
+![执行时间](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-time.png)
 
-#### Coprocessor tab
+#### Coprocessor 读取
 
-Click the **Coprocessor** tab, and you can see information related to Coprocessor read.
+显示 Coprocessor 读取的相关信息。
 
-![Coprocessor read](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail-plans-cop-read.png)
+![Coprocessor 读取](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-cop-read.png)
 
-#### Transaction tab
+#### 事务
 
-Click the **Transaction** tab, and you can see information related to execution plans and transactions, such as the average number of written keys or the maximum number of written keys.
+显示执行计划与事务相关的信息，比如平均写入 key 个数，最大写入 key 个数等。
 
-![Transaction](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-slow-queries-detail-plans-transaction.png)
+![事务](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-slow-queries-detail-plans-transaction.png)

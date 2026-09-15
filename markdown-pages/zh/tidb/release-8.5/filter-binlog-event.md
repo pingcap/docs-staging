@@ -1,20 +1,20 @@
 ---
-title: Filter Binlog Events
-summary: Learn how to filter binlog events when migrating data.
+title: 如何过滤 binlog 事件
+summary: 介绍如何过滤 binlog 事件。
 ---
 
-# Filter Binlog Events
+# 如何过滤 binlog 事件
 
-This document describes how to filter binlog events when you use DM to perform continuous incremental data replication. For the detailed replication instructions, refer to the following documents by scenarios:
+本文档介绍使用 DM 持续增量数据同步时，如何过滤 binlog 事件。具体迁移操作可参考已有数据迁移场景：
 
-- [Migrate Small Datasets from MySQL to TiDB](/migrate-small-mysql-to-tidb.md)
-- [Migrate Large Datasets from MySQL to TiDB](/migrate-large-mysql-to-tidb.md)
-- [Migrate and Merge MySQL Shards of Small Datasets to TiDB](/migrate-small-mysql-shards-to-tidb.md)
-- [Migrate and Merge MySQL Shards of Large Datasets to TiDB](/migrate-large-mysql-shards-to-tidb.md)
+- [从小数据量 MySQL 迁移数据到 TiDB](/migrate-small-mysql-to-tidb.md)
+- [从大数据量 MySQL 迁移数据到 TiDB](/migrate-large-mysql-to-tidb.md)
+- [从小数据量分库分表 MySQL 合并迁移数据到 TiDB](/migrate-small-mysql-shards-to-tidb.md)
+- [从大数据量分库分表 MySQL 合并迁移数据到 TiDB](/migrate-large-mysql-shards-to-tidb.md)
 
-## Configuration
+## 配置方式
 
-To use binlog event filter, add a `filter` to the task configuration file of DM, as shown below:
+配置 DM 的任务配置文件时，增加如下`filter`，具体配置示例如下图：
 
 ```yaml
 filters:
@@ -26,52 +26,46 @@ filters:
     action: Ignore
 ```
 
-- `schema-pattern`/`table-pattern`: Filters matching schemas or tables
-- `events`: Filters binlog events. Supported events are listed in the table below:
+- `schema-pattern`/`table-pattern`：对匹配上的 schema 或 table 进行过滤
+- `events`：binlog events，支持的 Event 如下表所示:
 
-  | Event           | Category | Description                       |
-  | --------------- | ---- | --------------------------|
-  | all             |      | Includes all events            |
-  | all dml         |      | Includes all DML events        |
-  | all ddl         |      | Includes all DDL events        |
-  | none            |      | Includes no event          |
-  | none ddl        |      | Excludes all DDL events      |
-  | none dml        |      | Excludes all DML events      |
-  | insert          | DML  | Insert DML event      |
-  | update          | DML  | Update DML event      |
-  | delete          | DML  | Delete DML event      |
-  | create database | DDL  | Create database event |
-  | drop database   | DDL  | Drop database event   |
-  | create table    | DDL  | Create table event    |
-  | create index    | DDL  | Create index event    |
-  | drop table      | DDL  | Drop table event      |
-  | truncate table  | DDL  | Truncate table event  |
-  | rename table    | DDL  | Rename table event    |
-  | drop index      | DDL  | Drop index event      |
-  | alter table     | DDL  | Alter table event     |
+| Event           | 分类 | 说明                       |
+| --------------- | ---- | --------------------------|
+| all             |      | 匹配所有 events            |
+| all dml         |      | 匹配所有 DML events        |
+| all ddl         |      | 匹配所有 DDL events        |
+| none            |      | 不匹配任何 events          |
+| none ddl        |      | 不包含任何 DDL events      |
+| none dml        |      | 不包含任何 DML events      |
+| insert          | DML  | 匹配 insert DML event      |
+| update          | DML  | 匹配 update DML event      |
+| delete          | DML  | 匹配 delete DML event      |
+| create database | DDL  | 匹配 create database event |
+| drop database   | DDL  | 匹配 drop database event   |
+| create table    | DDL  | 匹配 create table event    |
+| create index    | DDL  | 匹配 create index event    |
+| drop table      | DDL  | 匹配 drop table event      |
+| truncate table  | DDL  | 匹配 truncate table event  |
+| rename table    | DDL  | 匹配 rename table event    |
+| drop index      | DDL  | 匹配 drop index event      |
+| alter table     | DDL  | 匹配 alter table event     |
 
-- `sql-pattern`: Filters specified DDL SQL statements. The matching rule supports using a regular expression.
-- `action`: `Do` or `Ignore`
+- `sql-pattern`：匹配指定的 DDL SQL 语句，支持正则表达式匹配。
+- `action`：可取值 Do 或 Ignore。
+    - `Do`：白名单。binlog event 如果满足下面两个条件之一将会被同步：
+        - 符合 events 条件；
+        - sql-pattern 不为空，且对应的 SQL 可以匹配上 sql-pattern 中任意一项。
+    - `Ignore`：黑名单。如果满足下面两个条件之一就会被过滤掉：
+        - 符合 events 条件；
+        - sql-pattern 不为空，且对应的 SQL 可以匹配上 sql-pattern 中任意一项
 
-    - `Do`: the allow list. A binlog event is replicated if meeting either of the following two conditions:
+注意：如果同时配置 `Do/Ignore`，则 `Ignore` 优先级更高。`binlog event` 不匹配白名单或者匹配黑名单都将被直接过滤。
 
-        - The event matches the rule setting.
-        - sql-pattern has been specified and the SQL statement of the event matches any of the sql-pattern options.
+## 使用场景举例
 
-    - `Ignore`: the block list. A binlog event is filtered out if meeting either of the following two conditions:
+### 过滤分库分表的所有删除操作
 
-        - The event matches the rule setting.
-        - sql-pattern has been specified and the SQL statement of the event matches any of the sql-pattern options.
-
-    If both `Do` and `Ignore` are configured, `Ignore` has higher priority over `Do`. That is, an event satisfying both `Ignore` and `Do` conditions will be filtered out.
-
-## Application scenarios
-
-This section describes the application scenarios of binlog event filter.
-
-### Filter out all sharding deletion operations
-
-To filter out all deletion operations, configure a `filter-table-rule` and a `filter-schema-rule`, as shown below:
+设置 `filter-table-rule` 和 `filter-schema-rule` 两个过滤规则，具体如下：
 
 ```
 filters:
@@ -86,9 +80,9 @@ filters:
     action: Ignore
 ```
 
-### Migrate only DML operations of sharded schemas and tables
+### 只迁移分库分表的 DML 操作
 
-To replicate only DML statements, configure two `Binlog event filter rule`, as shown below:
+设置两个 `Binlog event filter rule`：
 
 ```
 filters:
@@ -103,9 +97,7 @@ filters:
     action: Do
 ```
 
-### Filter out SQL statements not supported by TiDB
-
-To filter out SQL statements not supported by TiDB, configure a `filter-procedure-rule`, as shown below:
+### 过滤 TiDB 不支持的 SQL 语句
 
 ```
 filters:
@@ -115,10 +107,10 @@ filters:
     action: Ignore
 ```
 
-> **Warning:**
+> **注意：**
 >
-> To avoid filtering out data that needs to be migrated, configure the global filtering rule as strictly as possible.
+> 全局过滤规则的设置必须尽可能严格，以避免过滤掉需要迁移的数据。
 
-## See also
+## 探索更多
 
-[Filter Binlog Events Using SQL Expressions](/filter-dml-event.md)
+- [如何通过 SQL 表达式过滤 binlog](/filter-dml-event.md)

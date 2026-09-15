@@ -1,46 +1,36 @@
 ---
 title: TiDB 事务隔离级别
-summary: 了解 TiDB 中的事务隔离级别。
+summary: 了解 TiDB 事务的隔离级别。
 ---
 
 # TiDB 事务隔离级别
 
-<CustomContent platform="tidb">
+事务隔离级别是数据库事务处理的基础，[ACID](/glossary.md#acid) 中的 “I”，即 Isolation，指的就是事务的隔离性。
 
-事务隔离是数据库事务处理的基础之一。隔离性是事务的四个关键属性之一（通常称为 [ACID](/glossary.md#acid)）。
+SQL-92 标准定义了 4 种隔离级别：读未提交 (READ UNCOMMITTED)、读已提交 (READ COMMITTED)、可重复读 (REPEATABLE READ)、串行化 (SERIALIZABLE)。详见下表：
 
-</CustomContent>
+| Isolation Level  | Dirty Write  | Dirty Read   | Fuzzy Read   | Phantom      |
+| ---------------- | ------------ | ------------ | ------------ | ------------ |
+| READ UNCOMMITTED | Not Possible | Possible     | Possible     | Possible     |
+| READ COMMITTED   | Not Possible | Not possible | Possible     | Possible     |
+| REPEATABLE READ  | Not Possible | Not possible | Not possible | Possible     |
+| SERIALIZABLE     | Not Possible | Not possible | Not possible | Not possible |
 
-<CustomContent platform="tidb-cloud">
-
-事务隔离是数据库事务处理的基础之一。隔离性是事务的四个关键属性之一（通常称为 [ACID](/tidb-cloud/tidb-cloud-glossary.md#acid)）。
-
-</CustomContent>
-
-SQL-92 标准定义了四个事务隔离级别：Read Uncommitted、Read Committed、Repeatable Read 和 Serializable。详见下表：
-
-| 隔离级别 | 脏写 | 脏读 | 模糊读 | 幻读 |
-| :----------- | :------------ | :------------- | :----------| :-------- |
-| READ UNCOMMITTED | 不可能 | 可能 | 可能 | 可能 |
-| READ COMMITTED   | 不可能 | 不可能 | 可能 | 可能 |
-| REPEATABLE READ  | 不可能 | 不可能 | 不可能 | 可能 |
-| SERIALIZABLE     | 不可能 | 不可能 | 不可能 | 不可能 |
-
-TiDB 实现了 Snapshot Isolation (SI) 一致性，出于兼容 MySQL 的考虑，将其标记为 `REPEATABLE-READ`。这与 [ANSI Repeatable Read 隔离级别](#difference-between-tidb-and-ansi-repeatable-read) 和 [MySQL Repeatable Read 级别](#difference-between-tidb-and-mysql-repeatable-read) 存在差异。
+TiDB 实现了快照隔离 (Snapshot Isolation, SI) 级别的一致性。为与 MySQL 保持一致，又称其为“可重复读” (REPEATABLE READ)。该隔离级别不同于 [ANSI 可重复读隔离级别](#与-ansi-可重复读隔离级别的区别)和 [MySQL 可重复读隔离级别](#与-mysql-可重复读隔离级别的区别)。
 
 > **注意：**
 >
-> 从 TiDB v3.0 版本开始，事务的自动重试默认已禁用。不建议开启自动重试，因为可能会 **破坏事务的隔离级别**。详情请参阅 [Transaction Retry](/optimistic-transaction.md#automatic-retry)。
+> 在 TiDB v3.0 中，事务的自动重试功能默认为禁用状态。不建议开启自动重试功能，因为可能导致**事务隔离级别遭到破坏**。更多关于事务自动重试的文档说明，请参考[事务重试](/optimistic-transaction.md#重试机制)。
 >
-> 从 TiDB v3.0.8 版本开始，新创建的 TiDB 集群默认使用 [悲观事务模式](/pessimistic-transaction.md)。当前的读（`for update` 读）是 **非可重复读**。详情请参阅 [悲观事务模式](/pessimistic-transaction.md)。
+> 从 TiDB [v3.0.8](/releases/release-3.0.8.md#tidb) 版本开始，新创建的 TiDB 集群会默认使用[悲观事务模式](/pessimistic-transaction.md)，悲观事务中的当前读（for update 读）为**不可重复读**，关于悲观事务使用注意事项，请参考[悲观事务模式](/pessimistic-transaction.md)
 
-## Repeatable Read 隔离级别
+## 可重复读隔离级别 (Repeatable Read)
 
-Repeatable Read 隔离级别只会看到事务开始之前已提交的数据，且永远不会看到未提交的数据或在事务执行期间由并发事务提交的变更。然而，事务中的某个语句可以看到同一事务中先前语句所做的更改，即使这些更改尚未提交。
+当事务隔离级别为可重复读时，只能读到该事务启动时已经提交的其他事务修改的数据，未提交的数据或在事务启动后其他事务提交的数据是不可见的。对于本事务而言，事务语句可以看到之前的语句做出的修改。
 
-对于在不同节点上运行的事务，开始和提交的顺序取决于从 PD 获取时间戳的顺序。
+对于运行于不同节点的事务而言，不同事务启动和提交的顺序取决于从 PD 获取时间戳的顺序。
 
-Repeatable Read 隔离级别的事务不能同时更新同一行。当提交时，如果发现该行在事务开始后被其他事务更新，则该事务会回滚。例如：
+处于可重复读隔离级别的事务不能并发的更新同一行，当事务提交时发现该行在该事务启动后，已经被另一个已提交的事务更新过，那么该事务会回滚。示例如下：
 
 ```sql
 create table t1(id int);
@@ -48,52 +38,48 @@ insert into t1 values(0);
 
 start transaction;              |               start transaction;
 select * from t1;               |               select * from t1;
-update t1 set id=id+1;          |               update t1 set id=id+1; -- 在悲观事务中，后续执行的 `update` 语句会等待锁，直到持有锁的事务提交或回滚并释放行锁。
+update t1 set id=id+1;          |               update t1 set id=id+1; -- 如果使用悲观事务，则后一个执行的 update 语句会等锁，直到持有锁的事务提交或者回滚释放行锁。
 commit;                         |
-                                |               commit; -- 事务提交失败并回滚。悲观事务可以成功提交。
+                                |               commit; -- 事务提交失败，回滚。如果使用悲观事务，可以提交成功。
 ```
 
-### Difference between TiDB and ANSI Repeatable Read
+### 与 ANSI 可重复读隔离级别的区别
 
-TiDB 的 Repeatable Read 隔离级别与 ANSI Repeatable Read 隔离级别不同，尽管它们名称相同。根据 [A Critique of ANSI SQL Isolation Levels](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf) 论文中的标准，TiDB 实现的是 Snapshot Isolation 级别。该隔离级别不允许严格的幻读（A3），但允许宽泛的幻读（P3）和写偏差。相比之下，ANSI Repeatable Read 允许幻读，但不允许写偏差。
+尽管名称是可重复读隔离级别，但是 TiDB 中可重复读隔离级别和 ANSI 可重复隔离级别是不同的。按照 [A Critique of ANSI SQL Isolation Levels](https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf) 论文中的标准，TiDB 实现的是论文中的快照隔离级别。该隔离级别不会出现狭义上的幻读 (A3)，但不会阻止广义上的幻读 (P3)，同时，SI 还会出现写偏斜，而 ANSI 可重复读隔离级别不会出现写偏斜，会出现幻读。
 
-### Difference between TiDB and MySQL Repeatable Read
+### 与 MySQL 可重复读隔离级别的区别
 
-TiDB 的 Repeatable Read 隔离级别与 MySQL 的不同。MySQL 的 Repeatable Read 在更新时不会检查当前版本是否可见，这意味着即使在事务开始后该行被更新，仍然可以继续更新。而 TiDB 的乐观事务在遇到事务开始后被更新的行时会回滚并重试。TiDB 的乐观并发控制中的事务重试可能会失败，导致事务最终失败；而在 TiDB 的悲观并发控制和 MySQL 中，更新事务可以成功。
+MySQL 可重复读隔离级别在更新时并不检验当前版本是否可见，也就是说，即使该行在事务启动后被更新过，同样可以继续更新。这种情况在 TiDB 使用乐观事务时会导致事务回滚，导致事务最终失败，而 TiDB 默认的悲观事务和 MySQL 是可以更新成功的。
 
-## Read Committed 隔离级别
+## 读已提交隔离级别 (Read Committed)
 
-从 TiDB v4.0.0-beta 版本开始，TiDB 支持 Read Committed 隔离级别。
-
-出于历史原因，目前主流数据库的 Read Committed 隔离级别本质上是 [Oracle 定义的一致性读](https://docs.oracle.com/cd/B19306_01/server.102/b14220/consist.htm)。为了适应这一情况，TiDB 中悲观事务的 Read Committed 隔离级别本质上也是一种一致性读行为。
+从 TiDB [v4.0.0-beta](/releases/release-4.0.0-beta.md#tidb) 版本开始，TiDB 支持使用 Read Committed 隔离级别。由于历史原因，当前主流数据库的 Read Committed 隔离级别本质上都是 Oracle 定义的[一致性读隔离级别](https://docs.oracle.com/cd/B19306_01/server.102/b14220/consist.htm)。TiDB 为了适应这一历史原因，悲观事务中的 Read Committed 隔离级别的实质行为也是一致性读。
 
 > **注意：**
 >
-> Read Committed 隔离级别仅在 [悲观事务模式](/pessimistic-transaction.md) 中生效。在 [乐观事务模式](/optimistic-transaction.md) 中，将事务隔离级别设置为 `Read Committed` 不会生效，事务仍然使用 Repeatable Read。
+> Read Committed 隔离级别仅在[悲观事务模式](/pessimistic-transaction.md)下生效。在[乐观事务模式](/optimistic-transaction.md)下设置事务隔离级别为 Read Committed 将不会生效，事务将仍旧使用可重复读隔离级别。
 
-从 v6.0.0 版本开始，TiDB 支持使用 [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600) 系统变量，在读写冲突较少的场景中优化时间戳获取。启用该变量后，TiDB 在执行 `SELECT` 时会尝试使用之前的有效时间戳读取数据。
+从 v6.0.0 版本开始，TiDB 支持使用系统变量 [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-从-v600-版本开始引入) 对读写冲突较少情况下优化时间戳的获取。开启此变量后，`SELECT` 语句会尝试使用前一个有效的时间戳进行数据读取，初始值为事务的 `start_ts`。
 
-- 如果在读取过程中没有遇到数据更新，结果会返回给客户端，`SELECT` 语句成功执行。
-- 如果在读取过程中遇到数据更新：
-    - 如果 TiDB 还未将结果返回给客户端，TiDB 会尝试获取新时间戳并重试该语句。
-    - 如果 TiDB 已经向客户端发送了部分数据，TiDB 会向客户端报告错误。每次发送的数据量由 [`tidb_init_chunk_size`](/system-variables.md#tidb_init_chunk_size) 和 [`tidb_max_chunk_size`](/system-variables.md#tidb_max_chunk_size) 控制。
+- 如果整个读取过程没有遇到更新的数据版本，则返回结果给客户端且 `SELECT` 语句执行成功。
+- 如果读取过程中遇到更新的数据版本：
+    - 如果当前 TiDB 尚未向客户端回复数据，则尝试重新获取一个新的时间戳重试此语句。
+    - 如果 TiDB 已经向客户端返回部分数据，则 TiDB 会向客户端报错。每次向客户端回复的数据量受 `tidb_init_chunk_size` 和 `tidb_max_chunk_size` 控制。
 
-在使用 `READ-COMMITTED` 隔离级别、`SELECT` 语句较多且读写冲突较少的场景中，启用此变量可以避免获取全局时间戳的延迟和开销。
+在使用 `READ-COMMITTED` 隔离级别且单个事务中 `SELECT` 语句较多、读写冲突较少的场景，可通过开启此变量来避免获取全局 timestamp 带来的延迟和开销。
 
-自 v6.3.0 版本起，TiDB 支持通过启用系统变量 [`tidb_rc_write_check_ts`](/system-variables.md#tidb_rc_write_check_ts-new-in-v630) 来优化点写冲突较少的时间戳获取。启用后，在执行点写语句时，TiDB 会尝试使用当前事务的有效时间戳读取和锁定数据。TiDB 在 [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-new-in-v600) 启用时，读取数据的方式相同。
+从 v6.3.0 版本开始，TiDB 支持通过开启系统变量 [`tidb_rc_write_check_ts`](/system-variables.md#tidb_rc_write_check_ts-从-v630-版本开始引入) 对点写冲突较少情况下优化时间戳的获取。开启此变量后，点写语句会尝试使用当前事务有效的时间戳进行数据读取和加锁操作，且在读取数据时按照开启 [`tidb_rc_read_check_ts`](/system-variables.md#tidb_rc_read_check_ts-从-v600-版本开始引入) 的方式读取数据。目前该变量适用的点写语句包括 `UPDATE`、`DELETE`、`SELECT ...... FOR UPDATE` 三种类型。点写语句是指将主键或者唯一键作为过滤条件且最终执行算子包含 `POINT-GET` 的写语句。目前这三种点写语句的共同点是会先根据 key 值做点查，如果 key 存在再加锁，如果不存在则直接返回空集。
 
-目前，适用的点写语句类型包括 `UPDATE`、`DELETE` 和 `SELECT ...... FOR UPDATE`。点写语句指使用主键或唯一键作为过滤条件，最终执行操作符包含 `POINT-GET` 的写语句。目前，这三类点写语句的共同点是：先根据键值进行点查询。如果键存在，则锁定该键；如果不存在，则返回空集。
+- 如果点写语句的整个读取过程中没有遇到更新的数据版本，则继续使用当前事务的时间戳进行加锁。
+    - 如果加锁过程中遇到因时间戳旧而导致写冲突，则重新获取最新的全局时间戳进行加锁。
+    - 如果加锁过程中没有遇到写冲突或其他错误，则加锁成功。
+- 如果读取过程中遇到更新的数据版本，则尝试重新获取一个新的时间戳重试此语句。
 
-- 如果点写语句的整个读取过程未遇到数据版本更新，TiDB 会继续使用当前事务的时间戳锁定数据。
-    - 如果在锁定过程中因旧时间戳发生写冲突，TiDB 会重试获取最新的全局时间戳。
-    - 如果在锁定过程中未发生写冲突或其他错误，锁定成功。
-- 如果在读取过程中遇到已更新的数据版本，TiDB 会尝试获取新时间戳并重试该语句。
+在使用 `READ-COMMITTED` 隔离级别且单个事务中点写语句较多、点写冲突较少的场景，可通过开启此变量来避免获取全局时间戳带来的延迟和开销。
 
-在 `READ-COMMITTED` 隔离级别下，事务中存在大量点写语句但点写冲突较少时，启用此变量可以避免获取全局时间戳的延迟和开销。
+### 与 MySQL Read Committed 隔离级别的区别
 
-## Difference between TiDB and MySQL Read Committed
-
-MySQL 的 Read Committed 隔离级别在大多数情况下与一致性读功能一致，也存在例外，例如 [semi-consistent read](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html)。这种特殊行为在 TiDB 中不支持。
+MySQL 的 Read Committed 隔离级别大部分符合一致性读特性，但其中存在某些特例，如半一致性读 ([semi-consistent read](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html))，TiDB 没有兼容这个特殊行为。
 
 ## 查看和修改事务隔离级别
 
@@ -111,8 +97,15 @@ SHOW VARIABLES LIKE 'transaction_isolation';
 SET SESSION transaction_isolation = 'READ-COMMITTED';
 ```
 
-关于配置和使用事务隔离级别的更多信息，请参阅以下文档：
+关于事务隔离级别的配置和使用说明，请参考：
 
-- [The system variable `transaction_isolation`](/system-variables.md#transaction_isolation)
-- [Isolation level](/pessimistic-transaction.md#isolation-level)
+- [系统变量 `transaction_isolation`](/system-variables.md#transaction_isolation)
+- [事务模式](/pessimistic-transaction.md#隔离级别)
 - [`SET TRANSACTION`](/sql-statements/sql-statement-set-transaction.md)
+  
+## 更多阅读
+
+- [TiDB 的乐观事务模型](https://pingkai.cn/tidbcommunity/blog/48d7f732)
+- [TiDB 新特性漫谈-悲观事务](https://pingkai.cn/tidbcommunity/blog/37596251)
+- [TiDB 新特性-白话悲观锁](https://pingkai.cn/tidbcommunity/blog/1f4a7e8f)
+- [TiKV 的 MVCC (Multi-Version Concurrency Control) 机制](https://pingkai.cn/tidbcommunity/blog/e51d71b2)

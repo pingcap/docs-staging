@@ -1,74 +1,66 @@
 ---
 title: 更新数据
-summary: 了解如何更新数据和批量更新数据。
+summary: 更新数据、批量更新数据的方法、最佳实践及例子。
+aliases: ['/zh/tidb/dev/update-data','/zh/tidb/stable/dev-guide-update-data/','/zh/tidb/dev/dev-guide-update-data/','/zh/tidbcloud/dev-guide-update-data/']
 ---
 
 # 更新数据
 
-本文档介绍如何使用以下 SQL 语句结合各种编程语言在 TiDB 中更新数据：
+此页面将展示以下 SQL 语句，配合各种编程语言 TiDB 中的数据进行更新：
 
-- [UPDATE](/sql-statements/sql-statement-update.md)：用于修改指定表中的数据。
-- [INSERT ON DUPLICATE KEY UPDATE](/sql-statements/sql-statement-insert.md)：用于插入数据，如果存在主键或唯一键冲突，则更新该数据。如果表中有多个唯一键（包括主键），**不推荐**使用此语句。因为该语句在检测到任何唯一键（包括主键）冲突时会更新数据。当存在多个冲突行时，只会更新其中一行。
+- [UPDATE](/sql-statements/sql-statement-update.md): 用于修改指定表中的数据。
+- [INSERT ON DUPLICATE KEY UPDATE](/sql-statements/sql-statement-insert.md): 用于插入数据，在有主键或唯一键冲突时，更新此数据。注意，**_不建议_**在有多个唯一键(包含主键)的情况下使用此语句。这是因为此语句在检测到任何唯一键(包括主键) 冲突时，将更新数据。在不止匹配到一行冲突时，将只会更新一行数据。
 
-## 开始之前
+## 在开始之前
 
-在阅读本文档之前，你需要准备以下内容：
+在阅读本页面之前，你需要准备以下事项：
 
-- [搭建 TiDB Cloud Starter 集群](/develop/dev-guide-build-cluster-in-cloud.md)。
-- 阅读 [Schema Design Overview](/develop/dev-guide-schema-design-overview.md)、[创建数据库](/develop/dev-guide-create-database.md)、[创建表](/develop/dev-guide-create-table.md) 和 [创建二级索引](/develop/dev-guide-create-secondary-indexes.md)。
-- 如果你想要 `UPDATE` 数据，首先需要 [插入数据](/develop/dev-guide-insert-data.md)。
+- [使用 TiDB Cloud Starter 构建 TiDB 实例](/develop/dev-guide-build-cluster-in-cloud.md)
+- 阅读[数据库模式概览](/develop/dev-guide-schema-design-overview.md)，并[创建数据库](/develop/dev-guide-create-database.md)、[创建表](/develop/dev-guide-create-table.md)、[创建二级索引](/develop/dev-guide-create-secondary-indexes.md)
+- 若需使用 `UPDATE` 语句更新数据，需先[插入数据](/develop/dev-guide-insert-data.md)
 
 ## 使用 `UPDATE`
 
-要更新表中的现有行，你需要使用带有 `WHERE` 子句的 [`UPDATE` 语句](/sql-statements/sql-statement-update.md)，以筛选需要更新的列。
+需更新表中的现有行，需要使用带有 WHERE 子句的 [UPDATE 语句](/sql-statements/sql-statement-update.md)，即需要过滤列进行更新。
 
 > **注意：**
 >
-> 如果你需要更新大量行，例如超过一万行，建议不要一次性全部更新，而应逐步分批次迭代更新，直到所有行都更新完毕。你可以编写脚本或程序循环执行此操作。
-> 详见 [Bulk-update](#bulk-update)。
+> 如果您需要更新大量的行，比如数万甚至更多行，那么建议不要一次性进行完整的更新，而是每次迭代更新一部分，直到所有行全部更新。您可以编写脚本或程序，使用循环完成此操作。
+> 您可参考[批量更新](#批量更新)获得指引。
 
-### `UPDATE` SQL 语法
+### SQL 语法
 
-在 SQL 中，`UPDATE` 语句通常如下所示：
+在 SQL 中，`UPDATE` 语句一般为以下形式：
 
 ```sql
 UPDATE {table} SET {update_column} = {update_value} WHERE {filter_column} = {filter_value}
 ```
 
-| 参数名称 | 描述 |
-| :--------------: | :------------------: |
-| `{table}` | 表名 |
-| `{update_column}` | 需要更新的列名 |
-| `{update_value}` | 需要更新的列值 |
-| `{filter_column}` | 用于筛选的列名 |
-| `{filter_value}` | 用于筛选的列值 |
+|       参数        |         描述         |
+| :---------------: | :------------------: |
+|     `{table}`     |         表名         |
+| `{update_column}` |     需更新的列名     |
+| `{update_value}`  |   需更新的此列的值   |
+| `{filter_column}` | 匹配条件过滤器的列名 |
+| `{filter_value}`  | 匹配条件过滤器的列值 |
 
-详细信息请参见 [UPDATE syntax](/sql-statements/sql-statement-update.md)。
+此处仅展示 `UPDATE` 的简单用法，详细文档可参考 TiDB 的 [UPDATE 语法页](/sql-statements/sql-statement-update.md)。
 
 ### `UPDATE` 最佳实践
 
-以下是一些更新数据的最佳实践：
+以下是更新行时需要遵循的一些最佳实践：
 
-- 始终在 `UPDATE` 语句中指定 `WHERE` 子句。如果没有 `WHERE` 子句，TiDB 将会更新 **_所有行_**。
+- 始终在更新语句中指定 `WHERE` 子句。如果 `UPDATE` 没有 `WHERE` 子句，TiDB 将更新这个表内的**_所有行_**。
+- 需要更新大量行(数万或更多)的时候，使用[批量更新](#批量更新)，这是因为 TiDB 单个事务大小限制为 [txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)（默认为 100MB），且一次性过多的数据更新，将导致持有锁时间过长（[悲观事务](/pessimistic-transaction.md)），或产生大量冲突（[乐观事务](/optimistic-transaction.md)）。
 
-<CustomContent platform="tidb">
+### `UPDATE` 例子
 
-- 当你需要更新大量行（例如超过一万行）时，建议使用 [bulk-update](#bulk-update)。因为 TiDB 限制单个事务的大小（[txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)，默认 100 MB），一次性更新过多数据会导致持锁时间过长（[pessimistic transactions](/pessimistic-transaction.md)）或引发冲突（[optimistic transactions](/optimistic-transaction.md)）。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-- 当你需要更新大量行（例如超过一万行）时，建议使用 [bulk-update](#bulk-update)。因为 TiDB 限制单个事务的大小为 100 MB，过多的数据一次性更新会导致持锁时间过长（[pessimistic transactions](/pessimistic-transaction.md)）或引发冲突（[optimistic transactions](/optimistic-transaction.md)）。
-
-</CustomContent>
-
-### `UPDATE` 示例
-
-假设一位作者将她的名字改为 **Helen Haruki**，你需要更新 [authors](/develop/dev-guide-bookshop-schema-design.md#authors-table) 表。假设她的唯一 `id` 为 **1**，筛选条件为：`id = 1`。
+假设某位作者改名为 Helen Haruki，需要更改 [authors](/develop/dev-guide-bookshop-schema-design.md#authors-表) 表。假设他的唯一标识 `id` 为 1，即过滤器应为：`id = 1`。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
+
+在 SQL 中更改作者姓名的示例为：
 
 ```sql
 UPDATE `authors` SET `name` = "Helen Haruki" WHERE `id` = 1;
@@ -78,8 +70,10 @@ UPDATE `authors` SET `name` = "Helen Haruki" WHERE `id` = 1;
 
 <div label="Java" value="java">
 
+在 Java 中更改作者姓名的示例为：
+
 ```java
-// ds 是一个 com.mysql.cj.jdbc.MysqlDataSource 的实体
+// ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
 try (Connection connection = ds.getConnection()) {
     PreparedStatement pstmt = connection.prepareStatement("UPDATE `authors` SET `name` = ? WHERE `id` = ?");
     pstmt.setString(1, "Helen Haruki");
@@ -95,38 +89,40 @@ try (Connection connection = ds.getConnection()) {
 
 ## 使用 `INSERT ON DUPLICATE KEY UPDATE`
 
-如果你需要向表中插入新数据，但如果存在唯一键（包括主键）冲突，则会更新冲突的那条记录。你可以使用 `INSERT ... ON DUPLICATE KEY UPDATE ...` 语句实现插入或更新。
+如果你需要将新数据插入表中，但如果有任何唯一键（主键也是一种唯一键）发生冲突，则会更新第一条冲突数据，可使用 `INSERT ... ON DUPLICATE KEY UPDATE ...` 语句进行插入或更新。
 
-### `INSERT ON DUPLICATE KEY UPDATE` SQL 语法
+### SQL 语法
 
-在 SQL 中，`INSERT ... ON DUPLICATE KEY UPDATE ...` 语句通常如下所示：
+在 SQL 中，`INSERT ... ON DUPLICATE KEY UPDATE ...` 语句一般为以下形式：
 
 ```sql
 INSERT INTO {table} ({columns}) VALUES ({values})
     ON DUPLICATE KEY UPDATE {update_column} = {update_value};
 ```
 
-| 参数名称 | 描述 |
-| :--------------: | :--------------: |
-| `{table}` | 表名 |
-| `{columns}` | 要插入的列名 |
-| `{values}` | 要插入的列值 |
-| `{update_column}` | 要更新的列名 |
-| `{update_value}` | 要更新的列值 |
+|       参数        |       描述       |
+| :---------------: | :--------------: |
+|     `{table}`     |       表名       |
+|    `{columns}`    |   需插入的列名   |
+|    `{values}`     | 需插入的此列的值 |
+| `{update_column}` |   需更新的列名   |
+| `{update_value}`  | 需更新的此列的值 |
 
 ### `INSERT ON DUPLICATE KEY UPDATE` 最佳实践
 
-- 仅在表中只有一个唯一键时使用 `INSERT ON DUPLICATE KEY UPDATE`。该语句在检测到任何 **_UNIQUE KEY_**（包括主键）冲突时会更新数据。如果存在多行冲突，只会更新其中一行。因此，除非你能保证冲突只有一行，否则不建议在具有多个唯一键的表中使用此语句。
-- 在创建数据或更新数据时使用此语句。
+- 在仅有一个唯一键的表上使用 `INSERT ON DUPLICATE KEY UPDATE`。此语句在检测到任何 **_唯一键_** (包括主键) 冲突时，将更新数据。在不止匹配到一行冲突时，将只会更新一行数据。因此，除非能保证仅有一行冲突，否则不建议在有多个唯一键的表中使用 `INSERT ON DUPLICATE KEY UPDATE` 语句。
+- 在创建或更新的场景中使用此语句。
 
-### `INSERT ON DUPLICATE KEY UPDATE` 示例
+### `INSERT ON DUPLICATE KEY UPDATE` 例子
 
-例如，你需要更新 [ratings](/develop/dev-guide-bookshop-schema-design.md#ratings-table) 表，以包含用户对书的评分。如果用户尚未评分，则会创建新评分；如果已评分，则会更新之前的评分。
+例如，需要更新 [ratings](/develop/dev-guide-bookshop-schema-design.md#ratings-表) 表来写入用户对书籍的评价，如果用户还未评价此书籍，将新建一条评价，如果用户已经评价过，那么将会更新他之前的评价。
 
-在下面的示例中，主键是 `book_id` 和 `user_id` 的联合主键。用户 `user_id = 1` 给一本书 `book_id = 1000` 评分为 `5`。
+此处主键为 `book_id` 和 `user_id` 的联合主键。`user_id` 为 1 的用户，给 `book_id` 为 1000 的书籍，打出的 5 分的评价。
 
 <SimpleTab groupId="language">
 <div label="SQL" value="sql">
+
+在 SQL 中更新书籍评价的示例为：
 
 ```sql
 INSERT INTO `ratings`
@@ -140,8 +136,10 @@ ON DUPLICATE KEY UPDATE `score` = 5, `rated_at` = NOW();
 
 <div label="Java" value="java">
 
+在 Java 中更新书籍评价的示例为：
+
 ```java
-// ds 是一个 com.mysql.cj.jdbc.MysqlDataSource 的实体
+// ds is an entity of com.mysql.cj.jdbc.MysqlDataSource
 
 try (Connection connection = ds.getConnection()) {
     PreparedStatement p = connection.prepareStatement("INSERT INTO `ratings` (`book_id`, `user_id`, `score`, `rated_at`)
@@ -161,33 +159,23 @@ VALUES (?, ?, ?, NOW()) ON DUPLICATE KEY UPDATE `score` = ?, `rated_at` = NOW()"
 
 ## 批量更新
 
-当你需要在表中更新多行数据时，可以 [使用 `INSERT ON DUPLICATE KEY UPDATE`](#use-insert-on-duplicate-key-update) 搭配 `WHERE` 子句筛选需要更新的数据。
+需要更新表中多行的数据，可选择[使用 `UPDATE`](#使用-update)，并使用 `WHERE` 子句过滤需要更新的数据。
 
-<CustomContent platform="tidb">
+但如果你需要更新大量行(数万或更多)的时候，建议使用一个迭代，每次都只更新一部分数据，直到更新全部完成。这是因为 TiDB 单个事务大小限制为 [txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)（默认为 100MB），且一次性过多的数据更新，将导致持有锁时间过长（[悲观事务](/pessimistic-transaction.md)），或产生大量冲突（[乐观事务](/optimistic-transaction.md)）。你可以在程序或脚本中使用循环来完成操作。
 
-然而，如果你需要更新大量行（例如超过一万行），建议逐步迭代更新，即每次只更新部分数据，直到全部完成。这是因为 TiDB 限制单个事务的大小（[txn-total-size-limit](/tidb-configuration-file.md#txn-total-size-limit)，默认 100 MB）。一次性更新过多数据会导致持锁时间过长（[pessimistic transactions](/pessimistic-transaction.md)）或引发冲突（[optimistic transactions](/optimistic-transaction.md)）。你可以在程序或脚本中使用循环完成此操作。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-然而，如果你需要更新大量行（例如超过一万行），建议逐步迭代更新，即每次只更新部分数据，直到全部完成。这是因为 TiDB 限制单个事务的大小为 100 MB。一次性更新过多数据会导致持锁时间过长（[pessimistic transactions](/pessimistic-transaction.md)）或引发冲突（[optimistic transactions](/optimistic-transaction.md)）。你可以在程序或脚本中使用循环完成此操作。
-
-</CustomContent>
-
-本节提供了编写脚本以实现迭代更新的示例。此示例展示了如何结合 `SELECT` 和 `UPDATE` 完成批量更新。
+本页提供了编写脚本来处理循环更新的示例，该示例演示了应如何进行 `SELECT` 和 `UPDATE` 的组合，完成循环更新。
 
 ### 编写批量更新循环
 
-首先，你应在你的应用或脚本中编写一个 `SELECT` 查询。该查询的返回值可以作为需要更新行的主键。注意在定义此 `SELECT` 查询时，必须使用 `WHERE` 子句筛选需要更新的行。
+首先，你应在你的应用或脚本的循环中，编写一个 `SELECT` 查询。这个查询的返回值可以作为需要更新的行的主键。需要注意的是，定义这个 `SELECT` 查询时，需要注意使用 `WHERE` 子句过滤需要更新的行。
 
-### 示例
+### 例子
 
-假设你在 `bookshop` 网站上过去一年收集了大量用户对书的评分，但原有的 5 分制设计导致评分缺乏差异化，大部分书的评分都为 `3`。你决定将评分从 5 分制切换到 10 分制，以实现差异化。
+假设在过去的一年里，用户在 `bookshop` 网站进行了大量的书籍打分，但是原本设计为 5 分制的评分导致书籍评分的区分度不够，大量书籍评分集中在 3 分附近，因此，决定将 5 分制改为 10 分制。用来增大书籍评分的区分度。
 
-你需要将 `ratings` 表中的数据乘以 `2`，并新增一列用以标识是否已更新。利用此列，你可以在 `SELECT` 时筛选出已更新的行，避免脚本崩溃或多次更新同一行导致数据异常。
+这时需要对 `ratings` 表内之前 5 分制的数据进行乘 2 操作，同时需向 `ratings` 表内添加一个新列，以指示行是否已经被更新了。使用此列，可以在 `SELECT` 中过滤掉已经更新的行，这将防止脚本崩溃时对行进行多次更新，导致不合理的数据出现。
 
-例如，你创建一个名为 `ten_point` 的列，数据类型为 [BOOL](/data-type-numeric.md#boolean-type)，用作是否为 10 分制的标识：
+例如，你可以创建一个名为 `ten_point`，数据类型为 [BOOL](/data-type-numeric.md#boolean-类型) 的列作为是否为 10 分制的标识：
 
 ```sql
 ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FALSE;
@@ -195,12 +183,12 @@ ALTER TABLE `bookshop`.`ratings` ADD COLUMN `ten_point` BOOL NOT NULL DEFAULT FA
 
 > **注意：**
 >
-> 此批量更新应用使用了 **DDL** 语句对数据表进行模式变更。所有 TiDB 的 DDL 变更操作都在线上执行。更多信息请参见 [ADD COLUMN](/sql-statements/sql-statement-add-column.md)。
+> 此批量更新程序将使用 **DDL** 语句将进行数据表的模式更改。TiDB 的所有 DDL 变更操作全部都是在线进行的，可查看此处，了解此处使用的 [ADD COLUMN](/sql-statements/sql-statement-add-column.md) 语句。
 
 <SimpleTab groupId="language">
 <div label="Golang" value="golang">
 
-在 Golang 中，批量更新的示例类似如下：
+在 Golang 中，批量更新程序类似于以下内容：
 
 ```go
 package main
@@ -221,17 +209,17 @@ func main() {
     defer db.Close()
 
     bookID, userID := updateBatch(db, true, 0, 0)
-    fmt.Println("第一次批量更新成功")
+    fmt.Println("first time batch update success")
     for {
         time.Sleep(time.Second)
         bookID, userID = updateBatch(db, false, bookID, userID)
-        fmt.Printf("批量更新成功，[bookID] %d，[userID] %d\n", bookID, userID)
+        fmt.Printf("batch update success, [bookID] %d, [userID] %d\n", bookID, userID)
     }
 }
 
-// updateBatch 在最多 1000 行数据中选择，更新评分
+// updateBatch select at most 1000 lines data to update score
 func updateBatch(db *sql.DB, firstTime bool, lastBookID, lastUserID int64) (bookID, userID int64) {
-    // 选择最多 1000 条未更新到 10 分制的数据的主键
+    // select at most 1000 primary keys in five-point scale data
     var err error
     var rows *sql.Rows
 
@@ -245,10 +233,10 @@ func updateBatch(db *sql.DB, firstTime bool, lastBookID, lastUserID int64) (book
     }
 
     if err != nil || rows == nil {
-        panic(fmt.Errorf("发生错误或行为空： %+v", err))
+        panic(fmt.Errorf("error occurred or rows nil: %+v", err))
     }
 
-    // 将所有ID合并成列表
+    // joint all id with a list
     var idList []interface{}
     for rows.Next() {
         var tempBookID, tempUserID int64
@@ -266,7 +254,7 @@ func updateBatch(db *sql.DB, firstTime bool, lastBookID, lastUserID int64) (book
     return bookID, userID
 }
 
-// placeHolder 格式化SQL占位符
+// placeHolder format SQL place holder
 func placeHolder(n int) string {
     holderList := make([]string, n/2, n/2)
     for i := range holderList {
@@ -276,15 +264,15 @@ func placeHolder(n int) string {
 }
 ```
 
-每次循环中，`SELECT` 按主键顺序查询，最多选择 1000 行未更新到 10 分制（`ten_point` 为 `false`）的主键。每个 `SELECT` 语句会选择比上一次最大主键更大的主键，以避免重复。然后，利用批量更新，将 `score` 列乘以 `2`，并将 `ten_point` 设置为 `true`。更新 `ten_point` 的目的是为了防止在崩溃重启后，更新程序反复更新同一行，导致数据损坏。每个循环中的 `time.Sleep(time.Second)` 让更新暂停 1 秒，以减少硬件资源消耗。
+每次迭代中，`SELECT` 按主键顺序进行查询，最多选择 1000 行未更新到 10 分制（`ten_point` 为 `false`）数据的主键值。每次 `SELECT` 都会选择比上一次 `SELECT` 结果的最大主键还要大的数据，防止重复。然后，使用批量更新的方式，对其 `score` 列乘 2，并且将 `ten_point` 设为 `true`，更新 `ten_point` 的意义是在于防止更新程序崩溃重启后，反复更新同一行数据，导致数据损坏。每次循环中的 `time.Sleep(time.Second)` 将使得更新程序暂停 1 秒，防止批量更新程序占用过多的硬件资源。
 
 </div>
 
-<div label="Java (JDBC)" value="jdbc">
+<div label="Java (JDBC)" value="java">
 
-在 Java (JDBC) 中，批量更新的示例可能如下：
+在 Java (JDBC) 中，批量更新程序类似于以下内容：
 
-**代码：**
+**Java 代码部分：**
 
 ```java
 package com.pingcap.bulkUpdate;
@@ -329,12 +317,12 @@ public class BatchUpdateExample {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        // 配置示例数据库连接。
+        // Configure the example database connection.
 
-        // 创建 Mysql 数据源实例。
+        // Create a mysql data source instance.
         MysqlDataSource mysqlDataSource = new MysqlDataSource();
 
-        // 设置服务器名、端口、数据库名、用户名和密码。
+        // Set server name, port, database name, username and password.
         mysqlDataSource.setServerName("localhost");
         mysqlDataSource.setPortNumber(4000);
         mysqlDataSource.setDatabaseName("bookshop");
@@ -343,11 +331,11 @@ public class BatchUpdateExample {
 
         UpdateID lastID = batchUpdate(mysqlDataSource, null);
 
-        System.out.println("第一次批量更新成功");
+        System.out.println("first time batch update success");
         while (true) {
             TimeUnit.SECONDS.sleep(1);
             lastID = batchUpdate(mysqlDataSource, lastID);
-            System.out.println("批量更新成功，[lastID] " + lastID);
+            System.out.println("batch update success, [lastID] " + lastID);
         }
     }
 
@@ -383,7 +371,7 @@ public class BatchUpdateExample {
             }
 
             if (idList.isEmpty()) {
-                System.out.println("没有数据需要更新");
+                System.out.println("no data should update");
                 return null;
             }
 
@@ -395,7 +383,7 @@ public class BatchUpdateExample {
                 updatePs.setLong(i + 1, idList.get(i));
             }
             int count = updatePs.executeUpdate();
-            System.out.println("更新了 " + count + " 条数据");
+            System.out.println("update " + count + " data");
 
             return updateID;
         } catch (SQLException e) {
@@ -416,7 +404,7 @@ public class BatchUpdateExample {
 }
 ```
 
-- `hibernate.cfg.xml` 配置：
+**`hibernate.cfg.xml` 配置部分：**
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -426,7 +414,7 @@ public class BatchUpdateExample {
 <hibernate-configuration>
     <session-factory>
 
-        <!-- 数据库连接设置 -->
+        <!-- Database connection settings -->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.dialect">org.hibernate.dialect.TiDBDialect</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:4000/movie</property>
@@ -435,29 +423,15 @@ public class BatchUpdateExample {
         <property name="hibernate.connection.autocommit">false</property>
         <property name="hibernate.jdbc.batch_size">20</property>
 
-        <!-- 可选：显示 SQL 输出以便调试 -->
+        <!-- Optional: Show SQL output for debugging -->
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.format_sql">true</property>
     </session-factory>
 </hibernate-configuration>
 ```
 
-每次循环中，`SELECT` 按主键顺序查询，最多选择 1000 行未更新到 10 分制（`ten_point` 为 `false`）的主键。每个 `SELECT` 语句会选择比上一次最大主键更大的主键，以避免重复。然后，利用批量更新，将 `score` 列乘以 `2`，并将 `ten_point` 设置为 `true`。更新 `ten_point` 的目的是为了防止在崩溃重启后，更新程序反复更新同一行，导致数据损坏。每个循环中的 `TimeUnit.SECONDS.sleep(1);` 让更新暂停 1 秒，以减少硬件资源消耗。
+每次迭代中，`SELECT` 按主键顺序进行查询，最多选择 1000 行未更新到 10 分制（`ten_point` 为 `false`）数据的主键值。每次 `SELECT` 都会选择比上一次 `SELECT` 结果的最大主键还要大的数据，防止重复。然后，使用批量更新的方式，对其 `score` 列乘 2，并且将 `ten_point` 设为 `true`，更新 `ten_point` 的意义是在于防止更新程序崩溃重启后，反复更新同一行数据，导致数据损坏。每次循环中的 `TimeUnit.SECONDS.sleep(1);` 将使得更新程序暂停 1 秒，防止批量更新程序占用过多的硬件资源。
 
 </div>
 
 </SimpleTab>
-
-## 需要帮助？
-
-<CustomContent platform="tidb">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>

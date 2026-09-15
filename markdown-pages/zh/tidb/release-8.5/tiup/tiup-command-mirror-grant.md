@@ -1,45 +1,42 @@
 ---
 title: tiup mirror grant
-summary: The `tiup mirror grant` command is used to add a component owner to the current mirror. The owner needs to send their public key to the mirror administrator before being added. This command is only supported for local mirrors. The syntax is `tiup mirror grant <id>`. The options include specifying the key and name of the component owner. If successful, there is no output. If there are errors, TiUP reports the specific error.
+summary: tiup mirror grant 命令用于向当前镜像中添加组件管理员。组件管理员可以发布新组件或修改之前发布的组件。添加管理员时，需将公钥发送给镜像管理员。命令仅支持本地镜像使用。语法：tiup mirror grant <id>。选项：-k, --key（指定管理员密钥）、-n, --name（指定管理员名字）。输出：执行成功无输出，管理员 ID 重复报错，密钥被其他管理员使用报错。
 ---
 
 # tiup mirror grant
 
-The `tiup mirror grant` command is used to introduce a component owner to the current mirror.
+命令 `tiup mirror grant` 用来向当前镜像中引入一个组件管理员。
 
-Component owners can use their keys to publish new components or to modify components they previously published. Before adding a new component owner, the component owner to be added needs to send his or her own public key to the mirror administrator.
+组件管理员可以使用其密钥发布新的组件，也可以对其之前发布的组件作出修改。添加组件管理员时，待添加的组件管理员需要先将其公钥发送给镜像管理员。
 
-> **Note:**
+> **注意：**
 >
-> This command is only supported when the current mirror is a local mirror.
+> 该命令仅支持在当前镜像为本地镜像时使用。
 
-## Syntax
+## 语法
 
 ```shell
 tiup mirror grant <id> [flags]
 ```
 
-`<id>` stands for the component owner's ID, which must be unique in the whole mirror. It is recommended to use an ID that matches the regular expression `^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$`.
+`<id>` 为该组件管理员的 ID，该 ID 需要在整个镜像中唯一，建议使用符合正则 `^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$` 的字符串。
 
-## Options
+## 选项
 
-### -k, --key
+### -k, --key（string，默认 ${TIUP_HOME}/keys/private.json）
 
-- Specifies the key of the introduced component owner. This key can either be public or private. If it is a private key, TiUP converts it to the corresponding public key before storing it in the mirror.
-- A key can be used by only one component owner.
-- Data type: `STRING`
-- Default: "${TIUP_HOME}/keys/private.json"
+指定引入的组件管理员的密钥。该密钥可以是公钥也可以是私钥。如果传入私钥，会被转换成对应的公钥储存在镜像中。
 
-### -n, --name
+一个密钥只能被一个组件管理员使用。
 
-- Specifies the name of the component owner. The name is displayed on the `Owner` field of the component list. If `-n/--name` is not specified, `<id>` is used as the component owner's name.
-- Data type: `STRING`
-- Default: `<id>`
+### -n, --name（string，默认 `<id>`）
 
-### Outputs
+指定组件管理员的名字，该名字会展示在组件列表的 `Owner` 字段上。若未指定 `-n/--name` 则使用 `<id>` 作为组件管理员名字。
 
-- If the command is executed successfully, there is no output.
-- If the component owner's ID is duplicated, TiUP reports the error `Error: owner %s exists`.
-- If the key is used by another component owner, TiUP reports the error `Error: key %s exists`.
+### 输出
 
-[<< Back to the previous page - TiUP Mirror command list](/tiup/tiup-command-mirror.md#command-list)
+- 若执行成功：无输出
+- 若管理员 ID 重复：`Error: owner %s exists`
+- 若密钥已被其他管理员使用：`Error: key %s exists`
+
+[<< 返回上一页 - TiUP Mirror 命令清单](/tiup/tiup-command-mirror.md#命令清单)

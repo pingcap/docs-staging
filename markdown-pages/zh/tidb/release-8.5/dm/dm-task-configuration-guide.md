@@ -1,255 +1,234 @@
 ---
-title: Data Migration Task Configuration Guide
-summary: Learn how to configure a data migration task in Data Migration (DM).
+title: TiDB Data Migration 数据迁移任务配置向导
+summary: 本文介绍了如何配置 TiDB Data Migration (DM) 的数据迁移任务。包括配置数据源、目标 TiDB 集群、需要迁移的表、需要过滤的操作、数据源表到目标 TiDB 表的映射以及分库分表合并等配置。详细配置规则可参考相关链接。
 ---
 
-# Data Migration Task Configuration Guide
+# TiDB Data Migration 数据迁移任务配置向导
 
-This document introduces how to configure a data migration task in Data Migration (DM).
+本文档介绍如何配置 TiDB Data Migration (DM) 的数据迁移任务。
 
-## Configure data sources to be migrated
+## 配置需要迁移的数据源
 
-Before configuring the data sources to be migrated for the task, you need to first make sure that DM has loaded the configuration files of the corresponding data sources. The following are some operation references:
+配置需要迁移的数据源之前，首先应该确认已经在 DM 创建相应数据源：
 
-- To view the data source, you can refer to [Check the data source configuration](/dm/dm-manage-source.md#check-data-source-configurations).
-- To create a data source, you can refer to [Create data source](/dm/migrate-data-using-dm.md#step-3-create-data-source).
-- To generate a data source configuration file, you can refer to [Source configuration file introduction](/dm/dm-source-configuration-file.md).
+- 查看数据源可以参考[查看数据源配置](/dm/dm-manage-source.md#查看数据源配置)
+- 创建数据源可以参考[在 DM 创建数据源](/dm/migrate-data-using-dm.md#第-3-步创建数据源)
+- 数据源配置可以参考[数据源配置文件介绍](/dm/dm-source-configuration-file.md)
 
-The following example of `mysql-instances` shows how to configure data sources that need to be migrated for the data migration task:
+仿照下面的 `mysql-instances:` 示例定义数据迁移任务需要同步的单个或者多个数据源。
 
 ```yaml
 ---
 
-## ********* Basic configuration *********
-name: test             # The name of the task. Should be globally unique.
+## ********* 任务信息配置 *********
+name: test             # 任务名称，需要全局唯一
 
-## ******** Data source configuration **********
+## ******** 数据源配置 **********
 mysql-instances:
-  - source-id: "mysql-replica-01"  # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-  - source-id: "mysql-replica-02"  # Migrate data from the data source whose `source-id` is `mysql-replica-02`.
+  - source-id: "mysql-replica-01"  # 从 source-id = mysql-replica-01 的数据源迁移数据
+  - source-id: "mysql-replica-02"  # 从 source-id = mysql-replica-02 的数据源迁移数据
 ```
 
-## Configure the downstream TiDB cluster
+## 配置迁移的目标 TiDB 集群
 
-The following example of `target-database` shows how to configure the target TiDB cluster to be migrated to for the data migration task:
+仿照下面的 `target-database:` 示例定义迁移的目标 TiDB 集群。
 
 ```yaml
 ---
 
-## ********* Basic configuration *********
-name: test             # The name of the task. Should be globally unique.
+## ********* 任务信息配置 *********
+name: test             # 任务名称，需要全局唯一
 
-## ******** Data source configuration **********
+## ******** 数据源配置 **********
 mysql-instances:
-  - source-id: "mysql-replica-01"  # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-  - source-id: "mysql-replica-02"  # Migrate data from the data source whose `source-id` is `mysql-replica-02`.
+  - source-id: "mysql-replica-01"  # 从 source-id = mysql-replica-01 的数据源迁移数据
+  - source-id: "mysql-replica-02"  # 从 source-id = mysql-replica-02 的数据源迁移数据
 
-## ******** Downstream TiDB database configuration **********
-target-database:       # Configuration of target TiDB database.
+## ******** 目标 TiDB 配置 **********
+target-database:       # 目标 TiDB 配置
   host: "127.0.0.1"
   port: 4000
   user: "root"
-  password: ""         # If the password is not null, it is recommended to use a password encrypted with dmctl.
+  password: ""         # 如果密码不为空，则推荐使用经过 dmctl 加密的密文
 ```
 
-## Configure tables to be migrated
+## 配置需要迁移的表
 
-> **Note:**
->
-> If you do not need to filter specific tables or migrate specific tables, skip this configuration.
+如果不需要过滤或迁移特定表，可以跳过该项配置。
 
-To configure the block and allow list of data source tables for the data migration task, perform the following steps:
+配置从数据源迁移表的黑白名单，则需要添加两个定义，详细配置规则参考 [Block & Allow Lists](/dm/dm-block-allow-table-lists.md)：
 
-1. Configure a global filter rule set of the block and allow list in the task configuration file.
+1. 定义全局的黑白名单规则
 
     ```yaml
     block-allow-list:
-      bw-rule-1:                           # The name of the block and allow list rule.
-        do-dbs: ["test.*", "user"]         # The allow list of upstream schemas to be migrated. Wildcard characters (*?) are supported. You only need to configure either `do-dbs` or `ignore-dbs`. If both fields are configured, only `do-dbs` takes effect.
-        # ignore-dbs: ["mysql", "account"] # The block list of upstream schemas to be migrated. Wildcard characters (*?) are supported.
-        do-tables:                         # The allow list of upstream tables to be migrated. You only need to configure either `do-tables` or `ignore-tables`. If both fields are configured, only `do-tables` takes effect.
+      bw-rule-1:                           # 规则名称
+        do-dbs: ["test.*", "user"]         # 迁移哪些库，支持通配符 "*" 和 "?"，do-dbs 和 ignore-dbs 只需要配置一个，如果两者同时配置只有 do-dbs 会生效
+        # ignore-dbs: ["mysql", "account"] # 忽略哪些库，支持通配符 "*" 和 "?"
+        do-tables:                         # 迁移哪些表，do-tables 和 ignore-tables 只需要配置一个，如果两者同时配置只有 do-tables 会生效
         - db-name: "test.*"
           tbl-name: "t.*"
         - db-name: "user"
           tbl-name: "information"
-      bw-rule-2:                          # The name of the block allow list rule.
-        ignore-tables:                    # The block list of data source tables needs to be migrated.
+      bw-rule-2:                          # 规则名称
+        ignore-tables:                    # 忽略哪些表
         - db-name: "user"
           tbl-name: "log"
     ```
 
-    For detailed configuration rules, see [Block and allow table lists](/dm/dm-block-allow-table-lists.md).
-
-2. Reference the block and allow list rules in the data source configuration to filter tables to be migrated.
+2. 在数据源配置中引用黑白名单规则，过滤该数据源需要迁移的表
 
     ```yaml
     mysql-instances:
-      - source-id: "mysql-replica-01"  # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-        block-allow-list:  "bw-rule-1" # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-      - source-id: "mysql-replica-02"  # Migrate data from the data source whose `source-id` is `mysql-replica-02`.
-        block-allow-list:  "bw-rule-2" # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
+        - source-id: "mysql-replica-01"  # 从 source-id = mysql-replica-01 的数据源迁移数据
+          block-allow-list:  "bw-rule-1" # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+        - source-id: "mysql-replica-02"  # 从 source-id = mysql-replica-02 的数据源迁移数据
+          block-allow-list:  "bw-rule-2" # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
     ```
 
-## Configure binlog events to be migrated
+## 配置需要过滤的操作
 
-> **Note:**
->
-> If you do not need to filter specific binlog events of certain schemas or tables, skip this configuration.
+如果不需要过滤特定库或者特定表的特定操作，可以跳过该项配置。
 
-To configure the filters of binlog events for the data migration task, perform the following steps:
+配置过滤特定操作，则需要添加两个定义，详细配置规则参考 [Binlog Event Filter](/dm/dm-binlog-event-filter.md)：
 
-1. Configure a global filter rule set of binlog events in the task configuration file.
+1. 定义全局的数据源操作过滤规则
 
     ```yaml
-    filters:                                        # The filter rule set of data source binlog events. You can set multiple rules at the same time.
-      filter-rule-1:                                # The name of the filtering rule.
-        schema-pattern: "test_*"                    # The pattern of the data source schema name. Wildcard characters (*?) are supported.
-        table-pattern: "t_*"                        # The pattern of the data source table name. Wildcard characters (*?) are supported.
-        events: ["truncate table", "drop table"]    # The event types to be filtered out in schemas or tables that match the `schema-pattern` or the `table-pattern`.
-        action: Ignore                              # Whether to migrate (Do) or ignore (Ignore) the binlog that matches the filtering rule.
+    filters:                                        # 定义过滤数据源特定操作的规则，可以定义多个规则
+      filter-rule-1:                                # 规则名称
+        schema-pattern: "test_*"                    # 匹配数据源的库名，支持通配符 "*" 和 "?"
+        table-pattern: "t_*"                        # 匹配数据源的表名，支持通配符 "*" 和 "?"
+        events: ["truncate table", "drop table"]    # 匹配上 schema-pattern 和 table-pattern 的库或者表的操作类型
+        action: Ignore                              # 迁移（Do）还是忽略(Ignore)
       filter-rule-2:
         schema-pattern: "test"
         events: ["all dml"]
         action: Do
     ```
 
-    For detailed configuration rules, see [Binlog event filter](/dm/dm-binlog-event-filter.md).
-
-2. Reference the binlog event filtering rules in the data source configuration to filter specified binlog events of specified tables or schemas in the data source.
+2. 在数据源配置中引用数据源操作过滤规则，过滤该数据源的指定库或表的指定操作
 
     ```yaml
     mysql-instances:
-      - source-id: "mysql-replica-01"    # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-        block-allow-list:  "bw-rule-1"   # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-        filter-rules: ["filter-rule-1"]  # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
-      - source-id: "mysql-replica-02"    # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-        block-allow-list:  "bw-rule-2"   # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-        filter-rules: ["filter-rule-2"]  # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
+      - source-id: "mysql-replica-01"    # 从 source-id = mysql-replica-01 的数据源迁移数据
+        block-allow-list:  "bw-rule-1"   # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+        filter-rules: ["filter-rule-1"]  # 过滤数据源特定操作的规则，可以配置多个过滤规则
+      - source-id: "mysql-replica-02"    # 从 source-id = mysql-replica-02 的数据源迁移数据
+        block-allow-list:  "bw-rule-2"   # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+        filter-rules: ["filter-rule-2"]  # 过滤数据源特定操作的规则，可以配置多个过滤规则
     ```
 
-## Configure the mapping of data source tables to downstream TiDB tables
+## 配置需要数据源表到目标 TiDB 表的映射
 
-> **Note:**
->
-> - If you do not need to migrate a certain table of the data source to the table with a different name in the downstream TiDB instance, skip this configuration.
->
-> - If it is a shard merge task, you **must** set mapping rules in the task configuration file.
+如果不需要将数据源表路由到不同名的目标 TiDB 表，可以跳过该项配置。分库分表合并迁移的场景必须配置该规则。
 
-To configure the routing mapping rules for migrating data source tables to specified downstream TiDB tables, perform the following steps:
+配置数据源表迁移到目标 TiDB 表的路由规则，则需要添加两个定义，详细配置规则参考 [Table Routing](/dm/dm-table-routing.md)：
 
-1. Configure a global routing mapping rule set in the task configuration file.
+1. 定义全局的路由规则
 
     ```yaml
-    routes:                           # The routing mapping rule set between the data source tables and downstream TiDB tables. You can set multiple rules at the same time.
-      route-rule-1:                   # The name of the routing mapping rule.
-        schema-pattern: "test_*"      # The pattern of the upstream schema name. Wildcard characters (*?) are supported.
-        table-pattern: "t_*"          # The pattern of the upstream table name. Wildcard characters (*?) are supported.
-        target-schema: "test"         # The name of the downstream TiDB schema.
-        target-table: "t"             # The name of the downstream TiDB table.
+    routes:                           # 定义数据源表迁移到目标 TiDB 表的路由规则，可以定义多个规则
+      route-rule-1:                   # 规则名称
+        schema-pattern: "test_*"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
+        table-pattern: "t_*"          # 匹配数据源的表名，支持通配符 "*" 和 "?"
+        target-schema: "test"         # 目标 TiDB 库名
+        target-table: "t"             # 目标 TiDB 表名
       route-rule-2:
         schema-pattern: "test_*"
         target-schema: "test"
     ```
 
-    For detailed configuration rules, see [Table Routing](/dm/dm-table-routing.md).
-
-2. Reference the routing mapping rules in the data source configuration to filter tables to be migrated.
+2. 在数据源配置中引用路由规则，过滤该数据源需要迁移的表
 
     ```yaml
     mysql-instances:
-      - source-id: "mysql-replica-01"                     # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-        block-allow-list:  "bw-rule-1"                    # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-        filter-rules: ["filter-rule-1"]                   # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
-        route-rules: ["route-rule-1", "route-rule-2"]     # The name of the routing mapping rule. You can configure multiple rules here.
-      - source-id: "mysql-replica-02"                     # Migrate data from the data source whose `source-id` is `mysql-replica-02`.
-        block-allow-list:  "bw-rule-2"                    # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-        filter-rules: ["filter-rule-2"]                   # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
+      - source-id: "mysql-replica-01"                     # 从 source-id = mysql-replica-01 的数据源迁移数据
+        block-allow-list:  "bw-rule-1"                    # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+        filter-rules: ["filter-rule-1"]                   # 过滤数据源特定操作的规则，可以配置多个过滤规则
+        route-rules: ["route-rule-1", "route-rule-2"]     # 数据源表迁移到目标 TiDB 表的路由规则，可以定义多个规则
+      - source-id: "mysql-replica-02"                     # 从 source-id = mysql-replica-02 的数据源迁移数据
+        block-allow-list:  "bw-rule-2"                    # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+        filter-rules: ["filter-rule-2"]                   # 过滤数据源特定操作的规则，可以配置多个过滤规则
     ```
 
-## Configure a shard merge task
+## 配置是否进行分库分表合并
 
-> **Note:**
->
-> - If you need to migrate sharding DDL statements in a shard merge scenario, you **must** explicitly configure the `shard-mode` field. Otherwise, **DO NOT** configure `shard-mode` at all.
->
-> - Migrating sharding DDL statements is likely to cause many issues. Make sure you understand the principles and restrictions of DM migrating DDL statements before using this feature, and you **must** use this feature with caution.
+如果是分库分表合并的数据迁移场景，并且需要同步分库分表的 DDL，则必须显式配置 `shard-mode`，否则不要配置该选项。
 
-The following example shows how to configure the task as a shard merge task:
+分库分表 DDL 同步问题特别多，请确认了解 DM 同步分库分表 DDL 的原理和限制后，谨慎使用。
 
 ```yaml
 ---
 
-## ********* Basic information *********
-name: test                      # The name of the task. Should be globally unique.
-shard-mode: "pessimistic"       # The shard merge mode. Optional modes are ""/"pessimistic"/"optimistic". The "" mode is used by default which means sharding DDL merge is disabled. If the task is a shard merge task, set it to the "pessimistic" mode. After getting a deep understanding of the principles and restrictions of the "optimistic" mode, you can set it to the "optimistic" mode.
+## ********* 任务信息配置 *********
+name: test                      # 任务名称，需要全局唯一
+shard-mode: "pessimistic"       # 默认值为 "" 即无需协调。如果为分库分表合并任务，请设置为悲观协调模式 "pessimistic"。在深入了解乐观协调模式的原理和使用限制后，也可以设置为乐观协调模式 "optimistic"
 ```
 
-## Other configurations
+## 其他配置
 
-The following is an overall task configuration example of this document. The complete task configuration template can be found in [DM task configuration file full introduction](/dm/task-configuration-file-full.md).
+下面是本数据迁移任务配置向导的完整示例。完整的任务配置参见 [DM 任务完整配置文件介绍](/dm/task-configuration-file-full.md)。
 
 ```yaml
 ---
 
-## ********* Basic configuration *********
-name: test                      # The name of the task. Should be globally unique.
-shard-mode: "pessimistic"       # The shard merge mode. Optional modes are ""/"pessimistic"/"optimistic". The "" mode is used by default which means sharding DDL merge is disabled. If the task is a shard merge task, set it to the "pessimistic" mode. After getting a deep understanding of the principles and restrictions of the "optimistic" mode, you can set it to the "optimistic" mode.
-task-mode: all                  # The task mode. Can be set to `full`(only migrates full data)/`incremental`(replicates binlog synchronously)/`all` (replicates both full and incremental binlogs).
-timezone: "UTC"               # The timezone used in SQL Session. By default, DM uses the global timezone setting in the target cluster, which ensures the correctness automatically. A customized timezone does not affect data migration but is unnecessary.
+## ********* 任务信息配置 *********
+name: test                      # 任务名称，需要全局唯一
+shard-mode: "pessimistic"       # 默认值为 "" 即无需协调。如果为分库分表合并任务，请设置为悲观协调模式 "pessimistic"。在深入了解乐观协调模式的原理和使用限制后，也可以设置为乐观协调模式 "optimistic"
+task-mode: all                  # 任务模式，可设为 "full" - "只进行全量数据迁移"、"incremental" - "Binlog 实时同步"、"all" - "全量 + Binlog 迁移"
+# timezone: "UTC"               # 指定数据迁移任务时 SQL Session 使用的时区。DM 默认使用目标库的全局时区配置进行数据迁移，并且自动确保同步数据的正确性。使用自定义时区依然可以确保整个流程的正确性，但一般不需要手动指定。
 
-## ******** Data source configuration **********
+## ******** 数据源配置 **********
 mysql-instances:
-  - source-id: "mysql-replica-01"                   # Migrate data from the data source whose `source-id` is `mysql-replica-01`.
-    block-allow-list:  "bw-rule-1"                  # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-    filter-rules: ["filter-rule-1"]                 # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
-    route-rules: ["route-rule-1", "route-rule-2"]   # The name of the routing mapping rule. You can configure multiple rules here.
-  - source-id: "mysql-replica-02"                   # Migrate data from the data source whose `source-id` is `mysql-replica-02`.
-    block-allow-list:  "bw-rule-2"                  # The name of the block and allow list rule. If the DM version is earlier than v2.0.0-beta.2, use `black-white-list` instead.
-    filter-rules: ["filter-rule-2"]                 # The name of the rule that filters specific binlog events of the data source. You can configure multiple rules here.
-    route-rules: ["route-rule-2"]                   # The name of the routing mapping rule. You can configure multiple rules here.
+  - source-id: "mysql-replica-01"                   # 从 source-id = mysql-replica-01 的数据源迁移数据
+    block-allow-list:  "bw-rule-1"                  # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+    filter-rules: ["filter-rule-1"]                 # 过滤数据源特定操作的规则，可以配置多个过滤规则
+    route-rules: ["route-rule-1", "route-rule-2"]   # 数据源表迁移到目标 TiDB 表的路由规则，可以定义多个规则
+  - source-id: "mysql-replica-02"                   # 从 source-id = mysql-replica-02 的数据源迁移数据
+    block-allow-list:  "bw-rule-2"                  # 黑白名单配置名称，如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+    filter-rules: ["filter-rule-2"]                 # 过滤数据源特定操作的规则，可以配置多个过滤规则
+    route-rules: ["route-rule-2"]                   # 数据源表迁移到目标 TiDB 表的路由规则，可以定义多个规则
 
-## ******** Downstream TiDB instance configuration **********
-target-database:       # Configuration of the downstream database instance.
+## ******** 目标 TiDB 配置 **********
+target-database:       # 目标 TiDB 配置
   host: "127.0.0.1"
   port: 4000
   user: "root"
-  password: ""         # If the password is not null, it is recommended to use a password encrypted with dmctl.
+  password: ""         # 如果密码不为空，则推荐使用经过 dmctl 加密的密文
 
-## ******** Feature configuration set **********
-# The filter rule set of tables to be migrated from the upstream database instance. You can set multiple rules at the same time.
-block-allow-list:                      # Use black-white-list if the DM version is earlier than v2.0.0-beta.2.
-  bw-rule-1:                           # The name of the block and allow list rule.
-    do-dbs: ["test.*", "user"]         # The allow list of upstream schemas to be migrated. Wildcard characters (*?) are supported. You only need to configure either `do-dbs` or `ignore-dbs`. If both fields are configured, only `do-dbs` takes effect.
-    # ignore-dbs: ["mysql", "account"] # The block list of upstream schemas to be migrated. Wildcard characters (*?) are supported.
-    do-tables:                         # The allow list of upstream tables to be migrated. You only need to configure either `do-tables` or `ignore-tables`. If both fields are configured, only `do-tables` takes effect.
+## ******** 功能配置 **********
+block-allow-list:                      # 定义数据源迁移表的过滤规则，可以定义多个规则。如果 DM 版本早于 v2.0.0-beta.2 则使用 black-white-list
+  bw-rule-1:                           # 规则名称
+    do-dbs: ["test.*", "user"]         # 迁移哪些库，支持通配符 "*" 和 "?"，do-dbs 和 ignore-dbs 只需要配置一个，如果两者同时配置只有 do-dbs 会生效
+    # ignore-dbs: ["mysql", "account"] # 忽略哪些库，支持通配符 "*" 和 "?"
+    do-tables:                         # 迁移哪些表，do-tables 和 ignore-tables 只需要配置一个，如果两者同时配置只有 do-tables 会生效
     - db-name: "test.*"
       tbl-name: "t.*"
     - db-name: "user"
       tbl-name: "information"
-  bw-rule-2:                         # The name of the block allow list rule.
-    ignore-tables:                   # The block list of data source tables needs to be migrated.
+  bw-rule-2:                         # 规则名称
+    ignore-tables:                   # 忽略哪些表
     - db-name: "user"
       tbl-name: "log"
 
-# The filter rule set of data source binlog events.
-filters:                                        # You can set multiple rules at the same time.
-  filter-rule-1:                                # The name of the filtering rule.
-    schema-pattern: "test_*"                    # The pattern of the data source schema name. Wildcard characters (*?) are supported.
-    table-pattern: "t_*"                        # The pattern of the data source table name. Wildcard characters (*?) are supported.
-    events: ["truncate table", "drop table"]    # The event types to be filtered out in schemas or tables that match the `schema-pattern` or the `table-pattern`.
-    action: Ignore                              # Whether to migrate (Do) or ignore (Ignore) the binlog that matches the filtering rule.
+filters:                                        # 定义过滤数据源特定操作的规则，可以定义多个规则
+  filter-rule-1:                                # 规则名称
+    schema-pattern: "test_*"                    # 匹配数据源的库名，支持通配符 "*" 和 "?"
+    table-pattern: "t_*"                        # 匹配数据源的表名，支持通配符 "*" 和 "?"
+    events: ["truncate table", "drop table"]    # 匹配上 schema-pattern 和 table-pattern 的库或者表的操作类型
+    action: Ignore                              # 迁移（Do）还是忽略(Ignore)
   filter-rule-2:
     schema-pattern: "test"
     events: ["all dml"]
     action: Do
 
-# The routing mapping rule set between the data source and target TiDB instance tables.
-routes:                           # You can set multiple rules at the same time.
-  route-rule-1:                   # The name of the routing mapping rule.
-    schema-pattern: "test_*"      # The pattern of the data source schema name. Wildcard characters (*?) are supported.
-    table-pattern: "t_*"          # The pattern of the data source table name. Wildcard characters (*?) are supported.
-    target-schema: "test"         # The name of the downstream TiDB schema.
-    target-table: "t"             # The name of the downstream TiDB table.
+routes:                           # 定义数据源表迁移到目标 TiDB 表的路由规则，可以定义多个规则
+  route-rule-1:                   # 规则名称
+    schema-pattern: "test_*"      # 匹配数据源的库名，支持通配符 "*" 和 "?"
+    table-pattern: "t_*"          # 匹配数据源的表名，支持通配符 "*" 和 "?"
+    target-schema: "test"         # 目标 TiDB 库名
+    target-table: "t"             # 目标 TiDB 表名
   route-rule-2:
     schema-pattern: "test_*"
     target-schema: "test"

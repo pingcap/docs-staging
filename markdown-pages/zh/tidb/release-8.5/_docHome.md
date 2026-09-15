@@ -1,158 +1,122 @@
 ---
-title: Home
+title: 文档中心
 hide_sidebar: true
 hide_commit: true
 hide_leftNav: true
-summary: TiDB Documentation provides how-to guides and references for using TiDB Cloud and TiDB Self-Managed, including data migration and application building. TiDB Cloud is a fully-managed Database-as-a-Service, offering easy access to the power of a cloud-native, distributed SQL database. TiDB is an open-source distributed SQL database with MySQL compatibility, horizontal scalability, and high availability. Developers can access documentation for application development and explore additional resources such as TiDB Playground, PingCAP Education, and community engagement opportunities.
+summary: TiDB 文档中心为您提供丰富的操作指南和参考资料，助您轻松上手 TiDB 产品，完成数据迁移和应用开发等操作。TiDB 是一款开源分布式关系型数据库，支持在线事务处理与在线分析处理，具备水平扩容、高可用、云原生、兼容 MySQL 协议等特性。TiDB Cloud 是全托管的数据库即服务产品，让数据库部署、运维和性能调优变得轻松简单，适用于中国出海企业和开发者。此外，还提供开发者手册、免费课程、TiDB 社区、TiDB 博客等资源，欢迎贡献内容。
 ---
 
-<DocHomeContainer title="TiDB Documentation" subTitle="Explore the how-to guides and references you need to use TiDB Cloud Starter, TiDB Cloud Dedicated and TiDB Self-Managed, migrate data, and build your applications on the database." ctaLabel="Start TiDB Cloud Starter for Free" ctaLink="https://tidbcloud.com/free-trial">
+<DocHomeContainer title="TiDB 文档中心" subTitle="欢迎来到 TiDB 文档中心！我们为您提供了丰富的操作指南和详实的参考资料，助您轻松上手 TiDB 产品，顺利完成数据迁移和基于数据库的应用开发等操作。" ctaLabel="快速上手 TiDB" ctaLink="/zh/tidb/stable/quick-start-with-tidb">
+
+<DocHomeSection label="TiDB" anchor="tidb" id="tidb">
+
+TiDB 是 PingCAP 公司自主设计、研发的开源分布式关系型数据库，是一款同时支持在线事务处理与在线分析处理 (Hybrid Transactional and Analytical Processing, HTAP) 的融合型分布式数据库产品，具备水平扩容或者缩容、金融级高可用、实时 HTAP、云原生的分布式数据库、兼容 MySQL 协议和 MySQL 生态等重要特性，支持在本地和云上部署。
+
+<DocHomeCardContainer>
+
+<DocHomeCard href="/zh/tidb/stable/overview" label="TiDB 简介" icon="oss-product-blue">
+
+TiDB 简介，核心特性与应用场景
+
+</DocHomeCard>
+
+<DocHomeCard href="/zh/tidb/stable/quick-start-with-tidb" label="快速上手 TiDB" icon="oss-getstarted-blue">
+
+快速了解和使用 TiDB
+
+</DocHomeCard>
+
+<DocHomeCard href="/zh/tidb/stable/production-deployment-using-tiup" label="部署本地 TiDB 集群" icon="oss-deploy-blue">
+
+在生产环境中部署本地 TiDB 集群
+
+</DocHomeCard>
+
+<DocHomeCard href="/zh/developer/" label="开发者指南" icon="oss-developer-blue">
+
+用熟悉的语言或框架连接到 TiDB
+
+</DocHomeCard>
+
+<DocHomeCard href="/zh/tidb/stable/mysql-compatibility" label="与 MySQL 兼容性对比" icon="oss-mysql-blue">
+
+TiDB 高度兼容 MySQL 协议，以及 MySQL 5.7 和 MySQL 8.0 常用的功能及语法
+
+</DocHomeCard>
+
+</DocHomeCardContainer>
+
+</DocHomeSection>
 
 <DocHomeSection label="TiDB Cloud" anchor="tidb-cloud" id="tidb-cloud">
 
-TiDB Cloud is a fully-managed Database-as-a-Service (DBaaS) that brings everything great about TiDB to your cloud, letting you focus on your applications instead of the complexities of your database.
+TiDB Cloud 是全托管的数据库即服务 (Database-as-a-Service, DBaaS) 产品，依托于公有云提供开箱即用的 TiDB 服务。TiDB Cloud 让数据库部署、运维和性能调优变得轻松简单，通过界面上的几次点击即可快速创建和管理 TiDB 集群，让您可以专注于自身业务。适用于中国出海企业和开发者。
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="/tidbcloud/tidb-cloud-intro" label="What is TiDB Cloud" icon="cloud-product-mauve">
+<DocHomeCard href="/tidbcloud/tidb-cloud-intro" label="TiDB Cloud 简介" icon="cloud-product-mauve">
 
-Learn what TiDB Cloud is as an easy-to-use database and its key features.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidbcloud/tidb-cloud-quickstart" label="Get started with TiDB Cloud Starter" icon="cloud-getstarted-mauve">
-
-Guide for an easy way to get started with TiDB Cloud.
+TiDB Cloud 核心特性与应用场景简介
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/dev-guide-overview" label="Developer Guide" icon="cloud-developer-mauve">
+<DocHomeCard href="/tidbcloud/tidb-cloud-quickstart" label="快速上手 TiDB Cloud Starter" icon="cloud-getstarted-mauve">
 
-Connect your application with the languages and frameworks you prefer.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidbcloud/vector-search-overview" label="Vector Search in TiDB Cloud Starter (Beta)" icon="cloud-vector-mauve">
-
-Explore native support of Vector Search in TiDB Cloud Starter to build your AI application.
+快速了解和使用 TiDB Cloud
 
 </DocHomeCard>
 
-<DocHomeCard href="/tidbcloud/tidb-cloud-roadmap" label="TiDB Cloud Roadmap" icon="cloud-roadmap-mauve">
+<DocHomeCard href="/zh/developer/" label="开发者指南" icon="cloud-developer-mauve">
 
-Planned features and releases for TiDB Cloud.
+使用你熟悉的语言或框架连接到 TiDB Cloud Starter
 
 </DocHomeCard>
 
 </DocHomeCardContainer>
 
-</DocHomeSection>
+体验全托管的云原生、分布式、实时 HTAP 数据库 TiDB Cloud。
 
-<DocHomeSection label="TiDB Self-Managed" anchor="tidb-self-managed" id="tidb-self-managed">
-
-<!-- Localization note for TiDB:
-
-- English: use distributed SQL, and start to emphasize HTAP
-- Chinese: can keep "NewSQL" and emphasize one-stop real-time HTAP ("一栈式实时 HTAP")
-- Japanese: use NewSQL because it is well-recognized
-
--->
-
-TiDB is an open-source distributed SQL database that supports Hybrid Transactional and Analytical Processing (HTAP) workloads. It is MySQL compatible and features horizontal scalability, strong consistency, and high availability. You can deploy TiDB in a self-hosted environment or on the cloud.
-
-<DocHomeCardContainer>
-
-<DocHomeCard href="/tidb/stable/overview" label="What is TiDB Self-Managed" icon="oss-product-blue">
-
-Learn what is TiDB Self-Managed and its key features.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidb/stable/quick-start-with-tidb" label="Get started with TiDB Self-Managed" icon="oss-getstarted-blue">
-
-Walks you through the quickest way to get started with TiDB Self-Managed.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidb/stable/production-deployment-using-tiup" label="Deploy a Local TiDB Cluster" icon="oss-deploy-blue">
-
-Learn how to deploy TiDB locally in a production environment.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidb/stable/dev-guide-overview" label="Developer Guide" icon="oss-developer-blue">
-
-For application developers using TiDB Self-Managed.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidb/stable/mysql-compatibility" label="MySQL Compatibility" icon="oss-mysql-blue">
-
-TiDB is highly compatible with the MySQL protocol and the common features and syntax of MySQL 5.7 and MySQL 8.0.
-
-</DocHomeCard>
-
-<DocHomeCard href="/tidb/dev/tidb-roadmap" label="TiDB Self-Managed Roadmap" icon="oss-roadmap-blue">
-
-Planned features and release dates for TiDB Self-Managed.
-
-</DocHomeCard>
-
-</DocHomeCardContainer>
-
-The open-source TiDB platform is released under the Apache 2.0 license and is supported by the community. [View on GitHub](https://github.com/pingcap/tidb)
+<a href="https://tidbcloud.com/free-trial" class="button button-primary" target="_blank" referrerpolicy="no-referrer-when-downgrade">免费试用</a>
 
 </DocHomeSection>
 
-<DocHomeSection label="More Resources" anchor="resources" id="resources">
+<DocHomeSection label="更多资源" anchor="resources" id="resources">
 
 <DocHomeCardContainer>
 
-<DocHomeCard href="https://www.pingcap.com/education/" label="Learning Center" icon="global-tidb-education">
+<DocHomeCard href="https://learn.pingkai.cn/learner/course" label="课程中心" icon="global-tidb-education">
 
-Learn TiDB Cloud and TiDB Self-Managed through well-designed online courses and instructor-led training.
-
-</DocHomeCard>
-
-<DocHomeCard href="https://www.pingcap.com/blog/" label="Blog" icon="global-tidb-blog">
-
-Read great articles about TiDB Cloud and TiDB Self-Managed.
+提供众多免费课程，助您深入学习 TiDB，成为 TiDB 技术专家
 
 </DocHomeCard>
 
-<DocHomeCard href="https://www.pingcap.com/event/" label="Events" icon="global-tidb-events">
+<DocHomeCard href="https://pingkai.cn/tidbcommunity" label="TiDB 社区" icon="global-tidb-community">
 
-Learn about events hosted by PingCAP and the community.
-
-</DocHomeCard>
-
-<DocHomeCard href="https://www.pingcap.com/ebook-whitepaper/" label="eBooks & Papers" icon="global-tidb-ebook">
-
-Download eBooks and papers.
+开发者、用户、Contributor、合作伙伴一起建立的学习和分享平台
 
 </DocHomeCard>
 
-<DocHomeCard href="https://www.pingcap.com/videos/" label="Videos" icon="global-tidb-video">
+<DocHomeCard href="https://pingkai.cn/tidbcommunity/blog" label="博客文章" icon="global-tidb-blog">
 
-Watch a compilation of short videos describing TiDB and various use cases.
+满满的技术干货、深度解读、技术分享
+
+</DocHomeCard>
+
+<DocHomeCard href="https://pingkai.cn/tidbcommunity/forum" label="Ask TiDB User Group" icon="global-tidb-asktug">
+
+互助交流，有问有答
 
 </DocHomeCard>
 
 <DocHomeCard href="https://ossinsight.io/" label="OSS Insight" icon="global-tidb-ossinsight">
 
-A powerful insight tool that provides in-depth analysis of any GitHub repository, powered by TiDB Cloud.
+一款由 TiDB Cloud 驱动的强大有趣的洞察工具，帮您深入分析 GitHub 仓库
 
 </DocHomeCard>
 
-<DocHomeCard href="https://play.tidbcloud.com/?utm_source=docs&utm_medium=home_more_resources" label="Playground" icon="global-tidb-playground">
+<DocHomeCard href="https://github.com/pingcap/docs-cn/blob/master/CONTRIBUTING.md" label="贡献内容" icon="global-tidb-contribute">
 
-Experience the capabilities of TiDB without registration.
-
-</DocHomeCard>
-
-<DocHomeCard href="https://discord.gg/DQZ2dy3cuc?utm_source=doc" label="Join our community on Discord" icon="global-tidb-discord" colspan="2" actionBtnLabel="Join Community" ctaGraphic="global-iso-hand">
-
-Join us on Discord or become a contributor.
+欢迎为 TiDB 文档做贡献，一起打造更好的 TiDB 文档！
 
 </DocHomeCard>
 

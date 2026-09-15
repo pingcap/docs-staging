@@ -1,46 +1,106 @@
 ---
-title: TiProxy Deployment Topology
-summary: Learn the deployment topology of TiProxy based on the minimal TiDB topology.
+title: TiProxy 部署拓扑
+summary: 了解在部署最小拓扑集群的基础上，部署 TiProxy 的拓扑结构。
 ---
 
-# TiProxy Deployment Topology
+# TiProxy 部署拓扑
 
-This document describes the deployment topology of [TiProxy](/tiproxy/tiproxy-overview.md) based on the minimal TiDB topology.
+本文介绍在部署最小拓扑集群的基础上，部署 [TiProxy](/tiproxy/tiproxy-overview.md) 的拓扑结构。
 
-For other deployment methods, refer to the following documents:
+其他部署方式，请参考以下文档：
 
-- To deploy TiProxy using TiDB Operator, see the [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-tiproxy) documentation.
-- To quickly deploy TiProxy locally using TiUP, see [Deploy TiProxy](/tiup/tiup-playground.md#deploy-tiproxy).
-- To deploy TiProxy using TiUP, see [Installation and usage](/tiproxy/tiproxy-overview.md#installation-and-usage).
+- 使用 TiDB Operator 部署 TiProxy，请参见 [TiDB Operator](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/deploy-tiproxy) 文档。
+- 使用 TiUP 本地快速部署 TiProxy，请参见[部署 TiProxy](/tiup/tiup-playground.md#部署-tiproxy)。
+- 使用 TiUP 部署 TiProxy，请参见 [TiProxy 安装和使用](/tiproxy/tiproxy-overview.md#安装和使用)。
 
-TiProxy is a L7 proxy server for TiDB, which can balance connections and migrate sessions when possible.
+TiProxy 是 TiDB 的 L7 代理，可以平衡连接并迁移会话。
 
-## Topology information
+## 拓扑信息
 
-| Instance | Count | Physical machine configuration | IP | Configuration |
+| 实例 | 个数 | 物理机配置 | IP | 配置 |
 | :-- | :-- | :-- | :-- | :-- |
-| TiDB | 3 | 16 VCore 32GB * 3 | 10.0.1.4 <br/> 10.0.1.5 <br/> 10.0.1.6 | Default port <br/> Global directory configuration |
-| PD | 3 | 4 VCore 8GB * 3 | 10.0.1.1 <br/> 10.0.1.2 <br/> 10.0.1.3 | Default port <br/> Global directory configuration |
-| TiKV | 3 | 16 VCore 32GB 2TB (nvme ssd) * 3 | 10.0.1.7 <br/> 10.0.1.8 <br/> 10.0.1.9 | Default port <br/> Global directory configuration |
-| TiProxy | 2 | 4 VCore 8 GB * 1  | 10.0.1.11 <br/> 10.0.1.12 | Default port <br/> Global directory configuration |
-| Monitoring & Grafana | 1 | 4 VCore 8GB * 1 500GB (ssd) | 10.0.1.13 | Default port <br/> Global directory configuration |
+| TiDB | 3 | 16 VCore 32GB * 3 | 10.0.1.4 <br/> 10.0.1.5 <br/> 10.0.1.6 | 默认端口 <br/>  全局目录配置 |
+| PD | 3 | 4 VCore 8GB * 3 | 10.0.1.1 <br/> 10.0.1.2 <br/> 10.0.1.3 | 默认端口 <br/>  全局目录配置 |
+| TiKV | 3 | 16 VCore 32GB 2TB (nvme ssd) * 3 | 10.0.1.7 <br/> 10.0.1.8 <br/> 10.0.1.9 | 默认端口 <br/>  全局目录配置 |
+| TiProxy | 2 | 4 VCore 8 GB * 1  | 10.0.1.11 <br/> 10.0.1.12 | 默认端口 <br/>  全局目录配置 |
+| Monitoring & Grafana | 1 | 4 VCore 8GB * 1 500GB (ssd) | 10.0.1.13 | 默认端口 <br/>  全局目录配置 |
 
-> **Note:**
+> **注意：**
 >
-> The IP addresses of the instances are given as examples only. In your actual deployment, replace the IP addresses with your actual IP addresses.
+> 该表中拓扑实例的 IP 为示例 IP。在实际部署时，请替换为实际的 IP。
 
-### Topology templates
+### 拓扑模版
 
-For more information about the template for TiProxy, see [The simple template for the TiProxy topology](https://github.com/pingcap/docs/blob/master/config-templates/simple-tiproxy.yaml).
+<details>
+<summary>简单 TiProxy 配置模版</summary>
 
-For detailed descriptions of the configuration items in the preceding TiDB cluster topology file, see [Topology Configuration File for Deploying TiDB Using TiUP](/tiup/tiup-cluster-topology-reference.md).
+```yaml
+# # Global variables are applied to all deployments and used as the default value of
+# # the deployments if a specific deployment value is missing.
+global:
+  user: "tidb"
+  ssh_port: 22
+  deploy_dir: "/tidb-deploy"
+  data_dir: "/tidb-data"
+component_versions:
+  tiproxy: "v1.3.2"
+server_configs:
+  tidb:
+    graceful-wait-before-shutdown: 30
+  tiproxy:
+    ha.virtual-ip: "10.0.1.10/24"
+    ha.interface: "eth0"
+    graceful-wait-before-shutdown: 15
 
-### Key parameters
+pd_servers:
+  - host: 10.0.1.1
+  - host: 10.0.1.2
+  - host: 10.0.1.3
 
-- The instance level `"-host"` configuration in `tiproxy_servers` only supports IP, not domain name.
-- For detailed TiProxy parameter description, see [TiProxy Configuration](/tiproxy/tiproxy-configuration.md).
+tidb_servers:
+  - host: 10.0.1.4
+  - host: 10.0.1.5
+  - host: 10.0.1.6
 
-> **Note:**
+tikv_servers:
+  - host: 10.0.1.7
+  - host: 10.0.1.8
+  - host: 10.0.1.9
+
+tiproxy_servers:
+  - host: 10.0.1.11
+    deploy_dir: "/tiproxy-deploy"
+    port: 6000
+    status_port: 3080
+    config:
+      labels: { zone: "east" }
+  - host: 10.0.1.12
+    deploy_dir: "/tiproxy-deploy"
+    port: 6000
+    status_port: 3080
+    config:
+      labels: { zone: "west" }
+
+monitoring_servers:
+  - host: 10.0.1.13
+
+grafana_servers:
+  - host: 10.0.1.13
+
+alertmanager_servers:
+  - host: 10.0.1.13
+```
+
+</details>
+
+以上 TiDB 集群拓扑文件中，详细的配置项说明见[通过 TiUP 部署 TiDB 集群的拓扑文件配置](/tiup/tiup-cluster-topology-reference.md)。
+
+### 关键参数介绍
+
+- `tiproxy_servers` 实例级别配置 `"-host"` 目前只支持 IP，不支持域名。
+- TiProxy 具体的参数配置介绍可参考 [TiProxy 参数配置](/tiproxy/tiproxy-configuration.md)。
+
+> **注意：**
 >
-> - You do not need to manually create the `tidb` user in the configuration file. The TiUP cluster component automatically creates the `tidb` user on the target machines. You can customize the user, or keep the user consistent with the control machine.
-> - If you configure the deployment directory as a relative path, the cluster will be deployed in the home directory of the user.
+> - 无需手动创建配置文件中的 `tidb` 用户，TiUP cluster 组件会在目标主机上自动创建该用户。可以自定义用户，也可以和中控机的用户保持一致。
+> - 如果部署目录配置为相对路径，会部署在用户的 Home 目录下。

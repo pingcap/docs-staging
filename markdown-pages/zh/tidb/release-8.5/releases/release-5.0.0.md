@@ -1,467 +1,462 @@
 ---
 title: What's New in TiDB 5.0
-summary: TiDB 5.0 introduces MPP architecture, clustered index, async commit, and stability improvements. It also enhances compatibility changes, configuration parameters, and new features. Additionally, it optimizes performance, high availability, disaster recovery, data migration, diagnostics, deployment, and maintenance. Telemetry is added for cluster usage metrics.
+summary: TiDB 5.0 版本新增了许多功能和优化，包括 MPP 架构、聚簇索引、异步提交事务、Raft Joint Consensus 算法等。此外，还优化了系统变量、配置文件参数、性能、稳定性和数据迁移功能。TiUP 工具也进行了多项优化，包括部署操作逻辑、升级稳定性、升级时长和运维功能。遥测方面新增了集群使用指标的收集。
+aliases: ['/zh/tidb/dev/release-5.0.0/','/zh/tidb/v5.0/release-5.0.0','/zh/tidb/v5.4/release-5.0.0','/zh/tidb/v6.1/release-5.0.0','/zh/tidb/v6.5/release-5.0.0','/zh/tidb/v7.1/release-5.0.0','/zh/tidb/v7.5/release-5.0.0','/zh/tidb/v8.1/release-5.0.0']
 ---
 
 # What's New in TiDB 5.0
 
-Release date: April 7, 2021
+发版日期：2021 年 04 月 07 日
 
-TiDB version: 5.0.0
+TiDB 版本：5.0.0
 
-In v5.0, PingCAP is dedicated to helping enterprises quickly build applications based on TiDB, freeing them from worries about database performance, performance jitter, security, high availability, disaster recovery, troubleshooting SQL performance, and so on.
+5.0 版本中，我们专注于帮助企业基于 TiDB 数据库快速构建应用程序，使企业在构建过程中无需担心数据库的性能、性能抖动、安全、高可用、容灾、SQL 语句的性能问题排查等问题。
 
-In v5.0, the key new features or improvements are as follows:
+在 5.0 版本中，你可以获得以下关键特性：
 
-+ Introduce Massively Parallel Processing (MPP) architecture through TiFlash nodes, which shares the execution workloads of large join queries among TiFlash nodes. When the MPP mode is enabled, TiDB, based on cost, determines whether to use the MPP framework to perform the calculation. In the MPP mode, the join keys are redistributed through the `Exchange` operation while being calculated, which distributes the calculation pressure to each TiFlash node and speeds up the calculation. According to the benchmark, with the same cluster resource, TiDB 5.0 MPP shows 2 to 3 times of speedup over Greenplum 6.15.0 and Apache Spark 3.1.1, and some queries have 8 times better performance.
-+ Introduce the clustered index feature to improve database performance. For example, in the TPC-C tpmC test, the performance of TiDB, with clustered index enabled, improves by 39%.
-+ Enable the async commit feature to reduce the write latency. For example, in the 64-thread Sysbench test, the average latency of updating indexes, with async commit enabled, is reduced by 41.7%, from 12.04 ms to 7.01 ms.
-+ Reduce jitters. This is achieved by improving the optimizer stability and by limiting system tasks' usages of I/O, network, CPU, and memory resources. For example, in the 8-hour performance test, the standard deviation of TPC-C tpmC does not exceed 2%.
-+ Enhance system stability by improving scheduling and by keeping execution plans stable as much as possible.
-+ Introduces Raft Joint Consensus algorithm, which ensures the system availability during the Region membership change.
-+ Optimize `EXPLAIN` features and invisible index, which helps Database Administrators (DBAs) debug SQL statements more efficiently.
-+ Guarantee reliability for enterprise data. You can back up data from TiDB to Amazon S3 storage and Google Cloud GCS, or restore data from these cloud storage platforms.
-+ Improve performance of data import from or data export to Amazon S3 storage or TiDB/MySQL, which helps enterprises quickly build applications on the cloud. For example, in the TPC-C test, the performance of importing 1 TiB data improves by 40%, from 254 GiB/h to 366 GiB/h.
++ TiDB 通过 TiFlash 节点引入了 MPP 架构。这使得大型表连接类查询可以由不同 TiFlash 节点共同分担完成。当 MPP 模式开启后，TiDB 将会根据代价决定是否应该交由 MPP 框架进行计算。MPP 模式下，表连接将通过对 JOIN Key 进行数据计算时重分布（Exchange 操作）的方式把计算压力分摊到各个 TiFlash 执行节点，从而达到加速计算的目的。经测试，TiDB 5.0 在同等资源下，MPP 引擎的总体性能是 Greenplum 6.15.0 与 Apache Spark 3.1.1 两到三倍之间，部分查询可达 8 倍性能差异。
++ 引入聚簇索引功能，提升数据库的性能。例如，TPC-C tpmC 的性能提升了 39%。
++ 开启异步提交事务功能，降低写入数据的延迟。例如：Sysbench 设置 64 线程测试 Update index 时，平均延迟由 12.04 ms 降低到 7.01ms ，降低了 41.7%。
++ 通过提升优化器的稳定性及限制系统任务对 I/O、网络、CPU、内存等资源的占用，降低系统的抖动。例如：测试 8 小时，TPC-C 测试中 tpmC 抖动标准差的值小于等于 2%。
++ 通过完善调度功能及保证执行计划在最大程度上保持不变，提升系统的稳定性。
++ 引入 Raft Joint Consensus 算法，确保 Region 成员变更时系统的可用性。
++ 优化 `EXPLAIN` 功能、引入不可见索引等功能帮助提升 DBA 调试及 SQL 语句执行的效率。
++ 通过从 TiDB 备份文件到 Amazon S3、Google Cloud GCS，或者从 Amazon S3、Google Cloud GCS 恢复文件到 TiDB，确保企业数据的可靠性。
++ 提升从 Amazon S3 或者 TiDB/MySQL 导入导出数据的性能，帮忙企业在云上快速构建应用。例如：导入 1TiB TPC-C 数据性能提升了 40%，由 254 GiB/h 提升到 366 GiB/h。
 
-## Compatibility changes
+## 兼容性变化
 
-### System variables
+### 系统变量
 
-+ Add the [`tidb_executor_concurrency`](/system-variables.md#tidb_executor_concurrency-new-in-v50) system variable to control the concurrency of multiple operators. The previous `tidb_*_concurrency` settings (such as `tidb_projection_concurrency`) still take effect but with a warning when you use them.
-+ Add the [`tidb_skip_ascii_check`](/system-variables.md#tidb_skip_ascii_check-new-in-v50) system variable to specify whether to skip the ASCII validation check when the ASCII character set is written. This default value is `OFF`.
-+ Add the [`tidb_enable_strict_double_type_check`](/system-variables.md#tidb_enable_strict_double_type_check-new-in-v50) system variable to determine whether the syntax like `double(N)` can be defined in the table schema. This default value is `OFF`.
-+ Change the default value of [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size) from `20000` to `0`. This means that batch DML statements are no longer used by default in `LOAD`/`INSERT INTO SELECT ...`. Instead, large transactions are used to comply with the strict ACID semantics.
++ 新增系统变量 [`tidb_executor_concurrency`](/system-variables.md#tidb_executor_concurrency-从-v50-版本开始引入)，用于统一控制算子并发度。原有的 tidb_*_concurrency（例如 `tidb_projection_concurrency`）设置仍然生效，使用过程中会提示已废弃警告。
++ 新增系统变量 [`tidb_skip_ascii_check`](/system-variables.md#tidb_skip_ascii_check-从-v50-版本开始引入)，用于决定在写入 ASCII 字符集的列时，是否对字符的合法性进行检查，默认为 OFF。
++ 新增系统变量 [`tidb_enable_strict_double_type_check`](/system-variables.md#tidb_enable_strict_double_type_check-从-v50-版本开始引入)，用于决定类似“double(N)”语法是否允许被定义在表结构中，默认为 OFF。
++ 系统变量 [`tidb_dml_batch_size`](/system-variables.md#tidb_dml_batch_size) 的默认值由 20000 修改为 0，即在 "LOAD/INSERT INTO SELECT ..." 等语法中，不再默认使用 Batch DML，而是通过大事务以满足严格的 ACID 语义。
 
-    > **Note:**
+    > **注意：**
     >
-    > The scope of the variable is changed from session to global, and the default value is changed from `20000` to `0`. If the application relies on the original default value, you need to use the `set global` statement to modify the variable to the original value after the upgrade.
+    > 该变量作用域从 session 改变为 global，且默认值从 20000 修改为 0，如果应用依赖于原始默认值，需要在升级之后使用 `set global` 语句修改该变量值为原始值。
 
-+ Control temporary tables' syntax compatibility using the [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-new-in-v40) system variable. When this variable value is `OFF`, the `CREATE TEMPORARY TABLE` syntax returns an error.
-+ Add the following system variables to directly control the garbage collection-related parameters:
-    - [`tidb_gc_concurrency`](/system-variables.md#tidb_gc_concurrency-new-in-v50)
-    - [`tidb_gc_enable`](/system-variables.md#tidb_gc_enable-new-in-v50)
-    - [`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-new-in-v50)
-    - [`tidb_gc_run_interval`](/system-variables.md#tidb_gc_run_interval-new-in-v50)
-    - [`tidb_gc_scan_lock_mode`](/system-variables.md#tidb_gc_scan_lock_mode-new-in-v50)
-+ Change the default value of [`enable-joint-consensus`](/pd-configuration-file.md#enable-joint-consensus-new-in-v50) from `false` to `true`, which enables the Joint Consensus feature by default.
-+ Change the value of `tidb_enable_amend_pessimistic_txn` from `0` or `1` to `ON` or `OFF`.
-+ Change the default value of [`tidb_enable_clustered_index`](/system-variables.md#tidb_enable_clustered_index-new-in-v50) from `OFF` to `INT_ONLY` with the following new meanings:
-    + `ON`: clustered index is enabled. Adding or deleting non-clustered indexes is supported.
-    + `OFF`: clustered index is disabled. Adding or deleting non-clustered indexes is supported.
-    + `INT_ONLY`: the default value. The behavior is consistent with that before v5.0. You can control whether to enable clustered index for the INT type together with `alter-primary-key = false`.
++ 临时表的语法兼容性受到 [`tidb_enable_noop_functions`](/system-variables.md#tidb_enable_noop_functions-从-v40-版本开始引入) 系统变量的控制：当 `tidb_enable_noop_functions` 为 `OFF` 时，`CREATE TEMPORARY TABLE` 语法将会报错。
++ 新增 [`tidb_gc_concurrency`](/system-variables.md#tidb_gc_concurrency-从-v50-版本开始引入)、[`tidb_gc_enable`](/system-variables.md#tidb_gc_enable-从-v50-版本开始引入)、[`tidb_gc_life_time`](/system-variables.md#tidb_gc_life_time-从-v50-版本开始引入)、[`tidb_gc_run_interval`](/system-variables.md#tidb_gc_run_interval-从-v50-版本开始引入)、[`tidb_gc_scan_lock_mode`](/system-variables.md#tidb_gc_scan_lock_mode-从-v50-版本开始引入) 系统变量，用于直接通过系统变量调整垃圾回收相关参数。
++ 系统变量 [`enable-joint-consensus`](/pd-configuration-file.md#enable-joint-consensus-从-v50-版本开始引入) 默认值由 `false` 改成 `true`，默认开启 Joint consensus 功能。
++ 系统变量 `tidb_enable_amend_pessimistic_txn` 的值由数字 0 或者 1 变更成 ON 或者 OFF。
++ 系统变量 [`tidb_enable_clustered_index`](/system-variables.md#tidb_enable_clustered_index-从-v50-版本开始引入) 默认值由 OFF 改成 INT_ONLY 且含义有如下变化：
+    + ON：开启聚簇索引，支持添加或者删除非聚簇索引。
+    + OFF：关闭聚簇索引，支持添加或者删除非聚簇索引。
+    + INT_ONLY：默认值，行为与 v5.0 以下版本保持一致，与 `alter-primary-key = false` 一起使用可控制 INT 类型是否开启聚簇索引。
 
-    > **Note:**
+    > **注意：**
     >
-    > The `INT_ONLY` value of `tidb_enable_clustered_index` in 5.0 GA has the same meaning as the `OFF` value in 5.0 RC. After upgrading from a 5.0 RC cluster with the `OFF` setting to 5.0 GA, it will be displayed as `INT_ONLY`.
+    > 5.0 GA 中 `tidb_enable_clustered_index` 的 INT_ONLY 值和 5.0 RC 中的 OFF 值含义一致，从已设置 OFF 的 5.0 RC 集群升级至 5.0 GA 后，将展示为 INT_ONLY。
 
-### Configuration file parameters
+### 配置文件参数
 
-+ Add the [`index-limit`](/tidb-configuration-file.md#index-limit-new-in-v50) configuration item for TiDB. Its value defaults to `64` and ranges between `[64,512]`. A MySQL table supports 64 indexes at most. If its value exceeds the default setting and more than 64 indexes are created for a table, when the table schema is re-imported into MySQL, an error will be reported.
-+ Add the [`enable-enum-length-limit`](/tidb-configuration-file.md#enable-enum-length-limit-new-in-v50) configuration item for TiDB to be compatible and consistent with MySQL's ENUM/SET length (ENUM length < 255). The default value is `true`.
-+ Replace the `pessimistic-txn.enable` configuration item with the [`tidb_txn_mode`](/system-variables.md#tidb_txn_mode) environment variable.
-+ Replace the `performance.max-memory` configuration item with [`performance.server-memory-quota`](/tidb-configuration-file.md#server-memory-quota-new-in-v409)
-+ Replace the `tikv-client.copr-cache.enable` configuration item with [`tikv-client.copr-cache.capacity-mb`](/tidb-configuration-file.md#capacity-mb). If the item's value is `0.0`, this feature is disabled. If the item's value is greater than `0.0`, this feature is enabled. Its default value is `1000.0`.
-+ Replace the `rocksdb.auto-tuned` configuration item with [`rocksdb.rate-limiter-auto-tuned`](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50).
-+ Delete the `raftstore.sync-log` configuration item. By default, written data is forcibly spilled to the disk. Before v5.0, you can explicitly disable `raftstore.sync-log`. Since v5.0, the configuration value is forcibly set to `true`.
-+ Change the default value of the `gc.enable-compaction-filter` configuration item from `false` to `true`.
-+ Change the default value of the `enable-cross-table-merge` configuration item from `false` to `true`.
-+ Change the default value of the [`rate-limiter-auto-tuned`](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50) configuration item from `false` to `true`.
++ 新增 [`index-limit`](/tidb-configuration-file.md#index-limit-从-v50-版本开始引入) 配置项，默认值为 64，取值范围是 [64, 512]。MySQL 一张表最多支持 64 个索引，如果该配置超过默认值并为某张表创建超过 64 个索引，该表结构再次导入 MySQL 将会报错。
++ 新增 [`enable-enum-length-limit`](/tidb-configuration-file.md#enable-enum-length-limit-从-v50-版本开始引入) 配置项，用于兼容 MySQL ENUM/SET 元素长度并保持一致（ENUM 长度 < 255），默认值为 true。
++ 删除 `pessimistic-txn.enable` 配置项，通过环境变量 [tidb_txn_mode](/system-variables.md#tidb_txn_mode) 替代。
++ 删除 `performance.max-memory` 配置项，通过 [performance.server-memory-quota](/tidb-configuration-file.md#server-memory-quota-从-v409-版本开始引入) 替代。
++ 删除 `tikv-client.copr-cache.enable` 配置项，通过 [tikv-client.copr-cache.capacity-mb](/tidb-configuration-file.md#capacity-mb) 替代，如果配置项的值为 0.0 代表关闭此功能，大于 0.0 代表开启此功能，默认：1000.0。
++ 删除 `rocksdb.auto-tuned` 配置项，通过 [rocksdb.rate-limiter-auto-tuned](/tikv-configuration-file.md#rate-limiter-auto-tuned-从-v50-版本开始引入) 替代。
++ 删除 `raftstore.sync-log` 配置项，默认会写入数据强制落盘，之前显式关闭 `raftstore.sync-log`，成功升级 v5.0 版本后，会强制改为 `true`。
++ `gc.enable-compaction-filter` 配置项的默认值由 `false` 改成 `true`。
++ `enable-cross-table-merge` 配置项的默认值由 `false` 改成 `true`。
++ [`rate-limiter-auto-tuned`](/tikv-configuration-file.md#rate-limiter-auto-tuned-从-v50-版本开始引入) 配置项的默认值由 `false` 改成 `true`。
 
-### Others
+### 其他
 
-+ Before the upgrade, check the value of the TiDB configuration [`feedback-probability`](https://docs.pingcap.com/tidb/v5.0/tidb-configuration-file#feedback-probability). If the value is not 0, the "panic in the recoverable goroutine" error will occur after the upgrade, but this error does not affect the upgrade.
-+ Forbid conversion between `VARCHAR` type and `CHAR` type during the column type change to avoid data correctness issues.
++ 升级前，请检查 TiDB 配置项 [`feedback-probability`](https://docs-archive.pingcap.com/zh/tidb/v5.0/tidb-configuration-file#feedback-probability) 的值。如果不为 0，升级后会触发 "panic in the recoverable goroutine" 报错，但不影响升级。
++ 为了避免造成数据正确性问题，列类型变更不再允许 `VARCHAR` 类型和 `CHAR` 类型的互相转换。
 
-## New features
+## 新功能
 
 ### SQL
 
-#### List partitioning (**Experimental**)
+#### List 分区表 (List Partition)（**实验特性**）
 
-[User document](/partitioned-table.md#list-partitioning)
+[用户文档](/partitioned-table.md#list-分区)
 
-With the list partitioning feature, you can effectively query and maintain tables with a large amount of data.
+采用 List 分区表后，你可以高效地查询、维护有大量数据的表。
 
-With this feature enabled, partitions and how data is distributed among partitions are defined according to the `PARTITION BY LIST(expr) PARTITION part_name VALUES IN (...)` expression. The partitioned tables' data set supports at most 1024 distinct integer values. You can define the values using the `PARTITION ... VALUES IN (...)` clause.
+List 分区表会按照 `PARTITION BY LIST(expr) PARTITION part_name VALUES IN (...)` 表达式来定义分区，定义如何将数据划分到不同的分区中。分区表的数据集合最多支持 1024 个值，值的类型只支持整数型，不能有重复的值。可通过 `PARTITION ... VALUES IN (...)` 子句对值进行定义。
 
-To enable list partitioning, set the session variable [`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-new-in-v50) to `ON`.
+你可以设置 session 变量 [`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-从-v50-版本开始引入) 的值为 `ON`，开启 List 分区表功能。
 
-#### List COLUMNS partitioning (**Experimental**)
+#### List COLUMNS 分区表 (List COLUMNS Partition)（**实验特性**）
 
-[User document](/partitioned-table.md#list-columns-partitioning)
+[用户文档](/partitioned-table.md#list-columns-分区)
 
-List COLUMNS partitioning is a variant of list partitioning. You can use multiple columns as partition keys. Besides the integer data type, you can also use the columns in the string, `DATE`, and `DATETIME` data types as partition columns.
+List COLUMNS 分区表是 List 分区表的变体，主要的区别是分区键可以由多个列组成，列的类型不再局限于整数类型，也可以是字符串、DATE 和 DATETIME 等类型。
 
-To enable List COLUMNS partitioning, set the session variable [`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-new-in-v50) to `ON`.
+你可以设置 session 变量 [`tidb_enable_list_partition`](/system-variables.md#tidb_enable_list_partition-从-v50-版本开始引入) 的值为 `ON`，开启 List COLUMNS 分区表功能。
 
-#### Invisible indexes
+#### 不可见索引 (Invisible Indexes)
 
-[User document](/sql-statements/sql-statement-alter-index.md), [#9246](https://github.com/pingcap/tidb/issues/9246)
+[用户文档](/sql-statements/sql-statement-alter-index.md)，[#9246](https://github.com/pingcap/tidb/issues/9246)
 
-When you tune performance or select optimal indexes, you can set an index to be `Visible` or `Invisible` by using SQL statements. This setting can avoid performing resource-consuming operations, such as `DROP INDEX` and `ADD INDEX`.
+DBA 调试和选择相对最优的索引时，可以通过 SQL 语句将某个索引设置成 `Visible` 或者 `Invisible`，避免执行消耗资源较多的操作，如 `DROP INDEX` 或 `ADD INDEX`。
 
-To modify the visibility of an index, use the `ALTER INDEX` statement. After the modification, the optimizer decides whether to add this index to the index list based on the index visibility.
+DBA 通过 `ALTER INDEX` 语句可以修改某个索引的可见性。修改后，查询优化器会根据索引的可见性决定是否将此索引加入到索引列表中。
 
-#### `EXCEPT` and `INTERSECT` operators
+#### `EXCEPT` 和 `INTERSECT` 操作符
 
-[User document](/functions-and-operators/set-operators.md), [#18031](https://github.com/pingcap/tidb/issues/18031)
+[用户文档](/functions-and-operators/set-operators.md)，[#18031](https://github.com/pingcap/tidb/issues/18031)
 
-The `INTERSECT` operator is a set operator, which returns the intersection of the result sets of two or more queries. To some extent, it is an alternative to the `Inner Join` operator.
+`INTERSECT` 操作符是一个集合操作符，返回两个或者多个查询结果集的交集。一定程度上可以替代 `Inner Join` 操作符。
 
-The `EXCEPT` operator is a set operator, which combines the result sets of two queries and returns elements that are in the first query result but not in the second.
+`EXCEPT` 操作符是一个集合操作符，返回两个查询结果集的差集，即在第一个查询结果中存在但在第二个查询结果中不存在的结果集。
 
-### Transaction
+### 事务
 
 [#18005](https://github.com/pingcap/tidb/issues/18005)
 
-In the pessimistic transaction mode, if the tables involved in a transaction contain concurrent DDL operations or `SCHEMA VERSION` changes, the system automatically updates the transaction's `SCHEMA VERSION` to the latest to ensure the successful transaction commit, and to avoid that the client receives the `Information schema is changed` error when the transaction is interrupted by DDL operations or `SCHEMA VERSION` changes.
+悲观事务模式下，如果事务所涉及到的表存在并发的 DDL 操作或者 SCHEMA VERSION 变更，系统自动将该事务的 SCHEMA VERSION 更新到最新版本，以此确保事务会提交成功，避免事务因并发的 DDL 操作或者 SCHEMA VERSION 变更而中断时客户端收到 `Information schema is changed` 的错误信息。
 
-This feature is disabled by default. To enable the feature, modify the value of `tidb_enable_amend_pessimistic_txn` system variable. This feature is introduced in v4.0.7 and has the following issues fixed in v5.0:
+系统默认关闭此功能，你可以通过修改 `tidb_enable_amend_pessimistic_txn` 系统变量开启此功能，此功能从 4.0.7 版本开始提供，5.0 版本主要修复了以下问题：
 
-+ The compatibility issue that occurs when TiDB Binlog executes `Add Column` operations
-+ The data inconsistency issue that occurs when using the feature together with the unique index
-+ The data inconsistency issue that occurs when using the feature together with the added index
++ TiDB Binlog 在执行 Add column 操作的兼容性问题
++ 与唯一索引一起使用时存在的数据不一致性的问题
++ 与添加索引一起使用时存在的数据不一致性的问题
 
-Currently, this feature still has the following incompatibility issues:
+当前此功能存在以下不兼容性问题：
 
-+ Transaction's semantics might change when there are concurrent transactions
-+ Known compatibility issue that occurs when using the feature together with TiDB Binlog
-+ Incompatibility with `Change Column`
++ 并发事务场景下事务的语义可能发生变化的问题
++ 与 TiDB Binlog 一起使用时，存在已知的兼容性问题 [#20996](https://github.com/pingcap/tidb/issues/20996)
++ 与 change column 功能不兼容 [#21470](https://github.com/pingcap/tidb/issues/21470)
 
-### Character set and collation
+### 字符集和排序规则
 
-- Support the `utf8mb4_unicode_ci` and `utf8_unicode_ci` collations. [User document](/character-set-and-collation.md#new-framework-for-collations), [#17596](https://github.com/pingcap/tidb/issues/17596)
-- Support the case-insensitive comparison sort for collations
+- 支持 `utf8mb4_unicode_ci` 和 `utf8_unicode_ci` 排序规则。 [用户文档](/character-set-and-collation.md#新框架下的排序规则支持)，[#17596](https://github.com/pingcap/tidb/issues/17596)
+- 支持字符集比较排序时不区分大小写。
 
-### Security
+### 安全
 
-[User document](/log-redaction.md), [#18566](https://github.com/pingcap/tidb/issues/18566)
+[用户文档](/log-redaction.md)，[#18566](https://github.com/pingcap/tidb/issues/18566)
 
-To meet security compliance requirements (such as *General Data Protection Regulation*, or GDPR), the system supports desensitizing information (such as ID and credit card number) in the output error messages and logs, which can avoid leaking sensitive information.
+为满足各种安全合规（如《通用数据保护条例》(GDPR)）的要求，系统在输出错误信息和日志信息时，支持对敏感信息（例如，身份证信息、信用卡号）进行脱敏处理，避免敏感信息泄露。
 
-TiDB supports desensitizing the output log information. To enable this feature, use the following switches:
+TiDB 支持对输出的日志信息进行脱敏处理，你可以通过以下开关开启此功能：
 
-+ The global variable [`tidb_redact_log`](/system-variables.md#tidb_redact_log). Its default value is `0`, which means that desensitization is disabled. To enable desensitization for tidb-server logs, set the variable value to `1`.
-+ The configuration item `security.redact-info-log`. Its default value is `false`, which means that desensitization is disabled. To enable desensitization for tikv-server logs, set the variable value to `true`.
-+ The configuration item `security.redact-info-log`. Its default value is `false`, which means that desensitization is disabled. To enable desensitization for pd-server logs, set the variable value to `true`.
-+ The configuration item `security.redact_info_log` for tiflash-server and `security.redact-info-log` for tiflash-learner. Their default values are both `false`, which means that desensitization is disabled. To enable desensitization for tiflash-server and tiflash-learner logs, set the values of both variables to `true`.
++ 全局系统变量 [`tidb_redact_log`](/system-variables.md#tidb_redact_log)：默认值为 0，即关闭脱敏。设置变量值为 1 开启 tidb-server 的日志脱敏功能。
++ 配置项 `security.redact-info-log`：默认值为 false，即关闭脱敏。设置配置项值为 true 开启 tikv-server 的日志脱敏功能。[#2852](https://github.com/tikv/pd/issues/2852)
++ 配置项 `security.redact-info-log`：默认值为 false，即关闭脱敏。设置配置项值为 true 开启 pd-server 的日志脱敏功能。
++ 配置项 `security.redact_info_log`（对于 tiflash-server）和配置项 `security.redact-info-log`（对于 tiflash-learner）：两个配置项的默认值均为 false，即关闭脱敏。设置配置项值为 true 开启 tiflash-server 及 tiflash-learner 的日志脱敏功能。
 
-This feature is introduced in v5.0. To use the feature, enable the system variable and all configuration items above.
+此功能从 5.0 版本中开始提供，使用过程中必须开启以上所有系统变量及配置项。
 
-## Performance optimization
+## 性能优化
 
-### MPP architecture
+### MPP 架构
 
-[User document](/tiflash/use-tiflash-mpp-mode.md)
+[用户文档](/tiflash/use-tiflash-mpp-mode.md)
 
-TiDB introduces the MPP architecture through TiFlash nodes. This architecture allows multiple TiFlash nodes to share the execution workload of large join queries.
+TiDB 通过 TiFlash 节点引入了 MPP 架构。这使得大型表连接类查询可以由不同 TiFlash 节点分担共同完成。
 
-When the MPP mode is on, TiDB determines whether to send a query to the MPP engine for computation based on the calculation cost. In the MPP mode, TiDB distributes the computation of table joins to each running TiFlash node by redistributing the join key during data calculation (`Exchange` operation), and thus accelerates the calculation. Furthermore, with the aggregation computing feature that TiFlash has already supported, TiDB can pushdown the computation of a query to the TiFlash MPP cluster. Then the distributed environment can help accelerate the entire execution process and dramatically increase the speed of analytic queries.
+当 MPP 模式开启后，TiDB 会通过代价决策是否应该交由 MPP 框架进行计算。MPP 模式下，表连接将通过对 JOIN Key 进行数据计算时重分布（Exchange 操作）的方式把计算压力分摊到各个 TiFlash 执行节点，从而达到加速计算的目的。更进一步，加上之前 TiFlash 已经支持的聚合计算，MPP 模式下 TiDB 可以将一个查询的计算都下推到 TiFlash MPP 集群，从而借助分布式环境加速整个执行过程，大幅度提升分析查询速度。
 
-In the TPC-H 100 benchmark test, TiFlash MPP delivers significant processing speed over analytic engines of traditional analytic databases and SQL on Hadoop. With this architecture, you can perform large-scale analytic queries directly on the latest transaction data, with a higher performance than traditional offline analytic solutions. According to the benchmark, with the same cluster resource, TiDB 5.0 MPP shows 2 to 3 times of speedup over Greenplum 6.15.0 and Apache Spark 3.1.1, and some queries have 8 times better performance.
+经过 Benchmark 测试，在 TPC-H 100 的规模下，TiFlash MPP 提供了显著超越 Greenplum，Apache Spark 等传统分析数据库或数据湖上分析引擎的速度。借助这套架构，用户可以直接针对最新的交易数据进行大规模分析查询，且性能超越传统离线分析方案。经测试，TiDB 5.0 在同等资源下，MPP 引擎的总体性能是 Greenplum 6.15.0 与 Apache Spark 3.1.1 两到三倍之间，部分查询可达 8 倍性能差异。
 
-Currently, the main features that the MPP mode does not support are as follows (For details, refer to [Use TiFlash](/tiflash/use-tiflash-mpp-mode.md)):
+当前 MPP 模式不支持的主要功能如下（详细信息请参阅[用户文档](/tiflash/use-tiflash-mpp-mode.md)）：
 
-+ Table partitioning
++ 分区表
 + Window Function
 + Collation
-+ Some built-in functions
-+ Reading data from TiKV
-+ OOM spill
++ 部分内置函数
++ 读取 TiKV 数据
++ OOM Spill
 + Union
 + Full Outer Join
 
-### Clustered index
+### 聚簇索引
 
-[User document](/clustered-indexes.md), [#4841](https://github.com/pingcap/tidb/issues/4841)
+[用户文档](/clustered-indexes.md)，[#4841](https://github.com/pingcap/tidb/issues/4841)
 
-When you are designing table structures or analyzing database behaviors, it is recommended to use the clustered index feature if you find that some columns with primary keys are often grouped and sorted, queries on these columns often return a certain range of data or a small amount of data with different values, and the corresponding data does not cause read or write hotspot issues.
+DBA、数据库应用开发者在设计表结构时或者分析业务数据的行为时，如果发现有部分列经常分组排序、返回某范围的数据、返回少量不同的值的数据、有主键列及业务数据不会有读写热点时，建议选择聚簇索引。
 
-Clustered indexes is a storage structure associated with the data of a table. Some database management systems refer to clustered index tables as _index-organized tables_. When creating a clustered index, you can specify one or more columns from the table as the keys for the index. TiDB stores these keys in a specific structure, which allows TiDB to quickly and efficiently find the rows associated with the keys, thus improves the performance of querying and writing data.
+聚簇索引 (Clustered Index) 是一种和表的数据相关联的存储结构。有些数据库管理系统将聚簇索引表称为“索引组织表”。创建聚簇索引时可指定包含表中的一列或多列作为索引的键值。这些键存储在一个结构中，使 TiDB 能够快速有效地找到与键值相关联的行，提升查询和写入数据的性能。
 
-When the clustered index feature is enabled, the TiDB performance improves significantly (for example in the TPC-C tpmC test, the performance of TiDB, with clustered index enabled, improves by 39%) in the following cases:
+开启聚簇索引功能后，TiDB 性能在一些场景下会有较大幅度的提升。例如，TPC-C tpmC 的性能提升了 39%。聚簇索引主要在以下场景会有性能提升：
 
-+ When data is inserted, the clustered index reduces one write of the index data from the network.
-+ When a query with an equivalent condition only involves the primary key, the clustered index reduces one read of index data from the network.
-+ When a query with a range condition only involves the primary key, the clustered index reduces multiple reads of index data from the network.
-+ When a query with an equivalent or range condition involves the primary key prefix, the clustered index reduces multiple reads of index data from the network.
++ 插入数据时会减少一次从网络写入索引数据。
++ 等值条件查询仅涉及主键时会减少一次从网络读取数据。
++ 范围条件查询仅涉及主键时会减少多次从网络读取数据。
++ 等值或范围条件查询涉及主键的前缀时会减少多次从网络读取数据。
 
-Each table can either use a clustered or non-clustered index to sort and store data. The differences of these two storage structures are as follows:
+每张表既可以采用聚簇索引排序存储数据，也可以采用非聚簇索引，两者区别如下：
 
-+ When creating a clustered index, you can specify one or more columns in the table as the key value of the index. A clustered index sorts and stores the data of a table according to the key value. Each table can have only one clustered index. If a table has a clustered index, it is called a clustered index table. Otherwise, it is called a non-clustered index table.
-+ When you create a non-clustered index, the data in the table is stored in an unordered structure. You do not need to explicitly specify the key value of the non-clustered index, because TiDB automatically assigns a unique ROWID to each row of data. During a query, the ROWID is used to locate the corresponding row. Because there are at least two network I/O operations when you query or insert data, the performance is degraded compared with clustered indexes.
++ 创建聚簇索引时，可指定包含表中的一列或多列作为索引的键值，聚簇索引根据键值对表的数据进行排序和存储，每张表只能有一个聚簇索引，当某张表有聚簇索引时，该表称为聚簇索引表。相反如果该表没有聚簇索引，称为非聚簇索引表。
++ 创建非聚簇索引时，表中的数据存储在无序结构中，用户无需显式指定非聚簇索引的键值，系统会自动为每一行数据分配唯一的 ROWID，标识一行数据的位置信息，查询数据时会用 ROWID 定位一行数据。查询或者写入数据时至少会有两次网络 I/O，因此查询或者写入数据的性能相比聚簇索引会有所下降。
 
-When table data is modified, the database system automatically maintains clustered indexes and non-clustered indexes for you.
+当修改表的数据时，数据库系统会自动维护聚簇索引和非聚簇索引，用户无需参与。
 
-All primary keys are created as non-clustered indexes by default. You can create a primary key as a clustered index or non-clustered index in either of the following two ways:
+系统默认采用非聚簇索引，用户可以通过以下两种方式选择使用聚簇索引或非聚簇索引：
 
-+ Specify the keyword `CLUSTERED | NONCLUSTERED` in the statement when creating a table, then the system creates the table in the specified way. The syntax is as follows:
++ 创建表时在语句上指定 `CLUSTERED | NONCLUSTERED`，指定后系统将按照指定的方式创建表。具体语法如下：
 
-```sql
-CREATE TABLE `t` (`a` VARCHAR(255), `b` INT, PRIMARY KEY (`a`, `b`) CLUSTERED);
-```
+    ```sql
+    CREATE TABLE `t` (`a` VARCHAR(255), `b` INT, PRIMARY KEY (`a`, `b`) CLUSTERED);
+    ```
 
-Or
+    或者：
 
-```sql
-CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
-```
+    ```sql
+    CREATE TABLE `t` (`a` VARCHAR(255) PRIMARY KEY CLUSTERED, `b` INT);
+    ```
 
-You can execute the statement `SHOW INDEX FROM tbl-name` to query whether a table has a clustered index.
+    通过 `SHOW INDEX FROM tbl-name` 语句可查询表是否有聚簇索引。
 
-+ Configure the system variable `tidb_enable_clustered_index` to control the clustered index feature. Supported values are `ON`, `OFF`, and `INT_ONLY`.
-    + `ON`: Indicates that the clustered index feature is enabled for all types of primary keys. Adding and dropping non-clustered indexes are supported.
-    + `OFF`: Indicates that the clustered index feature is disabled for all types of primary keys. Adding and dropping non-clustered indexes are supported.
-    + `INT_ONLY`: The default value. If the variable is set to `INT_ONLY` and `alter-primary-key` is set to `false`, the primary keys which consist of single integer columns are created as clustered indexes by default. The behavior is consistent with that of TiDB v5.0 and earlier versions.
++ 设置 `tidb_enable_clustered_index` 控制聚簇索引功能，取值：ON|OFF|INT_ONLY
 
-If a `CREATE TABLE` statement contains the keyword `CLUSTERED | NONCLUSTERED`, the statement overrides the configuration of the system variable and the configuration item.
+    + ON：开启聚簇索引，支持添加或者删除非聚簇索引。
+    + OFF：关闭聚簇索引，支持添加或者删除非聚簇索引。
+    + INT_ONLY：默认值，行为与 5.0 以下版本保持一致，与 `alter-primary-key = false` 一起使用可控制 INT 类型是否开启聚簇索引。
 
-You are recommended to use the clustered index feature by specifying the keyword `CLUSTERED | NONCLUSTERED` in statements. In this way, it is more flexible for TiDB to use all data types of clustered and non-clustered indexes in the system at the same time as required.
+优先级方面，建表时有指定 `CLUSTERED | NONCLUSTERED` 时，优先级高于系统变量和配置项。
 
-It is not recommended to use `tidb_enable_clustered_index = INT_ONLY`, because `INT_ONLY` is temporarily used to make this feature compatible and will be deprecated in the future.
+推荐创建表时在语句上指定 `CLUSTERED | NONCLUSTERED` 的方式使用聚簇索引和非聚簇索引，此方式对业务更加灵活，业务可以根据需求在同一个系统同时使用所有数据类型的聚簇索引和非聚簇索引。
 
-Limitations for the clustered index are as follows:
+不推荐使用 `tidb_enable_clustered_index = INT_ONLY`，原因是 INT_ONLY 是满足兼容性而临时设置的值，不推荐使用，未来会废弃。
 
-+ Mutual conversion between clustered indexes and non-clustered indexes is not supported.
-+ Dropping clustered indexes is not supported.
-+ Adding, dropping, and altering clustered indexes using `ALTER TABLE` statements are not supported.
-+ Reorganizing and re-creating a clustered index is not supported.
-+ Enabling or disabling indexes is not supported, which means the invisible index feature is not effective for clustered indexes.
-+ Creating a `UNIQUE KEY` as a clustered index is not supported.
-+ Using the clustered index feature together with TiDB Binlog is not supported. After TiDB Binlog is enabled, TiDB only supports creating a single integer primary key as a clustered index. TiDB Binlog does not replicate data changes of existing tables with clustered indexes to the downstream.
-+ Using the clustered index feature together with the attributes `SHARD_ROW_ID_BITS` and `PRE_SPLIT_REGIONS` is not supported.
-+ If the cluster is upgraded to a later version then rolls back, you need to downgrade newly-added tables by exporting table data before the rollback and importing the data after the rollback. Other tables are not affected.
+聚簇索引功能有如下限制：
 
-### Async Commit
++ 不支持聚簇索引和非聚簇索引相互转换。
++ 不支持删除聚簇索引。
++ 不支持通过 `ALTER TABLE` SQL 语句增加、删除、修改聚簇索引。
++ 不支持重组织和重建聚簇索引。
++ 不支持启用、禁用索引，也就是不可见索引功能对聚簇索引不生效。
++ 不支持 `UNIQUE KEY` 作为聚簇索引。
++ 不支持与 TiDB Binlog 一起使用。开启 TiDB Binlog 后 TiDB 只允许创建单个整数列作为主键的聚簇索引；已创建的聚簇索引表的数据插入、删除和更新动作不会通过 TiDB Binlog 同步到下游。
++ 不支持与 `SHARD_ROW_ID_BITS` 和 `PRE_SPLIT_REGIONS` 属性一起使用。
++ 集群升级回滚时，存量的表不受影响，新增表可以通过导入、导出数据的方式降级。
 
-[User document](/system-variables.md#tidb_enable_async_commit-new-in-v50), [#8316](https://github.com/tikv/tikv/issues/8316)
+### 异步提交事务 (Async Commit)
 
-The client of the database will wait for the database system to complete the transaction commit in two phases (2PC) synchronously. The transaction returns the result to the client after the first phase commit is successful, and the system executes the second phase commit operation in the background asynchronously to reduce the transaction commit latency. If the transaction write involves only one Region, the second phase is omitted directly, and the transaction becomes a one-phase commit.
+[用户文档](/system-variables.md#tidb_enable_async_commit-从-v50-版本开始引入)，[#8316](https://github.com/tikv/tikv/issues/8316)
 
-After the Async Commit feature is enabled, with the same hardware and configuration, when Sysbench is set to test the Update index with 64 threads, the average latency decreases by 41.7% from 12.04ms to 7.01ms.
+数据库的客户端会同步等待数据库系统通过两阶段 (2PC) 完成事务的提交，事务在第一阶段提交成功后就会返回结果给客户端，系统会在后台异步执行第二阶段提交操作，降低事务提交的延迟。如果事务的写入只涉及一个 Region，则第二阶段可以直接被省略，变成一阶段提交。
 
-When Async Commit feature is enabled, to reduce one network interaction latency and improve the performance of data writes, database application developers are recommended to consider reducing the consistency of transactions from linear consistency to [causal consistency](/transaction-overview.md#causal-consistency). The SQL statement to enable causal consistency is `START TRANSACTION WITH CAUSAL CONSISTENCY`.
+开启异步提交事务特性后，在硬件、配置完全相同的情况下，Sysbench 设置 64 线程测试 Update index 时，平均延迟由 12.04 ms 降低到 7.01ms ，降低了 41.7%。
 
-After the causal consistency is enabled, with the same hardware and configuration, when Sysbench is set to test oltp_write_only with 64 threads, the average latency decreased by 5.6% from 11.86ms to 11.19ms.
+开启异步提交事务特性时，数据库应用开发人员可以考虑将事务的一致性从线性一致性降低到[因果一致性](/transaction-overview.md#因果一致性事务)，减少 1 次网络交互降低延迟，提升数据写入的性能。开启因果一致性的 SQL 语句为 `START TRANSACTION WITH CAUSAL CONSISTENCY`。
 
-After the consistency of transactions is reduced from the linear consistency to causal consistency, if there is no interdependence between multiple transactions in the application, the transactions do not have a globally consistent order.
+开启因果一致性后，在硬件和配置完全相同的情况下，Sysbench 设置 64 线程测试 oltp_write_only 时，平均延迟由 11.86ms 降低到 11.19ms，降低了 5.6%。
 
-**The Async Commit feature is enabled by default for newly created v5.0 clusters.**
+事务的一致性从线性一致性降低到因果一致性后，如果应用程序中多个事务之间没有相互依赖关系时，事务没有全局一致的顺序。
 
-This feature is disabled by default for clusters upgraded from earlier versions to v5.0. You can enable this feature by executing the `set global tidb_enable_async_commit = ON;` and `set global tidb_enable_1pc = ON;` statements.
+**新创建的 5.0 集群默认开启异步提交事务功能。**
 
-The limitation for the Async Commit feature is as follows:
+从旧版本升级到 5.0 的集群，默认不开启该功能，你可以执行 `set global tidb_enable_async_commit = ON;` 和 `set global tidb_enable_1pc = ON;` 语句开启该功能。
 
-+ Direct downgrade is not supported.
+异步提交事务功能有如下限制：
 
-### Enable the Coprocessor cache feature by default
++ 不支持直接降级
 
-[User document](/tidb-configuration-file.md#tikv-clientcopr-cache-new-in-v400), [#18028](https://github.com/pingcap/tidb/issues/18028)
+### 默认开启 Coprocessor cache 功能
 
-In 5.0 GA, the Coprocessor cache feature is enabled by default. After this feature is enabled, to reduce the latency of reading data, TiDB caches the calculation results of the operators pushed down to tikv-server in tidb-server.
+[用户文档](/tidb-configuration-file.md#tikv-clientcopr-cache-从-v400-版本开始引入)
 
-To disable the Coprocessor cache feature, you can modify the `capacity-mb` configuration item of `tikv-client.copr-cache` to `0.0`.
+5.0 GA 默认开启 Coprocessor cache 功能。开启此功能后，TiDB 会在 tidb-server 中缓存算子下推到 tikv-server 计算后的结果，降低读取数据的延时。
 
-### Improve the execution performance of `delete from table where id <? Limit ?` statement
+要关闭 Coprocessor cache 功能，你可以修改 `tikv-client.copr-cache` 的 `capacity-mb` 配置项为 0.0。
+
+### 提升 `delete from table where id < ? limit ?` 语句执行的性能
 
 [#18028](https://github.com/pingcap/tidb/issues/18028)
 
-The p99 performance of the `delete from table where id <? limit ?` statement is improved by 4 times.
+`delete from table where id < ? limit ?` 语句执行的 p99 性能提升了 4 倍。
 
-### Optimize load base split strategy to solve the performance problem that data cannot be split in some small table hotspot read scenarios
+### 优化 load base 切分策略，解决部分小表热点读场景数据无法切分的性能问题
 
-[#18005](https://github.com/pingcap/tidb/issues/18005)
+## 稳定性提升
 
-## Improve stability
-
-### Optimize the performance jitter issue caused by imperfect scheduling
+### 优化因调度功能不完善引起的性能抖动问题
 
 [#18005](https://github.com/pingcap/tidb/issues/18005)
 
-The TiDB scheduling process occupies resources such as I/O, network, CPU, and memory. If TiDB does not control the scheduled tasks, QPS and delay might cause performance jitter due to resource preemption.
+TiDB 调度过程中会占用 I/O、网络、CPU、内存等资源，若不对调度的任务进行控制，QPS 和延时会因为资源被抢占而出现性能抖动问题。
 
-After the following optimizations, in the 8-hour performance test, the standard deviation of TPC-C tpmC does not exceed 2%.
+通过以下几项的优化，测试 8 小时，TPC-C 测试中 tpm-C 抖动标准差的值小于等于 2%。
 
-#### Introduce new scheduling calculation formulas to reduce unnecessary scheduling and performance jitter
+#### 引入新的调度算分公式，减少不必要的调度，减少因调度引起的性能抖动问题
 
-When the node capacity is always near the waterline set in the system, or when the `store-limit` is set too large, to balance the capacity load, the system frequently schedules Regions to other nodes or even schedules Regions back to their original nodes. Because scheduling occupies resources, such as I/O, network, CPU, and memory, and causes performance jitter, this type of scheduling is not necessary.
+当节点的总容量总是在系统设置的水位线附近波动或者 `store-limit` 配置项设置过大时，为满足容量负载的设计，系统会频繁地将 Region 调度到其他节点，甚至还会调度到原来的节点，调度过程中会占用 I/O、网络、CPU、内存等资源，引起性能抖动问题，但这类调度其实意义不大。
 
-To mitigate this issue, PD introduces a new set of default scheduling calculation formulas. You can switch back to the old formulas by configuring `region-score-formula-version = v1`.
+为缓解此问题，PD 引入了一套新的调度算分公式并默认开启，可通过 `region-score-formula-version = v1` 配置项切换回之前的调度算分公式。
 
-#### Enable the cross-table Region merge feature by default
+#### 默认开启跨表合并 Region 功能
 
-[User document](/pd-configuration-file.md#enable-cross-table-merge)
+[用户文档](/pd-configuration-file.md#enable-cross-table-merge)
 
-Before v5.0, TiDB disables the cross-table Region merge feature by default. Starting from v5.0, this feature is enabled by default to reduce the number of empty Regions and the overhead of network, memory, and CPU. You can disable this feature by modifying the `schedule.enable-cross-table-merge` configuration item.
+在 5.0 之前，TiDB 默认关闭跨表合并 Region 的功能。从 5.0 起，TiDB 默认开启跨表合并 Region 功能，减少空 Region 的数量，降低系统的网络、内存、CPU 的开销。你可以通过修改 `schedule.enable-cross-table-merge` 配置项关闭此功能。
 
-#### Enable the system to automatically adjust the data compaction speed by default to balance the contention for I/O resources between background tasks and foreground reads and writes
+#### 默认开启自动调整 Compaction 压缩的速度，平衡后台任务与前端的数据读写对 I/O 资源的争抢
 
-[User document](/tikv-configuration-file.md#rate-limiter-auto-tuned-new-in-v50)
+[用户文档](/tikv-configuration-file.md#rate-limiter-auto-tuned-从-v50-版本开始引入)
 
-Before v5.0, to balance the contention for I/O resources between background tasks and foreground reads and writes, the feature that the system automatically adjusts the data compaction speed is disabled by default. Starting from v5.0, TiDB enables this feature by default and optimizes the algorithm so that the latency jitter is significantly reduced.
+在 5.0 之前，为了平衡后台任务与前端的数据读写对 I/O 资源的争抢，自动调整 Compaction 的速度这个功能默认是关闭的；从 5.0 起，TiDB 默认开启此功能并优化调整算法，开启之后延迟抖动比未开启此功能时的抖动大幅减少。
 
-You can disable this feature by modifying the `rate-limiter-auto-tuned` configuration item.
+你可以通过修改 `rate-limiter-auto-tuned` 配置项关闭此功能。
 
-#### Enable the GC Compaction Filter feature by default to reduce GC's consumption of CPU and I/O resources
+#### 默认开启 GC in Compaction filter 功能，减少 GC 对 CPU、I/O 资源的占用
 
-[User document](/garbage-collection-configuration.md#gc-in-compaction-filter), [#18009](https://github.com/pingcap/tidb/issues/18009)
+[用户文档](/garbage-collection-configuration.md#gc-in-compaction-filter-机制)，[#18009](https://github.com/pingcap/tidb/issues/18009)
 
-When TiDB performs garbage collection (GC) and data compaction, partitions occupy CPU and I/O resources. Overlapping data exists during the execution of these two tasks.
+TiDB 在进行垃圾回收和数据 Compaction 时，分区会占用 CPU、I/O 资源，系统执行这两个任务过程中存在数据重叠。
 
-To reduce GC's consumption of CPU and I/O resources, the GC Compaction Filter feature combines these two tasks into one and executes them in the same task. This feature is enabled by default. You can disable it by configuring `gc.enable-compaction-filter = false`.
+GC Compaction Filter 特性将这两个任务合并在同一个任务中完成，减少对 CPU、I/O 资源的占用。系统默认开启此功能，你可以通过设置 `gc.enable-compaction-filter = false` 关闭此功能。
 
-#### TiFlash limits the compression and data sorting's use of I/O resources (**experimental feature**)
+#### TiFlash 限制压缩或整理数据占用 I/O 资源（**实验特性**）
 
-This feature alleviates the contention for I/O resources between background tasks and foreground reads and writes.
+该特性能缓解后台任务与前端的数据读写对 I/O 资源的争抢。
 
-This feature is disabled by default. You can enable this feature by modifying the `bg_task_io_rate_limit` configuration item.
+系统默认关闭该特性，你可以通过 `bg_task_io_rate_limit` 配置项开启限制压缩或整理数据 I/O 资源。
 
-#### Improve the performance of checking scheduling constraints and the performance of fixing the unhealthy Regions in a large cluster
+#### 增强检查调度约束的性能，提升大集群中修复不健康 Region 的性能
 
-### Ensure that the execution plans are unchanged as much as possible to avoid performance jitter
+### 保证执行计划在最大程度保持不变，避免性能抖动
 
-[User document](/sql-plan-management.md)
+[用户文档](/sql-plan-management.md)
 
-#### SQL Binding supports the `INSERT`, `REPLACE`, `UPDATE`, `DELETE` statements
+#### SQL BINDING 支持 `INSERT`、`REPLACE`、`UPDATE`、`DELETE` 语句
 
-When tuning performance or maintaining the database, if you find that the system performance is unstable due to unstable execution plans, you can select a manually optimized SQL statement according to your judgement or tested by `EXPLAIN ANALYZE`. You can bind the optimized SQL statement to the SQL statement to be executed in the application code to ensure stable performance.
+在数据库性能调优或者运维过程中，如果发现因为执行计划不稳定导致系统性能不稳定时，你可以根据自身的经验或者通过 `EXPLAIN ANALYZE` 测试选择一条人为优化过的 SQL 语句，通过 SQL BINDING 将优化过的 SQL 语句与业务代码执行的 SQL 语句绑定，确保性能的稳定性。
 
-When manually binding SQL statements using the SQL BINDING statement, you need to ensure that the optimized SQL statement has the same syntax as the original SQL statement.
+通过 SQL BINDING 语句手动的绑定 SQL 语句时，你需要确保优化过的 SQL 语句的语法与原来 SQL 语句的语法保持一致。
 
-You can view the manually or automatically bound execution plan information by running the `SHOW {GLOBAL | SESSION} BINDINGS` command. The output is the same as that of versions earlier than v5.0.
+你可以通过 `SHOW {GLOBAL | SESSION} BINDINGS` 命令查看手工、系统自动绑定的执行计划信息。输出信息基本跟 5.0 之前的版本保持一致。
 
-#### Automatically capture and bind execution plans
+#### 自动捕获、绑定执行计划
 
-When upgrading TiDB, to avoid performance jitter, you can enable the baseline capturing feature to allow the system to automatically capture and bind the latest execution plan and store it in the system table. After TiDB is upgraded, you can export the bound execution plan by running the `SHOW GLOBAL BINDING` command and decide whether to delete these plans.
+在升级 TiDB 时，为避免性能抖动问题，你可以开启自动捕获并绑定执行计划的功能，由系统自动捕获并绑定最近一次执行计划然后存储在系统表中。升级完成后，你可以通过 `SHOW GLOBAL BINDINGS` 导出绑定的执行计划，自行分析并决策是否要删除绑定的执行计划。
 
-This feature is disabled by default. You can enable it by modifying the server or setting the `tidb_capture_plan_baselines` global system variable to `ON`. When this feature is enabled, the system fetches the SQL statements that appear at least twice from the Statement Summary every `bind-info-lease` (the default value is `3s`), and automatically captures and binds these SQL statements.
+系统默认关闭自动捕获并绑定执行计划的功能，你可以通过修改 Server 或者设置全局系统变量 `tidb_capture_plan_baselines = ON` 开启此功能。开启此功能后，系统每隔 `bind-info-lease`（默认 3 秒）从 Statement Summary 抓取出现过至少 2 次的 SQL 语句并自动捕获、绑定。
 
-### Improve stability of TiFlash queries
+### TiFlash 查询稳定性提升
 
-Add a system variable [`tidb_allow_fallback_to_tikv`](/system-variables.md#tidb_allow_fallback_to_tikv-new-in-v50) to fall back queries to TiKV when TiFlash fails. The default value is `OFF`.
+新增系统变量 [`tidb_allow_fallback_to_tikv`](/system-variables.md#tidb_allow_fallback_to_tikv-从-v50-版本开始引入)，用于决定在 TiFlash 查询失败时，自动将查询回退到 TiKV 尝试执行，默认为 OFF。
 
-### Improve TiCDC stability and alleviate the OOM issue caused by replicating too much incremental data
+### TiCDC 稳定性提升，缓解同步过多增量变更数据的 OOM 问题
 
-[User document](/ticdc/ticdc-manage-changefeed.md#unified-sorter), [#1150](https://github.com/pingcap/tiflow/issues/1150)
+[用户文档](/ticdc/ticdc-manage-changefeed.md#unified-sorter-功能)，[#1150](https://github.com/pingcap/tiflow/issues/1150)
 
-In TiCDC v4.0.9 or earlier versions, replicating too much data change might cause OOM. In v5.0, the Unified Sorter feature is enabled by default to mitigate OOM issues caused by the following scenarios:
+自 v4.0.9 版本起，TiCDC 引入变更数据本地排序功能 Unified Sorter。在 5.0 版本，默认开启此功能以缓解类似场景下的 OOM 问题：
 
-- The data replication task in TiCDC is paused for a long time, during which a large amount of incremental data is accumulated and needs to be replicated.
-- The data replication task is started from an early timestamp, so it becomes necessary to replicate a large amount of incremental data.
++ 场景一：TiCDC 数据订阅任务暂停中断时间长，其间积累了大量的增量更新数据需要同步。
++ 场景二：从较早的时间点启动数据订阅任务，业务写入量大，积累了大量的更新数据需要同步。
 
-Unified Sorter is integrated with the `memory`/`file` sort-engine options of earlier versions. You do not need to manually configure the change.
+Unified Sorter 整合了老版本提供的 memory、file sort-engine 配置选择，不需要用户手动配置变更的运维操作。
 
-Limitations:
+限制与约束：
 
-- You need to provide sufficient disk capacity according to the amount of your incremental data. It is recommended to use SSDs with free capacity greater than 128 GB.
++ 用户需要根据业务数据更新量提供充足的磁盘空间，推荐使用大于 128G 的 SSD 磁盘。
 
-## High availability and disaster recovery
+## 高可用和容灾
 
-### Improve system availability during Region membership change
+### 提升 Region 成员变更时的可用性
 
-[User document](/pd-configuration-file.md#enable-joint-consensus-new-in-v50), [#18079](https://github.com/pingcap/tidb/issues/18079), [#7587](https://github.com/tikv/tikv/issues/7587), [#2860](https://github.com/tikv/pd/issues/2860)
+[用户文档](/pd-configuration-file.md#enable-joint-consensus-从-v50-版本开始引入)，[#18079](https://github.com/pingcap/tidb/issues/18079)，[#7587](https://github.com/tikv/tikv/issues/7587)，[#2860](https://github.com/tikv/pd/issues/2860)
 
-In the process of Region membership changes, "adding a member" and "deleting a member" are two operations performed in two steps. If a failure occurs when the membership change finishes, the Regions will become unavailable and an error of foreground application is returned.
+Region 在完成成员变更时，由于“添加”和“删除”成员操作分成两步，如果两步操作之间有故障发生会引起 Region 不可用并且会返回前端业务的错误信息。
 
-The introduced Raft Joint Consensus algorithm can improve the system availability during Region membership change. "adding a member" and "deleting a member" operations during the membership change are combined into one operation and sent to all members. During the change process, Regions are in an intermediate state. If any modified member fails, the system is still available.
+TiDB 引入的 Raft Joint Consensus 算法将成员变更操作中的“添加”和“删除”合并为一个操作，并发送给所有成员，提升了 Region 成员变更时的可用性。在变更过程中，Region 处于中间的状态，如果任何被修改的成员失败，系统仍然可以使用。
 
-This feature is enabled by default. You can disable it by running the `pd-ctl config set enable-joint-consensus` command to set the `enable-joint-consensus` value to `false`.
+系统默认开启此功能，你可以通过 `pd-ctl config set enable-joint-consensus` 命令设置选项值为 false 关闭此功能。
 
-### Optimize the memory management module to reduce system OOM risks
+### 优化内存管理模块，降低系统 OOM 的风险
 
-Track the memory usage of aggregate functions. This feature is enabled by default. When SQL statements with aggregate functions are executed, if the total memory usage of the current query exceeds the threshold set by `mem-quota-query`, the system automatically performs operations defined by `oom-action`.
+跟踪统计聚合函数的内存使用情况，系统默认开启该功能，开启后带有聚合函数的 SQL 语句在执行时，如果当前查询内存总的使用量超过 `mem-quota-query` 阈值时，系统自动采用 `oom-action` 定义的相应操作。
 
-### Improve the system availability during network partition
+### 提升系统在发生网络分区时的可用性
 
-## Data migration
+## 数据迁移
 
-### Migrate data from S3/Aurora to TiDB
+### 从 S3/Aurora 数据迁移到 TiDB
 
-TiDB data migration tools support using Amazon S3 (and other S3-compatible storage services) as the intermediate for data migration and initializing Aurora snapshot data directly into TiDB, providing more options for migrating data from Amazon S3/Aurora to TiDB.
+数据迁移类工具支持 Amazon S3（也包含支持 S3 协议的其他存储服务）作为数据迁移的中间转存介质，同时支持将 Aurora 快照数据直接初始化 TiDB 中，丰富了数据从 Amazon S3/Aurora 迁移到 TiDB 的选择。
 
-To use this feature, refer to the following documents:
+该功能使用方法可以参照以下文档：
 
-- [Export data to Amazon S3 cloud storage](/dumpling-overview.md#export-data-to-amazon-s3-cloud-storage), [#8](https://github.com/pingcap/dumpling/issues/8)
-- [Migrate from Amazon Aurora MySQL Using TiDB Lightning](/migrate-aurora-to-tidb.md), [#266](https://github.com/pingcap/tidb-lightning/issues/266)
++ [将 MySQL/Aurora 数据导出到 Amazon S3](/dumpling-overview.md#导出到-amazon-s3-云盘)，[#8](https://github.com/pingcap/dumpling/issues/8)
++ [从 Amazon S3 将 Aurora Snapshot 数据初始化到 TiDB](/migrate-aurora-to-tidb.md)，[#266](https://github.com/pingcap/tidb-lightning/issues/266)
 
-### Optimize the data import performance of TiDB Cloud
+### TiDB Cloud 数据导入性能优化
 
-TiDB Lightning optimizes its data import performance specifically for AWS T1.standard configurations (or equivalent) of TiDB Cloud. Test results show that TiDB Lightning improves its speed of importing 1TB of TPC-C data into TiDB by 40%, from 254 GiB/h to 366 GiB/h.
+数据导入工具 TiDB Lightning 针对 TiDB Cloud AWS T1.standard 配置（及其等同配置）的 TiDB 集群进行了数据导入性能优化，测试结果显式使用 TiDB Lightning 导入 1TB TPC-C 数据到 TiDB，性能提升了 40%，由 254 GiB/h 提升到了 366 GiB/h。
 
-## Data sharing and subscription
+## TiDB 数据共享订阅
 
-### Integrate TiDB to Kafka Connect (Confluent Platform) using TiCDC (**experimental feature**)
+### TiCDC 集成第三方生态 Kafka Connect (Confluent Platform)（**实验特性**）
 
-[User document](/ticdc/integrate-confluent-using-ticdc.md), [#660](https://github.com/pingcap/tiflow/issues/660)
+[用户文档](/ticdc/integrate-confluent-using-ticdc.md)，[#660](https://github.com/pingcap/tiflow/issues/660)
 
-To support the business requirements of streaming TiDB data to other systems, this feature enables you to stream TiDB data to the systems such as Kafka, Hadoop, and Oracle.
+为满足将 TiDB 的数据流转到其他系统以支持相关的业务需求，该功能可以把 TiDB 数据流转到 Kafka、Hadoop、Oracle 等系统。
 
-The Kafka connectors protocol provided by the Confluent platform is widely used in the community, and it supports transferring data to either relational or non-relational databases in different protocols. By integrating TiCDC to Kafka Connect of the Confluent platform, TiDB extends the ability to stream TiDB data to other heterogeneous databases or systems.
+Confluent 平台提供的 kafka connectors 协议支持向不同协议关系型或非关系型数据库传输数据，在社区被广泛使用。TiDB 通过 TiCDC 集成到 Confluent 平台的 Kafka Connect，扩展了 TiDB 数据流转到其他异构数据库或者系统的能力。
 
-## Diagnostics
+## 问题诊断
 
-[User document](/sql-statements/sql-statement-explain.md#explain)
+[用户文档](/sql-statements/sql-statement-explain.md#explain)
 
-During the troubleshooting of SQL performance issues, detailed diagnostic information is needed to determine the causes of performance issues. Before TiDB 5.0, the information collected by the `EXPLAIN` statements was not detailed enough. The root causes of the issues can only be determined based on log information, monitoring information, or even on guess, which might be inefficient.
+在排查 SQL 语句性能问题时，需要详细的信息来判断引起性能问题的原因。5.0 版本之前，`EXPLAIN` 收集的信息不够完善，DBA 只能通过日志信息、监控信息或者盲猜的方式来判断问题的原因，效率比较低。
 
-In TiDB v5.0, the following improvements are made to help you troubleshoot performance issues more efficiently:
+5.0 版本中，通过以下几项优化提升排查问题的效率：
 
-+ Support using the `EXPLAIN ANALYZE` statement to analyze all DML statements to show the actual performance plans and the execution information of each operator. [#18056](https://github.com/pingcap/tidb/issues/18056)
-+ Support using the `EXPLAIN FOR CONNECTION` statement to check the real-time status of all the SQL statements being executed. For example, you can use the statement to check the execution duration of each operator and the number of processed rows. [#18233](https://github.com/pingcap/tidb/issues/18233)
-+ Provide more details about the operator execution in the output of the `EXPLAIN ANALYZE` statement, including the number of RPC requests sent by operators, the duration of resolving lock conflicts, network latency, the scanned volume of deleted data in RocksDB, and the hit rate of RocksDB caches. [#18663](https://github.com/pingcap/tidb/issues/18663)
-+ Support automatically recording the detailed execution information of SQL statements in the slow log. The execution information in the slow log is consistent with the output information of the `EXPLAIN ANALYZE` statement, which includes the time consumed by each operator, the number of processed rows, and the number of sent RPC requests. [#15009](https://github.com/pingcap/tidb/issues/15009)
++ 支持对所有 DML 语句使用 `EXPLAIN ANALYZE` 语句以查看实际的执行计划及各个算子的执行详情。[#18056](https://github.com/pingcap/tidb/issues/18056)
++ 支持对正在执行的 SQL 语句使用 `EXPLAIN FOR CONNECTION` 语句以查看实时执行状态，例如各个算子的执行时间、已处理的数据行数等。[#18233](https://github.com/pingcap/tidb/issues/18233)
++ `EXPLAIN ANALYZE` 语句显示的算子执行详情中新增算子发送的 RPC 请求数、处理锁冲突耗时、网络延迟、RocksDB 已删除数据的扫描量、RocksDB 缓存命中情况等。[#18663](https://github.com/pingcap/tidb/issues/18663)
++ 慢查询日志中自动记录 SQL 语句执行时的详细执行状态，输出的信息与 `EXPLAIN ANALYZE` 语句输出信息保持一致，例如各个算子消耗的时间、处理数据行数、发送的 RPC 请求数等。[#15009](https://github.com/pingcap/tidb/issues/15009)
 
-## Deployment and maintenance
+## 部署及运维
 
-### Optimize the logic of cluster deployment operations, to help DBAs deploy a set of standard TiDB production cluster faster
+### 优化集群部署操作逻辑，帮助 DBA 更快地部署一套标准的 TiDB 生产集群
 
-[User Document](/production-deployment-using-tiup.md)
+[用户文档](/production-deployment-using-tiup.md)
 
-In previous TiDB versions, DBAs using TiUP to deploy TiDB clusters find that the environment initialization is complicated, the checksum configuration is excessive, and the cluster topology file is difficult to edit. All of these issues lead to low deployment efficiency for DBAs. In TiDB v5.0, the TiDB deployment efficiency using TiUP is improved for DBAs through the following items:
+DBA 在使用 TiUP 部署 TiDB 集群过程发现环境初始化比较复杂、校验配置过多，集群拓扑文件比较难编辑等问题，导致 DBA 的部署效率比较低。5.0 版本通过以下几个事项提升 DBA 部署 TiDB 的效率：
 
-+ TiUP Cluster supports the `check topo.yaml` command to perform a more comprehensive one-click environment check and provide repair recommendations.
-+ TiUP Cluster supports the `check topo.yaml --apply` command to automatically repair environmental problems found during the environment check.
-+ TiUP Cluster supports the `template` command to get the cluster topology template file for DBAs to edit and support modifying the global node parameters.
-+ TiUP supports editing the `remote_config` parameter using the `edit-config` command to configure remote Prometheus.
-+ TiUP supports editing the `external_alertmanagers` parameter to configure different AlertManagers using the `edit-config` command.
-+ When editing the topology file using the `edit-config` subcommand in tiup-cluster, you can modify the data types of the configuration item values.
++ TiUP Cluster 支持使用 `check topo.yaml` 命令，进行更全面一键式环境检查并给出修复建议。
++ TiUP Cluster 支持使用 `check topo.yaml --apply` 命令，自动修复检查过程中发现的环境问题。
++ TiUP Cluster 支持 `template` 命令，获取集群拓扑模板文件，供 DBA 编辑且支持修改全局的节点参数。
++ TiUP 支持使用 `edit-config` 命令编辑 `remote_config` 参数配置远程 Prometheus。
++ TiUP 支持使用 `edit-config` 命令编辑 `external_alertmanagers` 参数配置不同的 AlertManager。
++ 在 tiup-cluster 中使用 `edit-config` 子命令编辑拓扑文件时允许改变配置项值的数据类型。
 
-### Improve upgrade stability
+### 提升升级稳定性
 
-Before TiUP v1.4.0, during the upgrade of a TiDB cluster using tiup-cluster, the SQL responses of the cluster jitter for a long period of time, and during PD online rolling upgrades, the QPS of the cluster jitter between 10s to 30s.
+TiUP v1.4.0 版本以前，DBA 使用 tiup-cluster 升级 TiDB 集群时会导致 SQL 响应持续长时间抖动，PD 在线滚动升级期间集群 QPS 抖动时间维持在 10~30s。
 
-TiUP v1.4.0 adjusts the logic and makes the following optimizations:
+TiUP v1.4.0 版本调整了逻辑，优化如下：
 
-+ During the upgrade of PD nodes, TiUP automatically checks the status of the restarted PD node, and then rolls to upgrade the next PD node after confirming that the status is ready.
-+ TiUP identifies the PD role automatically, first upgrades the PD nodes of the follower role, and finally upgrades the PD Leader node.
++ 升级 PD 时，会主动判断被重启的 PD 节点状态，确认就绪后再滚动升级下一个 PD 节点。
++ 主动识别 PD 角色，先升级 follower 角色 PD 节点，最后再升级 PD Leader 节点。
 
-### Optimize the upgrade time
+### 优化升级时长
 
-Before TiUP v1.4.0, when DBAs upgrade TiDB clusters using tiup-cluster, for clusters with a large number of nodes, the total upgrade time is long and cannot meet the upgrade time window requirement for certain users.
+TiUP v1.4.0 版本以前，DBA 使用 tiup-cluster 升级 TiDB 集群时，对于节点数比较多的集群，整个升级的时间会持续很长，不能满足部分有升级时间窗口要求的用户。
 
-Starting from v1.4.0, TiUP optimizes the following items:
+从 v1.4.0 版本起，TiUP 进行了以下几处优化：
 
-+ Supports fast offline upgrades using the `tiup cluster upgrade --offline` subcommand.
-+ Speeds up the Region Leader relocation for users using rolling upgrades during upgrades by default, so that reduces the time of rolling TiKV upgrades.
-+ Checks the status of the Region monitor using the `check` subcommand before running a rolling upgrade. Ensure that the cluster is in a normal state before the upgrade, thus reducing the probability of upgrade failures.
++ 新版本 TiUP 支持使用 `tiup cluster upgrade --offline` 子命令实现快速的离线升级。
++ 对于使用滚动升级的用户，新版本 TiUP 默认会加速升级期间 Region Leader 的搬迁速度以减少滚动升级 TiKV 消耗的时间。
++ 运行滚动升级前使用 `check` 子命令，对 Region 监控状态的检查，确保集群升级前状态正常以减少升级失败的概率。
 
-### Support the breakpoint feature
+### 支持断点功能
 
-Before TiUP v1.4.0, when DBAs upgrade TiDB clusters using tiup-cluster, if the execution of a command is interrupted, all the upgrade operations have to be performed again from the beginning.
+TiUP v1.4.0 版本以前，DBA 使用 tiup-cluster 升级 TiDB 集群时，如果命令执行中断，那么整个升级操作都需重新开始。
 
-TiUP v1.4.0 supports retrying failed operations from breakpoints using the tiup-cluster `replay` subcommand, to avoid re-executing all operations after an upgrade interruption.
+新版本 TiUP 支持使用 tiup-cluster `replay` 子命令从断点处重试失败的操作，以避免升级中断后所有操作重新执行。
 
-### Enhance the functionalities of maintenance and operations
+### 增强运维功能
 
-TiUP v1.4.0 further enhances the functionalities for operating and maintaining TiDB clusters.
+新版本 TiUP 进一步强化了 TiDB 集群运维的功能：
 
-+ Supports the upgrade or patch operation on the downtime TiDB and DM clusters to adapt to more usage scenarios.
-+ Adds the `--version` parameter to the `display` subcommand of tiup-cluster to get the cluster version.
-+ When only Prometheus is included in the node being scaled out, the operation of updating the monitoring configuration is not performed, to avoid scale-out failure due to the absence of the Prometheus node.
-+ Adds user input to the error message when the results of the input TiUP commands are incorrect, so that you can locate the cause of the problem more quickly.
++ 支持对已停机的 TiDB 和 DM 集群进行升级或 patch 操作，以适应更多用户的使用场景。
++ 为 tiup-cluster 的 `display` 子命令添加 `--version` 参数用于获取集群版本。
++ 在被缩容的节点中仅包含 Prometheus 时不执行更新监控配置的操作，以避免因 Prometheus 节点不存在而缩容失败
++ 在使用 TiUP 命令输入结果不正确时将用户输入的内容添加到错误信息中，以便用户更快定位问题原因。
 
-## Telemetry
+## 遥测
 
-TiDB adds cluster usage metrics in telemetry, such as the number of data tables, the number of queries, and whether new features are enabled.
+TiDB 在遥测中新增收集集群的使用指标，包括数据表数量、查询次数、新特性是否启用等。
 
-To learn more about details and how to disable this behavior, refer to [telemetry](/telemetry.md).
+若要了解所收集的信息详情及如何禁用该行为，请参见[遥测](/telemetry.md)文档。

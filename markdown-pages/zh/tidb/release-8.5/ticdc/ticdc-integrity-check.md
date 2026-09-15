@@ -1,25 +1,25 @@
 ---
-title: TiCDC Data Integrity Validation for Single-Row Data
-summary: Introduce the implementation principle and usage of the TiCDC data integrity validation feature.
+title: TiCDC 单行数据正确性校验
+summary: 介绍 TiCDC 数据正确性校验功能的实现原理和使用方法。
 ---
 
-# TiCDC Data Integrity Validation for Single-Row Data
+# TiCDC 单行数据正确性校验
 
-Starting from v7.1.0, TiCDC introduces the data integrity validation feature, which uses a [checksum algorithm](#checksum-algorithms) to validate the integrity of single-row data. This feature helps verify whether any error occurs in the process of writing data from TiDB, replicating it through TiCDC, and then writing it to a Kafka cluster. Currently, only changefeeds using Kafka as the downstream and Simple or Avro as the protocol support this feature. For more information about the checksum algorithm, see [Algorithm for checksum calculation](#algorithm-for-checksum-calculation).
+从 v7.1.0 开始，TiCDC 引入了单行数据正确性校验功能。该功能基于 [Checksum 算法](#checksum-算法)，校验一行数据从 TiDB 写入、通过 TiCDC 同步，到写入 Kafka 集群的过程中数据内容是否发生错误。目前，仅下游为 Kafka 且协议为 Simple 或 Avro 的 Changefeed 支持该功能。关于 Checksum 值的计算规则，请参考 [Checksum 计算规则](#checksum-计算规则)。
 
-## Enable the feature
+## 启用功能
 
-TiCDC disables data integrity validation by default. To enable it, perform the following steps:
+TiCDC 数据正确性校验功能默认关闭，要使用该功能，请执行以下步骤：
 
-1. Enable the checksum integrity validation feature for single-row data in the upstream TiDB cluster by setting the [`tidb_enable_row_level_checksum`](/system-variables.md#tidb_enable_row_level_checksum-new-in-v710) system variable:
+1. 首先，你需要在上游 TiDB 中开启行数据 Checksum 功能 ([`tidb_enable_row_level_checksum`](/system-variables.md#tidb_enable_row_level_checksum-从-v710-版本开始引入))：
 
     ```sql
     SET GLOBAL tidb_enable_row_level_checksum = ON;
     ```
 
-    This configuration only takes effect for newly created sessions, so you need to reconnect to TiDB.
+    上述配置仅对新创建的会话生效，因此需要重新连接 TiDB。
 
-2. In the [configuration file](/ticdc/ticdc-changefeed-config.md#changefeed-configuration-parameters) specified by the `--config` parameter when you create a changefeed, add the following configurations:
+2. 在创建 Changefeed 的 `--config` 参数所指定的[配置文件中](/ticdc/ticdc-changefeed-config.md#ticdc-changefeed-配置文件说明)，添加如下配置：
 
     ```toml
     [integrity]
@@ -27,23 +27,23 @@ TiCDC disables data integrity validation by default. To enable it, perform the f
     corruption-handle-level = "warn"
     ```
 
-3. When using Avro as the data encoding format, you need to set [`enable-tidb-extension=true`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka) in the [`sink-uri`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka). To prevent numerical precision loss during network transmission, which can cause checksum validation failures, you also need to set [`avro-decimal-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka) and [`avro-bigint-unsigned-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#configure-sink-uri-for-kafka). The following is an example:
+3. 当使用 Avro 作为数据编码格式时，你需要在 [`sink-uri`](/ticdc/ticdc-sink-to-kafka.md#sink-uri-配置-kafka) 中设置 [`enable-tidb-extension=true`](/ticdc/ticdc-sink-to-kafka.md#sink-uri-配置-kafka)。同时，为了防止数值类型在网络传输过程中发生精度丢失，导致 Checksum 校验失败，还需要设置 [`avro-decimal-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#sink-uri-配置-kafka) 和 [`avro-bigint-unsigned-handling-mode=string`](/ticdc/ticdc-sink-to-kafka.md#sink-uri-配置-kafka)。下面是一个配置示例：
 
     ```shell
     cdc cli changefeed create --server=http://127.0.0.1:8300 --changefeed-id="kafka-avro-checksum" --sink-uri="kafka://127.0.0.1:9092/topic-name?protocol=avro&enable-tidb-extension=true&avro-decimal-handling-mode=string&avro-bigint-unsigned-handling-mode=string" --schema-registry=http://127.0.0.1:8081 --config changefeed_config.toml
     ```
 
-    With the preceding configuration, each message written to Kafka by the changefeed will include the corresponding data's checksum. You can verify data consistency based on these checksum values.
+    通过上述配置，Changefeed 会在每条写入 Kafka 的消息中携带该消息对应数据的 Checksum，你可以根据此 Checksum 的值进行数据一致性校验。
 
-    > **Note:**
+    > **注意：**
     >
-    > For existing changefeeds, if `avro-decimal-handling-mode` and `avro-bigint-unsigned-handling-mode` are not set, enabling the checksum validation feature might cause schema compatibility issues. To resolve this issue, you can modify the compatibility type of the Schema Registry to `NONE`. For more details, see [Schema Registry](https://docs.confluent.io/platform/current/schema-registry/fundamentals/avro.html#no-compatibility-checking).
+    > 对于已有 Changefeed，如果未设置 `avro-decimal-handling-mode` 和 `avro-bigint-unsigned-handling-mode`，开启 Checksum 校验功能时会引起 Schema 不兼容问题。可以通过修改 Schema Registry 的兼容性为 `NONE` 解决该问题。详情可参考 [Schema 兼容性](https://docs.confluent.io/platform/current/schema-registry/fundamentals/avro.html#no-compatibility-checking)。
 
-## Disable the feature
+## 关闭功能
 
-TiCDC disables data integrity validation by default. To disable this feature after enabling it, perform the following steps:
+TiCDC 默认关闭单行数据的 Checksum 校验功能。若要在开启此功能后将其关闭，请执行以下步骤：
 
-1. Follow the `Pause Task -> Modify Configuration -> Resume Task` process described in [Update task configuration](/ticdc/ticdc-manage-changefeed.md#update-task-configuration) and remove all `[integrity]` configurations in the configuration file specified by the `--config` parameter of the changefeed.
+1. 首先，按照 [TiCDC 更新同步任务配置](/ticdc/ticdc-manage-changefeed.md#更新同步任务配置)的说明，按照 `暂停任务 -> 修改配置 -> 恢复任务` 的流程更新 Changefeed 的配置内容。在 Changefeed 的 `--config` 参数所指定的配置文件中调整 `[integrity]` 的配置内容为：
 
     ```toml
     [integrity]
@@ -51,33 +51,33 @@ TiCDC disables data integrity validation by default. To disable this feature aft
     corruption-handle-level = "warn"
     ```
 
-2. Execute the following SQL statement in the upstream TiDB to disable the checksum integrity validation feature ([`tidb_enable_row_level_checksum`](/system-variables.md#tidb_enable_row_level_checksum-new-in-v710)):
+2. 在上游 TiDB 中关闭行数据 Checksum 功能 ([`tidb_enable_row_level_checksum`](/system-variables.md#tidb_enable_row_level_checksum-从-v710-版本开始引入))，执行如下 SQL 语句：
 
     ```sql
     SET GLOBAL tidb_enable_row_level_checksum = OFF;
     ```
 
-    The preceding configuration only takes effect for newly created sessions. After all clients writing to TiDB have reconnected, the messages written by changefeed to Kafka will no longer include the checksum for the corresponding data.
+    上述配置仅对新创建的会话生效。在所有写入 TiDB 的客户端都完成数据库连接重建后，Changefeed 写入 Kafka 的消息中将不再携带该条消息对应数据的 Checksum 值。
 
-## Checksum algorithms
+## Checksum 算法
 
 ### Checksum V1
 
-Before v8.4.0, TiDB and TiCDC use Checksum V1 for checksum calculation and verification.
+在 v8.4.0 之前，TiDB 和 TiCDC 采用 Checksum v1 算法进行 Checksum 计算和校验。
 
-After you enable the checksum integrity validation feature for single-row data, TiDB uses the CRC32 algorithm to calculate the checksum of each row and writes it to TiKV along with the data. TiCDC reads the data from TiKV and recalculates the checksum using the same algorithm. If the two checksums are equal, it indicates that the data is consistent during the transmission from TiDB to TiCDC.
+在启用单行数据 Checksum 正确性校验功能后，TiDB 会使用 CRC32 算法计算每行数据的 Checksum 值，并将这个值与该行数据一并存储在 TiKV 中。随后，TiCDC 从 TiKV 读取这些数据，并使用相同的算法重新计算 Checksum，如果得到的 Checksum 值与 TiDB 写入的 Checksum 值相同，则表明数据在从 TiDB 到 TiCDC 的传输过程中是正确的。
 
-TiCDC then encodes the data into a specific format and sends it to Kafka. After the Kafka consumer reads the data, it calculates a new checksum using the same CRC32 algorithm as TiDB. If the new checksum is equal to the checksum in the data, it indicates that the data is consistent during the transmission from TiCDC to the Kafka consumer.
+TiCDC 将数据编码成特定格式并发送至 Kafka。Kafka Consumer 读取数据后，可以使用与 TiDB 相同的 CRC32 算法计算得到新的 Checksum，将此值与数据中携带的 Checksum 值进行比较，若二者一致，则表明从 TiCDC 到 Kafka Consumer 的传输链路上的数据是正确的。
 
 ### Checksum V2
 
-Starting from v8.4.0, TiDB and TiCDC introduce Checksum V2 to address issues of Checksum V1 in verifying old values in Update or Delete events after `ADD COLUMN` or `DROP COLUMN` operations.
+从 v8.4.0 开始，TiDB 和 TiCDC 引入 Checksum V2 算法，解决了 Checksum V1 在执行 `ADD COLUMN` 或 `DROP COLUMN` 后无法正确校验 Update 或 Delete 事件中 Old Value 数据的问题。
 
-For clusters created in v8.4.0 or later, or clusters upgraded to v8.4.0 or later, TiDB uses Checksum V2 by default when single-row data checksum verification is enabled. TiCDC supports handling both Checksum V1 and V2. This change only affects TiDB and TiCDC internal implementation and does not affect checksum calculation methods for downstream Kafka consumers.
+对于 v8.4.0 及之后新创建的集群，或从之前版本升级到 v8.4.0 或之后版本的集群，启用单行数据 Checksum 正确性校验功能后，TiDB 默认使用 Checksum V2 算法进行 Checksum 计算和校验。TiCDC 支持同时处理 V1 和 V2 两种 Checksum。该变更仅影响 TiDB 和 TiCDC 内部实现，不影响下游 Kafka consumer 的 Checksum 计算校验方法。
 
-## Algorithm for checksum calculation
+## Checksum 计算规则
 
-The pseudocode for the checksum calculation algorithm is as follows:
+Checksum 计算算法的伪代码如下：
 
 ```
 fn checksum(columns) {
@@ -89,24 +89,24 @@ fn checksum(columns) {
 }
 ```
 
-* `columns` should be sorted by column ID. In the Avro schema, fields are already sorted by column ID, so you can directly use the order in `columns`.
+* `columns` 应该按照 column ID 排序。在 Avro schema 中，各个字段已经按照 column ID 的顺序排序，因此可以直接按照此顺序排序 `columns`。
 
-* The `encode(column)` function encodes the column value into bytes. Encoding rules vary based on the data type of the column. The specific rules are as follows:
+* `encode(column)` 函数将 column 的值编码为字节，编码规则取决于该 column 的数据类型。具体规则如下：
 
-    * TINYINT, SMALLINT, INT, BIGINT, MEDIUMINT, and YEAR types are converted to UINT64 and encoded in little-endian. For example, the number `0x0123456789abcdef` is encoded as `hex'0x0123456789abcdef'`.
-    * FLOAT and DOUBLE types are converted to DOUBLE and then encoded as UINT64 in IEEE754 format.
-    * BIT, ENUM, and SET types are converted to UINT64.
+    * TINYINT、SMALLINT、INT、BIGINT、MEDIUMINT 和 YEAR 类型会被转换为 UINT64 类型，并按照小端序编码。例如，数字 `0x0123456789abcdef` 会被编码为 `hex'0x0123456789abcdef'`。
+    * FLOAT 和 DOUBLE 类型会被转换为 DOUBLE 类型，然后转换为 IEEE754 格式的 UINT64 类型。
+    * BIT、ENUM 和 SET 类型会被转换为 UINT64 类型。
 
-        * BIT type is converted to UINT64 in binary format.
-        * ENUM and SET types are converted to their corresponding INT values in UINT64. For example, if the data value of a `SET('a','b','c')` type column is `'a,c'`, the value is encoded as `0b101`, which is `5` in decimal.
+        * BIT 类型按照二进制转换为 UINT64 类型。
+        * ENUM 和 SET 类型按照其对应的 INT 值转换为 UINT64 类型。例如，`SET('a','b','c')` 类型 column 的数据值为 `'a,c'`，则该值将被编码为 `0b101`，即 `5`。
 
-    * TIMESTAMP, DATE, DURATION, DATETIME, JSON, and DECIMAL types are first converted to STRING and then converted to bytes.
-    * CHAR, VARCHAR, VARSTRING, STRING, TEXT, and BLOB types (including TINY, MEDIUM, and LONG) are directly converted to bytes.
-    * NULL and GEOMETRY types are excluded from the checksum calculation and this function returns empty bytes.
+    * TIMESTAMP、DATE、DURATION、DATETIME、JSON 和 DECIMAL 类型会被转换为 STRING 类型，然后转换为字节。
+    * CHAR、VARCHAR、VARSTRING、STRING、TEXT、BLOB（包括 TINY、MEDIUM 和 LONG）等字符类型，会直接使用字节。
+    * NULL 和 GEOMETRY 类型不会被纳入到 Checksum 计算中，返回空字节。
 
-For more information about the implementation of data consumption and checksum verification using Golang, see [TiCDC row data checksum verification](/ticdc/ticdc-avro-checksum-verification.md).
+基于 Golang 的 Avro 数据消费和 Checksum 校验，可以参考 [TiCDC 行数据 Checksum 校验](/ticdc/ticdc-avro-checksum-verification.md)。
 
-> **Note:**
+> **注意：**
 >
-> - After enabling the checksum validation feature, DECIMAL and UNSIGNED BIGINT types data will be converted to STRING types. Therefore, in the downstream consumer code, you need to convert them back to their corresponding numerical types before calculating checksum values.
-> - The checksum verification process does not include DELETE events. This is because DELETE events only contain the handle key column, while the checksum is calculated based on all columns.
+> - 开启 Checksum 校验功能后，DECIMAL 和 UNSIGNED BIGINT 类型的数据会被转换为字符串类型。因此在下游消费者代码中需要将其转换为对应的数值类型，然后进行 Checksum 相关计算。
+> - Delete 事件只含有 Handle Key 列的内容，而 Checksum 是基于所有列计算的，所以 Delete 事件不参与到 Checksum 的校验中。

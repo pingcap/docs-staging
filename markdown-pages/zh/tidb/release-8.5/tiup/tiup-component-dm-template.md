@@ -1,39 +1,39 @@
 ---
 title: tiup dm template
-summary: TiUP DM template command is used to output the built-in topology file template for cluster deployment. The default template includes 3 DM-master instances, 3 DM-worker instances, 1 Prometheus instance, 1 Grafana instance, and 1 Alertmanager instance. The --full option outputs a detailed topology template with configurable parameters. The output can be redirected to the topology file for deployment.
+summary: tiup dm template 命令用于输出 TiUP 内置的集群拓扑模版内容。可以通过修改模版来生成最终的拓扑文件。可选的 --full 选项输出详细的拓扑模版，带上可配置的参数。输出拓扑模版到标准输出，可重定向到拓扑文件中用于部署。
 ---
 
 # tiup dm template
 
-Before deploying the cluster, you need to prepare a [topology file](/tiup/tiup-dm-topology-reference.md) of the cluster. TiUP has a built-in topology file template, and you can modify this template to create the final topology file. To output the built-in template content, you can use the `tiup dm template` command.
+部署集群之前，需要准备一份集群的[拓扑文件](/tiup/tiup-dm-topology-reference.md)。TiUP 内置了拓扑文件的模版，用户可以通过修改模版来生成最终的拓扑文件。使用 `tiup dm template` 命令可以输出 TiUP 内置的模版内容。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm template [flags]
 ```
 
-If this option is not specified, the output default template contains the following instances:
+如果不指定该选项，输出的默认模版包含以下实例：
 
-- 3 DM-master instances
-- 3 DM-worker instances
-- 1 Prometheus instance
-- 1 Grafana instance
-- 1 Alertmanager instance
+- 3 个 DM-master 实例
+- 3 个 DM-worker 实例
+- 1 个 Prometheus 实例
+- 1 个 Grafana 实例
+- 1 个 Alertmanager 实例
 
-## Options
+## 选项
 
 ### --full
 
-- Outputs a detailed topology template that is commented with configurable parameters. To enable this option, add it to the command.
-- If this option is not specified, the simple topology template is output by default. 
+- 输出详细的拓扑模版，该模版会以注释的形式带上可配置的参数。在命令中添加该选项，可开启该选项。
+- 如果不指定该选项，默认输出最简单的拓扑模版。
 
 ### -h, --help
 
-Prints the help information.
+输出帮助信息。
 
-## Output
+## 输出
 
-Outputs the topology template according to the specified options, which can be redirected to the topology file for deployment.
+根据指定选项输出拓扑模版到标准输出，可重定向到拓扑文件中用于部署。
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

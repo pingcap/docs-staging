@@ -1,76 +1,87 @@
 ---
-title: PD Recover User Guide
-summary: Use PD Recover to recover a PD cluster which cannot start or provide services normally.
+title: PD Recover 使用文档
+summary: PD Recover 是用于恢复无法正常启动或服务的 PD 集群的工具。安装方式包括从源代码编译和下载 TiDB 工具包。恢复集群的方式有两种：从存活的 PD 节点重建和完全重建。从存活的 PD 节点重建集群需要停止所有节点，启动存活的 PD 节点，并使用 pd-recover 修复元数据。完全重建 PD 集群需要获取 Cluster ID 和已分配 ID，部署新的 PD 集群，使用 pd-recover 修复，然后重启整个集群。
 ---
 
-# PD Recover User Guide
+# PD Recover 使用文档
 
-PD Recover is a disaster recovery tool of PD, used to recover the PD cluster which cannot start or provide services normally.
+PD Recover 是对 PD 进行灾难性恢复的工具，用于恢复无法正常启动或服务的 PD 集群。
 
-## Compile from source code
+## 安装 PD Recover
 
-+ [Go](https://golang.org/) 1.23 or later is required because the Go modules are used.
-+ In the root directory of the [PD project](https://github.com/pingcap/pd), use the `make pd-recover` command to compile and generate `bin/pd-recover`.
+要使用 PD Recover，你可以[从源代码编译](#从源代码编译)，也可以直接[下载 TiDB 工具包](#下载-tidb-工具包)。
 
-> **Note:**
+### 从源代码编译
+
+* [Go](https://golang.org/)：PD Recover 使用了 Go 模块，请安装 Go 1.25 或以上版本。
+* 在 [PD](https://github.com/pingcap/pd) 根目录下，运行 `make pd-recover` 命令来编译源代码并生成 `bin/pd-recover`。
+
+> **注意：**
 >
-> Generally, you do not need to compile source code because the PD Control tool already exists in the released binary or Docker. However, developer users can refer to the instructions above for compiling source code.
+> 一般来说，用户不需要编译源代码，因为发布的二进制文件或 Docker 中已包含 PD Recover 工具。开发者可以参考以上步骤来编译源代码。
 
-## Download TiDB Toolkit
+### 下载 TiDB 工具包
 
-The PD Recover installation package is included in the TiDB Toolkit. To download the TiDB Toolkit, see [Download TiDB Tools](/download-ecosystem-tools.md).
+PD Recover 的安装包位于 TiDB 离线工具包中。下载方式，请参考 [TiDB 工具下载](/download-ecosystem-tools.md)。
 
-The following sections introduce two methods to recover a PD cluster: recover from a surviving PD node and rebuild a PD cluster entirely.
+下面介绍两种重建集群的方式：从存活的 PD 节点重建和完全重建。
 
-## Method 1: Recover a PD cluster using a surviving PD node
+## 方式一：从存活的 PD 节点重建集群
 
-When a majority of PD nodes in a cluster experience an unrecoverable error, the cluster becomes unable to provide services. If there are any surviving PD nodes, you can recover the service by selecting a surviving PD node and forcibly modifying the members of the Raft Group. The steps are as follows:
+当 PD 集群的大多数节点发生灾难性故障时，集群将无法提供服务。当还有 PD 节点存活时，可以选择一个存活的 PD 节点，通过强制修改 Raft Group 的成员，使该节点重新恢复服务。具体操作步骤如下：
 
-### Step 1: Stop all nodes
+### 第 1 步：停止所有节点
 
-To prevent data corruption or other unrecoverable errors caused by interactions with PD parameters during the recovery process, stop the TiDB, TiKV, and TiFlash processes in the cluster.
+停止集群中的 TiDB、TiKV 和 TiFlash 服务进程，以防止在恢复过程中与 PD 参数交互，造成数据错乱或其他无法挽救的异常状况。
 
-### Step 2: Start the surviving PD node
+### 第 2 步：启动存活的 PD 节点
 
-Start the surviving PD node using the `--force-new-cluster` startup parameter. The following is an example:
+使用启动参数 `--force-new-cluster` 拉起该存活的 PD 节点，并确保该节点使用的是其原始数据目录。你可以在命令行中通过 `--data-dir` 显式指定，也可以在 `conf/pd.toml` 中提前配置 `data-dir`。例如：
 
 ```shell
-./bin/pd-server --force-new-cluster --name=pd-127.0.0.10-2379 --client-urls=http://0.0.0.0:2379 --advertise-client-urls=http://127.0.0.1:2379 --peer-urls=http://0.0.0.0:2380 --advertise-peer-urls=http://127.0.0.1:2380 --config=conf/pd.toml
+./bin/pd-server --force-new-cluster --name=pd-127.0.0.10-2379 --data-dir=/path/to/existing/pd/data --client-urls=http://0.0.0.0:2379 --advertise-client-urls=http://127.0.0.1:2379 --peer-urls=http://0.0.0.0:2380 --advertise-peer-urls=http://127.0.0.1:2380 --config=conf/pd.toml
 ```
 
-### Step 3: Repair metadata using `pd-recover`
+该命令会启动一个临时的单节点 PD，用于让下一步的 `pd-recover` 连接并修复元数据。请保持该 PD 进程运行，并在另一个终端窗口中执行下一步。
 
-Since this method relies on a minority PD node to recover the service, the node might contain outdated data. If the `alloc_id` and `tso` data roll back, the cluster data might be corrupted or unavailable. To prevent this, you need to use `pd-recover` to modify the metadata to ensure that the node can provide correct allocation IDs and TSO services. The following is an example:
+> **注意：**
+>
+> - 如果未在命令行中指定 `--data-dir`，请确保 `conf/pd.toml` 中的 `data-dir` 已正确指向该存活 PD 节点的原始数据目录，否则后续执行 `pd-recover` 时可能失败。
+> - 如果同时在 `conf/pd.toml` 和命令行参数中指定了 `data-dir`，则 `conf/pd.toml` 中的 `data-dir` 优先生效。
+
+### 第 3 步：使用 `pd-recover` 修复元数据
+
+该方法是利用少数派 PD 节点恢复服务，但由于该节点可能存在数据落后的情况，因此对于 `alloc_id` 和 `tso` 等数据，一旦发生回退，可能导致集群数据错乱或不可用。为确保该节点能提供正确的分配 ID 和 TSO 等服务，需要使用 `pd-recover` 修改元数据。具体命令参考：
 
 ```shell
-./bin/pd-recover --from-old-member --endpoints=http://127.0.0.1:2379 # Specify the corresponding PD address
+./bin/pd-recover --from-old-member --endpoints=http://127.0.0.1:2379 # 指定对应的 PD 地址
 ```
 
-> **Note:**
+> **注意：**
 >
-> In this step, the `alloc_id` in the storage automatically increases by a safe value of `100000000`. As a result, the subsequent cluster will allocate larger IDs.
+> 该步骤会自动将存储中的 `alloc_id` 增加一个安全值 `100000000`。这将导致后续集群中分配的 ID 偏大。
 >
-> Additionally, `pd-recover` does not modify the TSO. Therefore, before performing this step, make sure that the local time is later than the time when the failure occurs, and verify that the NTP clock synchronization service is enabled between the PD components before the failure. If it is not enabled, you need to adjust the local clock to a future time to prevent the TSO from rolling back.
+> 此外，`pd-recover` 不会修改 TSO。因此，在执行此步骤之前，请确保本地时间晚于故障发生时间，并且确认故障前 PD 组件之间已开启 NTP 时钟同步服务。如果未开启，则需要将本地时钟调整到一个未来的时间，以确保 TSO 不会回退。
 
-### Step 4: Restart the PD node
+### 第 4 步：重启这个 PD
 
-Once you see the prompt message `recovery is successful`, restart the PD node.
+当上一步出现 `recovery is successful` 的提示信息后，停止第 2 步中使用 `--force-new-cluster` 启动的临时 PD 进程，然后使用正常方式重启该 PD，重启时不要再携带 `--force-new-cluster` 参数。
 
-### Step 5: Scale out PD and start the cluster
+### 第 5 步：扩容 PD 并启动集群
 
-Scale out the PD cluster using the deployment tool and start the other components in the cluster. At this point, the PD service is available.
+确认第 4 步中的 PD 已正常启动并提供服务后，通过部署工具扩容 PD，并启动集群中的其他组件。至此服务恢复。
 
-## Method 2: Entirely rebuild a PD cluster
+## 方式二：完全重建 PD 集群
 
-This method is applicable to scenarios in which all PD data is lost, but the data of other components, such as TiDB, TiKV, and TiFlash, still exists.
+该方式适用于所有 PD 的数据都丢失，但 TiDB、TiKV 和 TiFlash 等其他组件数据都还存在的情况。
 
-### Step 1: Get cluster ID
+### 第 1 步：获取 Cluster ID
 
-The cluster ID can be obtained from the log of PD, TiKV, or TiDB. To get the cluster ID, you can view the log directly on the server.
+一般在 PD、TiKV 或 TiDB 的日志中都可以获取 Cluster ID。你可以直接在服务器上查看日志以获取 Cluster ID。
 
-#### Get cluster ID from PD log (recommended)
+#### 从 PD 日志获取 Cluster ID（推荐）
 
-To get the cluster ID from the PD log, run the following command:
+使用以下命令，从 PD 日志中获取 Cluster ID：
 
 
 ```bash
@@ -82,9 +93,11 @@ grep "init cluster id" {{/path/to}}/pd.log
 ...
 ```
 
-#### Get cluster ID from TiDB log
+或者也可以从 TiDB 或 TiKV 的日志中获取。
 
-To get the cluster ID from the TiDB log, run the following command:
+#### 从 TiDB 日志获取 Cluster ID
+
+使用以下命令，从 TiDB 日志中获取 Cluster ID：
 
 
 ```bash
@@ -96,9 +109,9 @@ grep "init cluster id" {{/path/to}}/tidb.log
 ...
 ```
 
-#### Get cluster ID from TiKV log
+#### 从 TiKV 日志获取 Cluster ID
 
-To get the cluster ID from the TiKV log, run the following command:
+使用以下命令，从 TiKV 日志中获取 Cluster ID：
 
 
 ```bash
@@ -110,17 +123,17 @@ grep "connect to PD cluster" {{/path/to}}/tikv.log
 ...
 ```
 
-### Step 2: Get allocated ID
+### 第 2 步：获取已分配 ID
 
-The allocated ID value you specify must be larger than the currently largest allocated ID value. To get allocated ID, you can either get it from the monitor, or view the log directly on the server.
+在指定已分配 ID 时，需指定一个比当前最大的已分配 ID 更大的值。可以从监控中获取已分配 ID，也可以直接在服务器上查看日志。
 
-#### Get allocated ID from the monitor (recommended)
+#### 从监控中获取已分配 ID（推荐）
 
-To get allocated ID from the monitor, you need to make sure that the metrics you are viewing are the metrics of **the last PD leader**, and you can get the largest allocated ID from the **Current ID allocation** panel in PD dashboard.
+要从监控中获取已分配的 ID，需要确保你所查看的监控指标是**上一任 PD Leader** 的指标。可从 PD Dashboard 中 **Current ID allocation** 面板获取最大的已分配 ID。
 
-#### Get allocated ID from PD log
+#### 从 PD 日志获取已分配 ID
 
-To get the allocated ID from the PD log, you need to make sure that the log you are viewing is the log of **the last PD leader**, and you can get the maximum allocated ID by running the following command:
+要从 PD 日志中获取分配的 ID，需要确保你所查看的日志是**上一任 PD Leader** 的日志。运行以下命令获取最大的已分配 ID：
 
 
 ```bash
@@ -132,31 +145,31 @@ grep "idAllocator allocates a new id" {{/path/to}}/pd*.log |  awk -F'=' '{print 
 ...
 ```
 
-Or you can simply run the above command in all PD servers to find the largest one.
+你也可以在所有 PD server 中运行上述命令，找到最大的值。
 
-### Step 3: Deploy a new PD cluster
+### 第 3 步：部署一套新的 PD 集群
 
-Before deploying a new PD cluster, you need to stop the existing PD cluster and then delete the previous data directory or specify a new data directory using `--data-dir`.
+部署新的 PD 集群之前，需要停止当前的 PD 集群，然后删除旧的数据目录（或者用 `--data-dir` 指定新的数据目录）。
 
-### Step 4: Use pd-recover
+### 第 4 步：使用 pd-recover
 
-You only need to run `pd-recover` on one PD node. Note that to avoid reallocation, it is recommended to set the `-alloc-id` parameter to a value larger than the allocated ID. For example, if the maximum allocated ID obtained from monitoring or logs is `9000`, it is recommended to pass `10000` or a larger value to the `-alloc-id` parameter.
+只需在一个 PD 节点上执行 `pd-recover` 即可。需要注意的是，为了避免重新分配，建议将参数 `-alloc-id` 设置为大于已分配 ID 的值。例如，从监控或者日志获得的最大已分配 ID 是 `9000`，则建议给参数 `-alloc-id` 传入 `10000` 或更大值。
 
 
 ```bash
 ./pd-recover -endpoints http://10.0.1.13:2379 -cluster-id 6747551640615446306 -alloc-id 10000
 ```
 
-### Step 5: Restart the whole cluster
+### 第 5 步：重启整个集群
 
-When you see the prompted information that the recovery is successful, restart the whole cluster.
+当出现 `recovery is successful` 的提示信息时，重启整个集群。
 
-## FAQ
+## 常见问题
 
-### Multiple cluster IDs are found when getting the cluster ID
+### 获取 Cluster ID 时发现有多个 Cluster ID
 
-When a PD cluster is created, a new cluster ID is generated. You can determine the cluster ID of the old cluster by viewing the log.
+新建 PD 集群时，会生成新的 Cluster ID。可以通过日志判断旧集群的 Cluster ID。
 
-### The error `dial tcp 10.0.1.13:2379: connect: connection refused` is returned when executing `pd-recover`
+### 执行 pd-recover 时返回错误 `dial tcp 10.0.1.13:2379: connect: connection refused`
 
-The PD service is required when you execute `pd-recover`. Deploy and start the PD cluster before you use PD Recover.
+执行 pd-recover 时需要 PD 提供服务，请先部署并启动 PD 集群。

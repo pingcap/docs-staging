@@ -1,13 +1,13 @@
 ---
-title: REVOKE <role> | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 REVOKE <role> 的概述。
+title: REVOKE <role>
+summary: TiDB 数据库中 REVOKE <role> 的使用概况。
 ---
 
 # `REVOKE <role>`
 
-该语句用于撤销之前分配给指定用户（或用户列表）的角色。
+`REVOKE <role>` 语句用于从指定的用户（或用户列表）中收回之前授予的角色。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 RevokeRoleStmt ::=
@@ -22,13 +22,13 @@ UsernameList ::=
 
 ## 示例
 
-以 `root` 用户连接到 TiDB：
+以 `root` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-创建一个新角色 `analyticsteam` 和一个新用户 `jennifer`：
+创建新角色 `analyticsteam` 和新用户 `jennifer`：
 
 ```sql
 CREATE ROLE analyticsteam;
@@ -44,13 +44,13 @@ GRANT analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-以 `jennifer` 用户连接到 TiDB：
+以 `jennifer` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-注意，默认情况下，`jennifer` 需要执行 `SET ROLE analyticsteam` 才能使用与 `analyticsteam` 角色相关联的权限：
+需要注意的是，默认情况下，用户 `jennifer` 需要执行 `SET ROLE analyticsteam` 语句才能使用与角色相关联的权限：
 
 ```sql
 SHOW GRANTS;
@@ -86,26 +86,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-以 `root` 用户连接到 TiDB：
+以 `root` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-可以使用 `SET DEFAULT ROLE` 将 `analyticsteam` 角色关联到 `jennifer`：
+执行 `SET DEFAULT ROLE` 语句将用户 `jennifer` 与 `analyticsteam` 角色相关联：
 
 ```sql
 SET DEFAULT ROLE analyticsteam TO jennifer;
 Query OK, 0 rows affected (0.02 sec)
 ```
 
-以 `jennifer` 用户连接到 TiDB：
+以 `jennifer` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-之后，用户 `jennifer` 将拥有与 `analyticsteam` 角色相关联的权限，且无需执行 `SET ROLE` 语句：
+此时 `jennifer` 用户无需执行 `SET ROLE` 语句就能拥有 `analyticsteam` 角色相关联的权限：
 
 ```sql
 SHOW GRANTS;
@@ -127,26 +127,26 @@ SHOW TABLES IN test;
 1 row in set (0.00 sec)
 ```
 
-以 `root` 用户连接到 TiDB：
+以 `root` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u root
 ```
 
-撤销 `jennifer` 的 `analyticsteam` 角色：
+收回角色 `analyticsteam`：
 
 ```sql
 REVOKE analyticsteam FROM jennifer;
 Query OK, 0 rows affected (0.01 sec)
 ```
 
-以 `jennifer` 用户连接到 TiDB：
+以 `jennifer` 用户连接 TiDB：
 
 ```shell
 mysql -h 127.0.0.1 -P 4000 -u jennifer
 ```
 
-显示 `jennifer` 的权限：
+查看 `jennifer` 用户的权限：
 
 ```sql
 SHOW GRANTS;
@@ -160,18 +160,13 @@ SHOW GRANTS;
 
 ## MySQL 兼容性
 
-TiDB 中的 `REVOKE <role>` 语句与 MySQL 8.0 中的角色功能完全兼容。如果发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`REVOKE <role>` 语句与 MySQL 8.0 的角色功能完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [`CREATE ROLE`](/sql-statements/sql-statement-create-role.md)
 * [`DROP ROLE`](/sql-statements/sql-statement-drop-role.md)
 * [`GRANT <role>`](/sql-statements/sql-statement-grant-role.md)
 * [`SET ROLE`](/sql-statements/sql-statement-set-role.md)
 * [`SET DEFAULT ROLE`](/sql-statements/sql-statement-set-default-role.md)
-
-<CustomContent platform="tidb">
-
-* [Role-Based Access Control](/role-based-access-control.md)
-
-</CustomContent>
+* [基于角色的访问控制](/role-based-access-control.md)

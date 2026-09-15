@@ -1,19 +1,20 @@
 ---
-title: Best Practices for Read-Only Storage Nodes
-summary: This document introduces configuring read-only storage nodes for isolating high-tolerance delay loads from online services. Steps include marking TiKV nodes as read-only, using Placement Rules to store data on read-only nodes as learners, and using Follower Read to read data from read-only nodes.
+title: 只读存储节点最佳实践
+summary: 介绍如何通过使用只读存储节点，达到物理隔离部分流量的目的。
+aliases: ['/zh/tidb/stable/readonly-nodes/','/zh/tidb/dev/readonly-nodes/']
 ---
 
-# Best Practices for Read-Only Storage Nodes
+# 只读存储节点最佳实践
 
-This document introduces how to configure read-only storage nodes and how to direct backup, analysis, testing, and other traffic to these nodes. In this way, loads with high tolerance for delay can be physically isolated from important online services.
+本文档介绍如何配置只读存储节点，以及如何将备份、分析、测试等流量导向这些节点，使这些对延迟要求较低的负载与线上重要服务在物理上达到隔离的效果。
 
-## Procedures
+## 操作步骤
 
-### 1. Specify some TiKV nodes as read-only
+### 1. 将部分 TiKV 节点指定为只读节点
 
-To specify some TiKV nodes as read-only, you can mark these nodes with a special label (use `$` as the prefix of the label key). Unless you explicitly specify these nodes to store some data using Placement Rules, PD does not schedule any data to these nodes.
+通过给 TiKV 节点标记特殊 label（使用 `$` 作为 label key 的前缀）的方式，可以把部分节点指定为特殊只读节点。除非通过设置 Placement Rules 的方式显式指定这些节点存储某些数据，否则 PD 不会调度任何数据到这些节点上。
 
-You can configure a read-only node by running the `tiup cluster edit-config` command:
+只读节点可通过执行 `tiup cluster edit-config` 命令进行配置：
 
 ```
 tikv_servers:
@@ -23,15 +24,15 @@ tikv_servers:
       $mode: readonly
 ```
 
-### 2. Use Placement Rules to store data on read-only nodes as learners
+### 2. 将数据以 learner 形式存储在只读节点
 
-1. Run the `pd-ctl config placement-rules` command to export the default Placement Rules:
+1. 使用如下 `pd-ctl config placement-rules` 命令导出默认 Placement Rules：
 
     ```shell
     pd-ctl config placement-rules rule-bundle load --out="rules.json"
     ```
 
-    If you have not configured Placement Rules before, the output is as follows:
+    如果之前没有配置过 Placement Rules，那么会导出如下内容：
 
     ```json
     [
@@ -53,7 +54,7 @@ tikv_servers:
     ]
     ```
 
-2. Store all data on the read-only nodes as a learner. The following example is based on the default configuration:
+2. 将所有数据在只读节点以 learner 方式存储一份。如下示例基于默认配置：
 
     ```json
     [
@@ -93,38 +94,31 @@ tikv_servers:
     ]
     ```
 
-3. Use the `pd-ctl config placement-rules` command to write the preceding configurations to PD:
+3. 执行 `pd-ctl config placement-rules` 命令将上面的配置写入 PD：
 
     ```shell
     pd-ctl config placement-rules rule-bundle save --in="rules.json"
     ```
 
-> **Note:**
+> **注意：**
 >
-> - If you perform the preceding operations on a cluster with a large dataset, the entire cluster might need some time to completely replicate data to read-only nodes. During this period, the read-only nodes might not be able to provide services.
-> - Because of the special implementation of backup, the learner number of each label cannot exceed 1. Otherwise, it will generate duplicate data during backup.
+> - 当对已存在大量数据的集群进行如上操作时，整个集群可能需要一段时间才能将数据完全复制到只读节点上。在这期间，只读节点可能无法进行服务。
+>
+> - 因为备份的特殊下推实现机制，每个 label 所对应的 learner 数量不能超过 1，否则会导致在备份时产生重复数据。
 
-### 3. Use Follower Read to read data from read-only nodes
+### 3. 使用 Follower Read 功能读取只读节点
 
-#### 3.1 Use Follower Read in TiDB
+#### 3.1 在 TiDB 中使用 Follower Read
 
-To read data from read-only nodes when using TiDB, you can set the system variable [`tidb_replica_read`](/system-variables.md#tidb_replica_read-new-in-v40) to `learner`:
+你可以将系统变量 [`tidb_replica_read`](/system-variables.md#tidb_replica_read-从-v40-版本开始引入) 设置为 `learner` 来读取只读节点上的数据：
 
 ```sql
 set tidb_replica_read=learner;
 ```
 
-#### 3.2 Use Follower Read in TiSpark
+#### 3.2 在备份集群数据时只备份 Follower 节点
 
-To read data from read-only nodes when using TiSpark, you can set the configuration item `spark.tispark.replica_read` to `learner` in the Spark configuration file:
-
-```
-spark.tispark.replica_read learner
-```
-
-#### 3.3 Use Follower Read when backing up cluster data
-
-To read data from read-only nodes when backing up cluster data, you can specify the `--replica-read-label` option in the br command line. Note that when running the following command in shell, you need to use single quotes to wrap the label to prevent `$` from being parsed.
+你可以在 br 命令行中添加 `--replica-read-label` 参数，来读取只读节点上的数据。注意，在 shell 中运行如下命令时需使用单引号包裹 label，以防止 `$` 被 shell 解析。
 
 ```shell
 tiup br backup full ... --replica-read-label '$mode:readonly'

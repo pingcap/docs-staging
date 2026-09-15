@@ -1,67 +1,67 @@
 ---
-title: Three Availability Zones in Two Regions Deployment
-summary: Learn the deployment solution to three availability zones in two regions.
+title: 双区域多 AZ 部署 TiDB
+summary: 介绍在两个区域多个可用区部署 TiDB 的方式。
 ---
 
-# Three Availability Zones in Two Regions Deployment
+# 双区域多 AZ 部署 TiDB
 
-This document introduces the architecture and configuration of the three availability zones (AZs) in two regions deployment.
+本文档简要介绍双区域多可用区 (Availability Zone, AZ) 部署的架构模型及配置。
 
-The term "region" in this document refers to a geographic area, while the capitalized "Region" refers to a basic unit of data storage in TiKV. "AZ" refers to an isolated location within a region, and each region has multiple AZs. The solution described in this document also applies to the scenario where multiple data centers are located in a single city.
+本文中的区域指的是地理隔离的不同位置，AZ 指的是区域内部划分的相互独立的资源集合，本文描述的方案同样适用于在两个城市部署三个数据中心（两地三中心）的场景。
 
-## Overview
+## 简介
 
-The architecture of three AZs in two regions is a highly available and disaster tolerant deployment solution that provides a production data AZ, a disaster recovery AZ in the same region, and a disaster recovery AZ in another region. In this mode, the three AZs in two regions are interconnected. If one AZ fails or suffers from a disaster, other AZs can still operate well and take over the key applications or all applications. Compared with the multi-AZ in one region deployment, this solution has the advantage of cross-region high availability and can survive region-level natural disasters.
+双区域多 AZ 架构，即生产数据 AZ、同区域灾备 AZ、跨区域灾备 AZ 的高可用容灾方案。在这种模式下，两个区域的三个 AZ 互联互通，如果一个 AZ 发生故障或灾难，其他 AZ 可以正常运行并对关键业务或全部业务实现接管。相比同区域多 AZ 方案，双区域三 AZ 具有跨区域级高可用能力，可以应对区域级自然灾害。
 
-The distributed database TiDB natively supports the three-AZ-in-two-region architecture by using the Raft algorithm, and guarantees the consistency and high availability of data within a database cluster. Because the network latency across AZs in the same region is relatively low, the application traffic can be dispatched to two AZs in the same region, and the traffic load can be shared by these two AZs by controlling the distribution of TiKV Region leaders and PD leaders.
+TiDB 分布式数据库采用 Raft 算法，可以原生支持双区域三 AZ 架构，并保证集群数据的一致性和高可用。而且，同区域 AZ 网络延迟相对较小，可以把业务流量同时派发到同区域两个 AZ，并通过控制 Region Leader 和 PD Leader 分布实现同区域 AZ 共同负载业务流量。
 
-## Deployment architecture
+## 架构
 
-This section takes the example of Seattle and San Francisco to explain the deployment mode of three AZs in two regions for the distributed database of TiDB.
+本文以北京和西安部署集群为例，阐述 TiDB 分布式数据库双区域三 AZ 架构的部署模型。
 
-In this example, two AZs (AZ1 and AZ2) are located in Seattle and another AZ (AZ3) is located in San Francisco. The network latency between AZ1 and AZ2 is lower than 3 milliseconds. The network latency between AZ3 and AZ1/AZ2 in Seattle is about 20 milliseconds (ISP dedicated network is used).
+假设北京有两个 AZ，AZ1 和 AZ2，西安有一个 AZ，AZ3。北京同区域两 AZ 之间网络延迟低于 3 ms，北京与西安之间的网络使用 ISP 专线，延迟约为 20 ms。
 
-The architecture of the cluster deployment is as follows:
+下图为集群部署架构图，具体如下：
 
-- The TiDB cluster is deployed to three AZs in two regions: AZ1 in Seattle, AZ2 in Seattle, and AZ3 in San Francisco.
-- The cluster has five replicas, two in AZ1, two in AZ2, and one in AZ3. For the TiKV component, each rack has a label, which means that each rack has a replica.
-- The Raft protocol is adopted to ensure consistency and high availability of data, which is transparent to users.
+- 集群采用双区域三 AZ 部署方式，分别为北京 AZ1，北京 AZ2，西安 AZ3。
+- 集群采用 5 副本模式，其中 AZ1 和 AZ2 分别放 2 份副本，AZ3 放 1 份副本；TiKV 按机柜设置 Label，即每个机柜上有 1 份副本。
+- 副本间通过 Raft 协议保证数据的一致性和高可用，对用户完全透明。
 
-![3-AZ-in-2-region architecture](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-01.png)
+![双区域三 AZ 集群架构图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-01.png)
 
-This architecture is highly available. The distribution of Region leaders is restricted to the two AZs (AZ1 and AZ2) that are in the same region (Seattle). Compared with the three-AZ solution in which the distribution of Region leaders is not restricted, this architecture has the following advantages and disadvantages:
+该架构具备高可用能力，同时通过 PD 调度保证 Region Leader 只出现在同区域的两个 AZ。相比于三 AZ，即 Region Leader 分布不受限制的方案，双区域三 AZ 方案有以下优缺点：
 
-- **Advantages**
+- **优点**
 
-    - Region leaders are in AZs of the same region with low latency, so the write is faster.
-    - The two AZs can provide services at the same time, so the resource usage rate is higher.
-    - If one AZ fails, services are still available and data safety is ensured.
+    - Region Leader 都在同区域 AZ，延迟低，数据写入速度更优。
+    - 双 AZ 可同时对外提供服务，资源利用率更高。
+    - 任一 AZ 失效后，另一 AZ 接管服务，业务可用并且不发生数据丢失。
 
-- **Disadvantages**
+- **缺点**
 
-    - Because the data consistency is achieved by the Raft algorithm, when two AZs in the same region fail at the same time, only one surviving replica remains in the disaster recovery AZ in another region (San Francisco). This cannot meet the requirement of the Raft algorithm that most replicas survive. As a result, the cluster can be temporarily unavailable. Maintenance staff needs to recover the cluster from the one surviving replica and a small amount of hot data that has not been replicated will be lost. But this case is a rare occurrence.
-    - Because the ISP dedicated network is used, the network infrastructure of this architecture has a high cost.
-    - Five replicas are configured in three AZs in two regions, data redundancy increases, which brings a higher storage cost.
+    - 因为数据一致性是基于 Raft 算法实现，当同区域两个 AZ 同时失效时，因为远程灾备 AZ 只剩下一份副本，不满足 Raft 算法大多数副本存活的要求。最终将导致集群暂时不可用，需要从一副本恢复集群，丢失少部分还没同步的热数据。这种情况出现概率较小。
+    - 由于使用了网络专线，该架构下网络设施成本较高。
+    - 双区域三 AZ 需设置 5 副本，数据冗余度增加，空间成本攀升。
 
-### Deployment details
+### 详细示例
 
-The configuration of the three AZs in two regions (Seattle and San Francisco) deployment plan is illustrated as follows:
+北京、西安双区域三 AZ 配置详解：
 
-![3-AZ-2-region](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-02.png)
+![双区域三 AZ 配置详图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-02.png)
 
-From the preceding illustration, you can see that Seattle has two AZs: AZ1 and AZ2. AZ1 has three sets of racks: rac1, rac2, and rac3. AZ2 has two racks: rac4 and rac5. The AZ3 in San Francisco has the rac6 rack.
+如上图所示，北京有两个可用区 AZ1 和 AZ2，可用区 AZ1 有三套机架 rac1、rac2 和 rac3，可用区 AZ2 有两套机架 rac4 和 rac5；西安可用区 AZ3 有一套机架 rac6。
 
-In the rac1 of AZ1, one server is deployed with TiDB and PD services, and the other two servers are deployed with TiKV services. Each TiKV server is deployed with two TiKV instances (tikv-server). This is similar to rac2, rac4, rac5, and rac6.
+AZ1 的 rac1 机架中，一台服务器部署了 TiDB 和 PD 服务，另外两台服务器部署了 TiKV 服务，其中，每台 TiKV 服务器部署了两个 TiKV 实例 (tikv-server)，rac2、rac4、rac5 和 rac6 类似。
 
-The TiDB server, the control machine, and the monitoring server are on rac3. The TiDB server is deployed for regular maintenance and backup. Prometheus, Grafana, and the restore tools are deployed on the control machine and monitoring machine.
+机架 rac3 上部署了 TiDB Server、中控及监控服务器。TiDB Server 用于日常管理维护和备份。中控和监控服务器上部署了 Prometheus、Grafana 以及恢复工具。
 
-## Configuration
+## 配置
 
-### Example
+### 示例
 
-See the following `tiup topology.yaml` yaml file for example:
+以下为一个 `tiup topology.yaml` 文件示例：
 
-```yaml
+```
 # # Global variables are applied to all deployments and used as the default value of
 # # the deployments if a specific deployment value is missing.
 global:
@@ -74,7 +74,7 @@ server_configs:
   tikv:
     server.grpc-compression-type: gzip
   pd:
-    replication.location-labels: ["az","replication zone","rack","host"]
+    replication.location-labels:  ["dc","zone","rack","host"]
 
 pd_servers:
   - host: 10.63.10.10
@@ -124,23 +124,23 @@ alertmanager_servers:
   - host: 10.63.10.60
 ```
 
-### Labels design
+### Labels 设计
 
-In the deployment of three AZs in two regions, the label design requires taking availability and disaster recovery into account. It is recommended that you define the four levels (`az`, `replication zone`, `rack`, and `host`) based on the physical structure of the deployment.
+在双区域三 AZ 部署方式下，对于 Labels 的设计需要充分考虑到系统的可用性和容灾能力，建议根据部署的物理结构来定义 AZ、replication zone、rack 和 host 四个等级。
 
-![Label logical definition](https://docs-download.pingcap.com/media/images/docs/three-data-centers-in-two-cities-deployment-03.png)
+![Label 逻辑定义图](https://docs-download.pingcap.com/media/images/docs-cn/three-data-centers-in-two-cities-deployment-03.png)
 
-In the PD configuration, add level information of TiKV labels:
+PD 设置中添加 TiKV label 的等级配置。
 
-```yaml
+```
 server_configs:
   pd:
-    replication.location-labels: ["az","replication zone","rack","host"]
+    replication.location-labels:  ["az","replication zone","rack","host"]
 ```
 
-The configuration of `tikv_servers` is based on the label information of the real physical deployment location of TiKV, which makes it easier for PD to perform global management and scheduling.
+tikv_servers 设置基于 TiKV 真实物理部署位置的 Label 信息，方便 PD 进行全局管理和调度。
 
-```yaml
+```
 tikv_servers:
   - host: 10.63.10.30
     config:
@@ -159,46 +159,46 @@ tikv_servers:
       server.labels: { az: "3", replication zone: "5", rack: "5", host: "34" }
 ```
 
-### Optimize parameter configuration
+### 参数配置优化
 
-In the deployment of three AZs in two regions, to optimize performance, you need to not only configure regular parameters, but also adjust component parameters.
+在双区域三 AZ 的架构部署中，从性能优化的角度，除了常规参数配置外，还需要对集群中相关组件参数进行调整。
 
-- Enable gRPC message compression in TiKV. Because data of the cluster is transmitted in the network, you can enable the gRPC message compression to lower the network traffic.
+- 启用 TiKV gRPC 消息压缩。由于需要在网络中传输集群数据，可开启 gRPC 消息压缩，降低网络流量。
 
-    ```yaml
+    ```
     server.grpc-compression-type: gzip
     ```
 
-- Optimize the network configuration of the TiKV node in another region (San Francisco). Modify the following TiKV parameters for AZ3 in San Francisco and try to prevent the replica in this TiKV node from participating in the Raft election.
+- 优化跨区域 AZ3 的 TiKV 节点网络，修改 TiKV 的如下参数，拉长跨区域副本参与选举的时间，避免跨区域 TiKV 中的副本参与 Raft 选举。
 
-    ```yaml
+    ```
     raftstore.raft-min-election-timeout-ticks: 50
     raftstore.raft-max-election-timeout-ticks: 60
     ```
 
-> **Note:**
+> **注意:**
 >
-> Using `raftstore.raft-min-election-timeout-ticks` and `raftstore.raft-max-election-timeout-ticks` to configure larger election timeout ticks for a TiKV node can significantly decrease the likelihood of Regions on that node becoming Leaders. However, in a disaster scenario where some TiKV nodes are offline and the remaining active TiKV nodes lag behind in Raft logs, only Regions on this TiKV node with large election timeout ticks can become Leaders. Because Regions on this TiKV node must wait for at least the duration set by `raftstore.raft-min-election-timeout-ticks` before initiating an election, it is recommended to avoid setting these values excessively large to prevent potential impact on the cluster availability in such scenarios.
+> 通过 `raftstore.raft-min-election-timeout-ticks` 和 `raftstore.raft-max-election-timeout-ticks` 为 TiKV 节点配置较大的 election timeout tick 可以大幅降低该节点上的 Region 成为 Leader 的概率。但在发生灾难的场景中，如果部分 TiKV 节点宕机，而其它存活的 TiKV 节点 Raft 日志落后，此时只有这个配置了较大的 election timeout tick 的 TiKV 节点上的 Region 能成为 Leader。由于此 TiKV 节点上的 Region 需要至少等待 `raftstore.raft-min-election-timeout-ticks` 设置的时间后才能发起选举，因此尽量避免将此配置值设置得过大，以免在这种场景下影响集群的可用性。
 
-- Configure scheduling. After the cluster is enabled, use the `tiup ctl:v{CLUSTER_VERSION} pd` tool to modify the scheduling policy. Modify the number of TiKV Raft replicas. Configure this number as planned. In this example, the number of replicas is five.
+- 调度设置。在集群启动后，通过 `tiup ctl:v<CLUSTER_VERSION> pd` 工具进行调度策略修改。修改 TiKV Raft 副本数按照安装时规划好的副本数进行设置，在本例中为 5 副本。
 
-    ```bash
+    ```
     config set max-replicas 5
     ```
 
-- Forbid scheduling the Raft leader to AZ3. Scheduling the Raft leader to another region (AZ3) causes unnecessary network overhead between AZ1/AZ2 in Seattle and AZ3 in San Francisco. The network bandwidth and latency also affect the performance of the TiDB cluster.
+- 禁止向跨区域 AZ 调度 Raft Leader，当 Raft Leader 在跨区域 AZ 时，会造成不必要的本区域 AZ 与远程 AZ 间的网络消耗，同时，网络带宽和延迟也会对 TiDB 的集群性能产生影响。
 
-    ```bash
+    ```
     config set label-property reject-leader dc 3
     ```
 
-   > **Note:**
-   >
-   > Starting from TiDB v5.2, the `label-property` configuration is not supported by default. To set the replica policy, use the [placement rules](/configure-placement-rules.md).
+    > **注意：**
+    >
+    > TiDB 5.2 及以上版本默认不支持 `label-property` 配置。若要设置副本策略，请使用 [Placement Rules](/configure-placement-rules.md)。
 
-- Configure the priority of PD. To avoid the situation where the PD leader is in another region (AZ3), you can increase the priority of local PD (in Seattle) and decrease the priority of PD in another region (San Francisco). The larger the number, the higher the priority. In all available PD nodes, the node with the highest priority number becomes the leader.
+- 设置 PD 的优先级，为了避免出现跨区域 AZ 的 PD 成为 Leader，可以将本区域 AZ 的 PD 优先级调高（数字越大，优先级越高），将跨区域的 PD 优先级调低。在可用的 PD 节点中，优先级数值最大的节点会直接当选 leader。
 
-    ```bash
+    ```
     member leader_priority PD-10 5
     member leader_priority PD-11 5
     member leader_priority PD-12 5

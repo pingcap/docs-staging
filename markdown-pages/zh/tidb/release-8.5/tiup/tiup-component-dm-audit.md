@@ -1,35 +1,35 @@
 ---
 title: tiup dm audit
-summary: The `tiup dm audit` command is used to view historical commands executed on all clusters and the execution log of each command. If `[audit-id]` is not filled, the table of operation records is output in reverse chronological order, showing the `audit-id`, execution time, and command. If `[audit-id]` is filled, the execution log of the specified `audit-id` is checked. The `-h, --help` option prints help information. If `[audit-id]` is specified, the corresponding execution log is output. If not specified, a table with the fields ID, Time, and Command is output.
+summary: tiup dm audit 命令用于查看所有集群上的历史命令和执行日志。若不填写 audit-id，则按时间倒序输出操作记录表格，包括 audit-id、命令执行时间和命令。若填写 audit-id，则查看指定的执行日志。选项 -h, --help 用于输出帮助信息，默认关闭。输出包括指定的 audit-id 对应的执行日志或包含 ID、时间和命令字段的表格。
 ---
 
 # tiup dm audit
 
-The `tiup dm audit` command is used to view historical commands executed on all clusters and the execution log of each command.
+命令 `tiup dm audit` 可以用于查看执行在所有集群上的历史命令，以及每个命令的执行日志。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm audit [audit-id] [flags]
 ```
 
-- If you do not fill in the `[audit-id]`, the table of operation records is output in reverse chronological order. The first column is the `audit-id`.
-- If you fill in the `[audit-id]`, the execution log of the specified `audit-id` is checked.
+- 若不填写 `[audit-id]` 则按时间倒序输出操作记录的表格，第一列为 audit-id
+- 若填写 `[audit-id]` 则查看指定的 audit-id 的执行日志
 
-## Option
+## 选项
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- Default: false
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-- If `[audit-id]` is specified, the corresponding execution log is output.
-- If `[audit-id]` is not specified, a table with the following fields is output:
-    - ID: the `audit-id` corresponding to this record
-    - Time: the execution time of the command corresponding to the record
-    - Command: the command corresponding to the record
+- 若指定 `[audit-id]`，则输出对应的执行日志
+- 若不指定 `[audit-id]` 则输出含有以下字段的表格：
+    - ID：该条记录对应的 audit-id
+    - Time：该条记录对应的命令执行时间
+    - Command：该条记录对应的命令
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

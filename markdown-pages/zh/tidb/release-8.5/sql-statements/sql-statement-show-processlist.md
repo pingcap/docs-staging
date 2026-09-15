@@ -1,13 +1,13 @@
 ---
-title: SHOW [FULL] PROCESSLIST | TiDB SQL Statement Reference
-summary: TiDB 数据库中 SHOW [FULL] PROCESSLIST 的用法概述。
+title: SHOW [FULL] PROCESSLIST
+summary: TiDB 数据库中 SHOW [FULL] PROCESSLIST 的使用概况。
 ---
 
 # SHOW [FULL] PROCESSLIST
 
-该语句用于列出当前连接到同一 TiDB 服务器的会话。`Info` 列包含查询文本，如果未指定可选关键字 `FULL`，则该文本会被截断。若要查看整个集群范围内的进程列表，请使用 [`INFORMATION_SCHEMA.CLUSTER_PROCESSLIST`](/information-schema/information-schema-processlist.md#cluster_processlist) 表。
+`SHOW [FULL] PROCESSLIST` 语句列出连接到相同 TiDB 服务器的当前会话。`Info` 列包含查询文本，除非指定了可选的 `FULL` 关键字，否则该文本将被截断。如需查看整个集群的进程列表，请使用 [`INFORMATION_SCHEMA.CLUSTER_PROCESSLIST`](/information-schema/information-schema-processlist.md#cluster_processlist) 表。
 
-## 语法
+## 语法图
 
 ```ebnf+diagram
 ShowProcesslistStmt ::=
@@ -17,7 +17,10 @@ ShowProcesslistStmt ::=
 ## 示例
 
 ```sql
-mysql> SHOW PROCESSLIST;
+SHOW PROCESSLIST;
+```
+
+```sql
 +------+------+-----------------+------+---------+------+------------+------------------+
 | Id   | User | Host            | db   | Command | Time | State      | Info             |
 +------+------+-----------------+------+---------+------+------------+------------------+
@@ -26,13 +29,20 @@ mysql> SHOW PROCESSLIST;
 1 rows in set (0.00 sec)
 ```
 
+以上返回结果中的主要字段描述如下：
+
+- `Command`：SQL 语句的类型，通常值为 `Query`。
+- `Time`：SQL 语句开始执行的时间。
+- `State`：SQL 语句的状态。常见的值是 `autocommit`，表示该 SQL 语句是自动提交的。`in transaction` 表示该 SQL 语句处于事务中。
+- `Info`：表示具体的 SQL 文本。除非指定可选关键字 `FULL`，否则文本会被截断。
+
 ## 权限
 
-如果当前用户没有 `PROCESS` 权限，`SHOW PROCESSLIST` 只会显示该用户自己会话的请求。
+如果当前用户没有 `PROCESS` 权限，`SHOW PROCESSLIST` 仅显示该用户自己的会话请求。
 
 ## MySQL 兼容性
 
-* TiDB 中的 `State` 列不具备描述性。在 TiDB 中将状态表示为单一值更加复杂，因为查询是并行执行的，每个 goroutine 在任意时刻都可能处于不同的状态。
+* TiDB 中的 `State` 列是非描述性的。在 TiDB 中，将状态表示为单个值更复杂，因为查询是并行执行的，而且每个 Go 线程在任一时刻都有不同的状态。
 
 ## 另请参阅
 

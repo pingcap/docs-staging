@@ -1,61 +1,58 @@
 ---
-title: Upgrade and After Upgrade FAQs
-summary: Learn about some FAQs and the solutions during and after upgrading TiDB.
+title: 升级与升级后常见问题
+summary: TiDB 升级与升级后的常见问题与解决办法。
 ---
 
-# Upgrade and After Upgrade FAQs
+# 升级与升级后常见问题
 
-This document introduces some FAQs and their solutions when or after you upgrade TiDB.
+本文介绍 TiDB 升级与升级后的常见问题与解决办法。
 
-## Upgrade FAQs
+## 升级常见问题
 
-This section lists some FAQs and their solutions when you upgrade TiDB.
+本小节列出了 TiDB 升级相关的常见问题与解决办法。
 
-### What are the effects of rolling updates?
+### 滚动升级有那些影响？
 
-When you apply rolling updates to the TiDB services, the running application is affected to varying degrees. Therefore, it is not recommended that you perform a rolling update during business peak hours. You need to configure the minimum cluster topology (TiDB \* 2, PD \* 3, TiKV \* 3).
+滚动升级 TiDB 期间，业务运行会受到一定影响。因此，不建议在业务高峰期进行滚动升级。需要配置最小集群拓扑 (TiDB \* 2、PD \* 3、TiKV \* 3)。
 
-### Can I upgrade the TiDB cluster during the DDL execution?
+### 集群在执行 DDL 请求期间可以进行升级操作吗？
 
-* If the TiDB version before upgrade is earlier than v7.1.0:
+* 如果升级前 TiDB 的版本低于 v7.1.0：
 
-    * **DO NOT** upgrade a TiDB cluster when a DDL statement is being executed in the cluster (usually for the time-consuming DDL statements such as `ADD INDEX` and the column type changes). Before the upgrade, it is recommended to use the [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md) command to check whether the TiDB cluster has an ongoing DDL job. If the cluster has a DDL job, to upgrade the cluster, wait until the DDL execution is finished or use the [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md) command to cancel the DDL job before you upgrade the cluster.
+    * 集群中有 DDL 语句正在被执行时（通常为 `ADD INDEX` 和列类型变更等耗时较久的 DDL 语句），**请勿进行**升级操作。在升级前，建议使用 [`ADMIN SHOW DDL`](/sql-statements/sql-statement-admin-show-ddl.md) 命令查看集群中是否有正在进行的 DDL Job。如需升级，请等待 DDL 执行完成或使用 [`ADMIN CANCEL DDL`](/sql-statements/sql-statement-admin-cancel-ddl.md) 命令取消该 DDL Job 后再进行升级。
 
-    * During the cluster upgrade, **DO NOT** execute any DDL statement. Otherwise, the issue of undefined behavior might occur.
+    * 在升级 TiDB 集群的过程中，**请勿执行** DDL 语句，否则可能会出现行为未定义的问题。
 
-* If the TiDB version before upgrade is v7.1.0 or later:
+* 如果升级前 TiDB 的版本为 v7.1.0 或更高的版本：
 
-    * You do not need to follow the restrictions of upgrading from an earlier version to v7.1.0. That is, TiDB can receive user DDL tasks during the upgrade. For details, refer to [TiDB Smooth Upgrade](/smooth-upgrade-tidb.md).
+    * 不用遵循限制低版本升级时的限制，即在升级时可以接收用户 DDL 任务。建议参考[平滑升级 TiDB](/smooth-upgrade-tidb.md)。
 
-### How to upgrade TiDB using the binary?
+### Binary 如何升级？
 
-It is not recommended to upgrade TiDB using the binary. Instead, it is recommended to [upgrade TiDB using TiUP](/upgrade-tidb-using-tiup.md) or [upgrade a TiDB cluster on Kubernetes](https://docs.pingcap.com/tidb-in-kubernetes/stable/upgrade-a-tidb-cluster), which ensures both version consistency and compatibility.
+不推荐使用 Binary 来升级集群。建议[使用 TiUP 升级 TiDB](/upgrade-tidb-using-tiup.md) 进行升级，确保分布式系统版本一致性和兼容性。
 
-## After upgrade FAQs
+## 升级后常见问题
 
-This section lists some FAQs and their solutions after you upgrade TiDB.
+本小节列出了一些升级后可能会遇到的问题与解决办法。
 
-### The collation in JDBC connections changes after upgrading TiDB
+### TiDB 升级后 JDBC 连接的排序规则变化问题
 
-When upgrading from an earlier version to v7.4 or later, if the `connectionCollation` is not configured, and the `characterEncoding` is either not configured or configured as `UTF-8` in the JDBC URL, the default collation in your JDBC connections might change from `utf8mb4_bin` to `utf8mb4_0900_ai_ci` after upgrading. If you need to maintain the collation as `utf8mb4_bin`, configure `connectionCollation=utf8mb4_bin` in the JDBC URL.
+当从较低版本升级到 v7.4 或更高版本时，如果 JDBC URL 中未配置 `connectionCollation`，且 `characterEncoding` 未配置或配置为 `UTF-8`，升级后 JDBC 连接的默认排序规则可能会从 `utf8mb4_bin` 变更为 `utf8mb4_0900_ai_ci`。如需保持排序规则为 `utf8mb4_bin`，请在 JDBC URL 中配置 `connectionCollation=utf8mb4_bin`。
 
-For more information, see [Collation used in JDBC connections](/faq/sql-faq.md#collation-used-in-jdbc-connections).
+更多信息，请参考 [JDBC 连接所使用的排序规则](/faq/sql-faq.md#jdbc-连接所使用的排序规则)。
 
-### The character set (charset) errors when executing DDL operations
+### 执行 DDL 操作时遇到的字符集 (charset) 问题
 
-In v2.1.0 and earlier versions (including all versions of v2.0), the character set of TiDB is UTF-8 by default. But starting from v2.1.1, the default character set has been changed into UTF8MB4.
+TiDB 在 v2.1.0 以及之前版本（包括 v2.0 所有版本）中，默认字符集是 UTF8。从 v2.1.1 开始，默认字符集变更为 UTF8MB4。如果在 v2.1.0 及之前版本中，建表时显式指定了 table 的 charset 为 UTF8，那么升级到 v2.1.1 之后，执行 DDL 操作可能会失败。
 
-If you explicitly specify the charset of a newly created table as UTF-8 in v2.1.0 or earlier versions, then you might fail to execute DDL operations after upgrading TiDB to v2.1.1.
+要避免该问题，需注意以下两个要点：
 
-To avoid this issue, you need to pay attention to:
-
-- Before v2.1.3, TiDB does not support modifying the charset of the column. Therefore, when you execute DDL operations, you need to make sure that the charset of the new column is consistent with that of the original column.
-
-- Before v2.1.3, even if the charset of the column is different from that of the table, `show create table` does not show the charset of the column. But as shown in the following example, you can view it by obtaining the metadata of the table through the HTTP API.
+- 在 v2.1.3 之前，TiDB 不支持修改 column 的 charset。所以，执行 DDL 操作时，新 column 的 charset 需要和旧 column 的 charset 保持一致。
+- 在 v2.1.3 之前，即使 column 的 charset 和 table 的 charset 不一样，`show create table` 也不会显示 column 的 charset，但可以通过 HTTP API 获取 table 的元信息来查看 column 的 charset，下文提供了示例。
 
 #### `unsupported modify column charset utf8mb4 not match origin utf8`
 
-- Before upgrading, the following operations are executed in v2.1.0 and earlier versions.
+- 升级前：v2.1.0 及之前版本
 
     
     ```sql
@@ -69,7 +66,7 @@ To avoid this issue, you need to pay attention to:
 
     
     ```sql
-    show create table t;
+    show create table t
     ```
 
     ```
@@ -84,7 +81,7 @@ To avoid this issue, you need to pay attention to:
     Time: 0.006s
     ```
 
-- After upgrading, the following error is reported in v2.1.1 and v2.1.2 but there is no such error in v2.1.3 and the later versions.
+- 升级后：v2.1.1、v2.1.2 会出现下面的问题，v2.1.3 以及之后版本不会出现下面的问题。
 
     
     ```sql
@@ -95,45 +92,43 @@ To avoid this issue, you need to pay attention to:
     ERROR 1105 (HY000): unsupported modify column charset utf8mb4 not match origin utf8
     ```
 
-Solution:
-
-You can explicitly specify the column charset as the same with the original charset.
+解决方案：显式指定 column charset，保持和原来的 charset 一致即可。
 
 
 ```sql
 alter table t change column a a varchar(22) character set utf8;
 ```
 
-- According to Point #1, if you do not specify the column charset, UTF8MB4 is used by default, so you need to specify the column charset to make it consistent with the original one.
+- 根据要点 1，此处如果不指定 column 的 charset，会用默认的 UTF8MB4，所以需要指定 column charset 保持和原来一致。
 
-- According to Point #2, you can obtain the metadata of the table through the HTTP API, and find the column charset by searching the column name and the keyword "Charset".
+- 根据要点 2，用 HTTP API 获取 table 元信息，然后根据 column 名字和 Charset 关键字搜索即可找到 column 的 charset。
 
     
     ```sh
     curl "http://$IP:10080/schema/test/t" | python -m json.tool
     ```
 
-    A python tool is used here to format JSON, which is not required and only for the convenience to add the comments.
+    这里用了 python 的格式化 json 的工具，也可以不加，此处只是为了方便注释。
 
     ```json
     {
         "ShardRowIDBits": 0,
         "auto_inc_id": 0,
-        "charset": "utf8",   # The charset of the table.
+        "charset": "utf8",   # table 的 charset
         "collate": "",
-        "cols": [            # The relevant information about the columns.
+        "cols": [            # 从这里开始列举 column 的相关信息
             {
                 ...
                 "id": 1,
                 "name": {
                     "L": "a",
-                    "O": "a"   # The column name.
+                    "O": "a"   # column 的名字
                 },
                 "offset": 0,
                 "origin_default": null,
                 "state": 5,
                 "type": {
-                    "Charset": "utf8",   # The charset of column a.
+                    "Charset": "utf8",   # column a 的 charset
                     "Collate": "utf8_bin",
                     "Decimal": 0,
                     "Elems": null,
@@ -149,7 +144,7 @@ alter table t change column a a varchar(22) character set utf8;
 
 #### `unsupported modify charset from utf8mb4 to utf8`
 
-- Before upgrading, the following operations are executed in v2.1.1 and v2.1.2.
+- 升级前：v2.1.1，v2.1.2
 
     
     ```sql
@@ -176,9 +171,9 @@ alter table t change column a a varchar(22) character set utf8;
     +-------+-------------------------------------------------------+
     ```
 
-    In the above example, `show create table` only shows the charset of the table, but the charset of the column is actually UTF8MB4, which can be confirmed by obtaining the schema through the HTTP API. However, when a new table is created, the charset of the column should stay consistent with that of the table. This bug has been fixed in v2.1.3.
+    上面 `show create table` 只显示出了 table 的 charset，但其实 column 的 charset 是 UTF8MB4，这可以通过 HTTP API 获取 schema 来确认。这是一个 bug，即此处建表时 column 的 charset 应该要和 table 保持一致为 UTF8，该问题在 v2.1.3 中已经修复。
 
-- After upgrading, the following operations are executed in v2.1.3 and the later versions.
+- 升级后：v2.1.3 及之后版本
 
     
     ```sql
@@ -206,16 +201,16 @@ alter table t change column a a varchar(22) character set utf8;
     ERROR 1105 (HY000): unsupported modify charset from utf8mb4 to utf8
     ```
 
-Solution:
+解决方案：
 
-- Starting from v2.1.3, TiDB supports modifying the charsets of the column and the table, so it is recommended to modify the table charset into UTF8MB4.
+- 因为在 v2.1.3 之后，TiDB 支持修改 column 和 table 的 charset，所以这里推荐修改 table 的 charset 为 UTF8MB4。
 
     
     ```sql
     alter table t convert to character set utf8mb4;
     ```
 
-- You can also specify the column charset as done in Issue #1, making it stay consistent with the original column charset (UTF8MB4).
+- 也可以像问题 1 一样指定 column 的 charset，保持和 column 原来的 charset (UTF8MB4) 一致即可。
 
     
     ```sql
@@ -224,9 +219,9 @@ Solution:
 
 #### `ERROR 1366 (HY000): incorrect utf8 value f09f8c80(🌀) for column a`
 
-In TiDB v2.1.1 and earlier versions, if the charset is UTF-8, there is no UTF-8 Unicode encoding check on the inserted 4-byte data. But in v2.1.2 and the later versions, this check is added.
+TiDB 在 v2.1.1 及之前版本中，如果 charset 是 UTF8，没有对 4-byte 的插入数据进行 UTF8 Unicode encoding 检查。在 `v2.1.2` 及之后版本中，添加了该检查。
 
-- Before upgrading, the following operations are executed in v2.1.1 and earlier versions.
+- 升级前：v2.1.1 及之前版本
 
     
     ```sql
@@ -246,7 +241,7 @@ In TiDB v2.1.1 and earlier versions, if the charset is UTF-8, there is no UTF-8 
     Query OK, 1 row affected
     ```
 
-- After upgrading, the following error is reported in v2.1.2 and the later versions.
+- 升级后：v2.1.2 及之后版本
 
     
     ```sql
@@ -257,9 +252,9 @@ In TiDB v2.1.1 and earlier versions, if the charset is UTF-8, there is no UTF-8 
     ERROR 1366 (HY000): incorrect utf8 value f09f8c80(🌀) for column a
     ```
 
-Solution:
+解决方案：
 
-- In v2.1.2: this version does not support modifying the column charset, so you have to skip the UTF-8 check.
+- v2.1.2 版本：该版本不支持修改 column charset，所以只能跳过 UTF8 的检查。
 
     
     ```sql
@@ -279,7 +274,7 @@ Solution:
     Query OK, 1 row affected
     ```
 
-- In v2.1.3 and the later versions: it is recommended to modify the column charset into UTF8MB4. Or you can set `tidb_skip_utf8_check` to skip the UTF-8 check. But if you skip the check, you might fail to replicate data from TiDB to MySQL because MySQL executes the check.
+- v2.1.3 及之后版本：建议修改 column 的 charset 为 UTF8MB4。或者也可以设置 `tidb_skip_utf8_check` 变量跳过 UTF8 的检查。如果跳过 UTF8 的检查，在需要将数据从 TiDB 同步回 MySQL 的时候，可能会失败，因为 MySQL 会执行该检查。
 
     
     ```sql
@@ -299,40 +294,46 @@ Solution:
     Query OK, 1 row affected
     ```
 
-    Specifically, you can use the variable `tidb_skip_utf8_check` to skip the legal UTF-8 and UTF8MB4 check on the data. But if you skip the check, you might fail to replicate the data from TiDB to MySQL because MySQL executes the check.
+    关于 `tidb_skip_utf8_check` 变量，具体来说是指跳过 UTF8 和 UTF8MB4 类型对数据的合法性检查。如果跳过这个检查，在需要将数据从 TiDB 同步回 MySQL 的时候，可能会失败，因为 MySQL 执行该检查。如果只想跳过 UTF8 类型的检查，可以设置 `tidb_check_mb4_value_in_utf8` 变量。
 
-    If you only want to skip the UTF-8 check, you can set `tidb_check_mb4_value_in_utf8`. This variable is added to the `config.toml` file in v2.1.3, and you can modify `check-mb4-value-in-utf8` in the configuration file and then restart the cluster to enable it.
+    `tidb_check_mb4_value_in_utf8` 在 v2.1.3 版本加入 `config.toml` 文件，可以修改配置文件里面的 `check-mb4-value-in-utf8` 后重启集群生效。
 
-    Starting from v2.1.5, you can set `tidb_check_mb4_value_in_utf8` through the HTTP API and the session variable:
+    `tidb_check_mb4_value_in_utf8` 在 v2.1.5 版本开始可以用 HTTP API 来设置，也可以用 session 变量来设置。
 
-    * HTTP API（the HTTP API can be enabled only on a single server）
+    * HTTP API（HTTP API 只在单台服务器上生效）
 
-        * To enable HTTP API:
+        * 执行下列命令启用 HTTP API：
 
             
             ```sh
             curl -X POST -d "check_mb4_value_in_utf8=1" http://{TiDBIP}:10080/settings
             ```
 
-        * To disable HTTP API:
+        * 执行下列命令禁用 HTTP API：
 
             
             ```sh
             curl -X POST -d "check_mb4_value_in_utf8=0" http://{TiDBIP}:10080/settings
             ```
 
-    * Session variable
+    * Session 变量
 
-        * To enable session variable:
+        * 执行下列命令启用 Session 变量：
 
             
             ```sql
             set @@session.tidb_check_mb4_value_in_utf8 = 1;
             ```
 
-        * To disable session variable:
+        * 执行下列命令禁用 Session 变量：
 
             
             ```sql
             set @@session.tidb_check_mb4_value_in_utf8 = 0;
             ```
+
+- v2.1.7 及之后版本，如果对表和 column 的字符集没有严格要求为 UTF8，也不想修改客户端代码去跳过 UTF8 检查或者手动修改 column 的 charset，可以在配置文件中把 `treat-old-version-utf8-as-utf8mb4` 打开。该配置的作用是自动把 v2.1.7 版本之前创建的旧版本的表和 column 的 UTF8 字符集转成 UTF8MB4。这个转换是在 TiDB load schema 时在内存中将 UTF8 转成 UTF8MB4，不会对实际存储的数据做任何修改。在配置文件中关闭 `treat-old-version-utf8-as-utf8mb4` 并重启 TiDB 后，以前字符集为 UTF8 的表和 column 的字符集仍然还是 UTF8。
+
+    > **注意：**
+    >
+    > `treat-old-version-utf8-as-utf8mb4` 参数默认打开，如果客户端强制需要用 UTF8 而不用 UTF8MB4，需要在配置文件中关闭。

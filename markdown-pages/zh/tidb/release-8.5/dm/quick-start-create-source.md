@@ -1,25 +1,25 @@
 ---
-title: Create a Data Source for TiDB Data Migration
-summary: Learn how to create a data source for Data Migration (DM).
+title: 创建 TiDB Data Migration 数据源
+summary: 了解如何为 DM 创建数据源。
 ---
 
-# Create a Data Source for TiDB Data Migration
+# 创建 TiDB Data Migration 数据源
 
-> **Note:**
+> **注意：**
 >
-> Before creating a data source, you need to [Deploy a DM Cluster Using TiUP](/dm/deploy-a-dm-cluster-using-tiup.md).
+> 在创建数据源之前，你需要先[使用 TiUP 部署 DM 集群](/dm/deploy-a-dm-cluster-using-tiup.md)。
 
-The document describes how to create a data source for the data migration task of TiDB Data Migration (DM).
+本文档介绍如何为 TiDB Data Migration (DM) 的数据迁移任务创建数据源。
 
-A data source contains the information for accessing the upstream migration task. Because a data migration task requires referring its corresponding data source to obtain the configuration information of access, you need to create the data source of a task before creating a data migration task. For specific data source management commands, refer to [Manage Data Source Configurations](/dm/dm-manage-source.md).
+数据源包含了访问迁移任务上游所需的信息。数据迁移任务需要引用对应的数据源来获取访问配置信息。因此，在创建数据迁移任务之前，需要先创建任务的数据源。详细的数据源管理命令请参考[管理上游数据源](/dm/dm-manage-source.md)。
 
-## Step 1: Configure the data source
+## 第一步：配置数据源
 
-1. (optional) Encrypt the data source password
+1. （可选）加密数据源密码
 
-    In DM configuration files, it is recommended to use the password encrypted with dmctl. You can follow the example below to obtain the encrypted password of the data source, which can be used to write the configuration file later.
+    在 DM 的配置文件中，推荐使用经 dmctl 加密后的密文密码。按照下面的示例可以获得数据源的密文密码，用于下一步编写数据源配置文件。
 
-    Starting from v8.0.0, you must configure [`secret-key-path`](/dm/dm-master-configuration-file.md) for DM-master before using the `tiup dmctl encrypt` command.
+    从 v8.0.0 开始，DM-master 必须配置 [`secret-key-path`](/dm/dm-master-configuration-file.md) 后才可使用 `tiup dmctl encrypt` 命令。
 
     
     ```bash
@@ -30,36 +30,36 @@ A data source contains the information for accessing the upstream migration task
     MKxn0Qo3m3XOyjCnhEMtsUCm83EhGQDZ/T4=
     ```
 
-2. Write the configuration file of the data source
+2. 编写数据源配置文件
 
-    For each data source, you need an individual configuration file to create it. You can follow the example below to create a data source whose ID is "mysql-01". First create the configuration file `./source-mysql-01.yaml`:
+    每个数据源需要一个单独的配置文件来创建数据源。按照下面示例创建 ID 为 "mysql-01" 的数据源，创建数据源配置文件 `./source-mysql-01.yaml`：
 
     ```yaml
-    source-id: "mysql-01"    # The ID of the data source, you can refer this source-id in the task configuration and dmctl command to associate the corresponding data source.
+    source-id: "mysql-01"    # 数据源 ID，在数据迁移任务配置和 dmctl 命令行中引用该 source-id 可以关联到对应的数据源
 
     from:
       host: "127.0.0.1"
       port: 3306
       user: "root"
-      password: "MKxn0Qo3m3XOyjCnhEMtsUCm83EhGQDZ/T4=" # The user password of the upstream data source. It is recommended to use the password encrypted with dmctl.
-      security:                                        # The TLS configuration of the upstream data source. If not necessary, it can be deleted.
+      password: "MKxn0Qo3m3XOyjCnhEMtsUCm83EhGQDZ/T4=" # 推荐使用 dmctl 对上游数据源的用户密码加密之后的密码
+      security:                                        # 上游数据源 TLS 相关配置。如果没有需要则可以删除
         ssl-ca: "/path/to/ca.pem"
         ssl-cert: "/path/to/cert.pem"
         ssl-key: "/path/to/key.pem"
     ```
 
-## Step 2: Create a data source
+## 第二步：创建数据源
 
-You can use the following command to create a data source:
+使用如下命令创建数据源：
 
 
 ```bash
 tiup dmctl --master-addr <master-addr> operate-source create ./source-mysql-01.yaml
 ```
 
-For other configuration parameters, refer to [Upstream Database Configuration File](/dm/dm-source-configuration-file.md).
+数据源配置文件的其他配置参考[数据源配置文件介绍](/dm/dm-source-configuration-file.md)。
 
-The returned results are as follows:
+命令返回结果如下：
 
 
 ```
@@ -77,11 +77,11 @@ The returned results are as follows:
 }
 ```
 
-## Step 3: Query the data source you created
+## 第三步：查询创建的数据源
 
-After creating a data source, you can use the following command to query the data source:
+创建数据源后，可以使用如下命令查看创建的数据源：
 
-- If you know the `source-id` of the data source, you can use the `dmctl config source <source-id>` command to directly check the configuration of the data source:
+- 如果知道数据源的 `source-id`，可以通过 `dmctl config source <source-id>` 命令直接查看数据源配置：
 
     
     ```bash
@@ -103,7 +103,7 @@ After creating a data source, you can use the following command to query the dat
     }
     ```
 
-- If you do not know the `source-id`, you can use the `dmctl operate-source show` command to check the source database list, from which you can find the corresponding data source.
+- 如果不知道数据源的 `source-id`，可以先通过 `dmctl operate-source show` 命令查看源数据库列表，从中可以找到对应的数据源。
 
     
     ```bash

@@ -1,13 +1,13 @@
 ---
-title: 解释使用子查询的语句
+title: 用 EXPLAIN 查看子查询的执行计划
 summary: 了解 TiDB 中 EXPLAIN 语句返回的执行计划信息。
 ---
 
-# 解释使用子查询的语句
+# 用 EXPLAIN 查看子查询的执行计划
 
-TiDB 对 [多项优化](/subquery-optimization.md) 进行了若干优化，以提升子查询的性能。本文档描述了这些优化中一些常见子查询的内容，以及如何解读 `EXPLAIN` 的输出。
+TiDB 会执行多种[子查询相关的优化](/subquery-optimization.md)，以提升子查询的执行性能。本文档介绍一些常见子查询的优化方式，以及如何解读 `EXPLAIN` 语句返回的执行计划信息。
 
-本文中的示例基于以下样例数据：
+本文档所使用的示例表数据如下：
 
 ```sql
 CREATE TABLE t1 (id BIGINT NOT NULL PRIMARY KEY auto_increment, pad1 BLOB, pad2 BLOB, pad3 BLOB, int_col INT NOT NULL DEFAULT 0);
@@ -19,6 +19,7 @@ CREATE TABLE t3 (
 );
 
 INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024), 0 FROM dual;
+INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024), 0 FROM t1 a JOIN t1 b JOIN t1 c LIMIT 10000;
 INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024), 0 FROM t1 a JOIN t1 b JOIN t1 c LIMIT 10000;
 INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024), 0 FROM t1 a JOIN t1 b JOIN t1 c LIMIT 10000;
 INSERT INTO t1 SELECT NULL, RANDOM_BYTES(1024), RANDOM_BYTES(1024), RANDOM_BYTES(1024), 0 FROM t1 a JOIN t1 b JOIN t1 c LIMIT 10000;
@@ -44,9 +45,9 @@ SELECT SLEEP(1);
 ANALYZE TABLE t1, t2, t3;
 ```
 
-## 内连接（非唯一子查询）
+## Inner join（无 `UNIQUE` 约束的子查询）
 
-在以下示例中，`IN` 子查询搜索 `t2` 表中的一组 ID。为了语义正确性，TiDB 需要保证 `t1_id` 列是唯一的。使用 `EXPLAIN`，你可以看到用以去重并执行 `INNER JOIN` 操作的执行计划：
+以下示例中，`IN` 子查询会从表 `t2` 中搜索一列 ID。为保证语义正确性，TiDB 需要保证 `t1_id` 列的值具有唯一性。使用 `EXPLAIN` 可查看到该查询的执行计划去掉重复项并执行 `Inner Join` 内连接操作：
 
 ```sql
 EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t2);
@@ -64,18 +65,14 @@ EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t2);
 | └─TableReader_12(Probe)        | 21.11    | root      |                              | data:TableRangeScan_11                                                                                                    |
 |   └─TableRangeScan_11          | 21.11    | cop[tikv] | table:t1                     | range: decided by [test.t2.t1_id], keep order:false                                                                       |
 +--------------------------------+----------+-----------+------------------------------+---------------------------------------------------------------------------------------------------------------------------+
+
 ```
 
-从上述查询结果可以看到，TiDB 使用索引连接操作 `IndexJoin_15` 来连接并转换子查询。在执行计划中，执行过程如下：
+由上述查询结果可知，TiDB 通过索引连接操作 `IndexJoin_15` 将子查询做了连接转化。该执行计划首先在 TiKV 侧通过索引扫描算子 `└─IndexFullScan_26` 读取 `t2.t1_id` 列的值，然后由 `└─StreamAgg_34` 算子的部分任务在 TiKV 中对 `t1_id` 值进行去重，然后采用 `├─StreamAgg_44(Build)` 算子的部分任务在 TiDB 中对 `t1_id` 值再次进行去重，去重操作由聚合函数 `firstrow(test.t2.t1_id)` 执行；之后将操作结果与 `t1` 表的主键相连接，连接条件是 `eq(test.t1.id, test.t2.t1_id)`。
 
-1. TiKV 端的索引扫描操作符 `└─IndexFullScan_26` 读取 `t2.t1_id` 列的值。
-2. `└─StreamAgg_34` 操作的部分任务在 TiKV 中对 `t1_id` 的值进行去重。
-3. `├─StreamAgg_44(Build)` 操作的部分任务在 TiDB 中对 `t1_id` 的值进行去重，去重由聚合函数 `firstrow(test.t2.t1_id)` 完成。
-4. 结果与 `t1` 表的主键进行连接，连接条件为 `eq(test.t1.id, test.t2.t1_id)`。
+## Inner join（有 `UNIQUE` 约束的子查询）
 
-## 内连接（唯一子查询）
-
-在前例中，为确保 `t1_id` 的值唯一，进行了聚合操作后再与 `t1` 表连接。但在以下示例中，`t3.t1_id` 已由 `UNIQUE` 约束保证唯一：
+在上述示例中，为了确保 `t1_id` 值在与表 `t1` 连接前具有唯一性，需要执行聚合运算。在以下示例中，由于 `UNIQUE` 约束已能确保 `t3.t1_id` 列值的唯一：
 
 ```sql
 EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t3);
@@ -91,15 +88,16 @@ EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t3);
 | └─TableReader_15(Probe)     | 999.00  | root      |                              | data:TableRangeScan_14                                                                                                    |
 |   └─TableRangeScan_14       | 999.00  | cop[tikv] | table:t1                     | range: decided by [test.t3.t1_id], keep order:false                                                                       |
 +-----------------------------+---------+-----------+------------------------------+---------------------------------------------------------------------------------------------------------------------------+
+
 ```
 
-语义上，由于 `t3.t1_id` 已由 `UNIQUE` 约束保证唯一，可以直接作为 `INNER JOIN` 执行。
+从语义上看，因为约束保证了 `t3.t1_id` 列值的唯一性，TiDB 可以直接执行 `INNER JOIN` 查询。
 
-## 半连接（相关子查询）
+## Semi Join（关联查询）
 
-在前两个示例中，TiDB 能在子查询中的数据经过 `StreamAgg` 变得唯一或本身已唯一后，执行 `INNER JOIN`。这两种连接都采用索引连接。
+在前两个示例中，通过 `StreamAgg` 聚合操作或通过 `UNIQUE` 约束保证子查询数据的唯一性之后，TiDB 才能够执行 `Inner Join` 操作。这两种连接均使用了 `Index Join`。
 
-在此示例中，TiDB 选择了不同的执行计划：
+下面的例子中，TiDB 优化器则选择了一种不同的执行计划：
 
 ```sql
 EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t2 WHERE t1_id != t1.int_col);
@@ -118,13 +116,13 @@ EXPLAIN SELECT * FROM t1 WHERE id IN (SELECT t1_id FROM t2 WHERE t1_id != t1.int
 +-----------------------------+----------+-----------+------------------------------+--------------------------------------------------------------------------------------------------------+
 ```
 
-从结果可以看出，TiDB 使用了 _semi join_ 算法。半连接不同于内连接：半连接只允许右侧键（`t2.t1_id`）的第一个值，这意味着重复值在连接操作中被去除。连接算法也是 Merge Join，类似于高效的拉链式合并，操作符以排序的顺序从左右两侧读取数据。
+由上述查询结果可知，TiDB 执行了 `Semi Join`。不同于 `Inner Join`，`Semi Join` 仅允许右键 (`t2.t1_id`) 上的第一个值，也就是该操作将去除 `Join` 算子任务中的重复数据。`Join` 算法也包含 `Merge Join`，会按照排序顺序同时从左侧和右侧读取数据，这是一种高效的 `Zipper Merge`。
 
-原始语句被视为 _相关子查询_，因为子查询中引用了子查询外存在的列（`t1.int_col`）。但 `EXPLAIN` 的输出显示在应用 [子查询去相关优化](/correlated-subquery-optimization.md) 后的执行计划。条件 `t1_id != t1.int_col` 被重写为 `t1.id != t1.int_col`。TiDB 可以在 `└─Selection_21` 中执行此操作，因为它在读取 `t1` 表的数据，因此此去相关和重写极大提升了执行效率。
+可以将原语句视为*关联子查询*，因为它引入了子查询外的 `t1.int_col` 列。然而，`EXPLAIN` 语句的返回结果显示的是[关联子查询去关联](/correlated-subquery-optimization.md)后的执行计划。条件 `t1_id != t1.int_col` 会被重写为 `t1.id != t1.int_col`。TiDB 可以从表 `t1` 中读取数据并且在 `└─Selection_21` 中执行此操作，因此这种去关联和重写操作会极大提高执行效率。
 
-## 反半连接（`NOT IN` 子查询）
+## Anti Semi Join（`NOT IN` 子查询）
 
-在以下示例中，语义上返回 `t3` 表中的所有行 _除非_ `t3.t1_id` 在子查询中：
+在以下示例中，*除非*子查询中存在 `t3.t1_id`，否则该查询将（从语义上）返回表 `t3` 中的所有行：
 
 ```sql
 EXPLAIN SELECT * FROM t3 WHERE t1_id NOT IN (SELECT id FROM t1 WHERE int_col < 100);
@@ -143,13 +141,13 @@ EXPLAIN SELECT * FROM t3 WHERE t1_id NOT IN (SELECT id FROM t1 WHERE int_col < 1
 +-----------------------------+---------+-----------+---------------+-------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-此查询先读取 `t3` 表，然后基于 `PRIMARY KEY` 连接 `t1` 表。连接类型为 _anti semi join_；反 semi 表示此示例用于判断值不存在（`NOT IN`），半连接表示只需匹配第一个行即可拒绝连接。
+上述查询首先读取了表 `t3`，然后根据主键开始探测 (probe) 表 `t1`。连接类型是 _anti semi join_，即反半连接：之所以使用 _anti_，是因为上述示例有不存在匹配值（即 `NOT IN`）的情况；使用 `Semi Join` 则是因为仅需要匹配第一行后就可以停止查询。
 
-## 空感知半连接（`IN` 和 `= ANY` 子查询）
+## Null-Aware Semi Join（`IN` 和 `= ANY` 子查询）
 
-`IN` 或 `= ANY` 集合操作符的值具有三值逻辑（`true`、`false` 和 `NULL`）。对于由这两个操作符转换而来的连接类型，TiDB 需要意识到连接键两端的 `NULL`，并以特殊方式处理。
+`IN` 和 `= ANY` 的集合运算符号具有特殊的三值属性（`true`、`false` 和 `NULL`）。这意味着在该运算符所转化得到的 Join 类型中需要对 Join key 两侧的 `NULL` 进行特殊的感知和处理。
 
-包含 `IN` 和 `= ANY` 操作符的子查询会被转换为半连接和左外半连接。前述 [半连接](#semi-join-correlated-subquery) 示例中，由于两端的列 `test.t1.id` 和 `test.t2.t1_id` 都非空，半连接无需考虑空感知（`NULL` 不会被特殊处理）。TiDB 以笛卡尔积和过滤的方式处理空感知半连接，未进行特殊优化。示例如下：
+`IN` 和 `= ANY` 算子引导的子查询会分别转为 Semi Join 和 Left Outer Semi Join。在上述 [Semi Join](#semi-join关联查询) 小节中，示例中 Join key 两侧的列 `test.t1.id` 和 `test.t2.t1_id` 都为 `not NULL` 属性，所以 Semi Join 本身不需要 Null-Aware 的性质来辅助运算，即不需要特殊处理 `NULL`。当前 TiDB 对于 Null-Aware Semi Join 没有特定的优化，其实现本质都是基于笛卡尔积加过滤 (filter) 的模式。以下为 Null-Aware Semi Join 的例子：
 
 ```sql
 CREATE TABLE t(a INT, b INT);
@@ -187,33 +185,33 @@ tidb> EXPLAIN SELECT * FROM t WHERE (a,b) IN (SELECT * FROM s);
 8 rows in set (0.01 sec)
 ```
 
-在第一个语句 `EXPLAIN SELECT (a,b) IN (SELECT * FROM s) FROM t;` 中，由于表 `t` 和 `s` 的列 `a` 和 `b` 允许为空，`IN` 子查询转换的左外半连接是空感知的。具体来说，先计算笛卡尔积，然后将连接在 `IN` 或 `= ANY` 上的列作为普通的等值条件加入其他条件进行过滤。
+第一个查询 `EXPLAIN SELECT (a,b) IN (SELECT * FROM s) FROM t;` 中，由于 `t` 表和 `s` 表的 `a`、`b` 列都是 NULLABLE 的，所以 `IN` 子查询所转化的 Left Outer Semi Join 是具有 Null-Aware 性质的。具体实现是先进行笛卡尔积，然后将 `IN` 或 `= ANY` 所连接的列作为普通等值条件放到 other condition 进行过滤（filter）。
 
-在第二个语句 `EXPLAIN SELECT * FROM t WHERE (a,b) IN (SELECT * FROM s);` 中，由于 `t` 和 `s` 的列 `a` 和 `b` 允许为空，`IN` 子查询本应转换为空感知半连接。但 TiDB 通过将半连接优化为内连接和聚合，提升了性能。这是因为在非标量输出的 `IN` 子查询中，`NULL` 和 `false` 等价。推下过滤中的 `NULL` 行会导致 `WHERE` 子句的负面语义，从而可以提前忽略这些行。
+第二个查询 `EXPLAIN SELECT * FROM t WHERE (a,b) IN (SELECT * FROM s);` 中，由于 `t` 表和 `s` 表的 `a`、`b` 列都是 NULLABLE 的，`IN` 子查询本应该转为具有 Null-Aware 性质的 Semi Join，但当前 TiDB 进行了优化，直接将 Semi Join 转为了 Inner Join + Aggregate 的方式来实现。这是因为在非 scalar 输出的 `IN` 子查询中，`NULL` 和 `false` 是等效的。下推过滤的 `NULL` 行导致了 `WHERE` 子句的否定语义，因此可以事先忽略这些行。
 
 > **注意：**
 >
-> `Exists` 操作符也会被转换为半连接，但它不是空感知的。
+> `Exists` 操作符也会被转成 Semi Join，但是 `Exists` 操作符号本身不具有集合运算 Null-Aware 的性质。
 
-## 空感知反半连接（`NOT IN` 和 `!= ALL` 子查询）
+## Null-Aware Anti Semi Join（`NOT IN` 和 `!= ALL` 子查询）
 
-`NOT IN` 或 `!= ALL` 集合操作符的值具有三值逻辑（`true`、`false` 和 `NULL`）。对于由这两个操作符转换而来的连接类型，TiDB 需要意识到连接键两端的 `NULL`，并以特殊方式处理。
+`NOT IN` 和 `!= ALL` 的集合运算运算具有特殊的三值属性（`true`、`false` 和 `NULL`）。这意味着在其所转化得到的 Join 类型中需要对 Join key 两侧的 `NULL` 进行特殊的感知和处理。
 
-包含 `NOT IN` 和 `! = ALL` 操作符的子查询会被转换为反半连接和反左外半连接。前述 [反半连接](#anti-semi-join-not-in-subquery) 示例中，由于两端的列 `test.t3.t1_id` 和 `test.t1.id` 都非空，反半连接无需考虑空感知（`NULL` 不会被特殊处理）。
+`NOT IN` 和 `!= ALL` 算子引导的子查询会对应地转为 Anti Semi Join 和 Anti Left Outer Semi Join。在上述的 [Anti Semi Join](#anti-semi-joinnot-in-子查询) 小节中，由于示例中 Join key 两侧的列 `test.t3.t1_id` 和 `test.t1.id` 都是 `not NULL` 属性的，所以 Anti Semi Join 本身不需要 Null-Aware 的性质来辅助计算，即不需要特殊处理 `NULL`。
 
-TiDB v6.3.0 对空感知反半连接（NAAJ）进行了如下优化：
+在 TiDB v6.3.0 版本，TiDB 引入了针对 Null-Aware Anti Join (NAAJ) 的如下特殊优化：
 
-- 使用空感知等值连接（NA-EQ）构建哈希连接
+- 利用 Null-Aware 的等值条件 (NA-EQ) 构建哈希连接
 
-    集合操作符引入了等值条件，这需要对条件两端的 `NULL` 值进行特殊处理。要求空感知的等值条件称为 NA-EQ。不同于早期版本，TiDB v6.3.0 不再像以前那样处理 NA-EQ，而是在连接后将其放入其他条件中，然后在匹配笛卡尔积后判断结果的合法性。
+    由于集合操作符引入的等值需要对等值两侧操作符数的 `NULL` 值做特殊处理，这里称需要 Null-Aware 的等值条件为 NA-EQ 条件。与 v6.3.0 之前版本不同的是，TiDB 不会再将 NA-EQ 条件处理成普通 EQ 条件，而是专门放置于 Join 后置的 other condition 中，匹配笛卡尔积后再判断结果集的合法性。
 
-    自 TiDB v6.3.0 起，NA-EQ 作为一种弱化的等值条件，仍用于构建哈希连接。这减少了需要遍历的匹配数据量，加快了匹配速度。当构建表的 `DISTINCT()` 值的总百分比几乎为 100% 时，优化效果更为显著。
+    在 TiDB v6.3.0 版本中，NA-EQ 这种弱化的等值条件依然会被用来构建哈希值 (Hash Join)，大大减少了匹配时所需遍历的数据量，加速匹配过程。在 build 表 `DISTINCT` 值比例趋近 1 的时候，加速效果更为显著。
 
-- 利用 `NULL` 的特殊属性加快匹配结果的返回
+- 利用两侧数据源 `NULL` 值的特殊性质加速匹配过程的返回
 
-    由于反半连接是合取范式（CNF），连接两端的 `NULL` 会导致确定的结果。此属性可用来加快整个匹配过程的返回速度。
+    由于 Anti Semi Join 自身具有 CNF (Conjunctive normal form) 表达式的属性，其任何一侧出现的 `NULL` 值都会导致确定的结果。利用这个性质可以来加速整个匹配过程。
 
-示例如下：
+以下为 Null-Aware Anti Semi Join 的例子：
 
 ```sql
 CREATE TABLE t(a INT, b INT);
@@ -248,22 +246,22 @@ tidb> EXPLAIN SELECT * FROM t WHERE (a, b) NOT IN (SELECT * FROM s);
 5 rows in set (0.00 sec)
 ```
 
-在第一个语句 `EXPLAIN SELECT (a, b) NOT IN (SELECT * FROM s) FROM t;` 中，由于表 `t` 和 `s` 的列 `a` 和 `b` 允许为空，`NOT IN` 子查询转换的左外半连接是空感知的。不同之处在于 NAAJ 优化也将 NA-EQ 作为哈希连接条件，大大加快了连接计算。
+第一个查询 `EXPLAIN SELECT (a, b) NOT IN (SELECT * FROM s) FROM t;` 中，由于 `t` 表和 `s` 表的 `a`、`b` 列都是 NULLABLE 的，所以 `NOT IN` 子查询所转化的 Left Outer Semi Join 是具有 Null-Aware 性质的。不同的是，NAAJ 优化将 NA-EQ 条件也作为了 Hash Join 的连接条件，大大加速了 Join 的计算。
 
-在第二个语句 `EXPLAIN SELECT * FROM t WHERE (a, b) NOT IN (SELECT * FROM s);` 中，由于 `t` 和 `s` 的列 `a` 和 `b` 允许为空，`NOT IN` 子查询转换的反半连接也是空感知的。不同之处在于 NAAJ 优化也将 NA-EQ 作为哈希连接条件，从而极大提升了连接计算速度。
+第二个查询 `EXPLAIN SELECT * FROM t WHERE (a, b) NOT IN (SELECT * FROM s);` 中，由于 `t` 表和 `s` 表的 `a`、`b` 列都是 NULLABLE 的，所以 `NOT IN` 子查询所转化的 Anti Semi Join 是具有 Null-Aware 性质的。不同的是，NAAJ 优化将 NA-EQ 条件也作为了 Hash Join 的连接条件，大大加速了 Join 的计算。
 
-目前，TiDB 仅支持空感知反半连接和空感知反左外半连接。仅支持哈希连接类型，且其构建表必须为右表。
+当前 TiDB 仅针对 Anti Semi Join 和 Anti Left Outer Semi Join 实现了 `NULL` 感知。目前仅支持 Hash Join 类型且其 build 表只能固定为右侧表。
 
 > **注意：**
 >
-> `Not Exists` 操作符也会被转换为反半连接，但它不是空感知的。
+> `Not Exists` 操作符也会被转成 Anti Semi Join，但是 `Not Exists` 符号本身不具有集合运算 Null-Aware 的性质。
 
-## 使用其他类型子查询的解释语句
+## 其他类型查询的执行计划
 
-+ [Explain Statements in the MPP Mode](/explain-mpp.md)
-+ [Explain Statements That Use Indexes](/explain-indexes.md)
-+ [Explain Statements That Use Joins](/explain-joins.md)
-+ [Explain Statements That Use Aggregation](/explain-aggregation.md)
-+ [Explain Statements Using Views](/explain-views.md)
-+ [Explain Statements Using Partitions](/explain-partitions.md)
-+ [Explain Statements Using Index Merge](/explain-index-merge.md)
++ [MPP 模式查询的执行计划](/explain-mpp.md)
++ [索引查询的执行计划](/explain-indexes.md)
++ [Join 查询的执行计划](/explain-joins.md)
++ [聚合查询的执行计划](/explain-aggregation.md)
++ [视图查询的执行计划](/explain-views.md)
++ [分区查询的执行计划](/explain-partitions.md)
++ [索引合并查询的执行计划](/explain-index-merge.md)

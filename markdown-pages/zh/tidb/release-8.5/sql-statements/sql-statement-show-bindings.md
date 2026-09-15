@@ -1,13 +1,13 @@
 ---
 title: SHOW [GLOBAL|SESSION] BINDINGS
-summary: Use of SHOW BINDINGS binding in TiDB database.
+summary: TiDB 数据库中 SHOW [GLOBAL|SESSION] BINDINGS 的使用概况。
 ---
 
 # SHOW [GLOBAL|SESSION] BINDINGS
 
-The `SHOW BINDINGS` statement is used to display information about created SQL bindings. A `BINDING` can be on either a `GLOBAL` or `SESSION` basis. The default is `SESSION`.
+`SHOW BINDINGS` 语句用于显示创建过的 SQL 绑定的相关信息。`BINDING` 语句可以在 `GLOBAL` 或者 `SESSION` 作用域内显示执行计划绑定。在不指定作用域时，默认的作用域为 `SESSION`。
 
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 ShowBindingsStmt ::=
@@ -18,62 +18,62 @@ ShowLikeOrWhere ::=
 |   "WHERE" Expression
 ```
 
-## Syntax description
+## 语法说明
 
-This statement outputs the execution plan bindings at the GLOBAL or SESSION level. The default scope is SESSION. Currently `SHOW BINDINGS` outputs eight columns, as shown below:
+该语句会输出 GLOBAL 或者 SESSION 作用域内的执行计划绑定，在不指定作用域时默认作用域为 SESSION。目前 `SHOW BINDINGS` 会输出 8 列，具体如下：
 
-| Column Name | Description |
+| 列名 | 说明            |
 | :---------- | :------------- |
-| original_sql  |  Original SQL statement after parameterization |
-| bind_sql | Bound SQL statement with hints |
-| default_db | Default database |
-| status | Status including 'Using', 'Deleted', 'Invalid', 'Rejected', and 'Pending verification'|
-| create_time | Created time |
-| update_time | Updated time |
-| charset | Character set |
-| collation | Sorting rule |
-| source | The way in which a binding is created, including `manual` (created by the `create [global] binding` SQL statement), `capture` (captured automatically by TiDB), and `evolve` (evolved automatically by TiDB) |
+| original_sql  |  参数化后的原始 SQL |
+| bind_sql | 带 Hint 的绑定 SQL |
+| default_db | 默认数据库名 |
+| status | 状态，包括 using（正在使用）、deleted（已删除）、 invalid（无效）、rejected（演进时被拒绝）和 pending verify（等待演进验证） |
+| create_time | 创建时间 |
+| update_time | 更新时间 |
+| charset | 字符集 |
+| collation | 排序规则 |
+| source | 创建方式，包括 manual （由 `create [global] binding` 生成）、capture（由 tidb 自动创建生成）和 evolve （由 tidb 自动演进生成） |
 
-## Examples
+## 示例
 
 ```sql
-mysql> CREATE TABLE t1 (
-          id INT NOT NULL PRIMARY KEY auto_increment,
-          b INT NOT NULL,
-          pad VARBINARY(255),
-          INDEX(b)
-         );
+CREATE TABLE t1 (
+    id INT NOT NULL PRIMARY KEY auto_increment,
+    b INT NOT NULL,
+    pad VARBINARY(255),
+    INDEX(b)
+   );
 Query OK, 0 rows affected (0.07 sec)
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM dual;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM dual;
 Query OK, 1 row affected (0.01 sec)
 Records: 1  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 1 row affected (0.00 sec)
 Records: 1  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 8 rows affected (0.00 sec)
 Records: 8  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 1000 rows affected (0.04 sec)
 Records: 1000  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 100000 rows affected (1.74 sec)
 Records: 100000  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 100000 rows affected (2.15 sec)
 Records: 100000  Duplicates: 0  Warnings: 0
 
-mysql> INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
+INSERT INTO t1 SELECT NULL, FLOOR(RAND()*1000), RANDOM_BYTES(255) FROM t1 a JOIN t1 b JOIN t1 c LIMIT 100000;
 Query OK, 100000 rows affected (2.64 sec)
 Records: 100000  Duplicates: 0  Warnings: 0
 
-mysql> SELECT SLEEP(1);
+SELECT SLEEP(1);
 +----------+
 | SLEEP(1) |
 +----------+
@@ -81,10 +81,10 @@ mysql> SELECT SLEEP(1);
 +----------+
 1 row in set (1.00 sec)
 
-mysql> ANALYZE TABLE t1;
+ANALYZE TABLE t1;
 Query OK, 0 rows affected (1.33 sec)
 
-mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
+EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 +-------------------------------+---------+---------+-----------+----------------------+---------------------------------------------------------------------------+-----------------------------------+----------------+------+
 | id                            | estRows | actRows | task      | access object        | execution info                                                            | operator info                     | memory         | disk |
 +-------------------------------+---------+---------+-----------+----------------------+---------------------------------------------------------------------------+-----------------------------------+----------------+------+
@@ -94,13 +94,13 @@ mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 +-------------------------------+---------+---------+-----------+----------------------+---------------------------------------------------------------------------+-----------------------------------+----------------+------+
 3 rows in set (0.02 sec)
 
-mysql> CREATE SESSION BINDING FOR
-         SELECT * FROM t1 WHERE b = 123
-        USING
-         SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
+CREATE SESSION BINDING FOR
+    SELECT * FROM t1 WHERE b = 123
+   USING
+    SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123;
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
+EXPLAIN ANALYZE  SELECT * FROM t1 WHERE b = 123;
 +-------------------------+-----------+---------+-----------+---------------+--------------------------------------------------------------------------------+--------------------+---------------+------+
 | id                      | estRows   | actRows | task      | access object | execution info                                                                 | operator info      | memory        | disk |
 +-------------------------+-----------+---------+-----------+---------------+--------------------------------------------------------------------------------+--------------------+---------------+------+
@@ -110,7 +110,7 @@ mysql> EXPLAIN ANALYZE SELECT * FROM t1 WHERE b = 123;
 +-------------------------+-----------+---------+-----------+---------------+--------------------------------------------------------------------------------+--------------------+---------------+------+
 3 rows in set (0.22 sec)
 
-mysql> SHOW SESSION BINDINGS\G
+SHOW SESSION BINDINGS\G
 *************************** 1. row ***************************
 Original_sql: select * from t1 where b = ?
     Bind_sql: SELECT * FROM t1 IGNORE INDEX (b) WHERE b = 123
@@ -123,14 +123,14 @@ Original_sql: select * from t1 where b = ?
 1 row in set (0.00 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-This statement is a TiDB extension to MySQL syntax.
+`SHOW [GLOBAL|SESSION] BINDINGS` 语句是 TiDB 对 MySQL 语法的扩展。
 
-## See also
+## 另请参阅
 
 * [CREATE [GLOBAL|SESSION] BINDING](/sql-statements/sql-statement-create-binding.md)
 * [DROP [GLOBAL|SESSION] BINDING](/sql-statements/sql-statement-drop-binding.md)
-* [ANALYZE TABLE](/sql-statements/sql-statement-analyze-table.md)
+* [ANALYZE](/sql-statements/sql-statement-analyze-table.md)
 * [Optimizer Hints](/optimizer-hints.md)
-* [SQL Plan Management](/sql-plan-management.md)
+* [执行计划管理 (SPM)](/sql-plan-management.md)

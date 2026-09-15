@@ -1,15 +1,15 @@
 ---
 title: ADMIN [SET|SHOW|UNSET] BDR ROLE
-summary: An overview of the usage of ADMIN [SET|SHOW|UNSET] BDR ROLE for the TiDB database.
+summary: TiDB 数据库中 ADMIN [SET|SHOW|UNSET] BDR ROLE 的使用概况。
 ---
 
 # ADMIN [SET|SHOW|UNSET] BDR ROLE
 
-- Use `ADMIN SET BDR ROLE` to set the BDR role of the cluster. Currently, you can set the following BDR roles for a TiDB cluster: `PRIMARY` and `SECONDARY`. For more information about BDR roles, see [DDL Synchronization in TiCDC Bidirectional Replication](/ticdc/ticdc-bidirectional-replication.md#ddl-replication).
-- Use `ADMIN SHOW BDR ROLE` to show the BDR role of the cluster.
-- Use `ADMIN UNSET BDR ROLE` to unset the BDR role of the cluster.
+- `ADMIN SET BDR ROLE` 可以设置该集群的 BDR role。现在 TiDB 集群可以设置 `PRIMARY`、`SECONDARY` 两种 BDR role。关于 BDR role 的详细信息可参考 [TiCDC 双向复制的 DDL 同步](/ticdc/ticdc-bidirectional-replication.md#ddl-同步)。
+- `ADMIN SHOW BDR ROLE` 可以显示该集群的 BDR role。
+- `ADMIN UNSET BDR ROLE` 可以撤销之前设置的 BDR role。
 
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 AdminShowBDRRoleStmt ::=
@@ -22,24 +22,24 @@ AdminUnsetBDRRoleStmt ::=
     'ADMIN' 'UNSET' 'BDR' 'ROLE'
 ```
 
-## Examples
+## 示例
 
-By default, a TiDB cluster has no BDR role. Run the following command to show the BDR role of the cluster.
+TiDB 集群默认没有 BDR role。运行以下命令显示集群的 BDR 角色。
 
 ```sql
 ADMIN SHOW BDR ROLE;
 ```
 
 ```sql
-+------------+
-| BDR_ROLE   |
-+------------+
-|            |
-+------------+
++----------+
+| BDR_ROLE |
++----------+
+|          |
++----------+
 1 row in set (0.01 sec)
 ```
 
-Run the following command to set the BDR role to `PRIMARY`.
+执行以下命令可以将 BDR role 设置为 `PRIMARY`。
 
 ```sql
 ADMIN SET BDR ROLE PRIMARY;
@@ -59,7 +59,7 @@ ADMIN SHOW BDR ROLE;
 1 row in set (0.00 sec)
 ```
 
-Run the following command to unset the BDR role of the cluster.
+撤销之前的设置。
 
 ```sql
 ADMIN UNSET BDR ROLE;
@@ -79,6 +79,6 @@ ADMIN SHOW BDR ROLE;
 1 row in set (0.01 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-This statement is a TiDB extension to MySQL syntax.
+`ADMIN [SET|SHOW|UNSET] BDR ROLE` 语句是 TiDB 对 MySQL 语法的扩展。

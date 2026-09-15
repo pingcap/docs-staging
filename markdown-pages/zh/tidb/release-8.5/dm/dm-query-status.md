@@ -1,34 +1,28 @@
 ---
-title: Query Task Status in TiDB Data Migration
-summary: Learn how to query the status of a data replication task.
+title: TiDB Data Migration 查询任务状态
+summary: 深入了解 TiDB Data Migration 如何查询数据迁移任务状态
 ---
 
-# Query Task Status in TiDB Data Migration
+# TiDB Data Migration 查询任务状态
 
-This document introduces how to use the `query-status` command to query the task status, and the subtask status of DM.
+本文介绍 TiDB Data Migration (DM) `query-status` 命令的查询结果、任务状态与子任务状态。
 
-## Query result
+## 查询结果
 
-It is recommended that you use `query-status` by the following steps:
-
-1. Use `query-status` to check whether each on-going task is in the normal state.
-2. If any error occurs in a task, use the `query-status <taskName>` command to see detailed error information. `<taskName>` in this command indicates the name of the task that encounters the error.
-
-A successful query result is as follows:
 
 ```bash
 » query-status
 ```
 
-```json
+```
 {
-    "result": true,
-    "msg": "",
-    "tasks": [
+    "result": true,     # 查询是否成功
+    "msg": "",          # 查询失败原因描述
+    "tasks": [          # 迁移 task 列表
         {
-            "taskName": "test",
-            "taskStatus": "Running",
-            "sources": [
+            "taskName": "test",         # 任务名称
+            "taskStatus": "Running",    # 任务运行状态
+            "sources": [                # 该任务的上游 MySQL 列表
                 "mysql-replica-01",
                 "mysql-replica-02"
             ]
@@ -45,84 +39,83 @@ A successful query result is as follows:
 }
 ```
 
-Some fields in the query result are described as follows:
+关于 tasks 下的 taskStatus 状态的详细定义，请参阅[任务状态](#任务状态)。
 
-- `result`: Whether the query is successful.
-- `msg`: The error message returned when the query fails.
-- `tasks`: The list of migration tasks. Each task contains the following fields:
-    - `taskName`: The name of the task.
-    - `taskStatus`: The status of the task. For detailed descriptions of `taskStatus`, refer to [Task status](#task-status).
-    - `sources`: The list of upstream MySQL databases.
+推荐的 `query-status` 使用方法是：
 
-## Task status
+1. 首先使用 query-status 查看各个 task 的运行状态是否正常。
+2. 如果发现其中某一 task 状态有问题，通过 `query-status <出错任务的 taskName>` 来得到更详细的错误信息。
 
-The status of a DM migration task depends on the status of each subtask assigned to DM-worker. For detailed descriptions of subtask status, see [Subtask status](#subtask-status). The table below shows how the subtask status is related to task status.
+## 任务状态
 
-|  Subtask status in a task | Task status |
+DM 的迁移任务状态取决于其分配到 DM-worker 上的[子任务状态](#子任务状态)，定义见下表：
+
+| 任务对应的所有子任务的状态 | 任务状态 |
 | :--- | :--- |
-| One subtask is in the `paused` state and error information is returned. | `Error - Some error occurred in subtask` |
-| One subtask in the Sync phase is in the `Running` state but its Relay processing unit is not running (in the `Error`/`Paused`/`Stopped` state). | `Error - Relay status is Error/Paused/Stopped` |
-| One subtask is in the `Paused` state and no error information is returned. | `Paused` |
-| All subtasks are in the `New` state. | `New` |
-| All subtasks are in the `Finished` state. | `Finished` |
-| All subtasks are in the `Stopped` state. | `Stopped` |
-| Other situations | `Running` |
+| 任一子任务处于 “Paused” 状态且返回结果有错误信息 | Error - Some error occurred in subtask |
+| 任一处于 Sync 阶段的子任务处于 “Running” 状态但其 Relay 处理单元未运行（处于 Error/Paused/Stopped 状态） | Error - Relay status is Error/Paused/Stopped |
+| 任一子任务处于 “Paused” 状态且返回结果没有错误信息 | Paused |
+| 所有子任务处于 “New” 状态 | New |
+| 所有子任务处于 “Finished” 状态 | Finished |
+| 所有子任务处于 “Stopped” 状态 | Stopped |
+| 其他情况 | Running |
 
-## Detailed query result
+## 详情查询结果
+
 
 ```bash
 » query-status test
 ```
 
-```json
+```
 {
-    "result": true,
-    "msg": "",
-    "sources": [
+    "result": true,     # 查询是否成功
+    "msg": "",          # 查询失败原因描述
+    "sources": [        # 上游 MySQL 列表
         {
             "result": true,
             "msg": "",
-            "sourceStatus": {
+            "sourceStatus": {                   # 上游 MySQL 的信息
                 "source": "mysql-replica-01",
                 "worker": "worker1",
                 "result": null,
                 "relayStatus": null
             },
-            "subTaskStatus": [
+            "subTaskStatus": [              # 上游 MySQL 所有子任务的信息
                 {
-                    "name": "test",
-                    "stage": "Running",
-                    "unit": "Sync",
-                    "result": null,
-                    "unresolvedDDLLockID": "test-`test`.`t_target`",
-                    "sync": {
-                        "masterBinlog": "(bin.000001, 3234)",
-                        "masterBinlogGtid": "c0149e17-dff1-11e8-b6a8-0242ac110004:1-14",
-                        "syncerBinlog": "(bin.000001, 2525)",
-                        "syncerBinlogGtid": "",
-                        "blockingDDLs": [
+                    "name": "test",         # 子任务名称
+                    "stage": "Running",     # 子任务运行状态，包括 “New”，“Running”，“Paused”，“Stopped” 以及 “Finished”
+                    "unit": "Sync",         # DM 的处理单元，包括 “Check”，“Dump“，“Load” 以及 “Sync”
+                    "result": null,         # 子任务失败时显示错误信息
+                    "unresolvedDDLLockID": "test-`test`.`t_target`",    # sharding DDL lock ID，可用于异常情况下手动处理 sharding DDL lock
+                    "sync": {                   # 当前 `Sync` 处理单元的迁移信息
+                        "masterBinlog": "(bin.000001, 3234)",                               # 上游数据库当前的 binlog position
+                        "masterBinlogGtid": "c0149e17-dff1-11e8-b6a8-0242ac110004:1-14",    # 上游数据库当前的 GTID 信息
+                        "syncerBinlog": "(bin.000001, 2525)",                               # 已被 `Sync` 处理单元迁移的 binlog position
+                        "syncerBinlogGtid": "",                                             # 使用 GTID 迁移的 binlog position
+                        "blockingDDLs": [       # 当前被阻塞的 DDL 列表。该项仅在当前 DM-worker 所有上游表都处于 “synced“ 状态时才有数值，此时该列表包含的是待执行或待跳过的 sharding DDL 语句
                             "USE `test`; ALTER TABLE `test`.`t_target` DROP COLUMN `age`;"
                         ],
-                        "unresolvedGroups": [
+                        "unresolvedGroups": [   # 没有被解决的 sharding group 信息
                             {
-                                "target": "`test`.`t_target`",
+                                "target": "`test`.`t_target`",                  # 待迁移的下游表
                                 "DDLs": [
                                     "USE `test`; ALTER TABLE `test`.`t_target` DROP COLUMN `age`;"
                                 ],
-                                "firstPos": "(bin|000001.000001, 3130)",
-                                "synced": [
+                                "firstPos": "(bin|000001.000001, 3130)",        # sharding DDL 语句起始 binlog position
+                                "synced": [                                     # `Sync` 处理单元已经读到该 sharding DDL 的上游分表
                                     "`test`.`t2`"
                                     "`test`.`t3`"
                                     "`test`.`t1`"
                                 ],
-                                "unsynced": [
+                                "unsynced": [                                   # `Sync` 处理单元未读到该 sharding DDL 的上游分表。如有上游分表未完成同步，`blockingDDLs` 为空
                                 ]
                             }
                         ],
-                        "synced": false,
-                        "totalRows": "12",
-                        "totalRps": "1",
-                        "recentRps": "1"
+                        "synced": false,        # 增量复制是否已追上上游。由于后台 `Sync` 单元并不会实时刷新保存点，当前值为 `false` 并不一定代表发生了迁移延迟
+                        "totalRows": "12",      # 该子任务中迁移的行数
+                        "totalRps": "1",        # 该子任务中每秒迁移的行数
+                        "recentRps": "1"        # 该子任务中最后一秒迁移的行数
                     }
                 }
             ]
@@ -143,11 +136,11 @@ The status of a DM migration task depends on the status of each subtask assigned
                     "unit": "Load",
                     "result": null,
                     "unresolvedDDLLockID": "",
-                    "load": {
-                        "finishedBytes": "115",
-                        "totalBytes": "452",
-                        "progress": "25.44 %",
-                        "bps": "2734"
+                    "load": {                                  # `Load` 处理单元的迁移信息
+                        "finishedBytes": "115",                # 已全量导入的字节数
+                        "totalBytes": "452",                   # 总计需要导入的字节数
+                        "progress": "25.44 %",                 # 全量导入进度
+                        "bps": "2734"                          # 全量导入速度
                     }
                 }
             ]
@@ -165,7 +158,7 @@ The status of a DM migration task depends on the status of each subtask assigned
                     "name": "test",
                     "stage": "Paused",
                     "unit": "Load",
-                    "result": {
+                    "result": {                 # 错误示例
                         "isCanceled": false,
                         "errors": [
                             {
@@ -201,14 +194,14 @@ The status of a DM migration task depends on the status of each subtask assigned
                     "unit": "Dump",
                     "result": null,
                     "unresolvedDDLLockID": "",
-                    "dump": {
-                        "totalTables": "10",
-                        "completedTables": "3",
-                        "finishedBytes": "2542",
-                        "finishedRows": "32",
-                        "estimateTotalRows": "563",
-                        "progress": "30.52 %",
-                        "bps": "445"
+                    "dump": {                        # `Dump` 处理单元的迁移信息
+                        "totalTables": "10",         # 需要 dump 的表数量
+                        "completedTables": "3",      # 已 dump 的表数量
+                        "finishedBytes": "2542",     # 已 dump 的字节数
+                        "finishedRows": "32",        # 已 dump 的行数
+                        "estimateTotalRows": "563",  # 预估需要 dump 的行数
+                        "progress": "30.52 %",       # dump 的进度
+                        "bps": "445"                 # dump 的速度
                     }
                 }
             ]
@@ -217,80 +210,40 @@ The status of a DM migration task depends on the status of each subtask assigned
 }
 ```
 
-Some fields in the returned result are described as follows:
+关于 `sources` 下 `subTaskStatus` 中 `stage` 状态和状态转换关系的详细信息，请参阅[子任务状态](#子任务状态)。
 
-- `result`: Whether the query is successful.
-- `msg`: The error message returned when the query fails.
-- `sources`: The list of upstream MySQL instances. Each source contains the following fields:
-    - `result`
-    - `msg`
-    - `sourceStatus`: The information of the upstream MySQL databases.
-    - `subTaskStatus`: The information of all subtasks of upstream MySQL databases. Each subtask might contain the following fields:
-        - `name`: The name of the subtask.
-        - `stage`: The status of the subtask. For the status description and status switch relationship of "stage" of "subTaskStatus" of "sources", see the [subtask status](#subtask-status).
-        - `unit`: The processing unit of DM, including "Check", "Dump", "Load", and "Sync".
-        - `result`: Displays the error information if a subtask fails.
-        - `unresolvedDDLLockID`: The sharding DDL lock ID, used for manually handling the sharding DDL lock in the abnormal condition. For operation details of "unresolvedDDLLockID" of "subTaskStatus" of "sources", see [Handle Sharding DDL Locks Manually](/dm/manually-handling-sharding-ddl-locks.md).
-        - `sync`: The replication information of the `Sync` processing unit. This information is about the same component with the current processing unit.
-            - `masterBinlog`: The binlog position in the upstream database.
-            - `masterBinlogGtid`: The GTID information in the upstream database.
-            - `syncerBinlog`:  The position of the binlog that has been replicated in the `Sync` processing unit.
-            - `syncerBinlogGtid`: The binlog position replicated using GTID.
-            - `blockingDDLs`: The DDL list that is blocked currently. It is not empty only when all the upstream tables of this DM-worker are in the "synced" status. In this case, it indicates the sharding DDL statements to be executed or that are skipped.
-            - `unresolvedGroups`: The sharding group that is not resolved. Each group contains the following fields:
-                - `target`: The downstream database table to be replicated.
-                - `DDLs`: A list of DDL statements.
-                - `firstPos`: The starting position of the sharding DDL statement.
-                - `synced`: The upstream sharded table whose executed sharding DDL statement has been read by the `Sync` unit.
-                - `unsynced`: The upstream table that has not executed this sharding DDL statement. If any upstream tables have not finished replication, `blockingDDLs` is empty.
-            - `synced`: Whether the incremental replication catches up with the upstream and has the same binlog position as that in the upstream. The save point is not refreshed in real time in the `Sync` background, so `false` of `synced` does not always mean a replication delay exits.
-            - `totalRows`: The total number of rows that are replicated in this subtask.
-            - `totalRps`: The number of rows that are replicated in this subtask per second.
-            - `recentRps`: The number of rows that are replicated in this subtask in the last second.
-        - `load`:  The replication information of the `Load` processing unit.
-            - `finishedBytes`: The number of bytes that have been loaded.
-            - `totalBytes`: The total number of bytes that need to be loaded.
-            - `progress`: The progress of the loading process.
-            - `bps`: The speed of the full loading.
-        - `dump`: The replication information of the `Dump` processing unit.
-            - `totalTables`: The number of tables to be dumped.
-            - `completedTables`:  The number of tables that have been dumped.
-            - `finishedBytes`: The number of bytes that have been dumped.
-            - `finishedRows`: The number of rows that have been dumped.
-            - `estimateTotalRows`: The estimated number of rows to be dumped.
-            - `progress`: The progress of the dumping process.
-            - `bps`: The dumping speed in bytes/second.
+关于 `sources` 下 `subTaskStatus` 中 `unresolvedDDLLockID`的操作细节，请参阅[手动处理 Sharding DDL Lock](/dm/manually-handling-sharding-ddl-locks.md)。
 
-## Subtask status
+## 子任务状态
 
-### Status description
+### 状态描述
 
-- `New`:
+- `New`：
 
-    - The initial status.
-    - If the subtask does not encounter an error, it is switched to `Running`; otherwise it is switched to `Paused`.
+    - 初始状态。
+    - 如果子任务没有发生错误，状态切换为 `Running`，其他情况则切换为 `Paused`。
 
-- `Running`: The normal running status.
+- `Running`：正常运行状态。
 
-- `Paused`:
+- `Paused`：
 
-    - The paused status.
-    - If the subtask encounters an error, it is switched to `Paused`.
-    - If you run `pause-task` when the subtask is in the `Running` status, the task is switched to `Paused`.
-    - When the subtask is in this status, you can run the `resume-task` command to resume the task.
+    - 暂停状态。
+    - 子任务发生错误，状态切换为 `Paused`。
+    - 如在子任务为 `Running` 状态下执行 `pause-task` 命令，任务状态会切换为 `Paused`。
+    - 如子任务处于该状态，可以使用 `resume-task` 命令恢复任务。
 
-- `Stopped`:
+- `Stopped`：
 
-    - The stopped status.
-    - If you run `stop-task` when the subtask is in the `Running` or `Paused` status, the task is switched to `Stopped`.
-    - When the subtask is in this status, you cannot use `resume-task` to resume the task.
+    - 停止状态。
+    - 如在子任务为 `Running` 或 `Paused` 状态下执行 `stop-task` 命令，任务状态会切换为 `Stopped`。
+    - 如子任务处于该状态，不可使用 `resume-task` 命令恢复任务。
 
-- `Finished`:
+- `Finished`：
 
-    - The finished subtask status.
-    - Only when the full replication subtask is finished normally, the task is switched to this status.
+    - 任务完成状态。
+    - 只有 `task-mode` 为 `full` 的任务正常完成后，任务才会切换为该状态。
 
-### Status switch diagram
+### 状态转换图
 
 ```
                                          error occurs

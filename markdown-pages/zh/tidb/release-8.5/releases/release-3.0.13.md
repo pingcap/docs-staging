@@ -1,20 +1,21 @@
 ---
 title: TiDB 3.0.13 Release Notes
-summary: TiDB 3.0.13 was released on April 22, 2020. The bug fixes include resolving issues with the `INSERT ... ON DUPLICATE KEY UPDATE` statement and fixing the system getting stuck and becoming unavailable during `Region Merge` in TiKV.
+summary: TiDB 3.0.13 发布日期为 2020 年 04 月 22 日。此版本修复了 TiDB 和 TiKV 中的一些 bug。其中 TiDB 修复了由于未检查 `MemBuffer`，事务内执行 `INSERT ... ON DUPLICATE KEY UPDATE` 语句插入多行重复数据可能出错的问题。TiKV 修复了重复多次执行 `Region Merge` 导致系统被阻塞的问题，阻塞期间服务不可用。
+aliases: ['/zh/tidb/dev/release-3.0.13/','/zh/tidb/v3.0/release-3.0.13','/docs-cn/dev/releases/release-3.0.13/','/docs-cn/dev/releases/3.0.13/','/zh/tidb/v5.4/release-3.0.13','/zh/tidb/v6.1/release-3.0.13','/zh/tidb/v6.5/release-3.0.13','/zh/tidb/v7.1/release-3.0.13','/zh/tidb/v7.5/release-3.0.13','/zh/tidb/v8.1/release-3.0.13']
 ---
 
 # TiDB 3.0.13 Release Notes
 
-Release date: April 22, 2020
+发版日期：2020 年 04 月 22 日
 
-TiDB version: 3.0.13
+TiDB 版本：3.0.13
 
-## Bug Fixes
+## Bug 修复
 
 + TiDB
 
-    - Fix the issue caused by unchecked `MemBuffer` that the `INSERT ... ON DUPLICATE KEY UPDATE` statement might be executed incorrectly within a transaction when users need to insert multiple rows of duplicate data [#16690](https://github.com/pingcap/tidb/pull/16690)
+    - 修复由于未检查 `MemBuffer`，事务内执行 `INSERT ... ON DUPLICATE KEY UPDATE` 语句插入多行重复数据可能出错的问题 [#16690](https://github.com/pingcap/tidb/pull/16690)
 
 + TiKV
 
-    - Fix the issue that the system might get stuck and the service is unavailable if `Region Merge` is executed repeatedly [#7612](https://github.com/tikv/tikv/pull/7612)
+    - 修复重复多次执行 `Region Merge` 导致系统被阻塞的问题，阻塞期间服务不可用 [#7612](https://github.com/tikv/tikv/pull/7612)

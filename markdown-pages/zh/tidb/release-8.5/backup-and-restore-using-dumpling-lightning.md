@@ -1,52 +1,52 @@
 ---
-title: Back up and Restore Data Using Dumpling and TiDB Lightning
-summary: Learn how to use Dumpling and TiDB Lightning to back up and restore full data of TiDB.
+title: 使用 Dumpling 和 TiDB Lightning 备份与恢复
+summary: 了解如何使用 Dumpling 和 TiDB Lightning 备份与恢复集群数据。
 ---
 
-# Back up and Restore Data Using Dumpling and TiDB Lightning
+# 使用 Dumpling 和 TiDB Lightning 备份与恢复
 
-This document introduces how to use Dumpling and TiDB Lightning to back up and restore full data of TiDB.
+本文档介绍如何使用 Dumpling 和 TiDB Lightning 进行全量备份与恢复。
 
-If you need to back up a small amount of data (for example, less than 50 GiB) and do not require high backup speed, you can use [Dumpling](/dumpling-overview.md) to export data from the TiDB database and then use [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) to restore the data into another TiDB database. 
+在备份与恢复场景中，如果需要全量备份少量数据（例如小于 50 GiB），且不要求备份速度，你可以使用 [Dumpling](/dumpling-overview.md) 从 TiDB 数据库导出数据进行备份，再使用 [TiDB Lightning](/tidb-lightning/tidb-lightning-overview.md) 将数据导入至 TiDB 数据库实现恢复。
 
-If you need to back up larger databases, the recommended method is to use [BR](/br/backup-and-restore-overview.md). Note that Dumpling can be used to export large databases, but BR is a better tool for that.
+如果需要备份大量数据，建议使用 [BR](/br/backup-and-restore-overview.md)。注意，Dumpling 也可以用于导出大量数据，但 BR 是更好的工具。
 
-## Requirements
+## 前提条件
 
-- Install Dumpling:
+- 安装 Dumpling：
 
     ```shell
     tiup install dumpling
     ```
 
-- Install TiDB Lightning:
+- 安装 TiDB Lightning：
 
     ```shell
     tiup install tidb-lightning
     ```
 
-- [Grant the source database privileges required for Dumpling](/dumpling-overview.md#export-data-from-tidb-or-mysql)
-- [Grant the target database privileges required for TiDB Lightning](/tidb-lightning/tidb-lightning-requirements.md#privileges-of-the-target-database)
+- [获取 Dumpling 所需上游数据库权限](/dumpling-overview.md#从-tidbmysql-导出数据)
+- [获取 TiDB Lightning 所需下游数据库权限](/tidb-lightning/tidb-lightning-requirements.md#目标数据库权限要求)
 
-## Resource requirements
+## 资源要求
 
-**Operating system**: The example in this document uses fresh CentOS 7 instances. You can deploy a virtual machine either on your local host or in the cloud. Because TiDB Lightning consumes as much CPU resources as needed by default, it is recommended that you deploy it on a dedicated server. If this is not possible, you can deploy it on a single server together with other TiDB components (for example, `tikv-server`) and then configure `region-concurrency` to limit the CPU usage from TiDB Lightning. Usually, you can configure the size to 75% of the logical CPU.
+**操作系统**：本文档示例使用的是若干新的、纯净版 CentOS 7 实例，你可以在本地虚拟化一台主机，或在供应商提供的平台上部署一台小型的云虚拟主机。TiDB Lightning 运行过程中，默认会占满 CPU，建议单独部署在一台主机上。如果条件不允许，你可以将 TiDB Lightning 和其他组件（比如 `tikv-server`）部署在同一台机器上，然后设置 `region-concurrency` 配置项的值为逻辑 CPU 数的 75%，以限制 TiDB Lightning 对 CPU 资源的使用。
 
-**Memory and CPU**: Because TiDB Lightning consumes high resources, it is recommended to allocate more than 64 GiB of memory and more than 32 CPU cores. To get the best performance, make sure that the CPU core to memory (GiB) ratio is greater than 1:2.
+**内存和 CPU**：因为 TiDB Lightning 对计算机资源消耗较高，建议分配 64 GB 以上的内存以及 32 核以上的 CPU，而且确保 CPU 核数和内存 (GB) 比为 1:2 以上，以获取最佳性能。
 
-**Disk space**:
+**磁盘空间**：
 
-It is recommended to use Amazon S3, Google Cloud Storage (GCS), or Azure Blob Storage as the external storage. With such a cloud storage, you can store backup files quickly without being limited by the disk space.
+推荐使用 Amazon S3、Google Cloud Storage (GCS) 和 Azure Blob Storage 等外部存储，以便能够快速存储备份文件，且不受磁盘空间限制。
 
-If you need to save data of one backup task to the local disk, note the following limitations:
+如果需要保存单次备份数据到本地磁盘，需要注意以下磁盘空间限制：
 
-- Dumpling requires a disk space that can store the whole data source (or to store all upstream tables to be exported). To calculate the required space, see [Downstream storage space requirements](/tidb-lightning/tidb-lightning-requirements.md#storage-space-of-the-target-database).
-- During the import, TiDB Lightning needs temporary space to store the sorted key-value pairs. The disk space should be enough to hold the largest single table from the data source.
+- Dumpling 需要能够储存整个数据源的存储空间，即可以容纳要导出的所有上游表的空间。计算方式参考[目标数据库所需空间](/tidb-lightning/tidb-lightning-requirements.md#目标数据库所需空间)。
+- TiDB Lightning 导入期间，需要临时空间来存储排序键值对，磁盘空间需要至少能存储数据源的最大单表。
 
-**Note**: It is difficult to calculate the exact data volume exported by Dumpling from MySQL, but you can estimate the data volume by using the following SQL statement to summarize the `DATA_LENGTH` field in the `information_schema.tables` table:
+**说明**：目前无法精确计算 Dumpling 从 TiDB 导出的数据大小，但你可以用下面 SQL 语句统计信息表的 `DATA_LENGTH` 字段估算数据量：
 
 ```sql
--- Calculate the size of all schemas
+-- 统计所有 schema 大小
 SELECT
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(DATA_LENGTH)) AS 'Data Size',
@@ -56,8 +56,8 @@ FROM
 GROUP BY
   TABLE_SCHEMA;
 
--- Calculate the 5 largest tables
-SELECT 
+-- 统计最大的 5 个单表
+SELECT
   TABLE_NAME,
   TABLE_SCHEMA,
   FORMAT_BYTES(SUM(data_length)) AS 'Data Size',
@@ -74,63 +74,63 @@ LIMIT
   5;
 ```
 
-### Disk space for the target TiKV cluster
+### 目标 TiKV 集群的磁盘空间要求
 
-The target TiKV cluster must have enough disk space to store the imported data. In addition to [the standard hardware requirements](/hardware-and-software-requirements.md), the storage space of the target TiKV cluster must be larger than **the size of the data source x [the number of replicas](/faq/manage-cluster-faq.md#is-the-number-of-replicas-in-each-region-configurable-if-yes-how-to-configure-it) x 2**. For example, if the cluster uses 3 replicas by default, the target TiKV cluster must have a storage space larger than 6 times the size of the data source. The formula has x 2 because:
+目标 TiKV 集群必须有足够空间接收新导入的数据。除了[标准硬件配置](/hardware-and-software-requirements.md)以外，目标 TiKV 集群的总存储空间必须大于**数据源大小 × [副本数量](/faq/manage-cluster-faq.md#每个-region-的-replica-数量可配置吗调整的方法是) × 2**。例如，集群默认使用 3 副本，那么总存储空间需为数据源大小的 6 倍以上。公式中的 2 倍可能难以理解，其依据是以下因素的估算空间占用：
 
-- Index might take extra space.
-- RocksDB has a space amplification effect.
+* 索引会占据额外的空间。
+* RocksDB 的空间放大效应。
 
-## Use Dumpling to back up full data
+## 使用 Dumpling 备份全量数据
 
-1. Run the following command to export full data from TiDB to `s3://my-bucket/sql-backup` in Amazon S3:
+1. 运行以下命令，从 TiDB 导出全量数据至 Amazon S3 存储路径 `s3://my-bucket/sql-backup`：
 
     ```shell
     tiup dumpling -h ${ip} -P 3306 -u root -t 16 -r 200000 -F 256MiB -B my_db1 -f 'my_db1.table[12]' -o 's3://my-bucket/sql-backup'
     ```
 
-    Dumpling exports data in SQL files by default. You can specify a different file format by adding the `--filetype` option.
+    Dumpling 默认导出数据格式为 SQL 文件，你也可以通过设置 `--filetype` 指定导出文件的类型。
 
-    For more configurations of Dumpling, see [Option list of Dumpling](/dumpling-overview.md#option-list-of-dumpling).
+    关于更多 Dumpling 的配置，请参考 [Dumpling 主要选项表](/dumpling-overview.md#dumpling-主要选项表)。
 
-2. After the export is completed, you can view the backup files in the directory `s3://my-bucket/sql-backup`.
+2. 导出完成后，可以在数据存储目录 `s3://my-bucket/sql-backup` 查看导出的备份文件。
 
-## Use TiDB Lightning to restore full data
+## 使用 TiDB Lightning 恢复全量数据
 
-1. Edit the `tidb-lightning.toml` file to import full data backed up using Dumpling from `s3://my-bucket/sql-backup` to the target TiDB cluster:
+1. 编写配置文件 `tidb-lightning.toml`，将 Dumpling 备份的全量数据从 `s3://my-bucket/sql-backup` 恢复到目标 TiDB 集群：
 
     ```toml
     [lightning]
-    # log
+    # 日志
     level = "info"
     file = "tidb-lightning.log"
 
     [tikv-importer]
-    # "local": Default backend. The local backend is recommended to import large volumes of data (1 TiB or more). During the import, the target TiDB cluster cannot provide any service.
-    # "tidb": The "tidb" backend is recommended to import data less than 1 TiB. During the import, the target TiDB cluster can provide service normally. For more information on the backends, refer to https://docs.pingcap.com/tidb/stable/tidb-lightning-backends.
+    # "local"：默认使用该模式，适用于 TB 级以上大数据量，但导入期间下游 TiDB 无法对外提供服务。
+    # "tidb"：TB 级以下数据量也可以采用`tidb`后端模式，下游 TiDB 可正常提供服务。关于后端模式更多信息请参阅：https://docs.pingcap.com/tidb/stable/tidb-lightning-backends
     backend = "local"
-    # Sets the temporary storage directory for the sorted Key-Value files. The directory must be empty, and the storage space must be greater than the size of the dataset to be imported. For better import performance, it is recommended to use a directory different from `data-source-dir` and use flash storage, which can use I/O exclusively.
+    # 设置排序的键值对的临时存放地址，目标路径必须是一个空目录，目录空间须大于待导入数据集的大小。建议设为与 `data-source-dir` 不同的磁盘目录并使用闪存介质，独占 IO 会获得更好的导入性能
     sorted-kv-dir = "${sorted-kv-dir}"
 
     [mydumper]
-    # The data source directory. The same directory where Dumpling exports data in "Use Dumpling to back up full data".
-    data-source-dir = "${data-path}" #  A local path or S3 path. For example, 's3://my-bucket/sql-backup'
+    # 源数据目录，即上一章节中 Dumpling 保存数据的路径。
+    data-source-dir = "${data-path}" # 本地或 S3 路径，例如：'s3://my-bucket/sql-backup'
 
     [tidb]
-    # The target TiDB cluster information.
-    host = ${host}                # e.g.: 172.16.32.1
-    port = ${port}                # e.g.: 4000
-    user = "${user_name}"         # e.g.: "root"
-    password = "${password}"      # e.g.: "rootroot"
-    status-port = ${status-port}  # During the import, TiDB Lightning needs to obtain the table schema information from the TiDB status port. e.g.: 10080
-    pd-addr = "${ip}:${port}"     # The address of the PD cluster, e.g.: 172.16.31.3:2379. TiDB Lightning obtains some information from PD. When backend = "local", you must specify status-port and pd-addr correctly. Otherwise, the import will be abnormal.
+    # 目标集群的信息
+    host = "${host}"              # 例如：172.16.32.1
+    port = "${port}"              # 例如：4000
+    user = "${user_name}"         # 例如："root"
+    password = "${password}"      # 例如："rootroot"
+    status-port = "${status-port}"  # 导入过程 Lightning 需要在从 TiDB 的“状态端口”获取表结构信息，例如：10080
+    pd-addr = "${ip}:${port}"     # 集群 PD 的地址，Lightning 通过 PD 获取部分信息，例如 172.16.31.3:2379。当 backend = "local" 时 status-port 和 pd-addr 必须正确填写，否则导入将出现异常。
     ```
 
-    For more information on TiDB Lightning configuration, refer to [TiDB Lightning Configuration](/tidb-lightning/tidb-lightning-configuration.md).
+    关于更多 TiDB Lightning 的配置，请参考 [TiDB Lightning 配置参数](/tidb-lightning/tidb-lightning-configuration.md)。
 
-2. Start the import by running `tidb-lightning`. If you launch the program directly in the command line, the process might exit unexpectedly after receiving a `SIGHUP` signal. In this case, it is recommended to run the program using a `nohup` or `screen` tool. For example:
+2. 运行 `tidb-lightning`。如果直接在命令行中启动程序，可能会因为 `SIGHUP` 信号而退出，建议配合 `nohup` 或 `screen` 等工具，如：
 
-    If you import data from S3, pass the SecretKey and AccessKey that have access to the S3 storage path as environment variables to the TiDB Lightning node. You can also read the credentials from `~/.aws/credentials`.
+    若从 Amazon S3 导入，则需将有权限访问该 S3 后端存储的账号的 SecretKey 和 AccessKey 作为环境变量传入 Lightning 节点。同时还支持从 `~/.aws/credentials` 读取凭证文件。
 
     ```shell
     export AWS_ACCESS_KEY_ID=${access_key}
@@ -138,12 +138,12 @@ The target TiKV cluster must have enough disk space to store the imported data. 
     nohup tiup tidb-lightning -config tidb-lightning.toml > nohup.out 2>&1 &
     ```
 
-3. After the import starts, you can `grep` the keyword `progress` in the log to check the progress of the import. The progress is updated every 5 minutes by default.
+3. 导入开始后，可以通过 `grep` 日志关键字 `progress` 查看进度，默认 5 分钟更新一次。
 
-4. After TiDB Lightning completes the import, it exits automatically. Check whether `tidb-lightning.log` contains `the whole procedure completed` in the last lines. If yes, the import is successful. If no, the import encounters an error. Address the error as instructed in the error message.
+4. 导入完毕后，TiDB Lightning 会自动退出。查看 `tidb-lightning.log` 日志末尾是否有 `the whole procedure completed`，如果有，数据导入成功，恢复完成。如果没有，则表示导入遇到了问题，可根据日志中的 error 提示解决遇到的问题。
 
-> **Note:**
+> **注意：**
 >
-> Whether the import is successful or not, the last line of the log shows `tidb lightning exit`. It means that TiDB Lightning exits normally, but does not necessarily mean that the import is successful.
+> 无论导入成功与否，最后一行都会显示 `tidb lightning exit`。它只是表示 TiDB Lightning 正常退出，不代表恢复任务完成。
 
-If the import fails, refer to [TiDB Lightning FAQ](/tidb-lightning/tidb-lightning-faq.md) for troubleshooting.
+如果恢复过程中遇到问题，请参见 [TiDB Lightning 常见问题](/tidb-lightning/tidb-lightning-faq.md)。

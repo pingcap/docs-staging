@@ -1,70 +1,77 @@
 ---
 title: Store Limit
-summary: Learn the feature of Store Limit.
+summary: 介绍 Store Limit 功能。
 ---
 
 # Store Limit
 
-Store Limit is a feature of PD. It is designed to control the scheduling speed in a finer manner for better performance in different scenarios.
+Store Limit 是一个 PD 特性，旨在更精细地控制调度速度，以在不同场景下实现更好的性能。
 
-## Implementation principles
+## 实现原理
 
-PD performs scheduling at the unit of operator. An operator might contain several scheduling operations. For example:
+PD 的调度是以 operator 为单位执行的。一个 operator 可能包含多个调度操作。示例如下；
 
 ```
 "replace-down-replica {mv peer: store [2] to [3]} (kind:region,replica, region:10(4,5), createAt:2020-05-18 06:40:25.775636418 +0000 UTC m=+2168762.679540369, startAt:2020-05-18 06:40:25.775684648 +0000 UTC m=+2168762.679588599, currentStep:0, steps:[add learner peer 20 on store 3, promote learner peer 20 on store 3 to voter, remove peer on store 2])"
 ```
 
-In this above example, the `replace-down-replica` operator contains the following specific operations:
+以上示例中，`replace-down-replica` 这个 operator 具体包含以下操作：
 
-1. Add a learner peer with the ID `20` to `store 3`.
-2. Promote the learner peer with the ID `20` on `store 3` to a voter.
-3. Delete the peer on `store 2`.
+1. 在 `store 3` 上添加一个 learner peer，ID 为 `20`。
+2. 将 `store 3` 上 ID 为 `20` 的 learner peer 提升为 voter。
+3. 删除 `store 2` 上的 peer。
 
-Store Limit achieves the store-level speed limit by maintaining a mapping from store IDs to token buckets in memory. The different operations here correspond to different token buckets. Currently, Store Limit only supports limiting the speed of two operations: adding learners/peers and deleting peers. That is, each store has two types of token buckets.
+Store Limit 是通过在内存中维护了一个 store ID 到令牌桶的映射，来实现 store 级别的限速。这里不同的操作对应不同的令牌桶，目前仅支持限制添加 learner/peer 和删除 peer 两种操作的速度，即对应于每个 store 存在两种类型的令牌桶。
 
-Every time an operator is generated, it checks whether enough tokens exist in the token buckets for its operations. If yes, the operator is added to the scheduling queue, and the corresponding token is taken from the token bucket. Otherwise, the operator is abandoned. Because the token bucket replenishes tokens at a fixed rate, the speed limit is thus achieved.
+每次 operator 产生后会检查所包含的操作对应的令牌桶中是否有足够的 token。如果 token 充足才会将该 operator 加入到调度的队列中，同时从令牌桶中拿走对应的 token，否则该 operator 被丢弃。令牌桶会按照固定的速率补充 token，从而实现限速的目的。
 
-Store Limit is different from other limit-related parameters in PD (such as `region-schedule-limit` and `leader-schedule-limit`) in that it mainly limits the consuming speed of operators, while other parameters limits the generating speed of operators. Before introducing the Store Limit feature, the speed limit of scheduling is mostly at the global scope. Therefore, even if the global speed is limited, it is still possible that the scheduling operations are concentrated on some stores, affecting the performance of the cluster. By limiting the speed at a finer level, Store Limit can better control the scheduling behavior.
+Store Limit 与 PD 其他 limit 相关的参数（如 `region-schedule-limit`，`leader-schedule-limit` 等）不同的是，Store Limit 限制的主要是 operator 的消费速度，而其他的 limit 主要是限制 operator 的产生速度。引入 Store Limit 特性之前，调度的限速主要是全局的，所以即使限制了全局的速度，但还是有可能存在调度都集中在部分 store 上面，因而影响集群的性能。而 Store Limit 通过将限速的粒度进一步细化，可以更好的控制调度的行为。
 
-Store Limit defines the maximum number of operations per minute. With a Store Limit of 5 operations per minute, adding a new node to the cluster will process 5 Regions per minute (`add-peer` operations). If 15 Regions require an `add-peer`, the operation will take 3 minutes (15 / 5 = 3) and consume up to 8 MiB/s ((5 × 96) / 60 = 8), assuming each Region is 96 MiB.
+Store Limit 定义了每分钟操作的最大数量。假设 Store Limit 为每分钟 5 次操作，向集群添加新节点将以每分钟 5 个 Region（`add-peer` 操作）的速度进行。如果需要为 15 个 Region 执行 `add-peer`，则该操作将需要 3 分钟 (15 / 5 = 3)，并且如果每个 Region 为 96 MiB，将消耗最高 8 MiB/s ((5 × 96) / 60 = 8)。
 
-## Usage
+## 使用方法
 
-The parameters of Store Limit can be configured using [`PD Control`](/pd-control.md).
+Store Limit 相关的参数可以通过 [`PD Control`](/pd-control.md) 进行设置。
 
-### View setting of the current store
+### 查看当前 store 的 limit 设置
 
-To view the limit setting of the current store, run the following commands:
-
-```bash
-tiup ctl:v<CLUSTER_VERSION> pd store limit                         // Shows the speed limit of adding and deleting peers in all stores.
-tiup ctl:v<CLUSTER_VERSION> pd store limit add-peer                // Shows the speed limit of adding peers in all stores.
-tiup ctl:v<CLUSTER_VERSION> pd store limit remove-peer             // Shows the speed limit of deleting peers in all stores.
-```
-
-### Set limit for all stores
-
-To set the speed limit for all stores, run the following commands:
+查看当前 store 的 limit 示例如下：
 
 ```bash
-tiup ctl:v<CLUSTER_VERSION> pd store limit all 5                   // All stores can at most add and delete 5 peers per minute.
-tiup ctl:v<CLUSTER_VERSION> pd store limit all 5 add-peer          // All stores can at most add 5 peers per minute.
-tiup ctl:v<CLUSTER_VERSION> pd store limit all 5 remove-peer       // All stores can at most delete 5 peers per minute.
+tiup ctl:v<CLUSTER_VERSION> pd store limit             // 显示所有 store 添加和删除 peer 的速度上限。
+tiup ctl:v<CLUSTER_VERSION> pd store limit add-peer    // 显示所有 store 添加 peer 的速度上限。
+tiup ctl:v<CLUSTER_VERSION> pd store limit remove-peer // 显示所有 store 删除 peer 的速度上限。
 ```
 
-### Set limit for a single store
+### 设置全部 store 的 limit
 
-To set the speed limit for a single store, run the following commands:
+设置全部 store 的 limit 示例如下：
 
 ```bash
-tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5                     // store 1 can at most add and delete 5 peers per minute.
-tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5 add-peer            // store 1 can at most add 5 peers per minute.
-tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5 remove-peer         // store 1 can at most delete 5 peers per minute.
+tiup ctl:v<CLUSTER_VERSION> pd store limit all 5                   // 设置所有 store 添加和删除 peer 的速度上限为每分钟 5 个。
+tiup ctl:v<CLUSTER_VERSION> pd store limit all 5 add-peer          // 设置所有 store 添加 peer 的速度上限为每分钟 5 个。
+tiup ctl:v<CLUSTER_VERSION> pd store limit all 5 remove-peer       // 设置所有 store 删除 peer 的速度上限为每分钟 5 个。
 ```
 
-### Principles of store limit v2
+从 v8.5.5 起，PD 支持按存储引擎类型为所有 store 设置删除 peer 的 limit，示例如下：
 
-When [`store-limit-version`](/pd-configuration-file.md#store-limit-version-new-in-v710) is set to `v2`, store limit v2 takes effect. In v2 mode, the limit of operators are dynamically adjusted based on the capability of TiKV snapshots. When TiKV has fewer pending tasks, PD increases its scheduling tasks. Otherwise, PD reduces the scheduling tasks for the node. Therefore, you do not need to manually set `store limit` to speed up the scheduling process.
+```bash
+tiup ctl:v<CLUSTER_VERSION> pd store limit all engine tikv 5 remove-peer    // 设置所有 TiKV store 删除 peer 的速度上限为每分钟 5 个
+tiup ctl:v<CLUSTER_VERSION> pd store limit all engine tiflash 5 remove-peer // 设置所有 TiFlash store 删除 peer 的速度上限为每分钟 5 个
+```
 
-In v2 mode, the execution speed of TiKV becomes the main bottleneck during migration. You can check whether the current scheduling speed has reached the upper limit through the **TiKV Details** > **Snapshot** > **Snapshot Speed** panel. To increase or decrease the scheduling speed of a node, you can adjust the TiKV snapshot limit ([`snap-io-max-bytes-per-sec`](/tikv-configuration-file.md#snap-io-max-bytes-per-sec)).
+### 设置单个 store 的 limit
+
+设置单个 store 的 limit 示例如下：
+
+```bash
+tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5                     // 设置 store 1 添加和删除 peer 的速度上限为每分钟 5 个。
+tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5 add-peer            // 设置 store 1 添加 peer 的速度上限为每分钟 5 个。
+tiup ctl:v<CLUSTER_VERSION> pd store limit 1 5 remove-peer         // 设置 store 1 删除 peer 的速度上限为每分钟 5 个。
+```
+
+## Store Limit v2 原理
+
+当 [`store-limit-version`](/pd-configuration-file.md#store-limit-version-从-v710-版本开始引入) 设置为 `v2` 时，Store Limit v2 生效。在此模式下，Operator 调度限制将根据 TiKV Snapshot 执行情况进行动态调整。当 TiKV 积压的任务较少时，PD 会增加其调度任务。相反，PD 会减少对该节点的调度任务。此时，你无需关注如何设置 `store limit` 以加快调度进度。
+
+在该模式下，TiKV 执行速度成为迁移进度的主要瓶颈。你可以通过 **TiKV Details** > **Snapshot** > **Snapshot Speed** 面板判断当前调度速度是否达到 TiKV 限流设置。通过调整 TiKV Snapshot Limit ([`snap-io-max-bytes-per-sec`](/tikv-configuration-file.md#snap-io-max-bytes-per-sec)) 来增加或减少该节点的调度速度。

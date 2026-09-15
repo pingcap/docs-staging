@@ -1,35 +1,36 @@
 ---
-title: Best Practices for Monitoring TiDB Using Grafana
-summary: Best Practices for Monitoring TiDB Using Grafana. Deploy a TiDB cluster using TiUP and add Grafana and Prometheus for monitoring. Use metrics to analyze cluster status and diagnose problems. Prometheus collects metrics from TiDB components, and Grafana displays them. Tips for efficient Grafana use include modifying query expressions, switching Y-axis scale, and using API for query results. The platform is powerful for analyzing and diagnosing TiDB cluster status.
+title: 使用 Grafana 监控 TiDB 的最佳实践
+summary: 了解高效利用 Grafana 监控 TiDB 的七个技巧。
+aliases: ['/docs-cn/dev/best-practices/grafana-monitor-best-practices/','/docs-cn/dev/reference/best-practices/grafana-monitor/','/zh/tidb/stable/grafana-monitor-best-practices/','/zh/tidb/dev/grafana-monitor-best-practices/']
 ---
 
-# Best Practices for Monitoring TiDB Using Grafana
+# 使用 Grafana 监控 TiDB 的最佳实践
 
-When you [deploy a TiDB cluster using TiUP](/production-deployment-using-tiup.md) and have added Grafana and Prometheus in the topology configuration, a set of [Grafana + Prometheus monitoring platform](/tidb-monitoring-framework.md) is deployed simultaneously to collect and display metrics for various components and machines in the TiDB cluster. This document describes best practices for monitoring TiDB using Grafana. It aims to help you use metrics to analyze the status of the TiDB cluster and diagnose problems.
+[使用 TiUP 部署 TiDB 集群](/production-deployment-using-tiup.md)时，如果在拓扑配置中添加了 Grafana 和 Prometheus，会部署一套 [Grafana + Prometheus 的监控平台](/tidb-monitoring-framework.md)，用于收集和展示 TiDB 集群各个组件和机器的 metric 信息。本文主要介绍使用 TiDB 监控的最佳实践，旨在帮助 TiDB 用户高效利用丰富的 metric 信息来分析 TiDB 的集群状态或进行故障诊断。
 
-## Monitoring architecture
+## 监控架构
 
-[Prometheus](https://prometheus.io/) is a time series database with a multi-dimensional data model and a flexible query language. [Grafana](https://grafana.com/) is an open source monitoring system for analyzing and visualizing metrics.
+Prometheus 是一个拥有多维度数据模型和灵活查询语句的时序数据库。Grafana 是一个开源的 metric 分析及可视化系统。
 
-![The monitoring architecture in the TiDB cluster](https://docs-download.pingcap.com/media/images/docs/prometheus-in-tidb.png)
+![TiDB 监控整体架构](https://docs-download.pingcap.com/media/images/docs-cn/prometheus-in-tidb.png)
 
-For TiDB 2.1.3 or later versions, TiDB monitoring supports the pull method. It is a good adjustment with the following benefits:
+从 TiDB 2.1.3 版本开始，监控可以支持 pull，这是一个非常好的调整，它有以下几个优点：
 
-- There is no need to restart the entire TiDB cluster if you need to migrate Prometheus. Before adjustment, migrating Prometheus requires restarting the entire cluster because the target address needs to be updated.
-- You can deploy 2 separate sets of Grafana + Prometheus monitoring platforms (not highly available) to prevent a single point of monitoring.
-- The Pushgateway which might become a single point of failure is removed.
+- 如果 Prometheus 需要迁移，无需重启整个 TiDB 集群。调整前，因为组件要调整 push 的目标地址，迁移 Prometheus 需要重启整个集群。
+- 支持部署 2 套独立的 Grafana + Prometheus 的监控平台（非 HA），防止监控的单点。
+- 去掉了 Pushgateway 这个单点组件。
 
-## Source and display of monitoring data
+## 监控数据的来源与展示
 
-The three core components of TiDB (TiDB server, TiKV server and PD server) obtain metrics through the HTTP interface. These metrics are collected from the program code, and the default ports are as follows:
+TiDB 的 3 个核心组件（TiDB server、TiKV server 和 PD server）可以通过 HTTP 接口来获取 metric 数据。这些 metric 均是从程序代码中上传的，默认端口如下：
 
-| Component   | Port  |
-| :---------- |:----- |
+| 组件        | 端口    |
+|:------------|:-------|
 | TiDB server | 10080 |
 | TiKV server | 20180 |
 | PD server   | 2379  |
 
-Execute the following command to check the QPS of a SQL statement through the HTTP interface. Take the TiDB server as an example:
+下面以 TiDB server 为例，展示如何通过 HTTP 接口查看一个语句的 QPS 数据：
 
 
 ```bash
@@ -37,7 +38,7 @@ curl http://__tidb_ip__:10080/metrics |grep tidb_executor_statement_total
 ```
 
 ```
-# Check the real-time QPS of different types of SQL statements. The numbers below are the cumulative values of counter type (scientific notation).
+# 可以看到实时 QPS 数据，并根据不同 type 对 SQL 语句进行了区分，value 是 counter 类型的累计值（科学计数法）。
 tidb_executor_statement_total{type="Delete"} 520197
 tidb_executor_statement_total{type="Explain"} 1
 tidb_executor_statement_total{type="Insert"} 7.20799402e+08
@@ -47,113 +48,113 @@ tidb_executor_statement_total{type="Show"} 500531
 tidb_executor_statement_total{type="Use"} 466016
 ```
 
-The data above is stored in Prometheus and displayed on Grafana. Right-click the panel and then click the **Edit** button (or directly press the <kbd>E</kbd> key) shown in the following figure:
+这些数据会存储在 Prometheus 中，然后在 Grafana 上进行展示。在面板上点击鼠标右键会出现 **Edit** 按钮（或直接按 <kbd>E</kbd> 键），如下图所示：
 
-![The Edit entry for the Metrics tab](https://docs-download.pingcap.com/media/images/docs/best-practices/metric-board-edit-entry.png)
+![Metrics 面板的编辑入口](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/metric-board-edit-entry.png)
 
-After clicking the **Edit** button, you can see the query expression with the `tidb_executor_statement_total` metric name on the Metrics tab. The meanings of some items on the panel are as follows:
+点击 **Edit** 按钮之后，在 Metrics 面板上可以看到利用该 metric 的 query 表达式。面板上一些细节的含义如下：
 
-- `rate[1m]`: The growth rate in one minute. It can only be used for the data of counter type.
-- `sum`: The sum of values.
-- `by type`: The summed data is grouped by type in the original metric value.
-- `Legend format`: The format of the metric name.
-- `Resolution`: The step width defaults to 15 seconds. Resolution means whether to generate one data point for multiple pixels.
+- `rate[1m]`：表示 1 分钟的增长速率，只能用于 counter 类型的数据。
+- `sum`：表示 value 求和。
+- `by type`：表示将求和后的数据按 metric 原始值中的 type 进行分组。
+- `Legend format`：表示指标名称的格式。
+- `Resolution`：默认打点步长是 15s，Resolution 表示是否将多个样本数据合并成一个点。
 
-The query expression on the **Metrics** tab is as follows:
+Metrics 面板中的表达式如下：
 
-![The query expression on the Metrics tab](https://docs-download.pingcap.com/media/images/docs/best-practices/metric-board-expression.jpeg)
+![Metric 面板中的表达式](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/metric-board-expression.jpeg)
 
-Prometheus supports many query expressions and functions. For more details, refer to [Prometheus official website](https://prometheus.io/docs/prometheus/latest/querying).
+Prometheus 支持很多表达式与函数，更多表达式请参考 [Prometheus 官网页面](https://prometheus.io/docs/prometheus/latest/querying)。
 
-## Grafana tips
+## Grafana 使用技巧
 
-This section introduces seven tips for efficiently using Grafana to monitor and analyze the metrics of TiDB.
+本小节介绍高效利用 Grafana 监控分析 TiDB 指标的七个技巧。
 
-### Tip 1: Check all dimensions and edit the query expression
+### 技巧 1：查看所有维度并编辑表达式
 
-In the example shown in the [source and display of monitoring data](#source-and-display-of-monitoring-data) section, the data is grouped by type. If you want to know whether you can group by other dimensions and quickly check which dimensions are available, you can use the following method: **Only keep the metric name on the query expression, no calculation, and leave the `Legend format` field blank**. In this way, the original metrics are displayed. For example, the following figure shows that there are three dimensions (`instance`, `job` and `type`):
+在[监控数据的来源与展示](#监控数据的来源与展示)一节的示例中，数据是按照 type 进行分组的。如果你想知道是否还能按其它维度分组，并快速查看还有哪些维度，可采用以下技巧：**在 query 的表达式上只保留指标名称，不做任何计算，`Legend format` 也留空**。这样就能显示出原始的 metric 数据。比如，下图能看到有 3 个维度（`instance`、`job` 和 `type`）：
 
-![Edit query expression and check all dimensions](https://docs-download.pingcap.com/media/images/docs/best-practices/edit-expression-check-dimensions.jpg)
+![编辑表达式并查看所有维度](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/edit-expression-check-dimensions.jpg)
 
-Then you can modify the query expression by adding the `instance` dimension after `type`, and adding `{{instance}}` to the `Legend format` field. In this way, you can check the QPS of different types of SQL statements that are executed on each TiDB server:
+然后调整表达式，在原有的 `type` 后面加上 `instance` 这个维度，在 `Legend format` 处增加 `{{instance}}`，就可以看到每个 TiDB server 上执行的不同类型 SQL 语句的 QPS 了。如下图所示：
 
-![Add an instance dimension to the query expression](https://docs-download.pingcap.com/media/images/docs/best-practices/add-instance-dimension.jpeg)
+![给表达式增加一个 instance 维度](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-instance-dimension.jpeg)
 
-### Tip 2: Switch the scale of the Y-axis
+### 技巧 2：调整 Y 轴标尺的计算方式
 
-Take Query Duration as an example, the Y-axis defaults to be on a binary logarithmic scale (log<sub>2</sub>n), which narrows the gap in display. To amplify changes, you can switch it to a linear scale. Comparing the following two figures, you can easily notice the difference in display, and locate the time when an SQL statement runs slowly.
+以 Query Duration 指标为例，默认的比例尺采用 2 的对数计算，显示上会将差距缩小。为了观察到明显的变化，可以将比例尺改为线性，从下面两张图中可以看到显示上的区别，明显发现那个时刻有个 SQL 语句运行较慢。
 
-Of course, a linear scale is not suitable for all situations. For example, if you observe the performance trend for the duration of a month, there might be noises with a linear scale, making it hard to observe.
+当然也不是所有场景都适合用线性，比如观察 1 个月的性能趋势，用线性可能就会有很多噪点，不好观察。
 
-The Y-axis uses a binary logarithmic scale by default:
+标尺默认的比例尺为 2 的对数：
 
-![The Y-axis uses a binary logarithmic scale](https://docs-download.pingcap.com/media/images/docs/best-practices/default-axes-scale.jpg)
+![标尺默认的比例尺为 2 的对数](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/default-axes-scale.jpg)
 
-Switch the Y-axis to a linear scale:
+将标尺的比例尺调整为线性：
 
-![Switch to a linear scale](https://docs-download.pingcap.com/media/images/docs/best-practices/axes-scale-linear.jpg)
+![调整标尺的比例尺为线性](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/axes-scale-linear.jpg)
 
-> **Tip:**
+> **建议：**
 >
-> Combining tip 2 with tip 1, you can find a `sql_type` dimension to help you immediately analyze whether the `SELECT` statement or the `UPDATE` statement is slow; you can even locate the instance with slow SQL statements.
+> 结合技巧 1，会发现这里还有一个 `sql_type` 的维度，可以立刻分析出是 `SELECT` 慢还是 `UPDATE` 慢；并且可以分析出是哪个 instance 上的语句慢。
 
-### Tip 3: Modify the baseline of the Y-axis to amplify changes
+### 技巧 3：调整 Y 轴基线，放大变化
 
-You might still cannot see the trend after switching to the linear scale. For example, in the following figure, you want to observe the real-time change of `Store size` after scaling the cluster, but due to the large baseline, small changes are not visible. In this situation, you can modify the baseline of the Y-axis from `0` to `auto` to zoom in the upper part. Check the two figures below, you can see data migration begins.
+有时已经用了线性比例尺，却还是看不出变化趋势。比如下图中，在扩容后想观察 `Store size` 的实时变化效果，但由于基数较大，观察不到微弱的变化。这时可以将 Y 轴最小值从 `0` 改为 `auto`，将上部放大。观察下面两张图的区别，可以看出数据已开始迁移了。
 
-The baseline defaults to `0`:
+基线默认为 `0`：
 
-![Baseline defaults to 0](https://docs-download.pingcap.com/media/images/docs/best-practices/default-y-min.jpeg)
+![基线默认为 0](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/default-y-min.jpeg)
 
-Change the baseline to `auto`:
+将基线调整为 `auto`：
 
-![Change the baseline to auto](https://docs-download.pingcap.com/media/images/docs/best-practices/y-min-auto.jpg)
+![调整基线为 auto](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/y-min-auto.jpg)
 
-### Tip 4: Use Shared crosshair or Tooltip
+### 技巧 4：标尺联动
 
-In the **Settings** panel, there is a **Graph Tooltip** panel option which defaults to **Default**.
+在 **Settings** 面板中，有一个 **Graph Tooltip** 设置项，默认使用 **Default**。
 
-![Graphic presentation tools](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip.jpeg)
+![图形展示工具](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip.jpeg)
 
-You can use **Shared crosshair** and **Shared Tooltip** respectively to test the effect as shown in the following figures. Then, the scales are displayed in linkage, which is convenient to confirm the correlation of two metrics when diagnosing problems.
+下面将图形展示工具分别调整为 **Shared crosshair** 和 **Shared Tooltip** 看看效果。可以看到标尺能联动展示了，方便排查问题时确认 2 个指标的关联性。
 
-Set the graphic presentation tool to **Shared crosshair**:
+将图形展示工具调整为 **Shared crosshair**：
 
-![Set the graphical presentation tool to Shared crosshair](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip-shared-crosshair.jpeg)
+![调整图形展示工具为 Shared crosshair](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip-shared-crosshair.jpeg)
 
-Set the graphical presentation tool to **Shared Tooltip**:
+将图形展示工具调整为 **Shared Tooltip**：
 
-![Set the graphic presentation tool to Shared Tooltip](https://docs-download.pingcap.com/media/images/docs/best-practices/graph-tooltip-shared-tooltip.jpg)
+![调整图形展示工具为 Shared Tooltip](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/graph-tooltip-shared-tooltip.jpg)
 
-### Tip 5: Enter `IP address:port number` to check the metrics in history
+### 技巧 5：手动输入 `ip:端口号` 查看历史信息
 
-PD's dashboard only shows the metrics of the current leader. If you want to check the status of a PD leader in history and it no longer exists in the drop-down list of the `instance` field, you can manually enter `IP address:2379` to check the data of the leader.
+PD 的 dashboard 只展示当前 leader 的 metric 信息，而有时想看历史上 PD leader 当时的状况，但是 `instance` 下拉列表中已不存在这个成员了。此时，可以手动输入 `ip:2379` 来查看当时的数据。
 
-![Check the metrics in history](https://docs-download.pingcap.com/media/images/docs/best-practices/manually-input-check-metric.jpeg)
+![查看历史 metric 信息](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/manually-input-check-metric.jpeg)
 
-### Tip 6: Use the `Avg` function
+### 技巧 6：巧用 `Avg` 函数
 
-Generally, only `Max` and `Current` functions are available in the legend by default. When the metrics fluctuate greatly, you can add other summary functions such as the `Avg` function to the legend to check the overall trend for the duration of time.
+通常默认图例中只有 `Max` 和 `Current` 函数。当指标波动较大时，可以增加 `Avg` 等其它汇总函数的图例，来看一段时间的整体趋势。
 
-Add summary functions such as the `Avg` function:
+增加 `Avg` 等汇总函数：
 
-![Add summary functions such as Avg](https://docs-download.pingcap.com/media/images/docs/best-practices/add-avg-function.jpeg)
+![增加 Avg 等汇总函数](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-avg-function.jpeg)
 
-Then check the overall trend:
+然后查看整体趋势：
 
-![Add Avg function to check the overall trend](https://docs-download.pingcap.com/media/images/docs/best-practices/add-avg-function-check-trend.jpg)
+![增加 Avg 函数查看整体趋势](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/add-avg-function-check-trend.jpg)
 
-### Tip 7: Use the API of Prometheus to obtain the result of query expressions
+### 技巧 7：使用 Prometheus 的 API 接口获得表达式的结果
 
-Grafana obtains data through the API of Prometheus and you can use this API to obtain information as well. In addition, it also has the following usages:
+Grafana 通过 Prometheus 的接口获取数据，你也可以用该接口来获取数据，这个用法还可以衍生出许多功能：
 
-- Automatically obtains information such as the cluster size and status.
-- Makes minor changes to the expression to provide information for the report, such as counting the total amount of QPS per day, the peak value of QPS per day, and the response time per day.
-- Performs regular health inspection on the important metrics.
+- 自动获取集群规模、状态等信息。
+- 对表达式稍加改动给报表提供数据，如统计每天的 QPS 总量、每天的 QPS 峰值和每天的响应时间。
+- 将重要的指标进行定期健康巡检。
 
-The API of Prometheus is shown as follows:
+Prometheus 的 API 接口如下：
 
-![The API of Prometheus](https://docs-download.pingcap.com/media/images/docs/best-practices/prometheus-api-interface.jpg)
+![Prometheus 的 API 接口](https://docs-download.pingcap.com/media/images/docs-cn/best-practices/prometheus-api-interface.jpg)
 
 
 ```bash
@@ -198,6 +199,6 @@ curl -u user:pass 'http://__grafana_ip__:3000/api/datasources/proxy/1/api/v1/que
 }
 ```
 
-## Summary
+## 总结
 
-The Grafana + Prometheus monitoring platform is a very powerful tool. Making good use of it can improve efficiency, saving you a lot of time on analyzing the status of the TiDB cluster. More importantly, it can help you diagnose problems. This tool is very useful in the operation and maintenance of TiDB clusters, especially when there is a large amount of data.
+Grafana + Prometheus 监控平台是一套非常强大的组合工具，用好这套工具可以为分析节省很多时间，提高效率，更重要的是，我们可以更容易发现问题。在运维 TiDB 集群，尤其是数据量大的情况下，这套工具能派上大用场。

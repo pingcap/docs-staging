@@ -1,81 +1,81 @@
 ---
-title: TiProxy Monitoring Metrics
-summary: Learn the monitoring items of TiProxy.
+title: TiProxy 监控指标
+summary: 了解 TiProxy 的监控指标。
 ---
 
-# TiProxy Monitoring Metrics
+# TiProxy 监控指标
 
-This document describes the monitoring items of TiProxy.
+本文介绍 TiProxy 的监控指标。
 
-If you use TiUP to deploy the TiDB cluster, the monitoring system (Prometheus & Grafana) is deployed at the same time. For more information, see [Overview of the Monitoring Framework](/tidb-monitoring-framework.md).
+如果你使用 TiUP 部署 TiDB 集群，监控系统（Prometheus 和 Grafana）会同时部署。更多信息请参考[监控框架概览](/tidb-monitoring-framework.md)。
 
-The Grafana dashboard is divided into a series of sub dashboards which include Overview, PD, TiDB, TiKV, TiProxy, and Node\_exporter. A lot of metrics are there to help you diagnose. Each dashboard contains panel groups and their panels.
+Grafana 仪表盘分为一系列子仪表盘，包括 Overview、PD、TiDB、TiKV、TiProxy 和 Node\_exporter，有很多指标可以帮助你诊断问题。每个仪表盘包含面板组和面板。
 
-TiProxy has four panel groups. The metrics on these panels indicate the current status of TiProxy.
+TiProxy 有四个面板组。这些面板上的指标表示 TiProxy 的当前状态。
 
-- **TiProxy-Server**: instance information.
-- **TiProxy-Query-Summary**: SQL query metrics like CPS. 
-- **TiProxy-Backend**: information on TiDB nodes that TiProxy might connect to.
-- **TiProxy-Balance**: load balancing metrics.
+- **TiProxy-Server**: TiProxy 实例信息。
+- **TiProxy-Query-Summary**: SQL 查询指标，如 CPS。
+- **TiProxy-Backend**: TiProxy 可能连接的 TiDB 节点的信息。
+- **TiProxy-Balance**: 负载均衡指标。
 
 ## Server
 
-- CPU Usage: the CPU utilization of each TiProxy instance
-- Memory Usage: the memory usage of each TiProxy instance
-- Uptime: the runtime of each TiProxy instance since last restart
-- Connection Count: the number of clients connected to each TiProxy instance
-- Create Connection OPM: the number of connections created on each TiProxy instance every minute
-- Disconnection OPM: the number of disconnections for each reason every minute. Reasons include:
-    - success: the client disconnects normally
-    - client network break: the client does not send a `QUIT` command before it disconnects. It may also be caused by a network problem or the client shutting down
-    - client handshake fail: the client fails to handshake with TiProxy
-    - auth fail: the access is denied by TiDB
-    - SQL error: TiDB returns other SQL errors
-    - proxy shutdown: TiProxy is shutting down
-    - malformed packet: TiProxy fails to parse the MySQL packet
-    - get backend fail: TiProxy fails to find an available backend for the connection
-    - proxy error: other TiProxy errors
-    - backend network break: fails to read from or write to the TiDB. This may be caused by a network problem or the TiDB server shutting down
-    - backend handshake fail: TiProxy fails to handshake with the TiDB server
-- Goroutine Count: the number of Goroutines on each TiProxy instance
-- Owner: the TiProxy instance that executes various tasks. For example, `10.24.31.1:3080 - vip` indicates that the TiProxy instance at `10.24.31.1:3080` is bound to a virtual IP. The tasks include the following:
-    - vip: binds a virtual IP
-    - metric_reader: reads monitoring data from TiDB servers
+- CPU Usage：每个 TiProxy 实例的 CPU 利用率
+- Memory Usage：每个 TiProxy 实例的内存利用率
+- Uptime：每个 TiProxy 实例自上次重启以来的运行时间
+- Connection Count：每个 TiProxy 实例连接的客户端数量
+- Create Connection OPM：每分钟在每个 TiProxy 实例上创建的连接数
+- Disconnection OPM：每分钟每个原因的断开连接数。原因包括：
+    - success：客户端正常断开连接。
+    - client network break：客户端在断开连接前没有发送 `QUIT` 命令。这可能是由于网络问题或客户端关闭引起的。
+    - client handshake fail：客户端握手失败。
+    - auth fail：TiDB 拒绝访问。
+    - SQL error：TiDB 返回其他 SQL 错误。
+    - proxy shutdown：TiProxy 正在关闭。
+    - malformed packet：TiProxy 无法解析 MySQL 数据包。
+    - get backend fail：TiProxy 无法为连接找到可用的后端。
+    - proxy error：其他 TiProxy 错误。
+    - backend network break：无法从 TiDB 读取或写入。这可能是由于网络问题或 TiDB 服务器关闭引起的。
+    - backend handshake fail：TiProxy 与 TiDB 服务器握手失败。
+- Goroutine Count：每个 TiProxy 实例的 Goroutine 数量
+- Owner：执行各个任务的 TiProxy 实例，例如 `10.24.31.1:3080 - vip` 表示 TiProxy 实例 `10.24.31.1:3080` 绑定了虚拟 IP。任务包括：
+    - vip：绑定虚拟 IP。
+    - metric_reader：读取 TiDB server 的监控数据。
 
 ## Query-Summary
 
-- Duration: average, P95, P99 SQL statement execution duration. It includes the duration of SQL statement execution on TiDB servers, so it is higher than the duration on the TiDB Grafana panel
-- P99 Duration By Instance: P99 statement execution duration of each TiProxy instance
-- P99 Duration By Backend: P99 statement execution duration of the statements that are executed on each TiDB instance
-- CPS by Instance: command per second of each TiProxy instance
-- CPS by Backend: command per second of each TiDB instance
-- CPS by CMD: command per second grouped by SQL command type
-- Handshake Duration: average, P95, and P99 duration of the handshake phase between the client and TiProxy
+- Duration：每个 TiProxy 实例的 SQL 语句执行的平均、P95、P99 时长。它包括 TiDB 服务器上 SQL 语句执行的时长，因此比 TiDB Grafana 面板上的时长高。
+- P99 Duration By Instance：每个 TiProxy 实例的 P99 语句执行时长。
+- P99 Duration By Backend：每个 TiDB 实例上执行的语句的 P99 语句执行时长。
+- CPS by Instance：每个 TiProxy 实例的每秒命令数。
+- CPS by Backend：每个 TiDB 实例的每秒命令数。
+- CPS by CMD：按 SQL 命令类型分组的每秒命令数。
+- Handshake Duration：客户端与 TiProxy 握手阶段的平均、P95、P99 时长。
 
 ## Balance
 
-- Backend Connections: connection counts between each TiDB instance and each TiProxy instance. For example, `10.24.31.1:6000 | 10.24.31.2:4000` indicates the connections between TiProxy instance `10.24.31.1:6000` and TiDB instance `10.24.31.2:4000`
-- Session Migration OPM: the number of session migrations that happened every minute, recording sessions on which TiDB instance migrated to the other. For example, `succeed: 10.24.31.2:4000 => 10.24.31.3:4000` indicates the number of sessions that are successfully migrated from TiDB instance `10.24.31.2:4000` to TiDB instance `10.24.31.3:4000`
-- Session Migration Duration: average, P95, P99 session migration duration.
-- Session Migration Reasons: the number of session migrations that happened every minute and the reason for them. The reasons include the following:
-    - `status`: TiProxy performed [status-based load balancing](/tiproxy/tiproxy-load-balance.md#status-based-load-balancing).
-    - `label`: TiProxy performed [label-based load balancing](/tiproxy/tiproxy-load-balance.md#label-based-load-balancing).
-    - `health`: TiProxy performed [health-based load balancing](/tiproxy/tiproxy-load-balance.md#health-based-load-balancing).
-    - `memory`: TiProxy performed [memory-based load balancing](/tiproxy/tiproxy-load-balance.md#memory-based-load-balancing).
-    - `cpu`: TiProxy performed [CPU-based load balancing](/tiproxy/tiproxy-load-balance.md#cpu-based-load-balancing).
-    - `location`: TiProxy performed [location-based load balancing](/tiproxy/tiproxy-load-balance.md#location-based-load-balancing).
-    - `conn`: TiProxy performed [connection count-based load balancing](/tiproxy/tiproxy-load-balance.md#connection-count-based-load-balancing).
+- Backend Connections：每个 TiDB 实例和每个 TiProxy 实例之间的连接数。例如，`10.24.31.1:6000 | 10.24.31.2:4000` 表示 TiProxy 实例 `10.24.31.1:6000` 和 TiDB 实例 `10.24.31.2:4000`。
+- Session Migration OPM：每分钟发生的会话迁移数，记录从 TiDB 实例迁移到另一个 TiDB 实例的会话。例如，`succeed: 10.24.31.2:4000 => 10.24.31.3:4000` 表示从 TiDB 实例 `10.24.31.2:4000` 成功迁移到 TiDB 实例 `10.24.31.3:4000` 的会话数。
+- Session Migration Duration：会话迁移的平均、P95、P99 时长。
+- Session Migration Reasons：每分钟发生的会话迁移数，以及迁移的原因。原因包括：
+    - `status`：TiProxy 进行了[基于状态的负载均衡](/tiproxy/tiproxy-load-balance.md#基于状态的负载均衡)
+    - `label`：TiProxy 进行了[基于标签的负载均衡](/tiproxy/tiproxy-load-balance.md#基于标签的负载均衡)
+    - `health`：TiProxy 进行了[基于健康度的负载均衡](/tiproxy/tiproxy-load-balance.md#基于健康度的负载均衡)
+    - `memory`：TiProxy 进行了[基于内存的负载均衡](/tiproxy/tiproxy-load-balance.md#基于内存的负载均衡)
+    - `cpu`：TiProxy 进行了[基于 CPU 的负载均衡](/tiproxy/tiproxy-load-balance.md#基于-cpu-的负载均衡)
+    - `location`：TiProxy 进行了[基于地理位置的负载均衡](/tiproxy/tiproxy-load-balance.md#基于地理位置的负载均衡)
+    - `conn`：TiProxy 进行了[基于连接数的负载均衡](/tiproxy/tiproxy-load-balance.md#基于连接数的负载均衡)
 
 ## Backend
 
-- Get Backend Duration: the average, p95, p99 duration of TiProxy connecting to a TiDB instance
-- Ping Backend Duration: the network latency between each TiProxy instance and each TiProxy instance. For example, `10.24.31.1:6000 | 10.24.31.2:4000` indicates the network latency between TiProxy instance `10.24.31.1:6000` and TiDB instance `10.24.31.2:4000`
-- Health Check Cycle: the duration of a cycle of the health check between a TiProxy instance and all TiDB instances. For example, `10.24.31.1:6000` indicates the duration of the latest health check that TiProxy instance `10.24.31.1:6000` executes on all the TiDB instances. If this duration is higher than 3 seconds, TiProxy may not be timely to refresh the backend TiDB list
+- Get Backend Duration：TiProxy 连接到 TiDB 实例的平均、P95、P99 时长。
+- Ping Backend Duration：每个 TiProxy 实例和每个 TiProxy 实例之间的网络延迟。例如，`10.24.31.1:6000 | 10.24.31.2:4000` 表示 TiProxy 实例 `10.24.31.1:6000` 和 TiDB 实例 `10.24.31.2:4000` 之间的网络延迟。
+- Health Check Cycle：每个 TiProxy 实例和所有 TiDB 实例之间的健康检查周期。例如，`10.24.31.1:6000` 表示 TiProxy 实例 `10.24.31.1:6000` 在所有 TiDB 实例上执行的最新健康检查的持续时间。如果此持续时间大于 3 秒，则 TiProxy 可能无法及时刷新后端 TiDB 列表。
 
 ## Traffic
 
-- Bytes/Second from Backends: the amount of data, in bytes, sent from each TiDB instance to each TiProxy instance per second.
-- Packets/Second from Backends: the number of MySQL packets sent from each TiDB instance to each TiProxy instance per second.
-- Bytes/Second to Backends: the amount of data, in bytes, sent from each TiProxy instance to each TiDB instance per second.
-- Packets/Second to Backends: the number of MySQL packets sent from each TiProxy instance to each TiDB instance per second.
-- Cross Location Bytes/Second: the amount of data, in bytes, sent from each TiProxy instance to TiDB instances in different locations per second.
+- Bytes/Second from Backends：每个 TiDB 实例每秒向每个 TiProxy 实例发送的数据量，单位为字节。
+- Packets/Second from Backends：每个 TiDB 实例每秒向每个 TiProxy 实例发送的 MySQL 数据包数量。
+- Bytes/Second to Backends：每个 TiProxy 实例每秒向每个 TiDB 实例发送的数据量，单位为字节。
+- Packets/Second to Backends：每个 TiProxy 实例每秒向每个 TiDB 实例发送的 MySQL 数据包数量。
+- Cross Location Bytes/Second：每个 TiProxy 实例每秒与跨地理位置的 TiDB 实例之间传输的数据量，单位为字节。

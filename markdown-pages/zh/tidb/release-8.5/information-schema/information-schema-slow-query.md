@@ -1,38 +1,18 @@
 ---
 title: SLOW_QUERY
-summary: 了解 `SLOW_QUERY` INFORMATION_SCHEMA 表。
+summary: 了解 INFORMATION_SCHEMA 表 `SLOW_QUERY`。
 ---
 
 # SLOW_QUERY
 
-<CustomContent platform="tidb">
-
-`SLOW_QUERY` 表提供当前节点的慢查询信息，这些信息是 TiDB [慢日志文件](/tidb-configuration-file.md#slow-query-file)的解析结果。表中的列名与慢日志中的字段名一一对应。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-`SLOW_QUERY` 表提供当前节点的慢查询信息，这些信息是 TiDB [慢日志文件](https://docs.pingcap.com/tidb/stable/tidb-configuration-file#slow-query-file)的解析结果。表中的列名与慢日志中的字段名一一对应。
-
-</CustomContent>
-
-> **Note:**
->
-> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
-
-<CustomContent platform="tidb">
-
-关于如何使用该表定位有问题的语句并提升查询性能，请参见 [慢查询日志文档](/identify-slow-queries.md)。
-
-</CustomContent>
+`SLOW_QUERY` 表中提供了当前节点的慢查询相关的信息，其内容通过解析当前节点的 TiDB [慢查询日志](/tidb-configuration-file.md#slow-query-file)而来，列名和慢日志中的字段名是一一对应。关于如何使用该表调查和改善慢查询，请参考[慢查询日志文档](/identify-slow-queries.md)。
 
 ```sql
 USE INFORMATION_SCHEMA;
-DESC SLOW_QUERY;
+DESC slow_query;
 ```
 
-输出如下：
+输出结果示例如下：
 
 ```sql
 +-------------------------------+---------------------+------+------+---------+-------+
@@ -124,29 +104,19 @@ DESC SLOW_QUERY;
 82 rows in set (0.00 sec)
 ```
 
-`Query` 列的最大语句长度受 [`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-new-in-v40) 系统变量限制。
+`Query` 列的语句长度上限由系统变量 [`tidb_stmt_summary_max_sql_length`](/system-variables.md#tidb_stmt_summary_max_sql_length-从-v40-版本开始引入) 控制。
 
-`Session_connect_attrs` 列存储从慢日志中解析出的 JSON 格式的会话连接属性。TiDB 使用 [`performance_schema_session_connect_attrs_size`](/system-variables.md#performance_schema_session_connect_attrs_size-new-in-v857) 控制写入该字段的最大负载大小。
+`Session_connect_attrs` 列以 JSON 格式存储从慢日志解析出的会话连接属性。TiDB 通过 [`performance_schema_session_connect_attrs_size`](/system-variables.md#performance_schema_session_connect_attrs_size-从-v857-版本开始引入) 系统变量来控制写入此字段的最大负载大小。
 
-## CLUSTER_SLOW_QUERY 表
+## CLUSTER_SLOW_QUERY table
 
-`CLUSTER_SLOW_QUERY` 表提供整个集群所有节点的慢查询信息，这些信息是 TiDB 慢日志文件的解析结果。你可以像使用 `SLOW_QUERY` 表一样使用 `CLUSTER_SLOW_QUERY` 表。`CLUSTER_SLOW_QUERY` 表的表结构与 `SLOW_QUERY` 表的区别在于多了一个 `INSTANCE` 列。`INSTANCE` 列表示该慢查询信息所在的 TiDB 节点地址。
-
-> **Note:**
->
-> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
-
-<CustomContent platform="tidb">
-
-关于如何使用该表定位有问题的语句并提升查询性能，请参见 [慢查询日志文档](/identify-slow-queries.md)。
-
-</CustomContent>
+`CLUSTER_SLOW_QUERY` 表中提供了集群所有节点的慢查询相关的信息，其内容通过解析 TiDB 慢查询日志而来，该表使用上和 `SLOW_QUERY` 表一样。`CLUSTER_SLOW_QUERY` 表结构上比 `SLOW_QUERY` 多一列 `INSTANCE`，表示该行慢查询信息来自的 TiDB 节点地址。关于如何使用该表调查和改善慢查询，请参考[慢查询日志文档](/identify-slow-queries.md)。
 
 ```sql
 DESC CLUSTER_SLOW_QUERY;
 ```
 
-输出如下：
+输出结果示例如下：
 
 ```sql
 +-------------------------------+---------------------+------+------+---------+-------+
@@ -239,13 +209,13 @@ DESC CLUSTER_SLOW_QUERY;
 83 rows in set (0.00 sec)
 ```
 
-当查询集群系统表时，TiDB 并不会从所有节点拉取数据，而是将相关计算下推到其他节点。执行计划如下：
+查询集群系统表时，TiDB 也会将相关计算下推给其他节点执行，而不是把所有节点的数据都取回来，可以查看执行计划，如下：
 
 ```sql
 DESC SELECT COUNT(*) FROM CLUSTER_SLOW_QUERY WHERE user = 'u1';
 ```
 
-输出如下：
+输出结果示例如下：
 
 ```sql
 +----------------------------+----------+-----------+--------------------------+------------------------------------------------------+
@@ -259,9 +229,9 @@ DESC SELECT COUNT(*) FROM CLUSTER_SLOW_QUERY WHERE user = 'u1';
 4 rows in set (0.00 sec)
 ```
 
-在上述执行计划中，`user = u1` 条件被下推到其他（`cop`）TiDB 节点，聚合算子也被下推（图中的 `StreamAgg` 算子）。
+上面执行计划表示，会将 `user = u1` 条件下推给其他的 (`cop`) TiDB 节点执行，也会把聚合算子（即上面输出结果中的 `StreamAgg` 算子）下推。
 
-目前，由于系统表没有统计信息，有时某些聚合算子无法下推，导致执行较慢。此时，你可以手动指定 SQL HINT，将聚合算子下推。例如：
+目前由于没有对系统表收集统计信息，所以有时会导致某些聚合算子不能下推，导致执行较慢，用户可以通过手动指定聚合下推的 SQL HINT 来将聚合算子下推，示例如下：
 
 ```sql
 SELECT /*+ AGG_TO_COP() */ COUNT(*) FROM CLUSTER_SLOW_QUERY GROUP BY user;
@@ -269,7 +239,7 @@ SELECT /*+ AGG_TO_COP() */ COUNT(*) FROM CLUSTER_SLOW_QUERY GROUP BY user;
 
 ## 查看执行信息
 
-通过在 `SLOW_QUERY` 表上执行 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md) 查询，你可以获得数据库获取慢查询信息的详细过程信息。但在 `CLUSTER_SLOW_QUERY` 表上执行 `EXPLAIN ANALYZE` 时**不会**返回这些信息。
+通过对 `SLOW_QUERY` 表执行 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md)，你可以获取数据库如何检索慢查询信息的详情。然而，如果对 `CLUSTER_SLOW_QUERY` 表执行 `EXPLAIN ANALYZE`，将无法获取这些信息。
 
 示例：
 
@@ -283,7 +253,7 @@ EXPLAIN ANALYZE SELECT * FROM INFORMATION_SCHEMA.SLOW_QUERY LIMIT 1\G
        estRows: 1.00
        actRows: 1
           task: root
- access object: 
+ access object:
 execution info: time:3.46ms, loops:2, RU:0.000000
  operator info: offset:0, count:1
         memory: N/A
@@ -301,7 +271,7 @@ execution info: time:3.45ms, loops:1, initialize: 55.5µs, read_file: 1.21ms, pa
 2 rows in set (0.01 sec)
 ```
 
-在输出结果中，可以关注 `execution info` 部分的以下字段（为便于阅读已格式化）：
+在输出中，查看 `execution info` 中的以下字段（为便于阅读，这些字段的格式已优化）：
 
 ```
 initialize: 55.5µs,
@@ -315,12 +285,12 @@ read_file: 1,
 read_size: 4.06 MB
 ```
 
-| 字段 | 说明 |
+| 字段 | 描述 |
 |---|---|
-| `initialize` | 初始化所花费的时间 |
-| `read_file` | 读取慢日志文件所花费的时间 |
-| `parse_log.time` | 解析慢日志文件所花费的时间 |
-| `parse_log.concurrency` | 解析慢日志文件的并发度（由 [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency) 设置） |
+| `initialize` | 用于初始化的时间 |
+| `read_file` | 用于读取慢日志文件的时间 |
+| `parse_log.time` | 用于解析慢日志文件的时间 |
+| `parse_log.concurrency` | 解析慢日志文件的并发度（由 [`tidb_distsql_scan_concurrency`](/system-variables.md#tidb_distsql_scan_concurrency) 控制） |
 | `total_file` | 慢日志文件的总数 |
-| `read_file` | 实际读取的慢日志文件数 |
+| `read_file` | 已读取的慢日志文件数 |
 | `read_size` | 从日志文件中读取的字节数 |

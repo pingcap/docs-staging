@@ -1,89 +1,83 @@
 ---
-title: TiDB Dashboard Metrics Relation Graph
-summary: TiDB Dashboard introduces a feature called metrics relation graph, which helps users understand the duration of each internal process in a TiDB cluster. After logging in, users can access the graph and see the proportion of each monitoring metric's duration to the total query duration. Each box area represents a monitoring metric and provides information such as the total duration and proportion to the total query duration. The graph also illustrates the parent-child relations between nodes, helping users understand the relations of each monitoring metric.
+title: TiDB Dashboard 监控关系图
+summary: 了解 TiDB Dashboard 监控关系图
 ---
 
-# TiDB Dashboard Metrics Relation Graph
+# TiDB Dashboard 监控关系图
 
-TiDB Dashboard metrics relation graph is a feature introduced in v4.0.7. This feature presents a relation graph of the monitoring data of each internal process's duration in a TiDB cluster. The aim is to help you quickly understand the duration of each process and their relations.
+TiDB Dashboard 监控关系图是 TiDB v4.0.7 起提供的新功能，可以将集群中各个内部流程的耗时监控数据绘制为关系图，帮助用户快速了解集群中各个环节的耗时及关系。
 
-## Access graph
+## 访问关系图
 
-After logging in to TiDB Dashboard, click **Cluster Diagnostics** in the left navigation menu, and you can see the page of generating the metrics relation graph.
+登录 TiDB Dashboard 后点击左侧导航的**集群诊断** (Cluster Diagnostics) 可以进入此功能页面：
 
-![Metrics relation graph homepage](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-home-v650.png)
+![生成监控关系图首页](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-home-v650.png)
 
-After setting **Range Start Time** and **Range Duration**, click **Generate Metrics Relation** and you will enter the page of metrics relation graph.
+设置**区间起始时间** (Range Start Time) 和**区间长度** (Range Duration) 参数后，点击**生成监控关系图** (Generate Metrics Relation) 按钮后，会进入监控关系图页面。
 
-## Understand graph
+## 关系图解读
 
-The following image is an example of the metrics relation graph. This graph illustrates the proportion of each monitoring metric's duration to the total query duration in a TiDB cluster within 5 minutes after 2020-07-29 16:36:00. The graph also illustrates the relations of each monitoring metric.
+下面是一份监控耗时关系图示例，描述的是某个 TiDB 集群在 2020-07-29 16:36:00 开始往后 5 分钟内，TiDB 集群中各个监控的总耗时比例，以及各项监控之间的关系。
 
-![Metrics relation graph example](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-example.png)
+![监控关系图示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-example.png)
 
-For example, the node meaning of the `tidb_execute` monitoring metric is as follows:
+例如以下 `tidb_execute` 节点监控图表示：`tidb_execute` 监控项的总耗时为 19306.46 秒，占总查询耗时的 89.4%，其中 `tidb_execute` 节点自身的耗时是 9070.18 秒，占总查询耗时的 42%。将鼠标悬停在该方框上，可以看到监控项的注释说明，总耗时、平均耗时、平均 P99 耗时等详细信息。
 
-+ The total duration of the `tidb_execute` monitoring metric is 19306.46 seconds, which accounts for 89.4% of the total query duration.
-+ The duration of the `tidb_execute` node itself is 9070.18 seconds, which accounts for 42% of the total query duration.
-+ Hover your mouse over the box area, and you can see the detailed information of the metric, including the total duration, the average duration, and the average P99 (99th percentile) duration.
+![监控关系图 tidb_execute 节点示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example.png)
 
-![tidb_execute node example](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example.png)
+### 节点的含义
 
-### Node information
+每个方框节点代表一个监控项，包含了以下信息：
 
-Each box area represents a monitoring metric and provides the following information:
+* 监控项的名称
+* 监控项的总耗时
+* 监控项总耗时和查询总耗时的比例
 
-* The name of the monitoring metric
-* The total duration of the monitoring metric
-* The proportion of the metric's total duration to the total query duration
+`节点监控的总耗时 = 节点自身的耗时 + 子节点的耗时`，所以某些节点监控图会显示节点自身的耗时和总耗时的比例。例如 `tidb_execute` 监控：
 
-*The total duration of the metric node* = *the duration of the metric node itself* + *the duration of its child nodes*. Therefore, the metric graph of some nodes displays the proportion of the node itself's duration to the total duration, such as the graph of `tidb_execute`.
+![监控关系图 tidb_execute 节点示例](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example1.png)
 
-![tidb_execute node example1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example1.png)
+* `tidb_execute` 是监控项的名字。该监控是指一条 SQL 请求在 TiDB 执行引擎中的执行耗时。
+* `19306.46s` 表示 `tidb_execute` 监控项消耗的总时间为 19306.46 秒。`89.40%` 表示 19306.46 秒占所有 SQL 查询总耗时（包括用户 SQL 和 TiDB 内部的 SQL）的比例为 89.40%。查询总耗时是 `tidb_query` 监控项的总耗时。
+* `9070.18s` 表示 `tidb_execute` 节点自身总执行耗时是 9070.18 秒，其余部分是被其子节点消耗的时间。`42.00%` 表示 9070.18 秒占所有查询总耗时的比例为 42.00%。
 
-* `tidb_execute` is the name of the monitoring metric, which represents the execution duration of a SQL query in the TiDB execution engine.
-* `19306.46s` represents that total duration of the `tidb_execute` metric is 19306.46 seconds. `89.40%` represents that 19306.46 seconds account for 89.40% of the total time consumed for all SQL queries (including user SQL queries and TiDB's internal SQL queries). The total query duration is the total duration of `tidb_query`.
-* `9070.18s` represents that the total execution duration of the `tidb_execute` node itself is 9070.18 seconds, and the rest is the time consumed by its child nodes. `42.00%` represents that 9070.18 seconds account for 42.00% of the total query duration of all queries.
+将鼠标悬停在该节点后，会显示监控项的更多详细信息：
 
-Hover your mouse over the box area and you can see more details of the `tidb_execute` metric node:
+![监控关系图 tidb_execute 节点注释](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-node-example2.png)
 
-![tidb_execute node example2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-node-example2.png)
+上图信息为该项监控的注释说明，包括总耗时、总次数、平均耗时和平均 P99、P90、P80 耗时。
 
-The text information displayed in the image above is the description of the metric node, including the total duration, the total times, the average duration, and the average duration P99, P90, and P80.
+### 监控项之间的父子关系
 
-### The parent-child relations between nodes
+下面以 `tidb_execute` 监控为例介绍该监控项相关的子节点：
 
-Taking the `tidb_execute` metric node as an example, this section introduces a metric's child nodes.
+![监控关系图 tidb_execute 节点注释](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example1.png)
 
-![tidb_execute node relation example1](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-relation-example1.png)
+可以看到，`tidb_execute` 包含两个子节点，分别是：
 
-From the graph above, you can see the two child nodes of `tidb_execute`:
+* `pd_start_tso_wait`：等待事务 `start_tso` 的耗时，其总耗时是 300.66 秒。
+* `tidb_txn_cmd`：TiDB 执行事务相关命令的耗时，其总耗时是 9935.62 秒。
 
-* `pd_start_tso_wait`: The total duration of waiting for the transaction's `start_tso`, which is 300.66 seconds.
-* `tidb_txn_cmd`: The total duration of TiDB executing the relevant transaction commands, which is 9935.62 seconds.
+另外，`tidb_execute` 还有一条虚线箭头指向 `tidb_cop` 监控，这里虚线箭头的含义如下：
 
-In addition, `tidb_execute` also has a dotted arrow pointing to the `tidb_cop` box area, which indicates as follows:
+`tidb_execute` 包含 `tidb_cop` 监控的耗时，但是 cop 请求有可能并发执行。例如对两个表的进行 `join` 查询的 `execute` 耗时为 60 秒，其中 `join` 的两个表会并行地执行 cop 扫表请求。假如 cop 请求执行时间分别为 40 秒和 30 秒，那 cop 请求的总耗时是 70 秒，但是 `execute` 执行耗时只有 60 秒。所以如果父节点的耗时不完全包含子节点的耗时，就用虚线箭头来指向子节点。
 
-`tidb_execute` includes the duration of the `tidb_cop` metric, but `cop` requests might be executed concurrently. For example, the `execute` duration of performing `join` queries on two tables is 60 seconds, during which table scan requests are concurrently executed on the joined two tables. If the execution durations of `cop` requests are respectively 40 seconds and 30 seconds, the total duration of `cop` requests are 70 seconds. However, the `execute` duration is only 60 seconds. Therefore, if the duration of a parent node does not completely include the duration of a child node, the dotted arrow is used to point to the child node.
-
-> **Note:**
+> **注意：**
 >
-> When a node have a dotted arrow pointing to its child node, the duration of this node itself is inaccurate. For example, in the `tidb_execute` node, the duration of the node itself is 9070.18 seconds (`9070.18 = 19306.46 - 300.66 - 9935.62`). In this equation, the duration of the `tidb_cop` child node is not calculated into the duration of `tidb_execute`'s child nodes. But in fact, this is not true. 9070.18 seconds, the duration of `tidb_execute` itself, includes a part of the `tidb_cop` duration, and the duration of this part cannot be determined.
+> 当节点有虚线箭头指向的子节点时，该节点的本身的耗时是不准确的。例如 `tidb_execute` 监控中，`tidb_execute` 节点本身的耗时为 `9070.18 = 19306.46 - 300.66 - 9935.62`。这里 `tidb_cop` 节点的耗时并不会计入子节点耗时的计算，但实际上，`tidb_execute` 监控本身的耗时 9070.18 秒中包含了 `tidb_cop` 一部分监控节点的耗时，但无法确认具体包含了多少耗时。
 
-### `tidb_kv_request` and its parent nodes
+### `tidb_kv_request` 及其父节点
 
-![tidb_execute node relation example2](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-metrics-relation-relation-example2.png)
+![监控关系图虚线节点关系](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-metrics-relation-relation-example2.png)
 
-`tidb_cop` and `tidb_txn_cmd.get`, the parent nodes of `tidb_kv_request`, both have dotted arrows pointing to `tidb_kv_request`, which indicates as follows:
+`tidb_kv_request` 的父节点 `tidb_cop` 和 `tidb_txn_cmd.get` 都用虚拟箭头指向 `tidb_kv_request`，这里表示：
 
-* The duration of `tidb_cop` includes a part of `tidb_kv_request`'s duration.
-* The duration of `tidb_txn_cmd.get` also includes a part of `tidb_kv_request`'s duration.
+* `tidb_cop` 的耗时包含部分 `tidb_kv_request` 的耗时
+* `tidb_txn_cmd.get` 的耗时也包含部分的 `tidb_kv_request` 的耗时。
 
-However, it is hard to determine how much duration of `tidb_kv_request` is included in `tidb_cop`.
+但是 `tidb_cop` 具体有多少耗时是 `tidb_kv_request` 消耗的，无法进行确认。
 
-* `tidb_kv_request.Get`: The duration of TiDB sending the `Get` type key-value requests.
-* `tidb_kv_request.Cop`: The duration of TiDB sending the `Cop` type key-value requests.
+* `tidb_kv_request.Get`：TiDB 发送 Get 类型的 kv 请求的耗时。
+* `tidb_kv_request.Cop`：TiDB 发送 Cop 类型的 kv 请求的耗时。
 
-`tidb_kv_request` does not include `tidb_kv_request.Get` and `tidb_kv_request.Cop` nodes as its child nodes, but consists of the latter two nodes. The name prefix of the child node is the name of the parent node plus `.xxx`, which means that the child node is the sub-class of the parent node. You can understand this case in the following way:
-
-The total duration of TiDB sending key-value requests is 14745.07 seconds, during which the key-value requests for the `Get` and `Cop` types respectively consume 9798.02 seconds and 4946.46 seconds.
+`tidb_kv_request` 与 `tidb_kv_request.Get` 和 `tidb_kv_request.Cop` 并不是父节点包含子节点的关系，而是组成关系。子节点的名称前缀是父节点的名称加上 `.xxx`，即为父节点的子类。这里可以理解为，TiDB 发送 kv 请求的总耗时为 14745.07 秒，其中 `Get` 和 `Cop` 类型的 kv 请求的总耗时分别为 9798.02 秒和 4946.46 秒。

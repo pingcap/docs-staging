@@ -1,42 +1,40 @@
 ---
 title: tiup dm scale-in
-summary: The tiup dm scale-in command is used to scale in the cluster by taking the service offline and removing the specified node from the cluster. The syntax is "tiup dm scale-in <cluster-name> [flags]". Options include -N, --force, and -h for specifying nodes, forcing removal of down nodes, and printing help information. The output is the log of scaling in.
+summary: tiup dm scale-in 命令用于集群缩容，即下线服务并移除指定节点和相关文件。语法为 tiup dm scale-in <cluster-name>，其中 <cluster-name> 为集群名。选项包括 -N, --node（必须非空，选择要缩容的节点），--force（强制移除宕机节点），-h, --help（输出帮助信息）。输出为缩容日志。
 ---
 
 # tiup dm scale-in
 
-The `tiup dm scale-in` command is used to scale in the cluster. Scaling in the cluster means taking the service offline, which eventually removes the specified node from the cluster and deletes the remaining related files.
+`tiup dm scale-in` 命令用于集群缩容，缩容即下线服务，最终会将指定的节点从集群中移除，并删除遗留的相关文件。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm scale-in <cluster-name> [flags]
 ```
 
-`<cluster-name>`: the name of the cluster to operate on. If you forget the cluster name, you can check it with the [cluster list](/tiup/tiup-component-dm-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可查看[集群列表](/tiup/tiup-component-dm-list.md)。
 
-## Options
+## 选项
 
-### -N, --node
+### -N, --node（strings，无默认值，必须非空）
 
-- Specifies the nodes to be scaled in. If you need to scale in multiple nodes, split them by commas.
-- Data type: `STRINGS`
-- Default: no. This option is mandatory and the value must be not null.
+选择要缩容的节点，若缩容多个节点，以逗号分割。
 
 ### --force
 
-- In some cases, some scale-in nodes in the cluster have been down, making it impossible to connect to the node through SSH for operation. At this time, you can use the `--force` option to remove these nodes from the cluster.
-- Data type: `BOOLEAN`
-- Default: false. If this option is not specified in the command, the specified nodes are not forcibly removed.
+- 在某些情况下，有可能被缩容的节点宿主机已经宕机，导致无法通过 SSH 连接到节点进行操作，这个时候可以通过 `--force` 选项强制将其从集群中移除。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- Default: false
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The log of scaling in.
+缩容日志
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

@@ -1,42 +1,21 @@
 ---
-title: 不稳定的结果集
-summary: 学习如何处理不稳定的结果集错误。
+title: 结果集不稳定
+summary: 结果集不稳定错误的处理办法。
+aliases: ['/zh/tidb/dev/unstable-result-set','/zh/tidb/stable/dev-guide-unstable-result-set/','/zh/tidb/dev/dev-guide-unstable-result-set/','/zh/tidbcloud/dev-guide-unstable-result-set/']
 ---
 
-# 不稳定的结果集
+# 结果集不稳定
 
-本文档描述了如何解决不稳定的结果集错误。
+本章将叙述结果集不稳定错误的处理办法。
 
-## GROUP BY
+## group by
 
-为了方便起见，MySQL “扩展” 了 `GROUP BY` 语法，允许 `SELECT` 子句引用未在 `GROUP BY` 子句中声明的非聚合字段，即所谓的 `NON-FULL GROUP BY` 语法。在其他数据库中，这被视为语法 **_错误_**，因为它会导致不稳定的结果集。
+出于便捷的考量，MySQL “扩展” 了 group by 语法，使 select 子句可以引用未在 group by 子句中声明的非聚集字段，也就是 non-full group by 语法。在其他数据库中，这被认为是一种语法错误，因为这会导致结果集不稳定。
 
-例如，你有两个表：
-
-- `stu_info` 存储学生信息
-- `stu_score` 存储学生考试成绩。
-
-然后你可以写出如下的 SQL 查询语句：
+在下例的 3 条 SQL 语句中，第一条 SQL 使用了 full group by 语法，所有在 select 子句中引用的字段，都在 group by 子句中有所声明，所以它的结果集是稳定的，可以看到 class 与 stuname 的全部组合共有三种；第二条与第三条是同一个 SQL，但它在两次执行时得到了不同的结果，这条 SQL 的 group by 子句中仅声明了一个 class 字段，因此结果集只会针对 class 进行聚集，class 的唯一值有两个，也就是说结果集中只会包含两行数据，而 class 与 stuname 的全部组合共有三种，班级 2018_CS_03 有两位同学，每次执行时返回哪位同学是没有语义上的限制的，都是符合语义的结果。
 
 ```sql
-SELECT
-    `a`.`class`,
-    `a`.`stuname`,
-    max( `b`.`courscore` )
-FROM
-    `stu_info` `a`
-    JOIN `stu_score` `b` ON `a`.`stuno` = `b`.`stuno`
-GROUP BY
-    `a`.`class`,
-    `a`.`stuname`
-ORDER BY
-    `a`.`class`,
-    `a`.`stuname`;
-```
-
-结果：
-
-```sql
+mysql> SELECT a.class, a.stuname, max(b.courscore) from stu_info a join stu_score b on a.stuno=b.stuno group by a.class, a.stuname order by a.class, a.stuname;
 +------------+--------------+------------------+
 | class      | stuname      | max(b.courscore) |
 +------------+--------------+------------------+
@@ -45,54 +24,30 @@ ORDER BY
 | 2018_CS_03 | SpongeBob    |             95.0 |
 +------------+--------------+------------------+
 3 rows in set (0.00 sec)
-```
 
-`a`.`class` 和 `a`.`stuname` 字段在 `GROUP BY` 语句中已明确指定，所选择的列为 `a`.`class`、`a`.`stuname` 和 `b`.`courscore`。唯一未在 `GROUP BY` 条件中的列 `b`.`courscore`，通过 `max()` 函数指定了唯一值。满足此 SQL 语句的 **_ONLY ONE_** 结果没有歧义，这被称为 `FULL GROUP BY` 语法。
-
-反例是 `NON-FULL GROUP BY` 语法。例如，在这两个表中，写出以下 SQL 查询（删除 `a`.`stuname` 在 `GROUP BY` 中）：
-
-```sql
-SELECT
-    `a`.`class`,
-    `a`.`stuname`,
-    max( `b`.`courscore` )
-FROM
-    `stu_info` `a`
-    JOIN `stu_score` `b` ON `a`.`stuno` = `b`.`stuno`
-GROUP BY
-    `a`.`class`
-ORDER BY
-    `a`.`class`,
-    `a`.`stuname`;
-```
-
-此时会返回两个符合此 SQL 的值。
-
-第一个返回值：
-
-```sql
-+------------+--------------+------------------------+
-| class      | stuname      | max( `b`.`courscore` ) |
-+------------+--------------+------------------------+
-| 2018_CS_01 | MonkeyDLuffy |                   95.5 |
-| 2018_CS_03 | PatrickStar  |                   99.0 |
-+------------+--------------+------------------------+
-```
-
-第二个返回值：
-
-```sql
+mysql> select a.class, a.stuname, max(b.courscore) from stu_info a join stu_score b on a.stuno=b.stuno group by a.class order by a.class, a.stuname;
 +------------+--------------+------------------+
 | class      | stuname      | max(b.courscore) |
 +------------+--------------+------------------+
 | 2018_CS_01 | MonkeyDLuffy |             95.5 |
 | 2018_CS_03 | SpongeBob    |             99.0 |
 +------------+--------------+------------------+
+2 rows in set (0.01 sec)
+
+mysql> select a.class, a.stuname, max(b.courscore) from stu_info a join stu_score b on a.stuno=b.stuno group by a.class order by a.class, a.stuname;
++------------+--------------+------------------+
+| class      | stuname      | max(b.courscore) |
++------------+--------------+------------------+
+| 2018_CS_01 | MonkeyDLuffy |             95.5 |
+| 2018_CS_03 | PatrickStar  |             99.0 |
++------------+--------------+------------------+
+2 rows in set (0.01 sec)
+
 ```
 
-出现两个结果的原因是你**_没有_** 指定如何获取 `a`.`stuname` 字段的值，两个结果都符合 SQL 语义，导致结果不稳定。因此，为了保证 `GROUP BY` 语句的结果稳定性，应使用 `FULL GROUP BY` 语法。
+因此，想保障 group by 语句结果集的稳定，请使用 full group by 语法。
 
-MySQL 提供了 `sql_mode` 开关 `ONLY_FULL_GROUP_BY` 来控制是否启用 `FULL GROUP BY` 语法。TiDB 也兼容此 `sql_mode` 开关。
+MySQL 提供了一个 SQL_MODE 开关 ONLY_FULL_GROUP_BY 来控制是否进行 full group by 语法的检查，TiDB 也兼容了这个 SQL_MODE 开关：
 
 ```sql
 mysql> select a.class, a.stuname, max(b.courscore) from stu_info a join stu_score b on a.stuno=b.stuno group by a.class order by a.class, a.stuname;
@@ -111,15 +66,13 @@ mysql> select a.class, a.stuname, max(b.courscore) from stu_info a join stu_scor
 ERROR 1055 (42000): Expression #2 of ORDER BY is not in GROUP BY clause and contains nonaggregated column '' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
 ```
 
-**运行结果**：上述示例展示了在设置 `ONLY_FULL_GROUP_BY` 后的效果。
+**运行结果简述**：上例为 sql_mode 设置了 ONLY_FULL_GROUP_BY 的效果。
 
-## ORDER BY
+## order by
 
-在 SQL 语义中，只有使用 `ORDER BY` 语法，结果集才会按指定顺序输出。对于单实例数据库，由于数据存储在同一台服务器上，多次执行的结果通常是稳定的（没有数据重排）。一些数据库（尤其是 MySQL 的 InnoDB 存储引擎）甚至可以按照主键或索引的顺序输出结果集。
+在 SQL 的语义中，只有使用了 order by 语法才会保障结果集的顺序输出。而单机数据库由于数据都存储在一台服务器上，在不进行数据重组时，多次执行的结果往往是稳定的，有些数据库(尤其是 MySQL InnoDB 存储引擎)还会按照主键或索引的顺序进行结果集的输出。TiDB 是分布式数据库，数据被存储在多台服务器上，另外 TiDB 层不缓存数据页，因此不含 order by 的 SQL 语句的结果集展现顺序容易被感知到不稳定。想要按顺序输出的结果集，需明确地把要排序的字段添加到 order by 子句中，这符合 SQL 的语义。
 
-作为分布式数据库，TiDB 将数据存储在多台服务器上。此外，TiDB 层不会缓存数据页，因此没有 `ORDER BY` 的 SQL 语句的结果集顺序很容易被感知为不稳定。为了输出有序的结果集，你需要显式在 `ORDER BY` 子句中添加排序字段，这符合 SQL 语义。
-
-在以下示例中，只在 `ORDER BY` 中添加了一个字段，TiDB 仅按该字段排序结果。
+在下面的案例中，用户只在 order by 子句中添加了一个字段，TiDB 只会按照这一个字段进行排序。
 
 ```sql
 mysql> select a.class, a.stuname, b.course, b.courscore from stu_info a join stu_score b on a.stuno=b.stuno order by a.class;
@@ -164,17 +117,18 @@ mysql> select a.class, a.stuname, b.course, b.courscore from stu_info a join stu
 | 2018_CS_03 | PatrickStar  | Physics                 |       6.0 |
 +------------+--------------+-------------------------+-----------+
 36 rows in set (0.01 sec)
+
 ```
 
-当 `ORDER BY` 的值相同时，结果会不稳定。为了减少随机性，`ORDER BY` 的值应具有唯一性。如果不能保证唯一性，则需要添加更多的 `ORDER BY` 字段，直到 `ORDER BY` 字段的组合在排序中唯一，结果才会稳定。
+当 order by 值相同时，结果会不稳定。为了减少随机性，order by 值应该是唯一的。如果不能保证唯一性，则需要添加更多的 order by 字段，直到 order by 字段的组合是唯一的，这样结果才会稳定。
 
-## `GROUP_CONCAT()` 中未使用 `ORDER BY` 导致结果不稳定
+## 由于 group_concat() 中没有使用 order by 导致结果集不稳定
 
-结果集不稳定的原因是 TiDB 从存储层并行读取数据，因此没有 `ORDER BY` 的 `GROUP_CONCAT()` 返回的结果集顺序很容易被感知为不稳定。
+结果集不稳定是因为 TiDB 是并行地从存储层读取数据，所以 `group_concat()` 在不加 order by 的情况下得到的结果集展现顺序容易被感知到不稳定。
 
-为了让 `GROUP_CONCAT()` 按顺序输出结果集，你需要在 `ORDER BY` 子句中添加排序字段，这符合 SQL 语义。在以下示例中，`GROUP_CONCAT()` 拼接 `customer_id` 时未使用 `ORDER BY`，导致结果集不稳定。
+`group_concat()` 要获取到按顺序输出的结果集，需要把用于排序的字段添加到 order by 子句中，这样才符合 SQL 的语义。在下面的案例中，使用 `group_concat()` 不加 order by 的情况下拼接 customer_id，造成结果集不稳定：
 
-1. 不包含 `ORDER BY`
+1. 不加 order by
 
     第一次查询：
 
@@ -200,7 +154,7 @@ mysql> select a.class, a.stuname, b.course, b.courscore from stu_info a join stu
     +-------------------------------------------------------------------------+
     ```
 
-2. 包含 `ORDER BY`
+2. 加 order by
 
     第一次查询：
 
@@ -226,20 +180,6 @@ mysql> select a.class, a.stuname, b.course, b.courscore from stu_info a join stu
     +-------------------------------------------------------------------------+
     ```
 
-## 在 `SELECT * FROM T LIMIT N` 中结果不稳定
+## select \* from t limit n 的结果不稳定
 
-返回的结果与存储节点（TiKV）上的数据分布有关。如果执行多次查询，不同存储单元（Region）返回结果的速度不同，可能导致结果不稳定。
-
-## 需要帮助？
-
-<CustomContent platform="tidb">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或[提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>
+返回结果与数据在存储节点 (TiKV) 上的分布有关。如果进行了多次查询，存储节点 (TiKV) 不同存储单元 (Region) 返回结果的速度不同，会造成结果不稳定。

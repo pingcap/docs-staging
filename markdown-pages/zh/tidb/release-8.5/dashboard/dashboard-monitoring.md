@@ -1,178 +1,171 @@
 ---
-title: TiDB Dashboard Monitoring Page
-summary: The TiDB Dashboard Monitoring Page allows users to analyze performance efficiently and identify database bottlenecks. Key metrics include database time, SQL execution time, QPS, connection count, TiDB and TiKV CPU, duration, connection idle duration, parse, compile, and execute duration, TiDB KV request duration, TiKV gRPC duration, PD TSO wait/RPC duration, storage async write duration, store duration, apply duration, append log duration, commit log duration, and apply log duration.
+title: TiDB Dashboard 监控页面
+summary: 介绍如何通过 TiDB Dashboard 监控页面查看 Performance Overview 面板，以及如何理解面板上的关键指标项。
 ---
 
-# TiDB Dashboard Monitoring Page
+# TiDB Dashboard 监控页面
 
-On the monitoring page, you can view the Performance Overview dashboard, a performance analysis and tuning tool introduced in TiDB v6.1.0. With the Performance Overview dashboard, you can analyze performance efficiently, and confirm whether the bottleneck of user response time is in the database. If the bottleneck is in the database, you can identify the bottleneck inside the database, with database time overview, workload profile and SQL latency breakdown. For details, see [Performance Analysis and Tuning](/performance-tuning-methods.md).
+从 TiDB Dashboard 监控页面，你可以查看性能分析和优化工具 Performance Overview 面板。借助 Performance Overview 面板，你可以高效地进行性能分析，确认用户响应时间的瓶颈是否在数据库中。如果数据库是整个系统的瓶颈，你可以通过数据库时间概览和 SQL 延迟的分解，定位数据库内部的瓶颈点。详情请参考 [TiDB 性能分析和优化方法](/performance-tuning-methods.md)。
 
-## Access the page
+## 访问页面
 
-Log in to TiDB dashboard and click **Monitoring** from the left navigation bar. The Performance Overview dashboard is displayed.
+登录 Dashboard 后点击左侧导航的 **Monitoring** （监控）可以进入此功能页面：
 
-![Monitoring page](https://docs-download.pingcap.com/media/images/docs/dashboard/dashboard-monitoring.png)
+![Monitoring page](https://docs-download.pingcap.com/media/images/docs-cn/dashboard/dashboard-monitoring.png)
 
-If the TiDB cluster is deployed using TiUP, you can also view the Performance Overview dashboard on Grafana. In this deployment mode, the monitoring system (Prometheus & Grafana) is deployed at the same time. For more information, see [TiDB Monitoring Framework Overview](/tidb-monitoring-framework.md).
+如果你使用 TiUP 部署 TiDB，你也可以在 Grafana 上查看 Performance Overview 面板。监控架构参见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
 
-![performance overview](https://docs-download.pingcap.com/media/images/docs/performance/grafana_performance_overview.png)
+![performance overview](https://docs-download.pingcap.com/media/images/docs-cn/performance/grafana_performance_overview.png)
 
-## Key Metrics on Performance Overview
+## 面板监控指标详解
 
-The Performance Overview dashboard orchestrates the metrics of TiDB, PD, and TiKV, and presents each of them in the following sections:
+Performance Overview 面板按总分结构对 TiDB、TiKV 和 PD 的性能指标进行了编排组织，包含以下三部分内容：
 
-- **Overview**: Database time and SQL execution time summary. By checking different colors in the overview, you can quickly identify the database workload profile and the performance bottleneck.
+- **总体概览**：数据库时间和 SQL 执行时间概览。通过颜色优化法，你可以快速识别数据库负载特征和性能瓶颈。
+- **资源负载**：关键指标和资源利用率，包含数据库 QPS、应用和数据库的连接信息和请求命令类型、数据库内部 TSO 和 KV 请求 OPS、TiDB 和 TiKV 的资源使用概况。
+- **自上而下的延迟分解**：Query 延迟和连接空闲时间对比、Query 延迟分解、execute 阶段 TSO 请求和 KV 请求的延迟、TiKV 内部写延迟的分解等。
 
-- **Load profile**: Key metrics and resource usage, including database QPS, connection information, the MySQL command types the application interacts with TiDB, database internal TSO and KV request OPS, and resource usage of the TiKV and TiDB.
-
-- **Top-down latency breakdown**: Query latency versus connection idle time ratio, query latency breakdown, TSO/KV request latency during execution, breakdown of write latency within TiKV.
-
-The following sections illustrate the metrics on the Performance Overview dashboard.
+以下为 Performance Overview 面板监控说明：
 
 ### Database Time by SQL Type
 
-- `database time`: Total database time per second
-- `sql_type`: Database time consumed by each type of SQL statements per second
+- `database time`：每秒的总数据库时间
+- `sql_type`：每种 SQL 语句每秒消耗的数据库时间
 
 ### Database Time by SQL Phase
 
-- `database time`: Total database time per second
-- `get token/parse/compile/execute`: Database time consumed in four SQL processing phases
+- `database time`：每秒的总数据库时间
+- `get token/parse/compile/execute`：4 个 SQL 处理阶段每秒消耗的数据库时间
 
-The SQL execution phase is in green and other phases are in red on general. If non-green areas are large, it means much database time is consumed in other phases than the execution phase and further cause analysis is required.
+execute 执行阶段为绿色，其他三个阶段偏红色系，如果非绿色的颜色占比明显，意味着在执行阶段之外数据库消耗了过多时间，需要进一步分析根源。
 
 ### SQL Execute Time Overview
 
-- `execute time`: Database time consumed during SQL execution per second
-- `tso_wait`: Concurrent TSO waiting time per second during SQL execution
-- `kv request type`: Time waiting for each KV request type per second during SQL execution. The total KV request wait time might exceed SQL execution time, because KV requests are concurrent.
+- `execute time`：execute 阶段每秒消耗的数据库时间
+- `tso_wait`：execute 阶段每秒同步等待 TSO 的时间
+- `kv request type`：execute 阶段每秒等待每种 KV 请求类型的时间，总的 KV 请求等待时间可能超过 execute time，因为 KV 请求是并发的。
 
-Green metrics stand for common KV write requests (such as prewrite and commit), blue metrics stand for common read requests, and metrics in other colors stand for unexpected situations which you need to pay attention to. For example, pessimistic lock KV requests are marked red and TSO waiting is marked dark brown.
-
-If non-blue or non-green areas are large, it means there is a bottleneck during SQL execution. For example:
-
-- If serious lock conflicts occur, the red area will take a large proportion.
-- If excessive time is consumed in waiting TSO, the dark brown area will take a large proportion.
+绿色系标识代表常规的写 KV 请求（例如 Prewrite 和 Commit），蓝色系标识代表常规的读 KV 请求，其他色系标识需要注意的问题。例如，悲观锁加锁请求为红色，TSO 等待为深褐色。如果非蓝色系或者非绿色系占比明显，意味着执行阶段存在异常的瓶颈。例如，当发生严重锁冲突时，红色的悲观锁时间会占比明显；当负载中 TSO 等待的消耗时间过长时，深褐色会占比明显。
 
 ### QPS
 
-Number of SQL statements executed per second in all TiDB instances, collected by type: such as `SELECT`, `INSERT`, and `UPDATE`
+- `QPS`：按 `SELECT`、`INSERT`、`UPDATE` 等类型统计所有 TiDB 实例上每秒执行的 SQL 语句数量
 
 ### CPS By Type
 
-Number of commands processed by all TiDB instances per second based on type
+- `CPS By Type`：按照类型统计所有 TiDB 实例每秒处理的命令数（Command Per Second）
 
 ### Queries Using Plan Cache OPS
 
-Number of queries using plan cache per second in all TiDB instances
+- `Queries Using Plan Cache OPS`：所有 TiDB 实例每秒使用 Plan Cache 的查询数量
 
 ### KV/TSO Request OPS
 
-- kv request total: Total number of KV requests per second in all TiDB instances
-- kv request by type: Number of KV requests per second in all TiDB instances based on such types as `Get`, `Prewrite`, and `Commit`
-- tso - cmd: Number of gRPC requests per second that TiDB sends to PD in all TiDB instances; each gRPC request contains a batch of TSO requests
-- tso - request: Number of TSO requests per second in all TiDB instances
+- `kv request total`：所有 TiDB 实例每秒总的 KV 请求数量
+- `kv request by type`：按 `Get`、`Prewrite`、 `Commit` 等类型统计在所有 TiDB 实例每秒的请求数据
+- `tso - cmd`：所有 TiDB 实例每秒发送的 gRPC 请求的数量，每个 gRPC 请求包含一批 (batch) TSO 请求
+- `tso - request`：所有 TiDB 实例每秒的 TSO 请求数量
 
-Generally, `tso - request` divided by `tso - cmd` is the average size of TSO request batches per second.
+通常 tso - request 除以 tso - cmd 等于 TSO 请求 batch 的平均大小。
 
 ### Connection Count
 
-- `total`: Number of connections to all TiDB instances
-- `active connections`: Number of active connections to all TiDB instances
-- Number of connections to each TiDB instance
+- `total`：所有 TiDB 的连接数
+- `active connections`：所有 TiDB 总的活跃连接数
+- 各个 TiDB 实例的连接数
 
 ### TiDB CPU/Memory
 
-- `CPU-Avg`: Average CPU utilization across all TiDB instances
-- `CPU-Delta`: Maximum CPU utilization of all TiDB instances minus minimum CPU utilization of all TiDB instances
-- `CPU-Max`: Maximum CPU utilization across all TiDB instances
-- `CPU-Quota`: Number of CPU cores that can be used by TiDB
-- `Mem-Max`: Maximum memory utilization across all TiDB instances
+- `CPU-Avg`：所有 TiDB 实例的平均 CPU 利用率
+- `CPU-Delta`：所有 TiDB 实例中最大 CPU 利用率减去所有 TiDB 实例中最小 CPU 利用率
+- `CPU-Max`：所有 TiDB 实例中最大 CPU 利用率
+- `CPU-Quota`：TiDB 可以使用的 CPU 核数
+- `Mem-Max`：所有 TiDB 实例中最大内存利用率
 
 ### TiKV CPU/Memory
 
-- `CPU-Avg`: Average CPU utilization across all TiKV instances
-- `CPU-Delta`: Maximum CPU utilization of all TiKV instances minus minimum CPU utilization of all TiKV instances
-- `CPU-Max`: Maximum CPU utilization across all TiKV instances
-- `CPU-Quota`: Number of CPU cores that can be used by TiKV
-- `Mem-Max`: Maximum memory utilization across all TiKV instances
+- `CPU-Avg`：所有 TiKV 实例的平均 CPU 利用率
+- `CPU-Delta`：所有 TiKV 实例中最大 CPU 利用率减去所有 TiKV 实例中最小 CPU 利用率
+- `CPU-Max`：所有 TiKV 实例中最大 CPU 利用率
+- `CPU-Quota`：TiKV 可以使用的 CPU 核数
+- `Mem-Max`：所有 TiKV 实例中最大内存利用率
 
 ### PD CPU/Memory
 
-- `CPU-Max`: Maximum CPU utilization across all PD instances
-- `CPU-Quota`: Number of CPU cores that can be used by PD
-- `Mem-Max`: Maximum memory utilization across all PD instances
+- `CPU-Max`：所有 PD 实例中最大 CPU 利用率
+- `CPU-Quota`：PD 可以使用的 CPU 核数
+- `Mem-Max`：所有 PD 实例中最大内存利用率
 
 ### Read Traffic
 
-- `TiDB -> Client`: The outbound traffic statistics from TiDB to the client
-- `Rocksdb -> TiKV`: The data flow that TiKV retrieves from RocksDB during read operations within the storage layer
+- `TiDB -> Client`：从 TiDB 到客户端的出站流量统计
+- `Rocksdb -> TiKV`：TiKV 在存储层读操作过程中从 RocksDB 读取的数据流量
 
 ### Write Traffic
 
-- `Client -> TiDB`: The inbound traffic statistics from the client to TiDB
-- `TiDB -> TiKV: general`: The rate at which foreground transactions are written from TiDB to TiKV
-- `TiDB -> TiKV: internal`: The rate at which internal transactions are written from TiDB to TiKV
-- `TiKV -> Rocksdb`: The flow of write operations from TiKV to RocksDB
-- `RocksDB Compaction`: The total read and write I/O flow generated by RocksDB compaction operations
+- `Client -> TiDB`：从客户端到 TiDB 的入站流量统计
+- `TiDB -> TiKV: general`：前台事务从 TiDB 写入到 TiKV 的速率
+- `TiDB -> TiKV: internal`：后台事务从 TiDB 写入到 TiKV 的速率
+- `TiKV -> Rocksdb`：从 TiKV 写入到 RocksDB 的流量
+- `RocksDB Compaction`：RocksDB compaction 操作产生的总读写 I/O 流量。
 
 ### Duration
 
-- `Duration`: Execution time
+- `Duration`：执行时间解释
 
-    - The duration from receiving a request from the client to TiDB till TiDB executing the request and returning the result to the client. In general, client requests are sent in the form of SQL statements; however, this duration can include the execution time of commands such as `COM_PING`, `COM_SLEEP`, `COM_STMT_FETCH`, and `COM_SEND_LONG_DATA`.
-    - TiDB supports Multi-Query, which means the client can send multiple SQL statements at one time, such as `select 1; select 1; select 1;`. In this case, the total execution time of this query includes the execution time of all SQL statements.
+    - 从客户端网络请求发送到 TiDB，到 TiDB 执行结束后返回给客户端的时间。一般情况下，客户端请求都是以 SQL 语句的形式发送，但也可以包含 `COM_PING`、`COM_SLEEP`、`COM_STMT_FETCH`、`COM_SEND_LONG_DATA` 之类的命令执行时间。
+    - 由于 TiDB 支持 Multi-Query，因此，客户端可以一次性发送多条 SQL 语句，如 `select 1; select 1; select 1;`。此时的执行时间是所有 SQL 语句执行完成的总时间。
 
-- `avg`: Average time to execute all requests
-- `99`: P99 duration to execute all requests
-- `avg by type`: Average time to execute all requests in all TiDB instances, collected by type: `SELECT`, `INSERT`, and `UPDATE`
+- `avg`：所有请求命令的平均执行时间
+- `99`：所有请求命令的 P99 执行时间
+- `avg by type`：按 `SELECT`、`INSERT`、`UPDATE` 类型统计所有 TiDB 实例上所有请求命令的平均执行时间
 
 ### Connection Idle Duration
 
-Connection Idle Duration indicates the duration of a connection being idle.
+Connection Idle Duration 指空闲连接的持续时间。
 
-- `avg-in-txn`: Average connection idle duration when the connection is within a transaction
-- `avg-not-in-txn`: Average connection idle duration when the connection is not within a transaction
-- `99-in-txn`: P99 connection idle duration when the connection is within a transaction
-- `99-not-in-txn`: P99 connection idle duration when the connection is not within a transaction
+- `avg-in-txn`：处于事务中，空闲连接的平均持续时间
+- `avg-not-in-txn`：没有处于事务中，空闲连接的平均持续时间
+- `99-in-txn`：处于事务中，空闲连接的 P99 持续时间
+- `99-not-in-txn`：没有处于事务中，空闲连接的 P99 持续时间
 
-### Parse Duration, Compile Duration, and Execute Duration
+### Parse Duration、Compile Duration 和 Execute Duration
 
-- `Parse Duration`: Time consumed in parsing SQL statements
-- `Compile Duration`: Time consumed in compiling the parsed SQL AST to execution plans
-- `Execution Duration`: Time consumed in executing execution plans of SQL statements
+- `Parse Duration`：SQL 语句解析耗时统计
+- `Compile Duration`：将解析后的 SQL AST 编译成执行计划的耗时
+- `Execution Duration`：执行 SQL 语句执行计划耗时
 
-All these three metrics include the average duration and the 99th percentile duration in all TiDB instances.
+这三个时间指标均包含均所有 TiDB 实例的平均值和 P99 值。
 
 ### Avg TiDB KV Request Duration
 
-Average time consumed in executing KV requests in all TiDB instances based on the type, including `Get`, `Prewrite`, and `Commit`.
+按 `Get`、`Prewrite`、 `Commit` 等类型统计在所有 TiDB 实例 KV 请求的平均执行时间。
 
 ### Avg TiKV GRPC Duration
 
-Average time consumed in executing gRPC requests in all TiKV instances based on the type, including `kv_get`, `kv_prewrite`, and `kv_commit`.
+按 `get`、`kv_prewrite`、 `kv_commit` 等类型统计所有 TiKV 实例对 gRPC 请求的平均执行时间。
 
 ### PD TSO Wait/RPC Duration
 
-- `wait - avg`: Average time in waiting for PD to return TSO in all TiDB instances
-- `rpc - avg`: Average time from sending TSO requests to PD to receiving TSO in all TiDB instances
-- `wait - 99`: P99 time in waiting for PD to return TSO in all TiDB instances
-- `rpc - 99`: P99 time from sending TSO requests to PD to receiving TSO in all TiDB instances
+- `wait - avg`：所有 TiDB 实例等待从 PD 返回 TSO 的平均时间
+- `rpc - avg`：所有 TiDB 实例从向 PD 发送获取 TSO 的请求到接收到 TSO 的平均耗时
+- `wait - 99`：所有 TiDB 实例等待从 PD 返回 TSO 的 P99 时间
+- `rpc - 99`：所有 TiDB 实例从向 PD 发送获取 TSO 的请求到接收到 TSO 的 P99 耗时
 
-### Storage Async Write Duration, Store Duration, and Apply Duration
+### Storage Async Write Duration、Store Duration 和 Apply Duration
 
-- `Storage Async Write Duration`: Time consumed in asynchronous write
-- `Store Duration`: Time consumed in store loop during asynchronously write
-- `Apply Duration`: Time consumed in apply loop during asynchronously write
+- `Storage Async Write Duration`：异步写所花费的时间
+- `Store Duration`：异步写入过程中，在存储循环 (store loop) 中所花费的时间
+- `Apply Duration`：异步写入过程中，在应用循环 (apply loop) 中所花费的时间
 
-All these three metrics include the average duration and P99 duration in all TiKV instances.
+这三个时间指标都包含所有 TiKV 实例的平均值和 P99 值
 
-Average storage async write duration = Average store duration + Average apply duration
+平均 Storage async write duration = 平均 Store Duration + 平均 Apply Duration
 
-### Append Log Duration, Commit Log Duration, and Apply Log Duration
+### Append Log Duration、Commit Log Duration 和 Apply Log Duration
 
-- `Append Log Duration`: Time consumed by Raft to append logs
-- `Commit Log Duration`: Time consumed by Raft to commit logs
-- `Apply Log Duration`: Time consumed by Raft to apply logs
+- `Append Log Duration`：Raft append 日志所花费的时间
+- `Commit Log Duration`：Raft commit 日志所花费的时间
+- `Apply Log Duration`：Raft apply 日志所花费的时间
 
-All these three metrics include the average duration and P99 duration in all TiKV instances.
+这三个时间指标均包含所有 TiKV 实例的平均值和 P99 值。

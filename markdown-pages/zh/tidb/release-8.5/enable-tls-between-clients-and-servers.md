@@ -1,105 +1,98 @@
 ---
-title: Enable TLS Between TiDB Clients and Servers
-summary: Use secure connections to ensure data security.
+title: 为 TiDB 客户端服务端间通信开启加密传输
+summary: TiDB 服务端与客户端间默认采用非加密连接，容易造成信息泄露。建议使用加密连接确保安全性。要开启 TLS 加密传输，需要在服务端配置开启 TLS 支持，并在客户端应用程序中配置使用 TLS 加密连接。可以通过配置系统变量或在创建 / 修改用户时指定要求加密连接。可通过命令检查当前连接是否是加密连接。TLS 版本为 TLSv1.2 和 TLSv1.3，支持的加密算法包括 AES 和 CHACHA20_POLY1305。
 ---
 
-# Enable TLS between TiDB Clients and Servers
+# 为 TiDB 客户端服务端间通信开启加密传输
 
-By default, TiDB allows insecure connections between the server and clients. This enables third parties that monitor channel traffic to know and possibly modify the data sent and received between the server and the client, including query content and query results. If a channel is untrustworthy (such as if the client is connected to the TiDB server via a public network), an insecure connection is prone to information leakage. In this case, for security reasons, it is recommended to require a connection that is secured with TLS.
+默认情况下，TiDB 允许服务端与客户端之间的不安全连接，因而具备监视信道流量能力的第三方可以知悉 TiDB 服务端与客户端之间发送和接受的数据，包括但不限于查询语句内容、查询结果等。若信道是不可信的，例如客户端是通过公网连接到 TiDB 服务端的，则不安全连接容易造成信息泄露，建议使用 TLS 连接确保安全性。
 
-The TiDB server supports secure connections based on the TLS (Transport Layer Security) protocol. The protocol is consistent with MySQL secure connections and is directly supported by existing MySQL clients such as MySQL Client, MySQL Shell and MySQL drivers. TLS is sometimes referred to as SSL (Secure Sockets Layer). Because the SSL protocol has [known security vulnerabilities](https://en.wikipedia.org/wiki/Transport_Layer_Security), TiDB does not support SSL. TiDB supports the following protocols: TLSv1.2 and TLSv1.3.
+TiDB 服务端支持启用基于 TLS（传输层安全）协议的安全连接，协议与 MySQL 安全连接一致，现有 MySQL Client 如 MySQL Shell 和 MySQL 驱动等能直接支持。TLS 的前身是 SSL，因而 TLS 有时也被称为 SSL，但由于 SSL 协议有已知安全漏洞，TiDB 实际上并未支持。TiDB 支持的 TLS/SSL 协议版本为 TLSv1.2 和 TLSv1.3。
 
-When a TLS secured connection is used, the connection has the following security properties:
+使用 TLS 安全连接后，连接将具有以下安全性质：
 
-- Confidentiality: the traffic plaintext is encrypted to avoid eavesdropping
-- Integrity: the traffic plaintext cannot be tampered
-- Authentication: (optional) the client can verify the identity of the server and the server can verify the identity of the client to avoid man-in-the-middle attacks
+- 保密性：流量明文被加密，无法被窃听；
+- 完整性：流量明文无法被篡改；
+- 身份验证（可选）：客户端和服务端能验证双方身份，避免中间人攻击。
 
-To use connections secured with TLS, you first need to configure the TiDB server to enable TLS. Then you need to configure the client application to use TLS. Most client libraries enable TLS automatically when the server has TLS support configured correctly.
+要为 TiDB 客户端与服务端间的通信开启 TLS 安全传输，首先需要在 TiDB 服务端通过配置开启 TLS 加密连接的支持，然后通过配置客户端应用程序使用 TLS 加密连接。一般情况下，如果服务端正确配置了 TLS 加密连接支持，客户端库都会自动启用 TLS 安全传输。
 
-Similar to MySQL, TiDB allows TLS and non-TLS connections on the same TCP port. For a TiDB server with TLS enabled, you can choose to securely connect to the TiDB server through an encrypted connection, or to use an unencrypted connection. You can use the following ways to require the use of secure connections:
+另外，与 MySQL 相同，TiDB 也支持在同一 TCP 端口上开启 TLS 连接或非 TLS 连接。对于开启了 TLS 连接支持的 TiDB 服务端，客户端既可以选择通过加密连接安全地连接到该 TiDB 服务端，也可以选择使用普通的非加密连接。如需使用加密连接，你可以通过以下方式进行配置：
 
-+ Configure the system variable [`require_secure_transport`](/system-variables.md#require_secure_transport-new-in-v610) to require secure connections to the TiDB server for all users.
-+ Specify `REQUIRE SSL` when you create a user (`create user`), or modify an existing user (`alter user`), which is to specify that specified users must use TLS connections to access TiDB. The following is an example of creating a user:
++ 通过配置系统变量 [`require_secure_transport`](/system-variables.md#require_secure_transport-从-v610-版本开始引入) 要求所有用户必须使用加密连接来连接到 TiDB。
++ 通过在创建用户 (`CREATE USER`)，或修改已有用户 (`ALTER USER`) 时指定 `REQUIRE SSL` 要求指定用户必须使用 TLS 连接来连接 TiDB。以创建用户为例：
 
-    
     ```sql
     CREATE USER 'u1'@'%' IDENTIFIED BY 'my_random_password' REQUIRE SSL;
     ```
 
-> **Note:**
+> **注意：**
 >
-> If the login user has configured using the [TiDB Certificate-Based Authentication for Login](/certificate-authentication.md#configure-the-user-certificate-information-for-login-verification), the user is implicitly required to enable the encrypted connection to TiDB.
+> 如果登录用户已配置使用 [TiDB 证书鉴权功能](/certificate-authentication.md#配置登录时需要校验的用户证书信息)校验用户证书，也会隐式要求对应用户必须使用加密连接连接 TiDB。
 
-## Configure TiDB server to use secure connections
+## 配置 TiDB 服务端启用安全连接
 
-See the following descriptions about the related parameters to enable secure connections:
+要启用安全连接，请参考以下相关参数说明：
 
-- [`auto-tls`](/tidb-configuration-file.md#auto-tls): enables automatic certificate generation (since v5.2.0)
-- [`ssl-cert`](/tidb-configuration-file.md#ssl-cert): specifies the file path of the SSL certificate
-- [`ssl-key`](/tidb-configuration-file.md#ssl-key): specifies the private key that matches the certificate
-- [`ssl-ca`](/tidb-configuration-file.md#ssl-ca): (optional) specifies the file path of the trusted CA certificate
-- [`tls-version`](/tidb-configuration-file.md#tls-version): (optional) specifies the minimum TLS version, e.g. "TLSv1.2"
+- [`auto-tls`](/tidb-configuration-file.md#auto-tls)：启用证书自动生成功能（从 v5.2.0 开始）
+- [`ssl-cert`](/tidb-configuration-file.md#ssl-cert)：指定 SSL 证书文件路径
+- [`ssl-key`](/tidb-configuration-file.md#ssl-key)：指定证书文件对应的私钥
+- [`ssl-ca`](/tidb-configuration-file.md#ssl-ca)：可选，指定受信任的 CA 证书文件路径
+- [`tls-version`](/tidb-configuration-file.md#tls-version)：可选，指定最低 TLS 版本，例如 `TLSv1.2`
 
-`auto-tls` allows secure connections but does not provide client certificate validation. For certificate validation, and to control how certificates are generated, see the advice on configuring the `ssl-cert`, `ssl-key` and `ssl-ca` variables below.
+`auto-tls` 支持安全连接，但不提供客户端证书验证。有关证书验证和控制证书生成方式的说明，请参考下面配置 `ssl-cert`、`ssl-key` 和 `ssl-ca` 变量的建议：
 
-To enable secure connections with your own certificates in the TiDB server, you must specify both of the `ssl-cert` and `ssl-key` parameters in the configuration file when you start the TiDB server. You can also specify the `ssl-ca` parameter for client authentication (see [Enable authentication](#enable-authentication)).
+- 在启动 TiDB 时，至少需要在配置文件中同时指定 `ssl-cert` 和 `ssl-key` 参数，才能在 TiDB 服务端开启安全连接。还可以指定 `ssl-ca` 参数进行客户端身份验证（请参见[配置启用身份验证](#配置启用身份验证)章节）。
+- 参数指定的文件都为 PEM 格式。另外目前 TiDB 尚不支持加载有密码保护的私钥，因此必须提供一个没有密码的私钥文件。若提供的证书或私钥无效，则 TiDB 服务端将照常启动，但并不支持客户端 TLS 连接到 TiDB 服务端。
+- 若证书参数无误，则 TiDB 在启动时将会输出 `mysql protocol server secure connection is enabled` 到 `"INFO"` 级别日志中。
 
-All the files specified by the parameters are in PEM (Privacy Enhanced Mail) format. Currently, TiDB does not support the import of a password-protected private key, so it is required to provide a private key file without a password. If the certificate or private key is invalid, the TiDB server starts as usual, but the client cannot connect to the TiDB server through a TLS connection.
+## 配置 TiProxy 使用 TLS 连接
 
-If the certificate parameters are correct, TiDB outputs `mysql protocol server secure connection is enabled` to the logs on `"INFO"` level when started.
+如需启用 [TiProxy](/tiproxy/tiproxy-overview.md) 的 TLS 连接支持，可以在 TiProxy 配置文件中指定 [`sql-tls`](/tiproxy/tiproxy-configuration.md#sql-tls) 配置项。关于该配置项的详细说明，以及如何为后端连接启用 TLS，请参考 [TiProxy 安全性](/tiproxy/tiproxy-overview.md#安全)。
 
-## Configure the MySQL client to use TLS connections
+## 配置 MySQL Client 使用 TLS 连接
 
-The client of MySQL 5.7 or later versions attempts to establish a TLS connection by default. If the server does not support TLS connections, it automatically returns to unencrypted connections. The client of MySQL earlier than version 5.7 uses the non-TLS connections by default.
+MySQL 5.7 及以上版本自带的客户端默认尝试使用 TLS 连接，若服务端不支持安全连接则自动退回到使用非安全连接；MySQL 5.7 以下版本自带的客户端默认采用非 TLS 连接。
 
-You can change the connection behavior of the client using the following `--ssl-mode` parameters:
+可以通过命令行参数修改客户端的连接行为，包括：
 
-- `--ssl-mode=REQUIRED`: The client requires a TLS connection. The connection cannot be established if the server side does not support TLS connections.
-- In the absence of the `--ssl-mode` parameter: The client attempts to use a TLS connection, but the encrypted connection cannot be established if the server side does not support encrypted connections. Then the client uses an unencrypted connection.
-- `--ssl-mode=DISABLED`: The client uses an unencrypted connection.
+- 强制使用安全连接，若服务端不支持安全连接则连接失败 (`--ssl-mode=REQUIRED`)
+- 尝试使用安全连接，若服务端不支持安全连接则退回使用不安全连接
+- 使用不安全连接 (`--ssl-mode=DISABLED`)
 
-MySQL 8.x clients have two SSL modes in addition to this parameter:
+除此参数外，MySQL 8.x 客户端有两种 SSL 模式：
 
-- `--ssl-mode=VERIFY_CA`: Validates the certificate from the server against the CA that requires `--ssl-ca`.
-- `--ssl-mode=VERIFY_IDENTITY`: The same as `VERIFY_CA`, but also validating whether the hostname you are connecting to matches the certificate.
+- `--ssl-mode=VERIFY_CA`：根据 `--ssl-ca` 签发的 CA 验证来自服务器的证书。
+- `--ssl-mode=VERIFY_IDENTITY`：与 `VERIFY_CA` 相同，但也验证所连接的主机名是否与证书匹配。
 
-For MySQL 5.7 and MariaDB clients and earlier you can use `--ssl-verify-server-cert` to enable validation of the server certificate.
+对于 MySQL 5.7 和 MariaDB 客户端及之前版本，可以使用 `--ssl-verify-server-cert` 参数启用对服务端证书的验证。
 
-For more information, see [Client-Side Configuration for Encrypted Connections](https://dev.mysql.com/doc/refman/8.0/en/using-encrypted-connections.html#using-encrypted-connections-client-side-configuration) in MySQL.
+详细信息请参阅 MySQL 文档中关于[客户端配置安全连接](https://dev.mysql.com/doc/refman/8.0/en/using-encrypted-connections.html#using-encrypted-connections-client-side-configuration)的部分。
 
-## Enable authentication
+## 配置启用身份验证
 
-If the `ssl-ca` parameter is not specified in the TiDB server or MySQL client, the client or the server does not perform authentication by default and cannot prevent man-in-the-middle attack. For example, the client might "securely" connect to a disguised client. You can configure the `ssl-ca` parameter for authentication in the server and client. Generally, you only need to authenticate the server, but you can also authenticate the client to further enhance the security.
+若在 TiDB 服务端或 MySQL Client 中未指定 `ssl-ca` 参数，则默认不会进行客户端或服务端身份验证，无法抵御中间人攻击，例如客户端可能会“安全地”连接到了一个伪装的服务端。可以在服务端和客户端中配置 `ssl-ca` 参数进行身份验证。一般情况下只需验证服务端身份，但也可以验证客户端身份进一步增强安全性。
 
-+ To authenticate the TiDB server from the MySQL client:
-  1. Specify the `ssl-cert` and `ssl-key` parameters in the TiDB server.
-  2. Specify the `--ssl-ca` parameter in the MySQL client.
-  3. Specify the `--ssl-mode` to `VERIFY_CA` at least in the MySQL client.
-  4. Make sure that the certificate (`ssl-cert`) configured in the TiDB server is signed by the CA specified by the client `--ssl-ca` parameter; otherwise, the authentication fails.
+- 若要使 MySQL Client 验证 TiDB 服务端身份，TiDB 服务端需至少配置 `ssl-cert` 和 `ssl-key` 参数，客户端需至少指定 `--ssl-ca` 参数，且 `--ssl-mode` 至少为 `VERIFY_CA`。必须确保 TiDB 服务端配置的证书 (`ssl-cert`) 是由客户端 `--ssl-ca` 参数所指定的 CA 所签发的，否则身份验证失败。
+- 若要使 TiDB 服务端验证 MySQL Client 身份，TiDB 服务端需配置 `ssl-cert`、`ssl-key`、`ssl-ca` 参数，客户端需至少指定 `--ssl-cert`、`--ssl-key` 参数。必须确保服务端配置的证书和客户端配置的证书都是由服务端配置指定的 `ssl-ca` 签发的。
+- 若要进行双向身份验证，请同时满足上述要求。
 
-+ To authenticate the MySQL client from the TiDB server:
-  1. Specify the `ssl-cert`, `ssl-key`, and `ssl-ca` parameters in the TiDB server.
-  2. Specify the `--ssl-cert` and `--ssl-key` parameters in the client.
-  3. Make sure the server-configured certificate and the client-configured certificate are both signed by the `ssl-ca` specified by the server.
-
-- To perform mutual authentication, meet both of the above requirements.
-
-By default, the server-to-client authentication is optional. Even if the client does not present its certificate of identification during the TLS handshake, the TLS connection can be still established. You can also require the client to be authenticated by specifying `REQUIRE x509` when creating a user (`CREATE USER`), or modifying an existing user (`ALTER USER`). The following is an example of creating a user:
+默认情况，服务端对客户端的身份验证是可选的。若客户端在 TLS 握手时未出示自己的身份证书，也能正常建立 TLS 连接。但也可以通过在创建用户 (`CREATE USER`) 或修改已有用户 (`ALTER USER`) 时指定 `REQUIRE x509` 要求客户端需进行身份验证，以创建用户为例：
 
 ```sql
-CREATE USER 'u1'@'%'  REQUIRE X509;
+CREATE USER 'u1'@'%' REQUIRE X509;
 ```
 
-> **Note:**
+> **注意：**
 >
-> If the login user has configured using the [TiDB Certificate-Based Authentication for Login](/certificate-authentication.md#configure-the-user-certificate-information-for-login-verification), the user is implicitly required to enable the TLS connection to TiDB.
+> 如果登录用户已配置使用 [TiDB 证书鉴权功能](/certificate-authentication.md#配置登录时需要校验的用户证书信息)校验用户证书，也会隐式要求对应用户需进行身份验证。
 
-## Check whether the current connection uses encryption
+## 检查当前连接是否是加密连接
 
-Use the `SHOW STATUS LIKE "%Ssl%";` statement to get the details of the current connection, including whether encryption is used, the encryption protocol used by encrypted connections and the TLS version number.
+可以通过 `SHOW STATUS LIKE "%Ssl%";` 了解当前连接的详细情况，包括是否使用了安全连接、安全连接采用的加密协议、TLS 版本号等。
 
-See the following example of the result in an encrypted connection. The results change according to different TLS versions or encryption protocols supported by the client.
+以下是一个安全连接中执行该语句的结果。由于客户端支持的 TLS 版本号和加密协议会有所不同，执行结果相应地也会有所变化。
+
 
 ```sql
 SHOW STATUS LIKE "Ssl%";
@@ -119,31 +112,37 @@ SHOW STATUS LIKE "Ssl%";
 6 rows in set (0.0062 sec)
 ```
 
-For the official MySQL client, you can also use the `STATUS` or `\s` statement to view the connection status:
+如果 `Ssl_cipher` 的值不为空，则表示连接已加密。
+
+除此以外，对于 MySQL 自带客户端，还可以使用 `STATUS` 或 `\s` 语句查看连接情况：
+
+
+```sql
+\s
+```
 
 ```
-mysql> \s
 ...
 SSL: Cipher in use is TLS_AES_128_GCM_SHA256
 ...
 ```
 
-## Supported TLS versions, key exchange protocols, and encryption algorithms
+## 支持的 TLS 版本及密钥交换协议和加密算法
 
-The TLS versions, key exchange protocols and encryption algorithms supported by TiDB are determined by the official Go libraries.
+TiDB 支持的 TLS 版本及密钥交换协议和加密算法由 Go 官方库决定。
 
-The crypto policy for your operating system and the client library you are using might also impact the list of supported protocols and cipher suites.
+你使用的客户端库和操作系统加密策略也可能会影响到支持的协议版本和密码套件。
 
-### Supported TLS versions
+### 支持的 TLS 版本
 
 - TLSv1.2
 - TLSv1.3
 
-You can use the [`tls-version`](/tidb-configuration-file.md#tls-version) configuration option to limit the TLS versions that can be used.
+可以使用配置项 [`tls-version`](/tidb-configuration-file.md#tls-version) 来限制 TLS 版本。
 
-The actual TLS versions that can be used depend on the OS crypto policy, MySQL client version and the SSL/TLS library that is used by the client.
+实际可用的 TLS 版本取决于操作系统的加密策略、MySQL 客户端版本和客户端的 SSL/TLS 库。
 
-### Supported key exchange protocols and encryption algorithms
+### 支持的密钥交换协议及加密算法
 
 - TLS\_RSA\_WITH\_AES\_128\_CBC\_SHA
 - TLS\_RSA\_WITH\_AES\_256\_CBC\_SHA
@@ -166,15 +165,15 @@ The actual TLS versions that can be used depend on the OS crypto policy, MySQL c
 - TLS\_AES\_256\_GCM\_SHA384
 - TLS\_CHACHA20\_POLY1305\_SHA256
 
-## Reload certificate, key, and CA
+## 重加载证书、密钥和 CA
 
-To replace the certificate, the key or CA, first replace the corresponding files, then execute the [`ALTER INSTANCE RELOAD TLS`](/sql-statements/sql-statement-alter-instance.md) statement on the running TiDB instance to reload the certificate ([`ssl-cert`](/tidb-configuration-file.md#ssl-cert)), the key ([`ssl-key`](/tidb-configuration-file.md#ssl-key)), and the CA ([`ssl-ca`](/tidb-configuration-file.md#ssl-ca)) from the original configuration path. In this way, you do not need to restart the TiDB instance.
+在需要替换证书、密钥或 CA 时，可以在完成对应文件替换后，对运行中的 TiDB 实例执行 [`ALTER INSTANCE RELOAD TLS`](/sql-statements/sql-statement-alter-instance.md) 语句从原配置的证书 ([`ssl-cert`](/tidb-configuration-file.md#ssl-cert))、密钥 ([`ssl-key`](/tidb-configuration-file.md#ssl-key)) 和 CA ([`ssl-ca`](/tidb-configuration-file.md#ssl-ca)) 的路径重新加证书、密钥和 CA，而无需重启 TiDB 实例。
 
-The newly loaded certificate, key, and CA take effect on the connection that is established after the statement is successfully executed. The connection established before the statement execution is not affected.
+新加载的证书密钥和 CA 将在语句执行成功后对新建立的连接生效，不会影响语句执行前已建立的连接。
 
-## Monitoring
+## 监控
 
-Since TiDB v5.2.0, you can use the `Ssl_server_not_after` and `Ssl_server_not_before` status variables to monitor the start and end dates of the validity of the certificate.
+自 TiDB v5.2.0 版本起，你可以使用 `Ssl_server_not_after` 和 `Ssl_server_not_before` 状态变量监控证书有效期的起止时间。
 
 ```sql
 SHOW GLOBAL STATUS LIKE 'Ssl\_server\_not\_%';
@@ -190,6 +189,6 @@ SHOW GLOBAL STATUS LIKE 'Ssl\_server\_not\_%';
 2 rows in set (0.0076 sec)
 ```
 
-## See also
+## 另请参阅
 
-- [Enable TLS Between TiDB Components](/enable-tls-between-components.md).
+- [为 TiDB 组件间通信开启加密传输](/enable-tls-between-components.md)

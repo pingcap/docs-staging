@@ -1,13 +1,13 @@
 ---
-title: GRANT <privileges> | TiDB SQL 语句参考
-summary: 关于在 TiDB 数据库中使用 GRANT <privileges> 的概述。
+title: GRANT <privileges>
+summary: TiDB 数据库中 GRANT <privileges> 的使用概况。
 ---
 
 # `GRANT <privileges>`
 
-此语句用于为 TiDB 中已存在的用户分配权限。TiDB 的权限系统遵循 MySQL 的设计，其中凭据是基于数据库/表的模式进行分配。执行此语句需要拥有 `GRANT OPTION` 权限以及你所分配的所有权限。
+`GRANT <privileges>` 语句用于为 TiDB 中已存在的用户分配权限。TiDB 中的权限系统同 MySQL 一样，都基于数据库/表模式来分配凭据。执行 `GRANT <privileges>` 语句需要拥有分配的权限，并且拥有 `GRANT OPTION` 权限。
 
-## 概述
+## 语法图
 
 ```ebnf+diagram
 GrantStmt ::=
@@ -62,14 +62,30 @@ RequireListElement ::= 'ISSUER' Issuer | 'SUBJECT' Subject | 'CIPHER' Cipher | '
 
 ## 示例
 
+
 ```sql
-mysql> CREATE USER 'newuser' IDENTIFIED BY 'mypassword';
+CREATE USER 'newuser' IDENTIFIED BY 'mypassword';
+```
+
+```
 Query OK, 1 row affected (0.02 sec)
+```
 
-mysql> GRANT ALL ON test.* TO 'newuser';
+
+```sql
+GRANT ALL ON test.* TO 'newuser';
+```
+
+```
 Query OK, 0 rows affected (0.03 sec)
+```
 
-mysql> SHOW GRANTS FOR 'newuser';
+
+```sql
+SHOW GRANTS FOR 'newuser';
+```
+
+```
 +-------------------------------------------------+
 | Grants for newuser@%                            |
 +-------------------------------------------------+
@@ -81,19 +97,15 @@ mysql> SHOW GRANTS FOR 'newuser';
 
 ## MySQL 兼容性
 
-* 类似于 MySQL，`USAGE` 权限表示登录 TiDB 服务器的能力。
-* 从 v8.5.6 开始，TiDB 支持与 MySQL 兼容的列级权限管理机制。你可以对指定表中的特定列授予或撤销 `SELECT`、`INSERT`、`UPDATE` 和 `REFERENCES` 权限。更多信息，请参见 [列级权限管理](/column-privilege-management.md)。
-* 类似于 MySQL，当 sql mode 中没有 `NO_AUTO_CREATE_USER` 时，如果用户不存在，`GRANT` 语句会自动创建一个空密码的新用户。移除此 sql mode（它默认启用）存在安全风险。
-* 在 TiDB 中，成功执行 `GRANT <privileges>` 语句后，执行结果会立即在当前连接生效。而 [在 MySQL 中，对于某些权限，执行结果只在后续连接中生效](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)。详情请参见 [TiDB #39356](https://github.com/pingcap/tidb/issues/39356)。
+* 与 MySQL 类似，`USAGE` 权限表示登录 TiDB 服务器的能力。
+* 与 MySQL 不同，TiDB 不支持 `GRANT PROXY`。
+* 从 v8.5.6 版本开始，TiDB 支持兼容 MySQL 的列级权限管理机制。你可以在指定表上针对特定列授予或回收 `SELECT`、`INSERT`、`UPDATE`、`REFERENCES` 权限。更多信息参见[列级权限管理](/column-privilege-management.md)。
+* 与 MySQL 类似，不存在 `NO_AUTO_CREATE_USER` sql 模式时，`GRANT` 语句将在用户不存在时自动创建一个空密码的新用户。删除此 sql-mode（默认情况下已启用）会带来安全风险。
+* `GRANT <privileges>` 语句执行成功后，在 TiDB 中语句执行的结果会在当前连接立即生效，而 [MySQL 中部分权限的结果需要等到之后的连接才生效](https://dev.mysql.com/doc/refman/8.0/en/privilege-changes.html)。见 [TiDB #39356](https://github.com/pingcap/tidb/issues/39356)。
 
-## 相关链接
+## 另请参阅
 
 * [`GRANT <role>`](/sql-statements/sql-statement-grant-role.md)
 * [`REVOKE <privileges>`](/sql-statements/sql-statement-revoke-privileges.md)
-* [SHOW GRANTS](/sql-statements/sql-statement-show-grants.md)
-
-<CustomContent platform="tidb">
-
-* [Privilege Management](/privilege-management.md)
-
-</CustomContent>
+* [`SHOW GRANTS`](/sql-statements/sql-statement-show-grants.md)
+* [权限管理](/privilege-management.md)

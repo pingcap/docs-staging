@@ -1,179 +1,187 @@
 ---
-title: TiDB Backup & Restore Overview
-summary: TiDB Backup & Restore (BR) ensures high availability of clusters and data safety. It supports disaster recovery with a short RPO, handles misoperations, and provides history data auditing. It is recommended to perform backup operations during off-peak hours and store backup data to compatible storage systems. BR supports full backup and log backup, as well as restoring data to any point in time. It is important to use BR of the same major version as the TiDB cluster for backup and restoration.
+title: TiDB 备份与恢复概述
+summary: 了解不同场景下如何使用 TiDB 的备份与恢复功能，以及不同功能、版本间的兼容性。
 ---
 
-# TiDB Backup & Restore Overview
+# TiDB 备份与恢复概述
 
-Based on the Raft protocol and a reasonable deployment topology, TiDB realizes high availability of clusters. When a few nodes in the cluster fail, the cluster can still be available. On this basis, to further ensure data safety, TiDB provides the Backup & Restore (BR) feature as the last resort to recover data from natural disasters and misoperations.
+基于 Raft 协议和合理的部署拓扑规划，TiDB 实现了集群的高可用，当集群中少数节点挂掉时，集群依然能对外提供服务。在此基础上，为了更进一步保证用户数据的安全，TiDB 还提供了集群的备份与恢复 (Backup & Restore, BR) 功能，作为数据安全的最后一道防线，使得集群能够免于严重的自然灾害，提供业务误操作“复原”的能力。
 
-BR satisfies the following requirements:
+TiDB 备份恢复功能可以用于满足以下业务的需求：
 
-- Back up cluster data to a disaster recovery (DR) system with an RPO as short as 5 minutes, reducing data loss in disaster scenarios.
-- Handle the cases of misoperations from applications by rolling back data to a time point before the error event.
-- Perform history data auditing to meet the requirements of judicial supervision.
-- Clone the production environment, which is convenient for troubleshooting, performance tuning, and simulation testing.
+- 备份集群数据到灾备系统，并保证 Recovery Point Objective (RPO) 低至 5 分钟，减少灾难场景下数据的丢失。
+- 处理业务数据写错的案例，提供业务操作的“复原”能力。
+- 审计业务的历史数据，满足司法审查的需求。
+- 复制 (Clone) 生产环境，方便问题诊断、性能调优验证、仿真测试等。
 
-## Before you use
+## 使用须知
 
-This section describes the prerequisites for using TiDB backup and restore, including restrictions, usage tips and compatibility issues. For more information about the compatibility of the BR tool with other features or versions, see [Compatibility](#compatibility).
+本部分介绍使用 TiDB 备份恢复功能前的注意事项，包括使用限制和使用建议。有关 BR 工具与其他功能或版本间的兼容性，请参考[兼容性](#兼容性)。
 
-### Restrictions
+### 使用限制
 
-- PITR only supports restoring data to **an empty cluster**.
-- PITR only supports cluster-level restore and does not support database-level or table-level restore.
-- PITR does not support restoring the data of user tables or privilege tables from system tables.
-- BR does not support running multiple backup tasks on a cluster **at the same time**.
-- It is not recommended to back up tables that are being restored, because the backed-up data might be problematic.
-- When restoring a cluster using PITR, you cannot run a log backup task or use TiCDC to replicate data to a downstream cluster.
+- PITR 仅支持恢复到**全新的空集群**。
+- PITR 不支持恢复系统表中用户表和权限表的数据。
+- 不支持在一个集群上**同时**运行多个数据备份任务。
+- 不建议备份正在恢复的表，这样备份的数据可能存在异常。
+- PITR 数据恢复任务运行期间，不支持同时运行日志备份任务，也不支持通过 TiCDC 同步数据到下游集群。
 
-### Some tips
+### 使用建议
 
-Snapshot backup:
+进行快照备份
 
-- It is recommended that you perform the backup operation during off-peak hours to minimize the impact on applications.
-- It is recommended that you execute multiple backup or restore tasks one by one. Running multiple backup tasks in parallel leads to low performance. Worse still, a lack of collaboration between multiple tasks might result in task failures and affect cluster performance.
+- 推荐在业务低峰时执行集群快照数据备份，这样能最大程度地减少对业务的影响。
+- 不推荐同时运行多个集群快照数据备份任务。不同的任务并行，不仅会导致备份的性能降低，影响在线业务，还会因为任务之间缺少协调机制造成任务失败，甚至对集群的状态产生影响。
 
-Snapshot restore:
+进行快照恢复
 
-- BR uses resources of the target cluster as much as possible. Therefore, it is recommended that you restore data to a new cluster or an offline cluster. Avoid restoring data to a production cluster. Otherwise, your application will be affected inevitably.
+- BR 恢复数据时会尽可能多地占用恢复集群的资源，因此推荐恢复数据到新集群或离线集群。应避免恢复数据到正在提供服务的生产集群，否则，恢复期间会对业务产生不可避免的影响。
 
-Backup storage and network configuration:
+备份存储和网络配置
 
-- It is recommended that you store backup data to a storage system that is compatible with Amazon S3, GCS, or Azure Blob Storage.
-- You need to ensure that BR, TiKV, and the backup storage system have enough network bandwidth, and that the backup storage system can provide sufficient read and write performance (IOPS). Otherwise, they might become a performance bottleneck during backup and restore.
+- 推荐使用支持 Amazon S3、GCS 或 Azure Blob Storage 协议的存储系统保存备份数据；
+- 应确保 BR、TiKV 节点和备份存储系统有足够的网络带宽，备份存储系统能提供足够的写入和读取性能，否则，它们有可能成为备份恢复时的性能瓶颈。
 
-## Use backup and restore
+## 功能使用
 
-The way to use BR varies with the deployment method of TiDB. This document introduces how to use the br command-line tool to back up and restore TiDB cluster data in an on-premise deployment.
+根据 TiDB 部署方式的不同，使用备份恢复功能的方式也不同。本文主要介绍在本地部署方式下，如何使用 br 命令行工具进行 TiDB 的备份和恢复。
 
-For information about how to use this feature in other deployment scenarios, see the following documents:
+其它 TiDB 的部署方式的备份恢复功能使用，可以参考：
 
-- [Back Up and Restore TiDB Deployed on TiDB Cloud](https://docs.pingcap.com/tidbcloud/backup-and-restore): It is recommended that you create TiDB clusters on [TiDB Cloud](https://www.pingcap.com/tidb-cloud/?from=en). TiDB Cloud offers fully managed databases to let you focus on your applications.
-- [Back Up and Restore Data Using TiDB Operator](https://docs.pingcap.com/tidb-in-kubernetes/stable/backup-restore-overview): If you deploy a TiDB cluster using TiDB Operator on Kubernetes, it is recommended to back up and restore data using Kubernetes CustomResourceDefinition (CRD).
+- [备份恢复部署在 TiDB Cloud 上的 TiDB](https://docs.pingcap.com/tidbcloud/backup-and-restore)。推荐在 [TiDB Cloud](https://www.pingcap.com/tidb-cloud/?from=en) 上创建 TiDB 集群，集群的运维管理将由 TiDB Cloud 团队托管完成，你可以聚焦于业务。
+- [备份恢复部署在 Kubernetes 上的 TiDB](https://docs.pingcap.com/zh/tidb-in-kubernetes/stable/backup-restore-overview)。如果你使用 TiDB Operator 在 Kubernetes 中部署了 TiDB 集群，建议通过 Kubernetes CustomResourceDefinition (CRD) 来提交备份和恢复任务。
 
-## BR features
+## 功能介绍
 
-TiDB BR provides the following features:
+使用备份恢复功能，你可以进行以下两类操作：
 
-- Back up cluster data: You can back up full data (**full backup**) of the cluster at a certain time point, or back up the data changes in TiDB (**log backup**, in which log means KV changes in TiKV).
+- 对集群进行备份：你可以对集群某个时间点的全量数据进行备份（**全量备份**），也可以对业务写入在 TiDB 产生的数据变更记录进行备份（**日志备份**，日志指的是 TiKV 中的 kv 变更数据的记录）。
 
-- Restore backup data:
+- 恢复备份数据：
 
-    - You can **restore a full backup** or **specific databases or tables** in a full backup.
-    - Based on backup data (full backup and log backup), you can restore the target cluster to any time point of the backup cluster. This type of restore is called point-in-time recovery, or PITR for short.
+    - 你可以**恢复某个全量备份**，或者全量备份中的**部分库/表**，将目标集群恢复到该全量备份对应的数据状态。
+    - 基于备份（全量和日志）数据，你可以指定任意时间点，将目标集群恢复到该时间点所对应的备份集群数据状态 (Point-in-time recovery, PITR)。
 
-### Back up cluster data
+### 备份集群数据
 
-Full backup backs up all data of a cluster at a specific time point. TiDB supports the following way of full backup:
+全量备份是对集群某个时间点的全量数据进行备份。TiDB 支持以下方式的全量备份：
 
-- Back up cluster snapshots: A snapshot of a TiDB cluster contains transactionally consistent data at a specific time. For details, see [Snapshot backup](/br/br-snapshot-guide.md#back-up-cluster-snapshots).
+- 快照数据备份：TiDB 集群快照数据包含某个物理时间点上集群满足事务一致性的所有数据。BR 支持备份集群快照数据，使用请参考[快照备份](/br/br-snapshot-guide.md#对集群进行快照备份)。
 
-Full backup occupies much storage space and contains only cluster data at a specific time point. If you want to choose the restore point as required, that is, to perform point-in-time recovery (PITR), you can use the following two ways of backup at the same time:
+全量备份一般会占用不小的存储空间，且只包含某个时间点的集群数据。如果你需要灵活的选择恢复的时间点，即实现 PITR，可以按以下说明同时使用两种备份方式：
 
-- Start [log backup](/br/br-pitr-guide.md#start-log-backup). After log backup is started, the task keeps running on all TiKV nodes and backs up TiDB incremental data in small batches to the specified storage periodically.
-- Perform snapshot backup regularly. Back up the full cluster data to the backup storage, for example, perform cluster snapshot backup at 0:00 AM every day.
+- 开启[日志备份](/br/br-pitr-guide.md#开启日志备份)任务后，任务会在所有 TiKV 节点上持续运行，以小批量的形式定期将 TiDB 变更数据备份到指定存储中。
+- 定期执行[快照备份](/br/br-snapshot-guide.md#对集群进行快照备份)，备份集群全量数据到备份存储，例如在每天零点进行集群快照备份。
 
-#### Backup performance and impact on TiDB clusters
+#### 备份的性能，以及对集群的影响
 
-- When CPU and I/O resources are sufficient in the cluster, the snapshot backup has a limited impact on the TiDB cluster, generally staying below 20%. With appropriate configuration of the TiDB cluster, this impact can be further minimized to 10% or even less. When CPU and I/O resources are insufficient, you can adjust the TiKV configuration item [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1) to change the number of worker threads used by the backup task to reduce the impact of the backup task on the TiDB cluster. The backup speed of a TiKV node is scalable and ranges from 50 MB/s to 100 MB/s. For more information, see [Backup performance and impact](/br/br-snapshot-guide.md#performance-and-impact-of-snapshot-backup).
-- When there are only log backup tasks, the impact on the cluster is about 5%. Log backup flushes all the changes generated after the last refresh every 3-5 minutes to the backup storage, which can **achieve a Recovery Point Objective (RPO) as short as five minutes**.
+- 在集群 CPU 和 I/O 资源充裕时，集群快照数据备份对 TiDB 集群的影响可以保持在 20% 以下，通过合理的配置 TiDB 集群用于备份资源，影响可以降低到 10% 及更低；在集群 CPU 和 I/O 资源紧张时，可以通过调整 TiKV 配置项 [`backup.num-threads`](/tikv-configuration-file.md#num-threads-1) 来调整备份任务使用的工作线程数量以降低备份任务对 TiDB 集群的影响；单 TiKV 存储节点的备份速度可以达到 50 MB/s ～ 100 MB/s，备份速度具有可扩展性；更详细说明请参考[备份性能和影响](/br/br-snapshot-guide.md#快照备份的性能与影响)。
+- 单独运行日志备份时影响约在 5%。日志备份每隔 3～5 分钟将上次刷新后产生的变更数据记录刷新到备份存储中，可以**实现低至五分钟 RPO 的集群容灾目标**。
 
-### Restore backup data
+### 恢复备份数据
 
-Corresponding to the backup features, you can perform two types of restore: full restore and PITR.
+与备份功能相对应，你可以进行两种类型的恢复：全量恢复和 PITR。
 
-- Restore a full backup
+- 恢复某个全量备份
 
-    - Restore cluster snapshot backup: You can restore snapshot backup data to an empty cluster or a cluster that does not have data conflicts (with the same schema or tables). For details, see [Restore snapshot backup](/br/br-snapshot-guide.md#restore-cluster-snapshots). In addition, you can restore specific databases or tables from the backup data and filter out unwanted data. For details, see [Restore specific databases or tables from backup data](/br/br-snapshot-guide.md#restore-a-database-or-a-table).
+    - 恢复集群快照数据备份：你可以在一个空集群或不存在数据冲突（相同 schema 或 table）的集群执行快照备份恢复，将该集群恢复到快照备份对应数据状态。使用请参考[恢复快照备份](/br/br-snapshot-guide.md#恢复快照备份数据)。此外你可以只恢复备份数据中指定库/表的局部数据。该功能在恢复过程中过滤掉不需要的数据。使用请参考[恢复备份数据中指定库表的数据](/br/br-snapshot-guide.md#恢复备份数据中指定库表的数据)。
 
-- Restore data to any point in time (PITR)
+- 恢复到集群的历史任意时间点 (PITR)
 
-    - By running the `br restore point` command, you can restore the latest snapshot backup data before recovery time point and log backup data to a specified time. BR automatically determines the restore scope, accesses backup data, and restores data to the target cluster in turn.
+    - 通过 `br restore point` 功能。你可以指定要恢复的时间点，恢复时间点之前最近的快照数据备份，以及日志备份数据。BR 会自动判断和读取恢复需要的数据，然后将这些数据依次恢复到指定的集群。
 
-#### Restore performance and impact on TiDB clusters
+#### 恢复的性能
 
-- Data restore is performed at a scalable speed. Generally, the speed is 1 GiB/s per TiKV node. For more details, see [Restore performance and impact](/br/br-snapshot-guide.md#performance-and-impact-of-snapshot-restore).
-- On each TiKV node, PITR can restore log data at 30 GiB/h. For more details, see [PITR performance and impact](/br/br-pitr-guide.md#performance-capabilities-of-pitr).
+- 恢复集群快照数据备份，速度可以达到单 TiKV 存储节点 1 GiB/s，恢复速度具有可扩展性。更详细说明请参考[恢复性能和影响](/br/br-snapshot-guide.md#快照恢复的性能与影响)。
+- 恢复日志备份数据，速度可以达到 30 GiB/h。更详细说明请参考 [PITR 的性能指标](/br/br-pitr-guide.md#pitr-的性能指标)。
 
-## Backup storage
+## 备份存储
 
-TiDB supports backing up data to Amazon S3, Google Cloud Storage (GCS), Azure Blob Storage, NFS, and other S3-compatible file storage services. For details, see the following documents:
+TiDB 支持将数据备份到 Amazon S3、Google Cloud Storage (GCS)、Azure Blob Storage、NFS，或者实现 S3 协议的其他文件存储服务。更多备份存储的详细信息，请参考如下内容：
 
-- [Specify backup storage in URI](/external-storage-uri.md)
-- [Configure access privileges to backup storages](/br/backup-and-restore-storages.md#authentication)
+- [使用 URI 格式指定备份存储](/external-storage-uri.md)
+- [配置备份存储的访问权限](/br/backup-and-restore-storages.md#鉴权)
 
-## Compatibility
+## 兼容性
 
-### Compatibility with other features
+在使用备份恢复功能之前，需要先了解 BR 工具与其他功能的兼容性以及使用限制。
 
-Backup and restore might go wrong when some TiDB features are enabled or disabled. If these features are not consistently enabled or disabled during backup and restore, compatibility issues might occur.
+### 与其他功能的兼容性
 
-| Feature | Issue | Solution |
+某些功能在开启或关闭状态下，会导致备份恢复功能使用出错。因此需要保证恢复集群的这些配置，与备份集群备份时的配置相同。
+
+| 功能 | 相关 issue | 解决方式 |
 |  ----  | ----  | ----- |
-|GBK charset|| BR of versions earlier than v5.4.0 does not support restoring `charset=GBK` tables. No version of BR supports recovering `charset=GBK` tables to TiDB clusters earlier than v5.4.0. |
-| Clustered index | [#565](https://github.com/pingcap/br/issues/565) | Make sure that the value of the `tidb_enable_clustered_index` global variable during restore is consistent with that during backup. Otherwise, data inconsistency might occur, such as `default not found` error and inconsistent data index. |
-| New collation  | [#352](https://github.com/pingcap/br/issues/352)       | Make sure that the value of the `new_collation_enabled` variable in the `mysql.tidb` table during restore is consistent with that during backup. Otherwise, inconsistent data index might occur and checksum might fail to pass. For more information, see [FAQ - Why does BR report `new_collations_enabled_on_first_bootstrap` mismatch?](/faq/backup-and-restore-faq.md#why-is-new_collation_enabled-mismatch-reported-during-restore). |
-| Global temporary tables | | Make sure that you are using v5.3.0 or a later version of BR to back up and restore data. Otherwise, an error occurs in the definition of the backed global temporary tables. |
-| TiDB Lightning Physical Import| | If the upstream database uses the physical import mode of TiDB Lightning, data cannot be backed up in log backup. It is recommended to perform a full backup after the data import. For more information, see [When the upstream database imports data using TiDB Lightning in the physical import mode, the log backup feature becomes unavailable. Why?](/faq/backup-and-restore-faq.md#when-the-upstream-database-imports-data-using-tidb-lightning-in-the-physical-import-mode-the-log-backup-feature-becomes-unavailable-why).|
-| TiCDC | | BR v8.2.0 and later: if the target cluster to be restored has a changefeed and the changefeed [CheckpointTS](/ticdc/ticdc-architecture.md#checkpointts) is earlier than the BackupTS, BR does not perform the restoration. BR versions before v8.2.0: if the target cluster to be restored has any active TiCDC changefeeds, BR does not perform the restoration. |
-| Vector search | | Make sure that you are using v8.4.0 or a later version of BR to back up and restore data. Restoring tables with [vector data types](/vector-search/vector-search-data-types.md) to TiDB clusters earlier than v8.4.0 is not supported. |
+|GBK charset|| BR 在 v5.4.0 之前不支持恢复 `charset=GBK` 的表。并且，任何版本的 BR 都不支持恢复 `charset=GBK` 的表到 v5.4.0 之前的 TiDB 集群。|
+| 聚簇索引 | [#565](https://github.com/pingcap/br/issues/565)       | 确保恢复时集群的 `tidb_enable_clustered_index` 全局变量和备份时一致，否则会导致数据不一致的问题，例如 `default not found` 和数据索引不一致。 |
+| New collation  | [#352](https://github.com/pingcap/br/issues/352)       | 确保恢复时集群的 `mysql.tidb` 表中 `new_collation_enabled` 变量值和备份时的一致，否则会导致数据索引不一致和 checksum 通不过。更多信息，请参考 [FAQ - BR 为什么会报 `new_collations_enabled_on_first_bootstrap` 不匹配？](/faq/backup-and-restore-faq.md#恢复时为什么会报-new_collation_enabled-不匹配)。 |
+| 全局临时表 | | 确保使用 BR v5.3.0 及以上版本进行备份和恢复，否则会导致全局临时表的表定义错误。 |
+| TiDB Lightning 物理导入模式| |上游数据库使用 TiDB Lightning 物理导入模式导入的数据，无法作为数据日志备份下来。推荐在数据导入后执行一次全量备份，细节参考[上游数据库使用 TiDB Lightning 物理导入模式导入数据的恢复](/faq/backup-and-restore-faq.md#上游数据库使用-tidb-lightning-物理导入模式导入数据时为什么无法使用日志备份功能)。|
+| TiCDC | | BR v8.2.0 及以上版本：如果在恢复的目标集群有 [CheckpointTS](/ticdc/ticdc-classic-architecture.md#checkpointts) 早于 BackupTS 的 Changefeed，BR 会拒绝执行恢复。BR v8.2.0 之前的版本：如果在恢复的目标集群有任何活跃的 TiCDC Changefeed，BR 会拒绝执行恢复。 |
+| 向量搜索 | | 确保使用 BR v8.4.0 及以上版本进行备份与恢复。不支持将带有[向量数据类型](/ai/reference/vector-search-data-types.md)的表恢复至 v8.4.0 之前的 TiDB 集群。 |
 
-### Version compatibility
+### 版本间兼容性
 
-> **Note:**
+> **注意：**
 >
-> It is recommended to use the BR of the same major version as your TiDB cluster for backup and restoration.
+> 建议使用与 TiDB 集群相同大版本的 BR 工具进行集群的备份和恢复。
 
-Before performing backup and restore, BR compares the TiDB cluster version with its own and checks their compatibility. If the versions are incompatible, BR reports an error and exits. To forcibly skip the version check, you can set `--check-requirements=false`. Note that skipping the version check might introduce incompatibility in data.
+在执行备份和恢复操作之前，BR 工具会检查自己的版本与 TiDB 集群的版本是否兼容。如果它们不兼容，BR 工具将报错并停止执行。如果你想跳过版本检查，可以设置 `--check-requirements=false`。但是请注意，跳过检查可能会导致恢复的数据不兼容。
 
-Starting from v7.0.0, TiDB gradually supports performing backup and restore operations through SQL statements. Therefore, it is strongly recommended to use the BR tool of the same major version as the TiDB cluster when backing up and restoring cluster data, and avoid performing data backup and restore operations across major versions. This helps ensure smooth execution of restore operations and data consistency. Starting from v7.6.0, BR restores data in some `mysql` system tables by default, that is, the `--with-sys-table` option is set to `true` by default. When restoring data to a TiDB cluster with a different version, if you encounter an error similar to `[BR:Restore:ErrRestoreIncompatibleSys]incompatible system table` due to different schemas of system tables, you can set `--with-sys-table=false` to skip restoring the system tables and avoid this error.
+从 v7.0.0 开始，TiDB 逐步支持通过 SQL 语句来执行备份和恢复操作。因此，强烈建议在备份和恢复集群时使用与 TiDB 集群相同大版本的 BR 工具，并避免跨大版本进行数据备份和恢复操作。这有助于确保恢复操作的顺利执行和数据的一致性。特别是从 v7.6.0 起，BR 默认支持在恢复数据的同时恢复 `mysql` 库下的系统表，即恢复时默认配置为 `--with-sys-table=true`。在跨版本进行数据恢复时，如果遇到 `mysql` 库的系统表结构不同导致类似 `[BR:Restore:ErrRestoreIncompatibleSys]incompatible system table` 异常，你可以通过设置 `--with-sys-table=false` 跳过恢复系统表以规避该问题。
 
-#### BR version compatibility matrix before TiDB v6.6.0
+#### TiDB v6.6.0 版本之前的 BR 版本兼容性矩阵
 
-The compatibility information for BR before TiDB v6.6.0 is as follows:
+TiDB v6.6.0 版本之前的 BR 版本兼容性矩阵：
 
-| Backup version (vertical) \ Restore version (horizontal)   | Restore to TiDB v6.0 | Restore to TiDB v6.1 | Restore to TiDB v6.2 | Restore to TiDB v6.3, v6.4, or v6.5 | Restore to TiDB v6.6 |
+| 备份版本（纵向）\ 恢复版本（横向）  | 恢复到 TiDB v6.0 | 恢复到 TiDB v6.1| 恢复到 TiDB v6.2 | 恢复到 TiDB v6.3、v6.4 或 v6.5 | 恢复到 TiDB v6.6 |
 |  ----  |  ----  | ---- | ---- | ---- | ---- |
-| TiDB v6.0, v6.1, v6.2, v6.3, v6.4, or v6.5 snapshot backup | Compatible (known issue [#36379](https://github.com/pingcap/tidb/issues/36379): if backup data contains an empty schema, BR might report an error.) | Compatible | Compatible | Compatible | Compatible (BR must be v6.6) |
-| TiDB v6.3, v6.4, v6.5, or v6.6 log backup| Incompatible | Incompatible | Incompatible | Compatible | Compatible |
+| TiDB v6.0、v6.1、v6.2、v6.3、v6.4 或 v6.5 快照备份 | 兼容（已知问题，如果备份数据中包含空库可能导致报错，参考 [#36379](https://github.com/pingcap/tidb/issues/36379)） | 兼容 | 兼容 | 兼容 | 兼容（需使用 v6.6 的 BR） |
+| TiDB v6.3、v6.4、v6.5 或 v6.6 日志备份| 不兼容 | 不兼容 | 不兼容 | 兼容 | 兼容 |
 
-#### BR version compatibility matrix between TiDB v6.5.0 and v8.5.0
+#### TiDB v6.5.0 版本到 v8.5.0 之间的 BR 版本兼容性矩阵
 
-This section introduces the BR compatibility information for all [Long-Term Support (LTS)](/releases/versioning.md#long-term-support-releases) versions between TiDB v6.5.0 and v8.5.0 (including v6.5.0, v7.1.0, v7.5.0, v8.1.0, and v8.5.0):
+本节列出了 TiDB v6.5.0 版本到 v8.5.0 之间所有[长期支持版本 (LTS)](/releases/versioning.md#长期支持版本)（包括 v6.5.0、v7.1.0、v7.5.0、v8.1.0、v8.5.0）的 BR 兼容性矩阵。这个矩阵中的 BR 版本与对应的 TiDB Server 的大版本一致。
 
-> **Note:**
+> **注意：**
 >
-> Known issue: Starting from version v7.2.0, some system table fields in newly created clusters are case-insensitive. However, for clusters that are **upgraded online** from versions earlier than v7.2.0 to v7.2.0 or later, the corresponding system table fields remain case-sensitive. Backup and restore operations involving system tables between these two types of clusters might fail. For more details, see [Issue #43717](https://github.com/pingcap/tidb/issues/43717).
+> - 已知问题：从 v7.2.0 开始，新建集群的部分系统表字段变为大小写不敏感。然而，对于从 v7.2.0 之前的版本**在线升级**到 v7.2.0 及以上版本的集群，对应的系统表字段仍然大小写敏感。如果在这两类集群之间进行包含系统表的备份和恢复操作，可能会失败。详情参见 [Issue #43717](https://github.com/pingcap/tidb/issues/43717)。
+> - 从 v8.5.5 起，BR 在恢复系统表时支持通过参数 `--sys-check-collation` 检查排序规则 (Collation) 兼容性。在恢复过程中，BR 会验证系统表数据在目标集群排序规则下是否存在大小写冲突。如果数据在目标序规则下兼容，则可以成功恢复旧版本备份。否则，BR 会报错并终止恢复。
 
-The following table lists the compatibility matrix for full backups. Note that all information in the table applies to newly created clusters. For clusters upgraded from a version earlier than v7.2.0 to v7.2.0 or later, their behavior is consistent with that of backups from v7.1.0.
+下表列出了全量备份的兼容性矩阵，表格中所有信息均适用于新建集群。如果备份集群是从 v7.2.0 之前升级过来的集群，行为等同于 v7.1.0：
 
-| Backup version | Compatible restore versions | Incompatible restore versions |
-|:---------|:----------------|:------------------|
-| v6.5.0    | v7.1.0           | v7.5.0 and later  |
-| v7.1.0    | -                | v7.5.0 and later  |
-| v7.5.0    | v7.5.0 and later | -                 |
-| v8.1.0    | v8.1.0 and later | -                 |
-| v8.5.0    | v8.5.0 and later | -                 |
+| 备份集群版本 | 兼容的恢复目标集群版本 | 不兼容的恢复目标集群版本 |
+|:--|:--|:--|
+| v6.5.0 | v7.1.0 | v7.5.0 及以上 |
+| v7.1.0 | - | v7.5.0 及以上 |
+| v7.5.0 | v7.5.0 及以上 | - |
+| v8.1.0 | v8.1.0 及以上 | - |
+| v8.5.0 | v8.5.0 及以上 | - |
 
-The following table lists the compatibility matrix for log backups. Note that all information in the table applies to newly created clusters. For clusters upgraded from a version earlier than v7.2.0 to v7.2.0 or later, their behavior is consistent with that of backups from v7.1.0.
+下表列出了日志备份的兼容性矩阵，表格中所有信息均适用于新建集群。如果备份集群是从 v7.2.0 之前升级过来的集群，行为等同于 v7.1.0：
 
-| Backup version | Compatible restore versions | Incompatible restore versions |
-|:---------|:----------------|:------------------|
-| v6.5.0    | v7.1.0           | v7.5.0 and later  |
-| v7.1.0    | -                | v7.5.0 and later  |
-| v7.5.0    | v7.5.0 and later | -                 |
-| v8.1.0    | v8.1.0 and later | -                 |
-| v8.5.0    | v8.5.0 and later | -                 |
+| 备份集群版本 | 兼容的恢复目标集群版本 | 不兼容的恢复目标集群版本 |
+|:--|:--|:--|
+| v6.5.0 | v7.1.0 | v7.5.0 及以上 |
+| v7.1.0 | - | v7.5.0 及以上 |
+| v7.5.0 | v7.5.0 及以上 | - |
+| v8.1.0 | v8.1.0 及以上 | - |
+| v8.5.0 | v8.5.0 及以上 | - |
 
-> **Note:**
+> **注意：**
 >
-> - When only data of non-system tables is backed up (full backup or log backup), all versions are compatible with each other.
-> - In scenarios where restoring the `mysql` system table is incompatible, you can resolve the problem by setting `--with-sys-table=false` to skip restoring all system tables, or use a more fine-grained filter to just skip incompatible system tables, for example: `--filter '*.*' --filter "__TiDB_BR_Temporary_*.*" --filter '!mysql.*' --filter 'mysql.bind_info' --filter 'mysql.user' --filter 'mysql.global_priv' --filter 'mysql.global_grants' --filter 'mysql.default_roles' --filter 'mysql.role_edges' --filter '!sys.*' --filter '!INFORMATION_SCHEMA.*' --filter '!PERFORMANCE_SCHEMA.*' --filter '!METRICS_SCHEMA.*' --filter '!INSPECTION_SCHEMA.*'`.
-> - `-` means that there are no compatibility restrictions for the corresponding scenario.
+> - 当仅备份非系统表的业务数据时（全量备份或日志备份），所有版本之间均兼容。
+> - 在恢复 `mysql` 系统表时，可能会出现不兼容情况。为避免此问题，你可以通过设置 `--with-sys-table=false` 跳过恢复所有系统表，或者使用更精细的过滤器仅仅跳过不兼容的系统表，例如：`--filter '*.*' --filter "__TiDB_BR_Temporary_*.*" --filter '!mysql.*' --filter 'mysql.bind_info' --filter 'mysql.user' --filter 'mysql.global_priv' --filter 'mysql.global_grants' --filter 'mysql.default_roles' --filter 'mysql.role_edges' --filter '!sys.*' --filter '!INFORMATION_SCHEMA.*' --filter '!PERFORMANCE_SCHEMA.*' --filter '!METRICS_SCHEMA.*' --filter '!INSPECTION_SCHEMA.*'`。
+> - "-" 表示该版本在对应场景下没有兼容性限制。
 
-## See also
+## 探索更多
 
-- [TiDB Snapshot Backup and Restore Guide](/br/br-snapshot-guide.md)
-- [TiDB Log Backup and PITR Guide](/br/br-pitr-guide.md)
-- [Backup Storages](/br/backup-and-restore-storages.md)
+- [TiDB 快照备份与恢复使用指南](/br/br-snapshot-guide.md)
+- [TiDB 日志备份与 PITR 使用指南](/br/br-pitr-guide.md)
+- [备份存储](/br/backup-and-restore-storages.md)
+
+## 相关资源
+
+<RelatedResources>
+  <ResourceCard title="管理 TiDB 实验 8: 备份与还原" type="lab" link="https://labs.pingcap.com/labs/dba_303_lab_ff7" imgSrc="https://lab-static.pingcap.com/quick-demo/dba_303_ch09_en.png" duration="60 分钟" />
+</RelatedResources>

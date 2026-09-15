@@ -1,24 +1,20 @@
 ---
 title: ALTER PLACEMENT POLICY
-summary: ALTER PLACEMENT POLICY 在 TiDB 中的用法。
+summary: TiDB 数据库中 ALTER PLACEMENT POLICY 的使用概况。
 ---
 
 # ALTER PLACEMENT POLICY
 
-`ALTER PLACEMENT POLICY` 用于修改之前已创建的现有放置策略。所有使用该放置策略的表和分区会自动更新。
+`ALTER PLACEMENT POLICY` 用于修改已创建的放置策略。此修改会自动更新至所有使用这些放置策略的表和分区。
 
-> **Note:**
->
-> 该功能在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
-
-`ALTER PLACEMENT POLICY` 会用新的定义 _替换_ 之前的策略，而不是将旧策略与新策略 _合并_。在以下示例中，执行 `ALTER PLACEMENT POLICY` 后，`FOLLOWERS=4` 会丢失：
+`ALTER PLACEMENT POLICY` 会完全替换之前定义的规则，而不会和之前的规则合并，比如在下面的例子中，`FOLLOWERS=4` 就被 `ALTER PLACEMENT POLICY` 语句覆盖了：
 
 ```sql
 CREATE PLACEMENT POLICY p1 FOLLOWERS=4;
 ALTER PLACEMENT POLICY p1 PRIMARY_REGION="us-east-1" REGIONS="us-east-1,us-west-1";
 ```
 
-## 语法
+## 语法图
 
 ```ebnf+diagram
 AlterPolicyStmt ::=
@@ -56,16 +52,15 @@ AdvancedPlacementOption ::=
 
 ## 示例
 
-> **Note:**
+> **注意：**
 >
-> 要了解你的集群中有哪些可用的 region，请参见 [`SHOW PLACEMENT LABELS`](/sql-statements/sql-statement-show-placement-labels.md)。
->
-> 如果你没有看到任何可用的 region，可能是你的 TiKV 安装没有正确设置 label。
+> 如要查看所在集群中可用的区域，见 [`SHOW PLACEMENT LABELS`](/sql-statements/sql-statement-show-placement-labels.md)。如果未看到任何可用的区域，此 TiKV 集群在部署时可能未正确设置标签 (label)。
+
 
 ```sql
 CREATE PLACEMENT POLICY p1 PRIMARY_REGION="us-east-1" REGIONS="us-east-1,us-west-1";
-CREATE TABLE t1 (i INT) PLACEMENT POLICY=p1; -- 将策略 p1 分配给表 t1
-ALTER PLACEMENT POLICY p1 PRIMARY_REGION="us-east-1" REGIONS="us-east-1,us-west-1,us-west-2" FOLLOWERS=4; -- t1 的规则会自动更新。
+CREATE TABLE t1 (i INT) PLACEMENT POLICY=p1; -- 绑定放置策略 p1 到表 t1。
+ALTER PLACEMENT POLICY p1 PRIMARY_REGION="us-east-1" REGIONS="us-east-1,us-west-1,us-west-2" FOLLOWERS=4; -- t1 上的放置规则会自动更新。
 SHOW CREATE PLACEMENT POLICY p1\G
 ```
 

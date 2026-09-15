@@ -1,178 +1,182 @@
 ---
-title: TiCDC Server Configurations
-summary: Learn the CLI and configuration parameters used in TiCDC.
+title: TiCDC Server 配置
+summary: 了解 TiCDC 详细的命令行参数和配置文件定义。
 ---
 
-# TiCDC Server Configurations
+# TiCDC Server 配置
 
-This document describes the CLI and configuration file parameters used in TiCDC.
+本文介绍 TiCDC 的命令行参数和配置文件定义。
 
-## `cdc server` CLI parameters
+## `cdc server` 命令行参数说明
 
-The following are descriptions of options available in a `cdc server` command:
+对于 `cdc server` 命令中可用选项解释如下：
 
-- `addr`: The listening address of TiCDC, the HTTP API address, and the Prometheus address of the TiCDC service. The default value is `127.0.0.1:8300`.
-- `advertise-addr`: The advertised address via which clients access TiCDC. If unspecified, the value is the same as that of `addr`.
-- `pd`: A comma-separated list of PD endpoints.
-- `config`: The address of the configuration file that TiCDC uses (optional). This option is supported since TiCDC v5.0.0. This option can be used in the TiCDC deployment since TiUP v1.4.0. For detailed configuration description, see [TiCDC Changefeed Configurations](/ticdc/ticdc-changefeed-config.md)
-- `data-dir`: Specifies the directory that TiCDC uses when it needs to use disks to store files. The sort engine used by TiCDC and redo logs use this directory to store temporary files. It is recommended to ensure that the free disk space for this directory is greater than or equal to 500 GiB. If you are using TiUP, you can configure `data_dir` in the [`cdc_servers`](/tiup/tiup-cluster-topology-reference.md#cdc_servers) section, or directly use the default `data_dir` path in `global`.
-- `gc-ttl`: The TTL (Time To Live) of the service level `GC safepoint` in PD set by TiCDC, and the duration that the replication task can suspend, in seconds. The default value is `86400`, which means 24 hours. Note: Suspending of the TiCDC replication task affects the progress of TiCDC GC safepoint, which means that it affects the progress of upstream TiDB GC, as detailed in [Complete Behavior of TiCDC GC safepoint](/ticdc/ticdc-faq.md#what-is-the-complete-behavior-of-ticdc-garbage-collection-gc-safepoint).
-- `log-file`: The path to which logs are output when the TiCDC process is running. If this parameter is not specified, logs are written to the standard output (stdout).
-- `log-level`: The log level when the TiCDC process is running. The default value is `"info"`.
-- `ca`: Specifies the path of the CA certificate file in PEM format for TLS connection (optional).
-- `cert`: Specifies the path of the certificate file in PEM format for TLS connection (optional).
-- `cert-allowed-cn`: Specifies the path of the common name in PEM format for TLS connection (optional).
-- `key`: Specifies the path of the private key file in PEM format for TLS connection (optional).
-- `tz`: Time zone used by the TiCDC service. TiCDC uses this time zone when it internally converts time data types such as `TIMESTAMP` or when it replicates data to the downstream. The default is the local time zone in which the process runs. If you specify `time-zone` (in `sink-uri`) and `tz` at the same time, the internal TiCDC processes use the time zone specified by `tz`, and the sink uses the time zone specified by `time-zone` for replicating data to the downstream. Make sure that the time zone specified by `tz` is the same as that specified by `time-zone` (in `sink-uri`).
-- `cluster-id`: (optional) The ID of the TiCDC cluster. The default value is `default`. `cluster-id` is the unique identifier of a TiCDC cluster. TiCDC nodes with the same `cluster-id` belong to the same cluster. The length of a `cluster-id` is 128 characters at most. `cluster-id` must follow the pattern of `^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$` and cannot be one of the following: `owner`, `capture`, `task`, `changefeed`, `job`, and `meta`.
+- `addr`：TiCDC 的监听地址，提供服务的 HTTP API 查询地址和 Prometheus 查询地址，默认为 `127.0.0.1:8300`。
+- `advertise-addr`：TiCDC 对外开放地址，供客户端访问。如果未设置该参数值，地址默认与 `addr` 相同。
+- `pd`：TiCDC 监听的 PD 节点地址，用 `,` 来分隔多个 PD 节点地址。
+- `config`：可选项，表示 TiCDC 使用的配置文件地址。TiCDC 从 v5.0.0 开始支持该选项，TiUP 从 v1.4.0 开始支持在部署 TiCDC 时使用该配置。配置文件的格式说明详见：[TiCDC Changefeed 配置参数](/ticdc/ticdc-changefeed-config.md)
+- `data-dir`：指定 TiCDC 使用磁盘储存文件时的目录。目前 TiCDC 内部的排序引擎和 redo log 等特性会使用该目录储存临时文件，建议确保该目录所在设备的可用空间大于等于 500 GiB。如果你使用 TiUP，本选项可以通过配置 [`cdc_servers`](/tiup/tiup-cluster-topology-reference.md#cdc_servers) 中的 `data_dir` 来指定或默认使用 `global` 中 `data_dir` 路径。
+- `gc-ttl`：TiCDC 在 PD 设置的服务级别 GC safepoint 的 TTL (Time To Live) 时长，和 TiCDC 同步任务所能够停滞的时长。单位为秒，默认值为 `86400`，即 24 小时。注意：TiCDC 同步任务的停滞会影响 TiCDC GC safepoint 的推进，即会影响上游 TiDB GC 的推进，详情可以参考 [TiCDC GC safepoint 的完整行为](/ticdc/ticdc-faq.md#ticdc-gc-safepoint-的完整行为是什么)。
+- `log-file`：TiCDC 进程运行时日志的输出地址，未设置时默认为标准输出 (stdout)。
+- `log-level`：TiCDC 进程运行时的日志级别，默认为 `"info"`。
+- `ca`：TiCDC 创建 TLS 连接时使用的 CA 证书文件路径，PEM 格式，可选。
+- `cert`：TiCDC 创建 TLS 连接时使用的证书文件路径，PEM 格式，可选。
+- `cert-allowed-cn`：TiCDC 创建 TLS 连接时使用的通用名称文件路径，可选。
+- `key`：TiCDC 创建 TLS 连接时使用的证书密钥文件路径，PEM 格式，可选。
+- `tz`：TiCDC 服务使用的时区。TiCDC 在内部转换 `TIMESTAMP` 等时间数据类型和向下游同步数据时使用该时区，默认为进程运行本地时区。注意 `sink-uri` 中的 `time-zone` 参数仅对 `mysql` 和 `tidb` sink 生效，用于设置下游连接会话的时区。如果同时指定 `tz` 参数和 `time-zone` 参数，请确保两个参数的设置相同，因为 TiCDC 进程内部使用 `tz` 指定的时区，而 MySQL 和 TiDB sink 向下游执行时使用 `time-zone` 指定的时区。
+- `cluster-id`：TiCDC 集群的 ID。可选，默认值为 `default`。`cluster-id` 是 TiCDC 集群的唯一标识，拥有相同 `cluster-id` 的 TiCDC 节点同属一个集群。长度最大为 128，需要符合正则表达式 `^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$`，且不能是以下值：`owner`，`capture`，`task`，`changefeed`，`job`，`meta`。
 
-## `cdc server` configuration file parameters
+## `cdc server` 配置文件说明
 
-The following describes the configuration file specified by the `config` option in the `cdc server` command. You can find the default configuration file in [`pkg/cmd/util/ticdc.toml`](https://github.com/pingcap/tiflow/blob/master/pkg/cmd/util/ticdc.toml).
+对于 `cdc server` 命令中 `config` 参数指定的配置文件说明如下。你可以在 [`pkg/cmd/util/ticdc.toml`](https://github.com/pingcap/tiflow/blob/master/pkg/cmd/util/ticdc.toml) 找到默认值的配置文件。
 
-<!-- The configuration method of the following parameters is the same as that of CLI parameters, but the CLI parameters have higher priorities. -->
+### `newarch` <span class="version-mark">从 v8.5.4-release.1 版本开始引入</span>
+
+- 控制是否开启 [TiCDC 新架构](/ticdc/ticdc-architecture.md)。
+- 默认值：`false`，表示使用 [TiCDC 老架构](/ticdc/ticdc-classic-architecture.md)。
+- 当设置为 `true` 时，表示开启 TiCDC 新架构。
+
+<!-- 下面的字段的配置含义与命令行参数相同，但是命令行参数优先级更高 -->
 
 ### `addr`
 
-- Example: `"127.0.0.1:8300"`
+- 示例值：`"127.0.0.1:8300"`
 
 ### `advertise-addr`
 
-- Example: `""`
+- 示例值：`""`
 
 ### `log-file`
 
-- Example: `""`
+- 示例值：`""`
 
 ### `log-level`
 
-- Example: `"info"`
+- 示例值：`"info"`
 
 ### `data-dir`
 
-- Example: `""`
+- 示例值：`""`
 
 ### `gc-ttl`
 
-- Example: `86400` (24h)
+- 示例值：`86400` (24h)
 
 ### `tz`
 
-- Example: `"System"`
+- 示例值：`"System"`
 
 ### `cluster-id`
 
-- Example: `"default"`
+- 示例值：`"default"`
 
 ### `gc-tuner-memory-threshold`
 
-- Specifies the maximum memory threshold for tuning GOGC. Setting a smaller threshold increases the GC frequency. Setting a larger threshold reduces GC frequency and consumes more memory resources for the TiCDC process. Once the memory usage exceeds this threshold, GOGC Tuner stops working.
-- Default value: `0`, indicating that GOGC Tuner is disabled
-- Unit: Bytes
+- 控制 GOGC Tuner 自动调节的最大内存阈值。设置较小的阈值会提高 GC 频率；设置较大的阈值会降低 GC 频率并使 TiCDC 进程占用更多的内存资源；超过阈值后 GOGC Tuner 会停止工作。
+- 默认值：`0`，表示禁用 GOGC Tuner
+- 单位：Byte
 
 ### security
 
 #### `ca-path`
 
-- Example: `""`
+- 示例值：`""`
 
 #### `cert-path`
 
-- Example: `""`
+- 示例值：`""`
 
 #### `key-path`
 
-- Example: `""`
+- 示例值：`""`
 
 #### `mtls`
 
-- Controls whether to enable the TLS client authentication.
-- Default value: `false`
+- 控制是否开启 TLS 客户端鉴权。
+- 默认值：`false`
 
 #### `client-user-required`
 
-- Controls whether to use username and password for client authentication. The default value is false.
-- Default value: `false`
+- 控制是否使用用户名和密码进行客户端鉴权。
+- 默认值：`false`
 
 #### `client-allowed-user`
 
-- Lists the usernames that are allowed for client authentication. Authentication requests with usernames not in this list will be rejected.
-- Default value: `null`
+- 指定可用于客户端鉴权的用户名，列表中不存在的用户的鉴权请求将被直接拒绝。
+- 默认值：`null`
 
-<!-- Example: `["username_1", "username_2"]` -->
+<!-- 示例值：`["username_1", "username_2"]` -->
 
 ### `capture-session-ttl`
 
-- Specifies the session duration between TiCDC and etcd services. This parameter is optional.
-- Default value: `10`
-- Unit: Seconds
+- TiCDC 与 etcd 服务间的 session 时长。可选。
+- 默认值：`10`
+- 单位：秒
 
 ### `owner-flush-interval`
 
-- Specifies the interval at which the Owner module in the TiCDC cluster attempts to push the replication progress. This parameter is optional and its default value is `50000000` nanoseconds (that is, 50 milliseconds).
-- You can configure this parameter in two ways: specifying only the number (for example, configuring it as `40000000` represents 40000000 nanoseconds, which is 40 milliseconds), or specifying both the number and unit (for example, directly configuring it as `40ms`).
-- Default value: `50000000`, that is, 50 milliseconds
+- TiCDC 集群中的 owner 模块尝试推进同步任务进度的周期，默认值为 `50000000` 纳秒（即 50 毫秒）。可选。
+- 该参数有两种配置方式：只指定数字（例如，配置为 `40000000` 表示 40000000 纳秒，即 40 毫秒），或同时指定数字和单位（例如，直接配置为 `40ms`）。
+- 默认值：`50000000`，即 50 毫秒
 
 ### `processor-flush-interval`
 
-- Specifies the interval at which the Processor module in the TiCDC cluster attempts to push the replication progress. This parameter is optional and its default value is `50000000` nanoseconds (that is, 50 milliseconds).
-- The configuration method of this parameter is the same as that of `owner-flush-interval`.
-- Default value: `50000000`, that is, 50 milliseconds
+- TiCDC 集群中的 processor 模块尝试推进同步任务进度的周期，默认值为 `50000000` 纳秒（即 50 毫秒）。可选。
+- 该参数配置方式与 `owner-flush-interval` 相同。
+- 默认值：`50000000`，即 50 毫秒
 
 ### log
 
 #### `error-output`
 
-- Specifies the output location for internal error logs of the zap log module. This parameter is optional.
-- Default value: `"stderr"`
+- 用于指定 zap log 模块内部的错误日志的输出位置。可选。
+- 默认值：`"stderr"`
 
 #### log.file
 
 ##### `max-size`
 
-- Specifies the maximum size of a single log file. This parameter is optional.
-- Default value: `300`
-- Unit: MiB
+- 单个日志文件的最大文件大小。可选。
+- 默认值：`300`
+- 单位：MiB
 
 ##### `max-days`
 
-- Specifies the maximum number of days to retain log files. This parameter is optional.
-- Default value: `0`, indicating never to delete
+- 日志文件最长保留天数。可选。
+- 默认值：`0`，代表永不删除
 
 ##### `max-backups`
 
-- Specifies the number of log files to retain. This parameter is optional.
-- Default value: `0`, indicating to keep all log files
+- 日志文件的保留个数。可选。
+- 默认值：`0`，代表保留所有日志文件
 
 ### sorter
 
 #### `cache-size-in-mb`
 
-- Specifies the size of the shared pebble block cache in the Sorter module for the 8 pebble DBs started by default.
-- Default value: `128`
-- Unit: MiB
+- Sorter 模块给默认启动的 8 个 pebble DB 共享的 pebble block cache 的大小。
+- 默认值：`128`
+- 单位：MiB
 
 #### `sorter-dir`
 
-- Specifies the directory where sorter files are stored relative to the data directory (`data-dir`). This parameter is optional.
-- Default value: `"/tmp/sorter"`
+- Sorter 文件相对于 `data-dir` 的目录。可选。
+- 默认值：`"/tmp/sorter"`
 
 ### kv-client
 
 #### `worker-concurrent`
 
-- Specifies the number of threads that can be used in a single Region worker. This parameter is optional.
-- Default value: `8`
+- 单个 Region worker 中可使用的线程数量。可选。 
+- 默认值：`8`
 
 #### `worker-pool-size`
 
-- Specifies the number of threads in the shared thread pool of TiCDC, mainly used for processing KV events. This parameter is optional.
-- Default value: `0`, indicating that the default pool size is twice the number of CPU cores
+- TiCDC 中共享线程池中线程的数量，主要用于处理 KV 事件。可选。
+- 默认值：`0`，表示默认为 CPU 核数的 2 倍
 
 #### `region-retry-duration`
 
-- Specifies the retry duration of Region connections. This parameter is optional.
-- You can configure this parameter in two ways:
-    - Specify only the number, for example, `50000000` represents 50000000 nanoseconds (50 milliseconds)
-    - Specify both the number and the unit, for example, `50ms`
-- Default value: `60000000000` (1 minute)
+- Region 连接重试时间，默认值为 `60000000000` 纳秒（即 1 分钟）。可选。
+- 该参数有两种配置方式：只指定数字（例如，配置为 `50000000` 表示 50000000 纳秒，即 50 毫秒），或同时指定数字和单位（例如，直接配置为 `50ms`）。
+- 默认值：`60000000000`，即 1 分钟

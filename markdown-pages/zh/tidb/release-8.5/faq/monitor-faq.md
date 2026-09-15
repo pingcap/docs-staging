@@ -1,37 +1,43 @@
 ---
-title: TiDB Monitoring FAQs
-summary: Learn about the FAQs related to TiDB Monitoring.
+title: TiDB 监控常见问题
+summary: 介绍在监控 TiDB 集群时的常见问题、原因及解决方法。
 ---
 
-# TiDB Monitoring FAQs
+# TiDB 监控常见问题
 
-This document summarizes the FAQs related to TiDB monitoring.
+本文介绍在监控 TiDB 集群时的常见问题、原因及解决方法。
 
-- For details of Prometheus monitoring framework, see [Overview of the Monitoring Framework](/tidb-monitoring-framework.md).
-- For details of key metrics of monitoring, see [Key Metrics](/grafana-overview-dashboard.md).
++ Prometheus 监控框架详情可见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
++ 监控指标解读详细参考[重要监控指标详解](/grafana-overview-dashboard.md)。
 
-## Is there a better way of monitoring the key metrics?
+## 目前的监控使用方式及主要监控指标，有没有更好看的监控？
 
-The monitoring system of TiDB consists of Prometheus and Grafana. From the dashboard in Grafana, you can monitor various running metrics of TiDB which include the monitoring metrics of system resources, of client connection and SQL operation, of internal communication and Region scheduling. With these metrics, the database administrator can better understand the system running status, running bottlenecks and so on. In the practice of monitoring these metrics, we list the key metrics of each TiDB component. Generally you only need to pay attention to these common metrics. For details, see [official documentation](/grafana-overview-dashboard.md).
+TiDB 使用 Prometheus + Grafana 组成 TiDB 数据库系统的监控系统。用户在 Grafana 上通过 dashboard 可以监控到 TiDB 的各类运行指标，包括
 
-## The Prometheus monitoring data is deleted every 15 days by default. Could I set it to two months or delete the monitoring data manually?
++ 系统资源的监控指标
++ 客户端连接与 SQL 运行的指标
++ 内部通信和 Region 调度的指标
 
-Yes. Find the startup script on the machine where Prometheus is started, edit the startup parameter and restart Prometheus.
+通过这些指标，可以让数据库管理员更好的了解到系统的运行状态，运行瓶颈等内容。在监控指标的过程中，我们按照 TiDB 不同的模块，分别列出了各个模块重要的指标项，一般用户只需要关注这些常见的指标项。具体指标请参见[官方文档](/grafana-overview-dashboard.md)。
+
+## Prometheus 监控数据默认 15 天自动清除一次，可以自己设定成 2 个月或者手动删除吗？
+
+可以的，在 Prometheus 启动的机器上，找到启动脚本，然后修改启动参数，然后重启 Prometheus 生效。
 
 ```
 --storage.tsdb.retention="60d"
 ```
 
-## Region Health monitor
+## Region Health 监控项
 
-In TiDB 2.0, Region health is monitored in the PD metric monitoring page, in which the `Region Health` monitoring item shows the statistics of all the Region replica status. `miss` means shortage of replicas and `extra` means the extra replica exists. In addition, `Region Health` also shows the isolation level by `label`. `level-1` means the Region replicas are isolated physically in the first `label` level. All the Regions are in `level-0` when `location label` is not configured.
+TiDB-2.0 版本中，PD metric 监控页面中，对 Region 健康度进行了监控，其中 Region Health 监控项是对所有 Region 副本状况的一些统计。其中 miss 是缺副本，extra 是多副本。同时也增加了按 Label 统计的隔离级别，level-1 表示这些 Region 的副本在第一级 Label 下是物理隔离的，没有配置 location label 时所有 Region 都在 level-0。
 
-## What is the meaning of `selectsimplefull` in Statement Count monitor?
+## Statement Count 监控项中的 selectsimplefull 是什么意思？
 
-It means full table scan but the table might be a small system table.
+代表全表扫，但是可能是很小的系统表。
 
-## What is the difference between `QPS` and `Statement OPS` in the monitor?
+## 监控上的 QPS 和 Statement OPS 有什么区别？
 
-The `QPS` statistics is about all the SQL statements, including `use database`, `load data`, `begin`, `commit`, `set`, `show`, `insert` and `select`.
+QPS 会统计执行的所有 SQL 命令，包括 use database、load data、begin、commit、set、show、insert、select 等。
 
-The `Statement OPS` statistics is only about applications related SQL statements, including `select`, `update` and `insert`, therefore the `Statement OPS` statistics matches the applications better.
+Statement OPS 只统计 select、update、insert 等业务相关的，所以 Statement OPS 的统计和业务比较相符。

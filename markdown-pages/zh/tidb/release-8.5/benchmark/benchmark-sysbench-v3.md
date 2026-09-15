@@ -1,44 +1,44 @@
 ---
-title: TiDB Sysbench Performance Test Report -- v2.1 vs. v2.0
-summary: TiDB 2.1 outperforms TiDB 2.0 in the `Point Select` test, with a 50% increase in query performance. However, the `Update Non-Index` and `Update Index` tests show similar performance between the two versions. The test was conducted in September 2018 in Beijing, China, using a specific test environment and configuration.
+title: TiDB Sysbench 性能对比测试报告 - v2.1 对比 v2.0
+summary: TiDB 2.1 版本在 Point Select 查询性能上提升了 50%，而在 Update Non-Index 和 Update Index 写入性能上与 2.0 版本基本一致。
 ---
 
-# TiDB Sysbench Performance Test Report -- v2.1 vs. v2.0
+# TiDB Sysbench 性能对比测试报告 - v2.1 对比 v2.0
 
-## Test purpose
+## 测试目的
 
-This test aims to compare the performance of TiDB 2.1 and TiDB 2.0 for OLTP where the working set fits in memory.
+对比 TiDB 2.1 版本和 2.0 版本在 OLTP 场景下的性能。
 
-## Test version, time, and place
+## 测试版本、时间、地点
 
-TiDB version: v2.1.0-rc.2 vs. v2.0.6
+TiDB 版本：v2.1.0-rc.2 vs. v2.0.6
 
-Time: September, 2018
+时间：2018 年 9 月
 
-Place: Beijing, China
+地点：北京
 
-## Test environment
+## 测试环境
 
-IDC machine:
+IDC 机器：
 
-| Type | Name |
+| 类别 | 名称 |
 | :-: | :-: |
 | OS | Linux (CentOS 7.3.1611) |
 | CPU | 40 vCPUs, Intel(R) Xeon(R) CPU E5-2630 v4 @ 2.20GHz |
 | RAM | 128GB |
 | DISK | Optane 500GB SSD \* 1 |
 
-Sysbench version: 1.1.0
+Sysbench 版本：1.1.0
 
-## Test plan
+## 测试方案
 
-Use Sysbench to import **16 tables, with 10,000,000 rows in each table**. With the HAProxy, requests are sent to the cluster at an incremental concurrent number. A single concurrent test lasts 5 minutes.
+使用 Sysbench 向集群导入 **16 张表，每张数据 1000 万**。通过 HAProxy 代理，分别以递增并发数向集群发送请求，单次并发测试时间 5 分钟。
 
-### TiDB version information
+### TiDB 版本信息
 
 ### v2.1.0-rc.2
 
-| Component | GitHash |
+| 组件 | GitHash |
 | :-: | :-: |
 | TiDB | 08e56cd3bae166b2af3c2f52354fbc9818717f62 |
 | TiKV | 57e684016dafb17dc8a6837d30224be66cbc7246 |
@@ -46,19 +46,19 @@ Use Sysbench to import **16 tables, with 10,000,000 rows in each table**. With t
 
 ### v2.0.6
 
-| Component | GitHash |
+| 组件 | GitHash |
 | :-: | :-: |
 | TiDB | b13bc08462a584a085f377625a7bab0cc0351570 |
 | TiKV | 57c83dc4ebc93d38d77dc8f7d66db224760766cc |
 | PD | b64716707b7279a4ae822be767085ff17b5f3fea |
 
-### TiDB parameter configuration
+### TiDB 参数配置
 
-The default TiDB configuration is used in both v2.1 and v2.0.
+两版本 TiDB 均使用**默认配置**。
 
-### TiKV parameter configuration
+### TiKV 参数配置
 
-The following TiKV configuration is used in both v2.1 and v2.0:
+两版本 TiKV 均使用如下配置：
 
 ```txt
 [readpool.storage]
@@ -73,20 +73,20 @@ block-cache-size = "60GB"
 block-cache-size = "20GB"
 ```
 
-### Cluster topology
+### 集群拓扑
 
-| Machine IP | Deployment instance |
+| 机器 IP | 部署实例 |
 | :-: | :-: |
 | 172.16.30.31 | 1\*Sysbench 1\*HAProxy |
 | 172.16.30.32 | 1\*TiDB 1\*pd 1\*TiKV |
 | 172.16.30.33 | 1\*TiDB 1\*TiKV |
 | 172.16.30.34 | 1\*TiDB 1\*TiKV |
 
-## Test result
+## 测试结果
 
-### `Point Select` test
+### Point Select 测试
 
-| Version | Threads | QPS | 95% Latency (ms) |
+| 版本 | threads | qps | 95% latency(ms) |
 | :-: | :-: | :-: | :-: |
 | v2.1 | 64   | 111481.09 | 1.16  |
 | v2.1 | 128  | 145102.62 | 2.52  |
@@ -99,13 +99,13 @@ block-cache-size = "20GB"
 | v2.0 | 512  | 121350.61 | 11.65 |
 | v2.0 | 1024 | 150036.31 | 17.32 |
 
-![point select](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_point_select.png)
+![point select](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v3_point_select.png)
 
-According to the statistics above, the `Point Select` query performance of TiDB 2.1 has increased by **50%** than that of TiDB 2.0.
+v2.1 比 v2.0 在 Point Select 查询性能上，**提升了 50%**。
 
-### `Update Non-Index` test
+### Update Non-Index 测试
 
-| Version | Threads | QPS | 95% Latency (ms) |
+| 版本 | threads | qps | 95% latency(ms) |
 | :-: | :-: | :-: | :-: |
 | v2.1 | 64   | 18946.09 | 5.77   |
 | v2.1 | 128  | 22022.82 | 12.08  |
@@ -118,13 +118,13 @@ According to the statistics above, the `Point Select` query performance of TiDB 
 | v2.0 | 512  | 25994.33 | 46.63  |
 | v2.0 | 1024 | 27917.52 | 92.42  |
 
-![update non-index](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_update_non_index.png)
+![update non-index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v3_update_non_index.png)
 
-According to the statistics above, the `Update Non-Index` write performance of TiDB 2.1 and TiDB 2.0 is almost the same.
+v2.1 与 v2.0 在 Update Non-Index 写入性能上基本一致。
 
-### `Update Index` test
+### Update Index 测试
 
-| Version | Threads | QPS | 95% Latency (ms) |
+| 版本 | threads | qps | 95% latency(ms) |
 | :-: | :-: | :-: | :-: |
 | v2.1 | 64   | 9934.49  | 12.08  |
 | v2.1 | 128  | 10505.95 | 25.28  |
@@ -137,6 +137,6 @@ According to the statistics above, the `Update Non-Index` write performance of T
 | v2.0 | 512  | 11162.63 | 104.84 |
 | v2.0 | 1024 | 12067.63 | 179.94 |
 
-![update index](https://docs-download.pingcap.com/media/images/docs/sysbench_v3_update_index.png)
+![update index](https://docs-download.pingcap.com/media/images/docs-cn/sysbench_v3_update_index.png)
 
-According to the statistics above, the `Update Index` write performance of TiDB 2.1 and TiDB 2.0 is almost the same.
+v2.1 与 v2.0 在 Update Index 写入性能上基本一致。

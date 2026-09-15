@@ -1,51 +1,51 @@
 ---
 title: tiup cluster template
-summary: The tiup cluster template command is used to prepare a topology file for cluster deployment. It has options to output default, detailed, local, or multi-dc topology templates. The output can be redirected to the topology file for deployment.
+summary: TiUP 内置了拓扑文件的模版，用户可以通过修改该模版来生成最终的拓扑文件。使用 tiup cluster template 命令可以输出 TiUP 内置的模版内容。该命令有多个选项，包括输出详细的拓扑模版、输出本地集群的简单拓扑模版以及输出多数据中心的拓扑模版。根据指定选项输出拓扑模版，可重定向到拓扑文件中用于部署。
 ---
 
 # tiup cluster template
 
-Before deploying the cluster, you need to prepare a [topology file](/tiup/tiup-cluster-topology-reference.md) of the cluster. TiUP has a built-in topology file template, and you can modify this template to create the final topology file. To output the built-in template content, you can use the `tiup cluster template` command.
+部署集群之前，需要准备一份集群的[拓扑文件](/tiup/tiup-cluster-topology-reference.md)。TiUP 内置了拓扑文件的模版，用户可以通过修改该模版来生成最终的拓扑文件。使用 `tiup cluster template` 命令可以输出 TiUP 内置的模版内容。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster template [flags]
 ```
 
-If this option is not specified, the output default template contains the following instances:
+如果不指定该选项，输出的默认模版包含以下实例：
 
-- 3 PD instances
-- 3 TiKV instances
-- 3 TiDB instances
-- 2 TiFlash instances
-- 1 Prometheus instance
-- 1 Grafana instance
-- 1 Alertmanager instance
+- 3 个 PD 实例
+- 3 个 TiKV 实例
+- 3 个 TiDB 实例
+- 2 个 TiFlash 实例
+- 1 个 Prometheus 实例
+- 1 个 Grafana 实例
+- 1 个 Alertmanager 实例
 
-## Options
+## 选项
 
 ### --full
 
-- Outputs a detailed topology template that is commented with configurable parameters. To enable this option, add it to the command.
-- If this option is not specified, the simple topology template is output by default.
+- 输出详细的拓扑模版，该模版会以注释的形式带上可配置的参数。在命令中添加该选项，可开启该选项。
+- 如果不指定该选项，默认输出最简单的拓扑模版。
 
 ### --local
 
-- Outputs a simple topology template for the local cluster, which can be used directly, and the `global` parameter can be adjusted as needed.
-- This template creates a PD service, a TiDB service, a TiKV service, a Prometheus service, and a Grafana service.
+- 输出本地集群的简单拓扑模版，该模版可以直接使用，该模版中的 global 参数也可以按需调整。
+- 该模板会创建一个 PD 服务、一个 TiDB 服务、一个 TiKV 服务、一个 Prometheus 服务、一个 Grafana 服务。
 
 ### --multi-dc
 
-- Outputs the topology template of multiple data centers. To enable this option, add it to the command.
-- If this option is not specified, the topology template of a single data center is output by default.
+- 输出多数据中心的拓扑模版。在命令中添加该选项，可开启该选项。
+- 如果不指定该选项，默认输出单地单机房的拓扑模版。
 
 ### -h, --help
 
-Prints the help information.
+输出帮助信息。
 
-## Output
+## 输出
 
-Outputs the topology template according to the specified options, which can be redirected to the topology file for deployment.
+根据指定选项输出拓扑模版，可重定向到拓扑文件中用于部署。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

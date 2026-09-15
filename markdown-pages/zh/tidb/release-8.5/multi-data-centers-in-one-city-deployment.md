@@ -1,117 +1,119 @@
 ---
-title: Multiple Availability Zones in One Region Deployment
-summary: Learn the deployment solution to multiple availability zones in one region.
+title: 单区域多 AZ 部署 TiDB
+summary: 本文档介绍单个区域多个可用区部署 TiDB 的方案。
 ---
 
-# Multiple Availability Zones in One Region Deployment
+# 单区域多 AZ 部署 TiDB
 
 <!-- Localization note for TiDB:
 
-- English: use distributed SQL, and start to emphasize HTAP
-- Chinese: can keep "NewSQL" and emphasize one-stop real-time HTAP ("一栈式实时 HTAP")
-- Japanese: use NewSQL because it is well-recognized
+- 英文：用 distributed SQL，同时开始强调 HTAP
+- 中文：可以保留 NewSQL 字眼，同时强调一栈式实时 HTAP
+- 日文：NewSQL 认可度高，用 NewSQL
 
 -->
 
-As a distributed SQL database, TiDB combines the best features of the traditional relational database and the scalability of the NoSQL database, and is highly available across availability zones (AZs). This document introduces the deployment of multiple AZs in one region.
+作为一栈式实时 HTAP 数据库，TiDB 兼顾了传统关系型数据库的优秀特性、NoSQL 数据库可扩展性以及跨可用区 (Availability Zone, AZ) 场景下的高可用。本文档旨在介绍同区域多 AZ 部署 TiDB 的方案。
 
-The term "region" in this document refers to a geographic area, while the capitalized "Region" refers to a basic unit of data storage in TiKV. "AZ" refers to an isolated location within a region, and each region has multiple AZs. The solution described in this document also applies to the scenario where multiple data centers are located in a single city.
+本文中的区域指的是地理隔离的不同位置，AZ 指的是区域内部划分的相互独立的资源集合。本文描述的方案同样适用于一个城市内多个数据中心（同城多中心）的场景。
 
-## Raft protocol
+## 了解 Raft 协议
 
-Raft is a distributed consensus algorithm. Using this algorithm, both PD and TiKV, among components of the TiDB cluster, achieve disaster recovery of data, which is implemented through the following mechanisms:
+Raft 是一种分布式一致性算法，在 TiDB 集群的多种组件中，PD 和 TiKV 都通过 Raft 实现了数据的容灾。Raft 的灾难恢复能力通过如下机制实现：
 
-- The essential role of Raft members is to perform log replication and act as a state machine. Among Raft members, data replication is implemented by replicating logs. Raft members change their own states in different conditions to elect a leader to provide services.
-- Raft is a voting system that follows the majority protocol. In a Raft group, if a member gets the majority of votes, its membership changes to leader. In other words, when the majority of nodes remain in the Raft group, a leader can be elected to provide services.
+- Raft 成员的本质是日志复制和状态机。Raft 成员之间通过复制日志来实现数据同步；Raft 成员在不同条件下切换自己的成员状态，其目标是选出 leader 以提供对外服务。
+- Raft 是一个表决系统，它遵循多数派协议，在一个 Raft Group 中，某成员获得大多数投票，它的成员状态就会转变为 leader。也就是说，当一个 Raft Group 还保有大多数节点 (majority) 时，它就能够选出 leader 以提供对外服务。
 
-To take advantage of Raft's reliability, the following conditions must be met in a real deployment scenario:
+遵循 Raft 可靠性的特点，放到现实场景中：
 
-- Use at least three servers in case one server fails.
-- Use at least three racks in case one rack fails.
-- Use at least three AZs in case one AZ fails.
-- Deploy TiDB in at least three regions in case data safety issue occurs in one region.
+- 想克服任意 1 台服务器 (host) 的故障，应至少提供 3 台服务器。
+- 想克服任意 1 个机柜 (rack) 的故障，应至少提供 3 个机柜。
+- 想克服任意 1 个可用区（AZ，也可以是同城的多个机房）的故障，应至少提供 3 个 AZ。
 
-The native Raft protocol does not have good support for an even number of replicas. Considering the impact of cross-region network latency, three AZs in the same region might be the most suitable solution to a highly available and disaster tolerant Raft deployment.
+- 想应对任意 1 个区域的灾难场景，应至少规划 3 个区域用于部署集群。
 
-## Three AZs in one region deployment
+可见，原生 Raft 协议对于偶数副本的支持并不是很友好，考虑跨区域网络延迟影响，同区域三 AZ 可能是最适合部署 Raft 的高可用及容灾方案。
 
-TiDB clusters can be deployed in three AZs in the same region. In this solution, data replication across the three AZs is implemented using the Raft protocol within the cluster. These three AZs can provide read and write services at the same time. Data consistency is not affected even if one AZ fails.
+## 同区域三 AZ 方案
 
-### Simple architecture
+同区域三 AZ 方案，即同区域有三个机房部署 TiDB 集群，AZ 间的数据在集群内部（通过 Raft 协议）进行同步。同区域三 AZ 可同时对外进行读写服务，任意中心发生故障不影响数据一致性。
 
-TiDB, TiKV, and PD are distributed among three AZs, which is the most common deployment with the highest availability.
+### 简易架构图
 
-![3-AZ Deployment Architecture](https://docs-download.pingcap.com/media/images/docs/deploy-3dc.png)
+集群 TiDB、TiKV 和 PD 组件分别部署在 3 个不同的 AZ，这是最常规且高可用性最高的方案。
 
-**Advantages:**
+![三 AZ 部署](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc.png)
 
-- All replicas are distributed among three AZs, with high availability and disaster recovery capability.
-- No data will be lost if one AZ is down (RPO = 0).
-- Even if one AZ is down, the other two AZs will automatically start leader election and automatically resume services within a certain period (within 20 seconds in most cases). See the following diagram for more information:
+**优点：**
 
-![Disaster Recovery for 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-dr.png)
+- 所有数据的副本分布在三个 AZ，具备高可用和容灾能力
+- 任何一个 AZ 失效后，不会产生任何数据丢失 (RPO = 0)
+- 任何一个 AZ 失效后，其他两个 AZ 会自动发起 leader election，并在一定时间内（通常 20s 以内）自动恢复服务
 
-**Disadvantages:**
+![三 AZ 部署容灾](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-dr.png)
 
-The performance can be affected by the network latency.
+**缺点：**
 
-- For writes, all the data has to be replicated to at least two AZs. Because TiDB uses a two-phase commit for writes, the write latency is at least twice the latency of the network between two AZs.
-- The read performance will also be affected by the network latency if the leader is not in the same AZ with the TiDB node that sends the read request.
-- Each TiDB transaction needs to obtain TimeStamp Oracle (TSO) from the PD leader. So if the TiDB and PD leaders are not in the same AZ, the performance of the transactions will also be affected by the network latency because each transaction with the write request has to obtain TSO twice.
+性能受网络延迟影响。具体影响如下：
 
-### Optimized architecture
+- 对于写入的场景，所有写入的数据需要同步复制到至少两个 AZ，由于 TiDB 写入过程使用两阶段提交，故写入延迟至少需要两倍 AZ 间的延迟。
 
-If not all of the three AZs need to provide services to the applications, you can dispatch all the requests to one AZ and configure the scheduling policy to migrate the TiKV Region leader and PD leader to the same AZ. In this way, neither obtaining TSO nor reading TiKV Regions will be impacted by the network latency across AZs. If this AZ is down, the PD leader and TiKV Region leader will be automatically elected in other surviving AZs, and you just need to switch the requests to the AZs that are still alive.
+- 对于读请求来说，如果数据 leader 与发起读取的 TiDB 节点不在同一个 AZ，也会受网络延迟影响。
+- TiDB 中的每个事务都需要向 PD leader 获取 TSO，当 TiDB 与 PD leader 不在同一个 AZ 时，TiDB 上运行的事务也会因此受网络延迟影响，每个有写入的事务会获取两次 TSO。
 
-![Read Performance Optimized 3-AZ Deployment](https://docs-download.pingcap.com/media/images/docs/deploy-3dc-optimize.png)
+### 架构优化图
 
-**Advantages:**
+如果不需要每个 AZ 同时对外提供服务，可以将业务流量全部派发到一个 AZ，并通过调度策略把 Region leader 和 PD leader 都迁移到同一个 AZ。这样，不管是从 PD 获取 TSO，还是读取 Region，都不会受 AZ 间网络的影响。当该 AZ 失效时，PD leader 和 Region leader 会自动在其它 AZ 选出，只需要把业务流量转移至其他存活的 AZ 即可。
 
-The cluster's read performance and the capability to get TSO are improved. A configuration template of scheduling policy is as follows:
+![三 AZ 部署读性能优化](https://docs-download.pingcap.com/media/images/docs-cn/deploy-3dc-optimize.png)
+
+**优点：**
+
+集群 TSO 获取能力以及读取性能有所提升。具体调度策略设置模板参照如下：
 
 ```shell
--- Evicts all leaders of other AZs to the AZ that provides services to the application.
+-- 其他 AZ 将 leader 驱逐至承载业务流量的 AZ
+
 config set label-property reject-leader LabelName labelValue
 
--- Migrates PD leaders and sets priority.
+-- 迁移 PD leader 并设置优先级
 member leader transfer pdName1
 member leader_priority pdName1 5
 member leader_priority pdName2 4
 member leader_priority pdName3 3
 ```
 
-> **Note:**
+> **注意：**
 >
-> Starting from TiDB v5.2, the `label-property` configuration is not supported by default. To set the replica policy, use the [placement rules](/configure-placement-rules.md).
+> TiDB 5.2 及以上版本默认不支持 `label-property` 配置。若要设置副本策略，请使用 [Placement Rules](/configure-placement-rules.md)。
 
-**Disadvantages:**
+**缺点：**
 
-- Write scenarios are still affected by network latency across AZs. This is because Raft follows the majority protocol and all written data must be replicated to at least two AZs.
-- The TiDB server that provides services is only in one AZ.
-- All application traffic is processed by one AZ and the performance is limited by the network bandwidth pressure of that AZ.
-- The capability to get TSO and the read performance are affected by whether the PD server and TiKV server are up in the AZ that processes application traffic. If these servers are down, the application is still affected by the cross-center network latency.
+- 写入场景仍受 AZ 网络延迟影响，这是因为遵循 Raft 多数派协议，所有写入的数据需要同步复制到至少两个 AZ
 
-### Deployment example
+- TiDB Server 是 AZ 级别单点
+- 业务流量纯走单 AZ，性能受限于单 AZ 网络带宽压力
+- TSO 获取能力以及读取性能受限于业务流量 AZ 集群 PD、TiKV 组件是否正常，否则仍受跨 AZ 网络交互影响
 
-This section provides a topology example, and introduces TiKV labels and TiKV labels planning.
+### 样例部署图
 
-#### Topology example
+#### 样例拓扑架构
 
-The following example assumes that three AZs (AZ1, AZ2, and AZ3) are located in one region; each AZ has two sets of racks and each rack has three servers. The example ignores the hybrid deployment or the scenario where multiple instances are deployed on one machine. The deployment of a TiDB cluster (three replicas) on three AZs in one region is as follows:
+假设某区域有三个 AZ，AZ1、AZ2 和 AZ3。每个 AZ 中有两套机架，每个机架有三台服务器，不考虑混合布署以及单台机器多实例部署，同区域三 AZ 架构集群（3 副本）部署参考如下：
 
-![3-AZ in One Region](https://docs-download.pingcap.com/media/images/docs/multi-data-centers-in-one-city-deployment-sample.png)
+![同区域三 AZ 集群部署](https://docs-download.pingcap.com/media/images/docs-cn/multi-data-centers-in-one-city-deployment-sample.png)
 
-#### TiKV labels
+#### TiKV Labels 简介
 
-TiKV is a Multi-Raft system where data is divided into Regions and the size of each Region is 96 MB by default. Three replicas of each Region form a Raft group. For a TiDB cluster of three replicas, because the number of Region replicas is independent of the TiKV instance numbers, three replicas of a Region are only scheduled to three TiKV instances. This means that even if the cluster is scaled out to have N TiKV instances, it is still a cluster of three replicas.
+TiKV 是一个 Multi-Raft 系统，其数据按 Region（默认 96M）切分，每个 Region 的 3 个副本构成了一个 Raft Group。假设一个 3 副本 TiDB 集群，由于 Region 的副本数与 TiKV 实例数量无关，则一个 Region 的 3 个副本只会被调度到其中 3 个 TiKV 实例上，也就是说即使集群扩容 N 个 TiKV 实例，其本质仍是一个 3 副本集群。
 
-Because a Raft group of three replicas tolerates only one replica failure, even if the cluster is scaled out to have N TiKV instances, this cluster still tolerates only one replica failure. Two failed TiKV instances might cause some Regions to lose replicas and the data in this cluster is no longer complete. SQL requests that access data from these Regions will fail. The probability of two simultaneous failures among N TiKV instances is much higher than the probability of two simultaneous failures among three TiKV instances. This means that the more TiKV instances the Multi-Raft system is scaled out to have, the less the availability of the system.
+由于 3 副本的 Raft Group 只能容忍 1 副本故障，当集群被扩容到 N 个 TiKV 实例时，这个集群依然只能容忍一个 TiKV 实例的故障。2 个 TiKV 实例的故障可能会导致某些 Region 丢失多个副本，整个集群的数据也不再完整，访问到这些 Region 上的数据的 SQL 请求将会失败。而 N 个 TiKV 实例中同时有两个发生故障的概率是远远高于 3 个 TiKV 中同时有两个发生故障的概率的，也就是说 Multi-Raft 系统集群扩容 TiKV 实例越多，其可用性是逐渐降低的。
 
-Because of the preceding limitation, `label` is used to describe the location information of TiKV. The label information is refreshed to the TiKV startup configuration file with deployment or rolling upgrade operations. The started TiKV reports its latest label information to PD. Based on the user-registered label name (the label metadata) and the TiKV topology, PD optimally schedules Region replicas and improves the system availability.
+正因为 Multi-Raft TiKV 系统局限性，Labels 标签应运而出，其主要用于描述 TiKV 的位置信息。Label 信息随着部署或滚动更新操作刷新到 TiKV 的启动配置文件中，启动后的 TiKV 会将自己最新的 Label 信息上报给 PD，PD 根据用户登记的 Label 名称（也就是 Label 元信息），结合 TiKV 的拓扑进行 Region 副本的最优调度，从而提高系统可用性。
 
-#### TiKV labels planning example
+#### TiKV Labels 样例规划
 
-To improve the availability and disaster recovery of the system, you need to design and plan TiKV labels according to your existing physical resources and the disaster recovery capability. You also need to edit the cluster initialization configuration file according to the planned topology:
+针对 TiKV Labels 标签，你需要根据已有的物理资源、容灾能力容忍度等方面进行设计与规划，进而提升系统的可用性和容灾能力。并根据已规划的拓扑架构，在集群初始化配置文件中进行配置（此处省略其他非重点项）：
 
 ```ini
 server_configs:
@@ -159,12 +161,12 @@ tikv_servers:
       server.labels: { zone: "z3", az: "az3", rack: "r2", host: "41" }
 ```
 
-In the preceding example, `zone` is the logical availability zone layer that controls the isolation of replicas (three replicas in the example cluster).
+本例中，zone 表示逻辑可用区层级，用于控制副本的隔离（当前集群 3 副本）。
 
-Considering that the AZs might be scaled out in the future, the three-layer label structure (`az`, `rack`, and `host`) is not directly adopted. Assuming that `AZ2`, `AZ3`, and `AZ4` are to be scaled out, you only need to scale out the AZs in the corresponding availability zone and scale out the racks in the corresponding AZ.
+不直接采用 az、rack 和 host 三层 Label 结构，是因为考虑到将来可能会扩容 AZ，假设新扩容的 AZ 编号是 AZ2、AZ3 和 AZ4，则只需在对应可用区下扩容 AZ，rack 也只需在对应 AZ 下扩容。
 
-If this three-layer label structure is directly adopted, after scaling out an AZ, you might need to apply new labels and the data in TiKV needs to be rebalanced.
+如果直接采用 AZ、rack 和 host 三层 Label 结构，那么扩容 AZ 操作可能需重新添加 Label，TiKV 数据整体需要 Rebalance。
 
-### High availability and disaster recovery analysis
+### 高可用和容灾分析
 
-The multiple AZs in one region deployment can guarantee that if one AZ fails, the cluster can automatically recover services without manual intervention. Data consistency is also guaranteed. Note that scheduling policies are used to optimize performance, but when a failure occurs, these policies prioritize availability over performance.
+采用区域多 AZ 方案，当任意一个 AZ 故障时，集群能自动恢复服务，不需要人工介入，并能保证数据一致性。注意，各种调度策略主要用于优化性能，当发生故障时，调度机制总是优先考虑可用性而不是性能。

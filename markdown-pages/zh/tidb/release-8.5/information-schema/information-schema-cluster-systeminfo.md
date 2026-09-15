@@ -1,15 +1,11 @@
 ---
 title: CLUSTER_SYSTEMINFO
-summary: Learn the `CLUSTER_SYSTEMINFO` kernel parameter table.
+summary: 了解 TiDB 集群负载表 `CLUSTER_SYSTEMINFO`。
 ---
 
 # CLUSTER_SYSTEMINFO
 
-You can use the `CLUSTER_SYSTEMINFO` kernel parameter table to query the kernel configuration information of the server where all instances of the cluster are located. Currently, you can query the information of the `sysctl` system.
-
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+内核参数表 `CLUSTER_SYSTEMINFO` 用于查询集群所有实例所在服务器的内核配置信息。目前支持查询 `sysctl` 的信息。
 
 
 ```sql
@@ -31,16 +27,16 @@ DESC cluster_systeminfo;
 6 rows in set (0.00 sec)
 ```
 
-Field description:
+字段解释：
 
-* `TYPE`: Corresponds to the `TYPE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) table. The optional values are `tidb`, `pd`, and `tikv`.
-* `INSTANCE`: Corresponds to the `INSTANCE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) cluster information table.
-* `SYSTEM_TYPE`: The system type. Currently, you can query the `system` system type.
-* `SYSTEM_NAME`: The system name. Currently, you can query the `sysctl` system name.
-* `NAME`: The configuration name corresponding to `sysctl`.
-* `VALUE`: The value of the configuration item corresponding to `sysctl`.
+* `TYPE`：对应于节点信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `TYPE` 字段，可取值为 `tidb`，`pd` 和 `tikv`。
+* `INSTANCE`：对应于节点信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `INSTANCE` 字段。
+* `SYSTEM_TYPE`：系统类型，目前可以查询的系统类型有 `system`。
+* `SYSTEM_NAME`：目前可以查询的 `SYSTEM_NAME` 为 `sysctl`。
+* `NAME`：`sysctl` 对应的配置名。
+* `VALUE`：`sysctl` 对应配置项的值。
 
-The following example shows how to query the kernel version of all servers in the cluster using the `CLUSTER_SYSTEMINFO` system information table.
+查询集群所有服务器的内核版本示例如下：
 
 ```sql
 SELECT * FROM cluster_systeminfo WHERE name LIKE '%kernel.osrelease%'

@@ -1,51 +1,53 @@
 ---
-title: GC 概述
-summary: 了解 TiDB 中的垃圾回收（Garbage Collection）。
+title: GC 机制简介
+summary: TiDB 的事务实现采用了 MVCC 机制，GC 的任务是清理不再需要的旧数据。整体流程包括 GC leader 控制 GC 的运行，定期触发 GC，以及三个步骤：Resolve Locks 清理锁，Delete Ranges 删除区间，Do GC 进行 GC 清理。Resolve Locks 清理锁有两种执行模式：LEGACY 和 PHYSICAL。Delete Ranges 删除区间会快速物理删除待删除的区间及删除操作的时间戳。Do GC 进行 GC 清理会删除所有 key 的过期版本。GC 每 10 分钟触发一次，默认保留最近 10 分钟内的数据。
 ---
 
-# GC 概述
+# GC 机制简介
 
-TiDB 使用 MVCC 来控制事务并发。当你更新数据时，原始数据不会立即删除，而是与新数据一起保留，并带有时间戳以区分版本。垃圾回收（GC）的目标是清理过时的数据。
+TiDB 的事务的实现采用了 MVCC（多版本并发控制）机制，当新写入的数据覆盖旧的数据时，旧的数据不会被替换掉，而是与新写入的数据同时保留，并以时间戳来区分版本。Garbage Collection (GC) 的任务便是清理不再需要的旧数据。
 
-## GC 过程
+## 整体流程
 
-每个 TiDB 集群包含一个被选为 GC 领导的 TiDB 实例，负责控制 GC 过程。
+一个 TiDB 集群中会有一个 TiDB 实例被选举为 GC leader，GC 的运行由 GC leader 来控制。
 
-TiDB 会定期运行 GC。每次 GC，TiDB 首先计算一个名为 “safe point” 的时间戳，然后在确保所有快照在 safe point 之后仍然保持数据完整的前提下，清理过时的数据。具体来说，每次 GC 过程包括三个步骤：
+GC 会被定期触发。每次 GC 时，首先，TiDB 会计算一个称为 safe point 的时间戳，接下来 TiDB 会在保证 safe point 之后的快照全部拥有正确数据的前提下，删除更早的过期数据。每一轮 GC 分为以下三个步骤：
 
-1. Resolve Locks。 在此步骤中，TiDB 扫描所有 Region 中 safe point 之前的锁，并清除这些锁。
-2. Delete Ranges。 在此步骤中，快速清除由 `DROP TABLE` / `DROP INDEX` 操作生成的整个范围的过时数据。
-3. Do GC。 在此步骤中，每个 TiKV 节点扫描其上的数据，并删除不再需要的旧版本的每个键。
+1. "Resolve Locks" 阶段会对所有 Region 扫描 safe point 之前的锁，并清理这些锁。
+2. "Delete Ranges" 阶段快速地删除由于 `DROP TABLE`/`DROP INDEX` 等操作产生的整区间的废弃数据。
+3. "Do GC" 阶段每个 TiKV 节点将会各自扫描该节点上的数据，并对每一个 key 删除其不再需要的旧版本。
 
-在默认配置下，GC 每 10 分钟触发一次。每次 GC 保留最近 10 分钟的数据，也就是说，默认的 GC 生命周期为 10 分钟（safe point = 当前时间 - GC 生命周期）。如果一轮 GC 运行时间过长，在本轮 GC 完成之前，即使到了触发下一轮 GC 的时间，也不会开始下一轮 GC。此外，为了确保长事务在超过 GC 生命周期后仍能正常运行，safe point 不会超过正在进行的事务的 start_ts。
+默认配置下，GC 每 10 分钟触发一次，每次 GC 会保留最近 10 分钟内的数据（即默认 GC life time 为 10 分钟，safe point 的计算方式为当前时间减去 GC life time）。如果一轮 GC 运行时间太久，那么在一轮 GC 完成之前，即使到了下一次触发 GC 的时间也不会开始下一轮 GC。另外，为了使持续时间较长的事务能在超过 GC life time 之后仍然可以正常运行，safe point 不会超过正在执行中的事务的开始时间 (start_ts)。
 
 ## 实现细节
 
-### Resolve Locks
+### Resolve Locks（清理锁）
 
-TiDB 的事务模型基于 [Google 的 Percolator](https://ai.google/research/pubs/pub36726) 实现，主要是一个两阶段提交协议，结合了一些实际优化。当第一阶段完成后，所有相关的键都被锁定。在这些锁中，有一个是主锁，其他的是包含指向主锁的指针的次锁；在第二阶段，带有主锁的键会生成一个写入记录，并移除其锁。写入记录表示该键的写入或删除操作，或者是事务的回滚记录。用以替代主锁的写入记录类型表明对应的事务是否成功提交。然后，所有次锁依次被替换。如果由于某些原因（如失败）这些次锁被保留而未被替换，你仍然可以根据次锁中的信息找到主键，并判断整个事务是否已提交。然而，如果主键信息被 GC 清除，而该事务有未提交的次锁，就无法判断这些锁是否可以提交，从而无法保证数据的完整性。
+TiDB 的事务是基于 [Google Percolator](https://ai.google/research/pubs/pub36726) 模型实现的，事务的提交是一个两阶段提交的过程。第一阶段完成时，所有涉及的 key 都会上锁，其中一个锁会被选为 Primary，其余的锁 (Secondary) 则会存储一个指向 Primary 的指针；第二阶段会将 Primary 锁所在的 key 加上一个 Write 记录，并去除锁。这里的 Write 记录就是历史上对该 key 进行写入或删除，或者该 key 上发生事务回滚的记录。Primary 锁被替换为何种 Write 记录标志着该事务提交成功与否。接下来，所有 Secondary 锁也会被依次替换。如果因为某些原因（如发生故障等），这些 Secondary 锁没有完成替换、残留了下来，那么也可以根据锁中的信息找到 Primary，并根据 Primary 是否提交来判断整个事务是否提交。但是，如果 Primary 的信息在 GC 中被删除了，而该事务又存在未成功提交的 Secondary 锁，那么就永远无法得知该锁是否可以提交。这样，数据的正确性就无法保证。
 
-Resolve Locks 步骤会在 safe point 之前清除锁。这意味着，如果锁的主键已提交，则需要提交该锁；否则，需要回滚。如果主键仍被锁定（未提交或已回滚），则视为超时并进行回滚。
+Resolve Locks 这一步的任务即对 safe point 之前的锁进行清理。即如果一个锁对应的 Primary 已经提交，那么该锁也应该被提交；反之，则应该回滚。而如果 Primary 仍然是上锁的状态（没有提交也没有回滚），则应当将该事务视为超时失败而回滚。
 
-Resolve Locks 步骤可以通过以下两种方式实现，且可以使用系统变量 [`tidb_gc_scan_lock_mode`](/system-variables.md#tidb_gc_scan_lock_mode-new-in-v50) 进行配置：
+Resolve Locks 有两种执行模式：
 
-> **Warning:**
+- `LEGACY` （默认模式）：由 GC leader 对所有的 Region 发送请求扫描过期的锁，并对扫到的锁查询 Primary 的状态，再发送请求对其进行提交或回滚。
+- `PHYSICAL`：TiDB 绕过 Raft 层直接扫描每个 TiKV 节点上的数据。
+
+> **警告：**
 >
-> 目前，`PHYSICAL`（Green GC）是一个实验性功能，不建议在生产环境中使用。
+> `PHYSICAL`模式（即启用 Green GC）目前是实验性功能，不建议在生产环境中使用。
 
-- `LEGACY`（默认）：GC 领导会向所有 Region 发送请求，扫描过时的锁，检查扫描到的锁的主键状态，并请求提交或回滚相应的事务。
-- `PHYSICAL`：TiDB 绕过 Raft 层，直接扫描每个 TiKV 节点上的数据。
+你可以通过修改系统变量 [`tidb_gc_scan_lock_mode`](/system-variables.md#tidb_gc_scan_lock_mode-从-v50-版本开始引入) 的值切换 Resolve Locks 的执行模式。
 
-### Delete Ranges
+### Delete Ranges（删除区间）
 
-在 `DROP TABLE/INDEX` 等操作中，会删除大量连续键的数据。逐个删除每个键并随后进行 GC，可能导致存储回收效率较低。在这种场景下，TiDB 实际上并不逐个删除每个键，而是只记录待删除的范围和删除的时间戳。然后，Delete Ranges 步骤会对时间戳早于 safe point 的范围进行快速物理删除。
+在执行 `DROP TABLE/INDEX` 等操作时，会有大量连续的数据被删除。如果对每个 key 都进行删除操作、再对每个 key 进行 GC 的话，那么执行效率和空间回收速度都可能非常的低下。事实上，这种时候 TiDB 并不会对每个 key 进行删除操作，而是将这些待删除的区间及删除操作的时间戳记录下来。Delete Ranges 会将这些时间戳在 safe point 之前的区间进行快速的物理删除。
 
-### Do GC
+### Do GC（进行 GC 清理）
 
-Do GC 步骤会清理所有键的过时版本。为了保证 safe point 之后的所有时间戳都能获得一致的快照，该步骤会删除在 safe point 之前提交的数据，但会保留每个键在 safe point 之前的最后一次写入（只要不是删除操作）。
+这一步即删除所有 key 的过期版本。为了保证 safe point 之后的任何时间戳都具有一致的快照，这一步删除 safe point 之前提交的数据，但是会对每个 key 保留 safe point 前的最后一次写入（除非最后一次写入是删除）。
 
-在此步骤中，TiDB 只需将 safe point 发送给 PD，然后整个 GC 轮次即告完成。TiKV 会自动检测 safe point 的变化，并对当前节点上的所有 Region leader 执行 GC。同时，GC 领导可以继续触发下一轮 GC。
+在进行这一步时，TiDB 只需要将 safe point 发送给 PD，即可结束整轮 GC。TiKV 会自行检测到 safe point 发生了更新，会对当前节点上所有作为 Region leader 进行 GC。与此同时，GC leader 可以继续触发下一轮 GC。
 
-> **Note:**
+> **注意：**
 >
-> 从 TiDB 5.0 开始，Do GC 步骤将始终使用 `DISTRIBUTED` gc 模式。这取代了早期的 `CENTRAL` gc 模式，后者由 TiDB 服务器向每个 Region 发送 GC 请求。
+> 从 TiDB 5.0 版本起，`CENTRAL` GC 模式（需要 TiDB 服务器发送 GC 请求到各个 Region）已经废弃，Do GC 这一步将只以 `DISTRIBUTED` GC 模式（从 TiDB 3.0 版起的默认模式）运行。

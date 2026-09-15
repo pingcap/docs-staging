@@ -1,66 +1,67 @@
 ---
 title: TiDB 2.1.16 Release Notes
-summary: TiDB 2.1.16 was released on August 15, 2019. It includes various fixes and improvements to the SQL optimizer, SQL execution engine, server, DDL, TiKV, TiDB Binlog, TiDB Lightning, and TiDB Ansible. Some notable changes include support for subqueries within SHOW statements, fixing issues with DATE_ADD function, and adding configuration items in Drainer for TiDB Binlog.
+summary: TiDB 2.1.16 发布，修复了 SQL 优化器和执行引擎的多个问题。TiKV 支持逆向 raw_scan 和 raw_batch_scan 接口。TiDB Binlog 和 TiDB Lightning 做了一些功能增强和 bug 修复。TiDB Ansible 也有多个 bug 修复和功能优化。
+aliases: ['/zh/tidb/dev/release-2.1.16/','/zh/tidb/v2.1/release-2.1.16','/docs-cn/dev/releases/release-2.1.16/','/docs-cn/dev/releases/2.1.16/','/zh/tidb/v5.4/release-2.1.16','/zh/tidb/v6.1/release-2.1.16','/zh/tidb/v6.5/release-2.1.16','/zh/tidb/v7.1/release-2.1.16','/zh/tidb/v7.5/release-2.1.16','/zh/tidb/v8.1/release-2.1.16']
 ---
 
 # TiDB 2.1.16 Release Notes
 
-Release date: August 15, 2019
+发版日期：2019 年 8 月 15 日
 
-TiDB version: 2.1.16
+TiDB 版本：2.1.16
 
-TiDB Ansible version: 2.1.16
+TiDB Ansible 版本：2.1.16
 
 ## TiDB
 
-+ SQL Optimizer
-    - Fix the issue that row count is estimated inaccurately for the equal condition on the time column [#11526](https://github.com/pingcap/tidb/pull/11526)
-    - Fix the issue that `TIDB_INLJ` Hint does not take effect or take effect on the specified table [#11361](https://github.com/pingcap/tidb/pull/11361)
-    - Change the implementation of `NOT EXISTS` in a query from OUTER JOIN to ANTI JOIN to find a more optimized execution plan [#11291](https://github.com/pingcap/tidb/pull/11291)
-    - Support subqueries within `SHOW` statements, allowing syntaxes such as `SHOW COLUMNS FROM tbl WHERE FIELDS IN (SELECT 'a')` [#11461](https://github.com/pingcap/tidb/pull/11461)
-    - Fix the issue that the `SELECT … CASE WHEN … ELSE NULL ...` query gets an incorrect result caused by the constant folding optimization [#11441](https://github.com/pingcap/tidb/pull/11441)
-+ SQL Execution Engine
-    - Fix the issue that the `DATE_ADD` function gets a wrong result when `INTERVAL` is negative [#11616](https://github.com/pingcap/tidb/pull/11616)
-    - Fix the issue that the `DATE_ADD` function might get an incorrect result because it performs type conversion wrongly when it accepts an argument of the `FLOAT`, `DOUBLE`, or `DECIMAL` type [#11628](https://github.com/pingcap/tidb/pull/11628)
-    - Fix the issue that the error message is inaccurate when CAST(JSON AS SIGNED) overflows [#11562](https://github.com/pingcap/tidb/pull/11562)
-    - Fix the issue that other child nodes are not closed when one child node fails to be closed and returns an error during the process of closing Executor [#11598](https://github.com/pingcap/tidb/pull/11598)
-    - Support `SPLIT TABLE` statements that return the number of Regions that are successfully split and a finished percentage rather than an error when the scheduling is not finished for Region scatter before the timeout [#11487](https://github.com/pingcap/tidb/pull/11487)
-    - Make `REGEXP BINARY` function case sensitive to be compatible with MySQL [#11505](https://github.com/pingcap/tidb/pull/11505)
-    - Fix the issue that `NULL` is not returned correctly because the value of `YEAR` in the `DATE_ADD`/`DATE_SUB` result overflows when it is smaller than 0 or larger than 65535 [#11477](https://github.com/pingcap/tidb/pull/11477)
-    - Add in the slow query table a `Succ` field that indicates whether the execution succeeds [#11412](https://github.com/pingcap/tidb/pull/11421)
-    - Fix the MySQL incompatibility issue caused by fetching the current timestamp multiple times when a SQL statement involves calculations of the current time (such as `CURRENT_TIMESTAMP` or `NOW`) [#11392](https://github.com/pingcap/tidb/pull/11392)
-    - Fix the issue that the AUTO_INCREMENT columns do not handle the FLOAT or DOUBLE type [#11389](https://github.com/pingcap/tidb/pull/11389)
-    - Fix the issue that `NULL` is not returned correctly when the `CONVERT_TZ` function accepts an invalid argument [#11357](https://github.com/pingcap/tidb/pull/11357)
-    - Fix the issue that an error is reported by the `PARTITION BY LIST` statement. (Currently only the syntax is supported; when TiDB executes the statement, a regular table is created and a prompting message is provided) [#11236](https://github.com/pingcap/tidb/pull/11236)
-    - Fix the issue that `Mod(%)`, `Multiple(*)`, and `Minus(-)` operations return an inconsistent `0` result with that in MySQL when there are many decimal digits (such as `select 0.000 % 0.11234500000000000000`) [#11353](https://github.com/pingcap/tidb/pull/11353)
++ SQL 优化器
+    - 修复时间列上的等值条件 Row Count 估算不准确的问题 [#11526](https://github.com/pingcap/tidb/pull/11526)
+    - 修复 `TIDB_INLJ` Hint 不生效或者对非指定的表生效的问题 [#11361](https://github.com/pingcap/tidb/pull/11361)
+    - 将查询中的 NOT EXISTS 由 OUTER JOIN 实现方式改为 ANTI JOIN ，便于找到更优执行计划 [#11291](https://github.com/pingcap/tidb/pull/11291)
+    - 支持在 `SHOW` 语句中使用子查询，现在可以支持诸如 `SHOW COLUMNS FROM tbl WHERE FIELDS IN (SELECT 'a')` 的写法 [#11461](https://github.com/pingcap/tidb/pull/11461)
+    - 修复常量折叠优化导致 `SELECT … CASE WHEN … ELSE NULL ...` 查询结果不正确的问题 [#11441](https://github.com/pingcap/tidb/pull/11441)
++ SQL 执行引擎
+    - 修复函数 DATE_ADD 在 INTERVAL 为负的情况下结果错误的问题 [#11616](https://github.com/pingcap/tidb/pull/11616)
+    - 修复 `DATE_ADD` 函数接受 `FLOAT`、`DOUBLE` 和 `DECIMAL` 类型的参数时，没有正确地进行类型转换而导致结果可能不正确的问题 [#11628](https://github.com/pingcap/tidb/pull/11628)
+    - 修复 CAST(JSON AS SIGNED) 出现 OVERFLOW 时错误信息不准确的问题 [#11562](https://github.com/pingcap/tidb/pull/11562)
+    - 修复在关闭 Executor 的过程中，子节点关闭返回错误时其他子节点未关闭的问题 [#11598](https://github.com/pingcap/tidb/pull/11598)
+    - 支持 SPLIT TABLE 语句返回切分成功的 REGION 数量，并且当部分 REGION SCATTER 在超时未完成调度时，不再返回错误，而是返回完成调度的比例 [#11487](https://github.com/pingcap/tidb/pull/11487)
+    - 修复 `REGEXP BINARY` 函数对大小写敏感，与 MySQL 不兼容的问题 [#11505](https://github.com/pingcap/tidb/pull/11505)
+    - 修复 DATE_ADD / DATE_SUB 结果中 YEAR 小于 0 或大于 65535 时溢出导致结果没有正确返回 NULL 值的问题 [#11477](https://github.com/pingcap/tidb/pull/11477)
+    - 慢查询表中添加用于表示是否执行成功的 `Succ` 字段 [#11412](https://github.com/pingcap/tidb/pull/11421)
+    - 修复一条 SQL 语句在涉及当前时间计算时（例如 `CURRENT_TIMESTAMP` 或者 `NOW`），多次取当前时间值，结果与 MySQL 不兼容的问题：现在同一条SQL语句中取当前时间时，均使用相同值 [#11392](https://github.com/pingcap/tidb/pull/11392)
+    - 修复 AUTO INCREMENT 列未处理 FLOAT / DOUBLE 的问题 [#11389](https://github.com/pingcap/tidb/pull/11389)
+    - 修复 `CONVERT_TZ` 函数在参数不合法时，没有正确返回 NULL 的问题 [#11357](https://github.com/pingcap/tidb/pull/11357)
+    - 修复 PARTITION BY LIST 报错的问题（仅添加语法支持，TiDB 执行时候会作为普通表创建并提供提示信息） [#11236](https://github.com/pingcap/tidb/pull/11236)
+    - 修复 `Mod(%)`、`Multiple(*)` 和 `Minus(-)` 返回结果为 0 时，在小数位数较多（例如 `select 0.000 % 0.11234500000000000000`）的情况下与 MySQL 位数不一致的问题 [#11353](https://github.com/pingcap/tidb/pull/11353)
 + Server
-    - Fix the issue that the plugin gets a `NULL` domain when `OnInit` is called back [#11426](https://github.com/pingcap/tidb/pull/11426)
-    - Fix the issue that the table information in a schema can still be obtained through the HTTP interface after the schema has been deleted [#11586](https://github.com/pingcap/tidb/pull/11586)
+    - 修复插件在 OnInit 回调中获取 Domain 为 NULL 的问题 [#11426](https://github.com/pingcap/tidb/pull/11426)
+    - 修复当 Schema 删除后，依然可以通过 HTTP 接口获取该 Schema 中表信息的问题 [#11586](https://github.com/pingcap/tidb/pull/11586)
 + DDL
-    - Disallow dropping indexes on auto-increment columns to avoid incorrect results of the auto-increment columns caused by this operation [#11402](https://github.com/pingcap/tidb/pull/11402)
-    - Fix the issue that the character set of the column is not correct when creating and modifying the table with different character sets and collations [#11423](https://github.com/pingcap/tidb/pull/11423)
-    - Fix the issue that the column schema might get wrong when `alter table ... set default...` and another DDL statement that modifies this column are executed in parallel [#11374](https://github.com/pingcap/tidb/pull/11374)
-    - Fix the issue that data fails to be backfilled when Generated Column A depends on Generated Column B and A is used to create an index [#11538](https://github.com/pingcap/tidb/pull/11538)
-    - Speed up `ADMIN CHECK TABLE` operations [#11538](https://github.com/pingcap/tidb/pull/11676)
+    - 禁止 DROP 自增列索引，修复因为 DROP 自增列上的索引导致自增列结果可能出错的问题 [#11402](https://github.com/pingcap/tidb/pull/11402)
+    - 修复列和表使用不同的 CHARSET 和 COLLATE 创建表和修改表时，列的字符集不正确的问题 [#11423](https://github.com/pingcap/tidb/pull/11423)
+    - 修复并行执行 “alter table ... set default...” 和其他修改此列信息的 DDL，可能导致此列的结构出错的问题 [#11374](https://github.com/pingcap/tidb/pull/11374)
+    - 修复当 Generated column A 依赖 Generated column B 时，使用 A 创建索引，数据回填失败的问题 [#11538](https://github.com/pingcap/tidb/pull/11538)
+    - 提升 ADMIN CHECK TABLE 的速度 [#11538](https://github.com/pingcap/tidb/pull/11676)
 
 ## TiKV
 
-+ Support returning an error message when the client accesses a TiKV Region that is being closed [#4820](https://github.com/tikv/tikv/pull/4820)
-+ Support reverse `raw_scan` and `raw_batch_scan` interfaces [#5148](https://github.com/tikv/tikv/pull/5148)
++ 访问正在关闭的 TiKV Region 时返回 Close 错误 [#4820](https://github.com/tikv/tikv/pull/4820)
++ 支持逆向 `raw_scan` 和逆向 `raw_batch_scan` 接口 [#5148](https://github.com/tikv/tikv/pull/5148)
 
 ## Tools
 
 + TiDB Binlog
-    - Add the `ignore-txn-commit-ts` configuration item in Drainer to skip executing some statements in a transaction [#697](https://github.com/pingcap/tidb-binlog/pull/697)
-    - Add the configuration item check on startup, which stops Pump and Drainer from running and returns an error message when meeting invalid configuration items [#708](https://github.com/pingcap/tidb-binlog/pull/708)
-    - Add the `node-id` configuration in Drainer to specify Drainer's node ID [#706](https://github.com/pingcap/tidb-binlog/pull/706)
+    - Drainer 增加 `ignore-txn-commit-ts` 配置项，用于跳过执行某些事务语句 [#697](https://github.com/pingcap/tidb-binlog/pull/697)
+    - 增加启动时配置项检查功能，遇到不合法配置项会退出运行并给出错误信息 [#708](https://github.com/pingcap/tidb-binlog/pull/708)
+    - Drainer 增加 `node-id` 配置，用于指定固定逻辑 Drainer [#706](https://github.com/pingcap/tidb-binlog/pull/706)
 + TiDB Lightning
-    - Fix the issue that `tikv_gc_life_time` fails to be changed back to its original value when 2 checksums are running at the same time [#224](https://github.com/pingcap/tidb-lightning/pull/224)
+    - 修复 2 个 checksum 同时运行的情况下，`tikv_gc_life_time` 没有正常修改回原本值的问题 [#224](https://github.com/pingcap/tidb-lightning/pull/224)
 
 ## TiDB Ansible
 
-+ Add the `log4j` configuration file in Spark [#842](https://github.com/pingcap/tidb-ansible/pull/842)
-+ Update the tispark jar package to v2.1.2 [#863](https://github.com/pingcap/tidb-ansible/pull/863)
-+ Fix the issue that the Prometheus configuration file is generated in the wrong format when TiDB Binlog uses Kafka or ZooKeeper [#845](https://github.com/pingcap/tidb-ansible/pull/845)
-+ Fix the bug that PD fails to switch the Leader when executing the `rolling_update.yml` operation [#888](https://github.com/pingcap/tidb-ansible/pull/888)
-+ Optimize the logic of rolling updating PD nodes - upgrade Followers first and then the Leader - to improve stability [#895](https://github.com/pingcap/tidb-ansible/pull/895)
++ Spark 新增 log4j 日志配置 [#842](https://github.com/pingcap/tidb-ansible/pull/842)
++ 更新 tispark jar 包为 v2.1.2 版本 [#863](https://github.com/pingcap/tidb-ansible/pull/863)
++ 修复了 TiDB Binlog 使用 Kafka 或者 ZooKeeper 时导致生成的 Prometheus 配置文件格式错误的问题 [#845](https://github.com/pingcap/tidb-ansible/pull/845)
++ 修复执行 `rolling_update.yml` 操作时，切换 PD Leader 失效的 Bug [#888](https://github.com/pingcap/tidb-ansible/pull/888)
++ 优化滚动升级 PD 节点的逻辑，先升级 Follower 再升级 Leader，提高稳定性 [#895](https://github.com/pingcap/tidb-ansible/pull/895)

@@ -1,23 +1,26 @@
 ---
-title: SET [NAMES|CHARACTER SET] |  TiDB SQL Statement Reference
-summary: An overview of the usage of SET [NAMES|CHARACTER SET] for the TiDB database.
+title: SET [NAMES|CHARACTER SET]
+summary: TiDB 数据库中 SET [NAMES|CHARACTER SET] 的使用概况。
 ---
 
 # SET [NAMES|CHARACTER SET]
 
-The statements `SET NAMES`, `SET CHARACTER SET` and `SET CHARSET` modify the variables `character_set_client`, `character_set_results` and `character_set_connection` for the current connection.
+`SET NAMES`，`SET CHARACTER SET` 和 `SET CHARSET` 语句用于修改当前连接的变量 `character_set_client`，`character_set_results` 和 `character_set_connection`。
 
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 SetNamesStmt ::=
     "SET" ("NAMES" ("DEFAULT" | CharsetName ("COLLATE" ("DEFAULT" | CollationName))?) | ("CHARSET" | ("CHAR" | "CHARACTER") "SET") ("DEFAULT" | CharsetName))
 ```
 
-## Examples
+## 示例
 
 ```sql
-mysql> SHOW VARIABLES LIKE 'character_set%';
+SHOW VARIABLES LIKE 'character_set%';
+```
+
+```
 +--------------------------+--------------------------------------------------------+
 | Variable_name            | Value                                                  |
 +--------------------------+--------------------------------------------------------+
@@ -31,11 +34,21 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 | character_set_server     | utf8mb4                                                |
 +--------------------------+--------------------------------------------------------+
 8 rows in set (0.01 sec)
+```
 
-mysql> SET NAMES utf8;
+```sql
+SET NAMES utf8;
+```
+
+```
 Query OK, 0 rows affected (0.00 sec)
+```
 
-mysql> SHOW VARIABLES LIKE 'character_set%';
+```sql
+SHOW VARIABLES LIKE 'character_set%';
+```
+
+```
 +--------------------------+--------------------------------------------------------+
 | Variable_name            | Value                                                  |
 +--------------------------+--------------------------------------------------------+
@@ -49,11 +62,21 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 | character_set_filesystem | binary                                                 |
 +--------------------------+--------------------------------------------------------+
 8 rows in set (0.00 sec)
+```
 
-mysql> SET CHARACTER SET utf8mb4;
+```sql
+SET CHARACTER SET utf8mb4;
+```
+
+```
 Query OK, 0 rows affected (0.00 sec)
+```
 
-mysql> SHOW VARIABLES LIKE 'character_set%';
+```sql
+SHOW VARIABLES LIKE 'character_set%';
+```
+
+```
 +--------------------------+--------------------------------------------------------+
 | Variable_name            | Value                                                  |
 +--------------------------+--------------------------------------------------------+
@@ -69,12 +92,12 @@ mysql> SHOW VARIABLES LIKE 'character_set%';
 8 rows in set (0.00 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-The `SET [NAMES|CHARACTER SET]` statement in TiDB is fully compatible with MySQL. If you find any compatibility differences, [report a bug](https://docs.pingcap.com/tidb/stable/support).
+`SET [NAMES|CHARACTER SET]` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## See also
+## 另请参阅
 
 * [SHOW \[GLOBAL|SESSION\] VARIABLES](/sql-statements/sql-statement-show-variables.md)
 * [`SET <variable>`](/sql-statements/sql-statement-set-variable.md)
-* [Character Set and Collation Support](/character-set-and-collation.md)
+* [Character Set Support](/character-set-and-collation.md)

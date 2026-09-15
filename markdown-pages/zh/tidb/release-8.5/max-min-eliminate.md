@@ -1,41 +1,43 @@
 ---
-title: Eliminate Max/Min
-summary: 介绍消除 Max/Min 函数的规则。
+title: Max/Min 函数消除规则
+summary: SQL 中的 max/min 函数消除规则能够将 max/min 聚合函数转换为 TopN 算子，利用索引进行查询。当只有一个 max/min 函数时，会重写为 select max(a) from (select a from t where a is not null order by a desc limit 1) t，利用索引只扫描一行数据。存在多个 max/min 函数时，会先检查列是否有索引能够保序，然后重写为两个子查询的笛卡尔积，最终避免对整个表的扫描。
 ---
 
-# Eliminate Max/Min
+# Max/Min 函数消除规则
 
-当一个 SQL 语句包含 `max`/`min` 函数时，查询优化器会尝试通过应用 `max`/`min` 优化规则，将这些聚合函数转换为 TopN 操作符。这样，TiDB 就能通过索引更高效地执行查询。
+在 SQL 中包含了 `max`/`min` 函数时，查询优化器会尝试使用 `max`/`min` 消除优化规则来将 `max`/`min` 聚合函数转换为 TopN 算子，从而能够有效地利用索引进行查询。
 
-此优化规则根据 `select` 语句中 `max`/`min` 函数的数量，分为以下两类：
+根据 `select` 语句中 `max`/`min` 函数的个数，这一优化规则有以下两种表现形式：
 
-- [仅含一个 `max`/`min` 函数的语句](#one-maxmin-function)
-- [含多个 `max`/`min` 函数的语句](#multiple-maxmin-functions)
++ [只有一个 max/min 函数时的优化规则](#只有一个-maxmin-函数时的优化规则)
++ [存在多个 max/min 函数时的优化规则](#存在多个-maxmin-函数时的优化规则)
 
-## 仅含一个 `max`/`min` 函数
+## 只有一个 max/min 函数时的优化规则
 
-当一个 SQL 语句满足以下条件时，应用此规则：
+当一个 SQL 满足以下条件时，就会应用这个规则：
 
-- 语句中仅包含一个聚合函数，为 `max` 或 `min`。
-- 该聚合函数没有相关的 `group by` 子句。
++ 只有一个聚合函数，且为 `max` 或者 `min` 函数。
++ 聚合函数没有相应的 `group by` 语句。
 
 例如：
+
 
 ```sql
 select max(a) from t
 ```
 
-优化规则会将该语句重写为：
+这时 `max`/`min` 消除优化规则会将其重写为：
+
 
 ```sql
 select max(a) from (select a from t where a is not null order by a desc limit 1) t
 ```
 
-当列 `a` 有索引，或者列 `a` 是某个复合索引的前缀时，借助索引，新 SQL 语句只需扫描一行数据即可找到最大值或最小值。这避免了全表扫描。
+这个新的 SQL 语句在 `a` 列存在索引（或 `a` 列是某个联合索引的前缀）时，能够利用索引只扫描一行数据来得到最大或者最小值，从而避免对整个表的扫描。
 
-该示例语句的执行计划如下：
+上述例子最终得到的执行计划如下：
 
-```sql
+```
 mysql> explain select max(a) from t;
 +------------------------------+---------+-----------+-------------------------+-------------------------------------+
 | id                           | estRows | task      | access object           | operator info                       |
@@ -46,23 +48,26 @@ mysql> explain select max(a) from t;
 |     └─Limit_26               | 1.00    | cop[tikv] |                         | offset:0, count:1                   |
 |       └─IndexFullScan_25     | 1.00    | cop[tikv] | table:t, index:idx_a(a) | keep order:true, desc, stats:pseudo |
 +------------------------------+---------+-----------+-------------------------+-------------------------------------+
+5 rows in set (0.00 sec)
 ```
 
-## 含多个 `max`/`min` 函数
+## 存在多个 max/min 函数时的优化规则
 
-当一个 SQL 语句满足以下条件时，应用此规则：
+当一个 SQL 满足以下条件时，就会应用这个规则：
 
-- 语句中包含多个聚合函数，且全部为 `max` 或 `min`。
-- 这些聚合函数都没有相关的 `group by` 子句。
-- 每个 `max`/`min` 函数中的列都具有索引以保持顺序。
++ 有多个聚合函数，且所有的聚合函数都是 max/min
++ 聚合函数没有相应的 `group by` 语句。
++ 每个 `max`/`min` 聚合函数参数中的列都有索引能够保序。
 
-例如：
+下面是一个简单的例子：
+
 
 ```sql
 select max(a) - min(a) from t
 ```
 
-优化规则首先会检查列 `a` 是否有索引以保持其顺序。如果有，SQL 语句会被重写为两个子查询的笛卡尔积：
+优化规则会先检查 `a` 列是否存在索引能够为其保序，如果存在，这个 SQL 会先被重写为两个子查询的笛卡尔积：
+
 
 ```sql
 select max_a - min_a
@@ -71,7 +76,8 @@ from
     (select min(a) as min_a from t) t2
 ```
 
-通过重写，优化器可以对两个子查询分别应用仅含一个 `max`/`min` 函数的规则。语句会被重写为：
+这样，两个子句中的 `max`/`min` 函数就可以使用上述“只有一个 `max`/`min` 函数时的优化规则”分别进行优化，最终重写为：
+
 
 ```sql
 select max_a - min_a
@@ -80,11 +86,11 @@ from
     (select min(a) as min_a from (select a from t where a is not null order by a asc limit 1) t) t2
 ```
 
-同样地，如果列 `a` 有索引以保持其顺序，优化后只需扫描两行数据，而不是全表扫描。然而，如果列 `a` 没有索引以保持其顺序，此规则会导致两次全表扫描，但如果不重写，执行只需一次全表扫描。因此，在这种情况下，不应用此规则。
+同样的，如果 `a` 列能够使用索引保序，那这个优化只会扫描两行数据，避免了对整个表的扫描。但如果 `a` 列没有可以保序的索引，这个变换会使原本只需一次的全表扫描变成两次，因此这个规则就不会被应用。
 
-最终的执行计划如下：
+最后得到的执行计划：
 
-```sql
+```
 mysql> explain select max(a)-min(a) from t;
 +------------------------------------+---------+-----------+-------------------------+-------------------------------------+
 | id                                 | estRows | task      | access object           | operator info                       |
@@ -102,4 +108,5 @@ mysql> explain select max(a)-min(a) from t;
 |         └─Limit_37                 | 1.00    | cop[tikv] |                         | offset:0, count:1                   |
 |           └─IndexFullScan_36       | 1.00    | cop[tikv] | table:t, index:idx_a(a) | keep order:true, desc, stats:pseudo |
 +------------------------------------+---------+-----------+-------------------------+-------------------------------------+
+12 rows in set (0.01 sec)
 ```

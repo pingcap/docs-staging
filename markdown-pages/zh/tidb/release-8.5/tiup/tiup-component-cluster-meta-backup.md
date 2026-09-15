@@ -1,34 +1,34 @@
 ---
 title: tiup cluster meta backup
-summary: The TiUP meta file is crucial for cluster operation and maintenance. Use `tiup cluster meta backup` to regularly back up the file. Use `tiup dm list` to check the cluster name. Specify the target directory with `--file` option. Use `-h, --help` for help information. The output includes execution logs of tiup-cluster.
+summary: TiUP meta 文件丢失会导致无法管理集群。使用“tiup cluster meta backup”命令定期备份文件。命令语法为“tiup cluster meta backup <cluster-name>”。选项包括指定备份文件存储目录和帮助信息。输出为 tiup-cluster 的执行日志。
 ---
 
 # tiup cluster meta backup
 
-The TiUP meta file is used for cluster operation and maintenance (OM). If this file is lost, you cannot use TiUP to manage the cluster. To avoid this situation, you can use the `tiup cluster meta backup` command to back up the TiUP meta file regularly.
+如果运维所需的 TiUP meta 文件丢失，会导致无法继续使用 TiUP 管理集群。你可以通过 `tiup cluster meta backup` 命令定期备份 TiUP meta 文件。
 
-## Syntax
+## 语法
 
 ```shell
 tiup cluster meta backup <cluster-name> [flags]
 ```
 
-`<cluster-name>` is the name of the cluster to be operated on. If you forget the cluster name, you can check it using the [`tiup cluster list`](/tiup/tiup-component-cluster-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可通过[集群列表](/tiup/tiup-component-cluster-list.md)查看。
 
-## Options
+## 选项
 
-### --file (string, defaults to the current directory)
+### --file（string，默认为当前目录）
 
-Specifies the target directory to store the TiUP meta backup file.
+指定 TiUP meta 备份文件存储的目标目录。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `Boolean`
-- This option is disabled by default and its default value is `false`. To enable this option, you can add this option to the command, and pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The execution logs of tiup-cluster.
+tiup-cluster 的执行日志。
 
-[<< Back to the previous page - TiUP Cluster command list](/tiup/tiup-component-cluster.md#command-list)
+[<< 返回上一页 - TiUP Cluster 命令清单](/tiup/tiup-component-cluster.md#命令清单)

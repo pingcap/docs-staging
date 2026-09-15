@@ -1,28 +1,28 @@
 ---
 title: tiup dm prune
-summary: When scaling in the cluster, a small amount of metadata in etcd may not be cleaned up, but it usually doesn't cause any problems. If needed, you can manually execute the "tiup dm prune" command to clean up the metadata. The command syntax is "tiup dm prune <cluster-name> [flags]". The option "-h, --help" prints help information and the output is the log of the cleanup process.
+summary: tiup dm prune 命令用于在缩容集群后清理 etcd 中的少量元信息。通常情况下不会有问题，但如果需要清理，可以手动执行该命令。语法为 tiup dm prune <cluster-name>，选项包括 -h, --help，输出为清理过程的日志。
 ---
 
 # tiup dm prune
 
-When you scale in the cluster(/tiup/tiup-component-dm-scale-in.md), a small amount of metadata in etcd is not cleaned up, which usually causes no problem. If you need to clean up the metadata, you can manually execute the `tiup dm prune` command.
+在[缩容集群](/tiup/tiup-component-dm-scale-in.md)后，etcd 中仍然会有少量元信息不会被清理，通常不会有问题，如果确实需要清理，可以手动执行 `tiup dm prune` 命令清理。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm prune <cluster-name> [flags]
 ```
 
-## Option
+## 选项
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- Default: false
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-The log of the cleanup process.
+清理过程的日志。
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

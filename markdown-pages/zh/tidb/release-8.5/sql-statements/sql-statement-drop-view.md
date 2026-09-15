@@ -1,13 +1,13 @@
 ---
-title: DROP VIEW | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 DROP VIEW 的用法概述。
+title: DROP VIEW
+summary: TiDB 数据库中 DROP VIEW 的使用概况。
 ---
 
 # DROP VIEW
 
-该语句用于从当前选择的数据库中删除视图对象。它不会影响视图所引用的任何基础表。
+`DROP VIEW` 语句用于从当前所选定的数据库中删除视图对象。视图所引用的基表不受影响。
 
-## 语法概要
+## 语法图
 
 ```ebnf+diagram
 DropViewStmt ::=
@@ -22,18 +22,40 @@ TableName ::=
 
 ## 示例
 
-```sql
-mysql> CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
-Query OK, 0 rows affected (0.11 sec)
 
-mysql> INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
+```sql
+CREATE TABLE t1 (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT, c1 INT NOT NULL);
+```
+
+```
+Query OK, 0 rows affected (0.11 sec)
+```
+
+
+```sql
+INSERT INTO t1 (c1) VALUES (1),(2),(3),(4),(5);
+```
+
+```
 Query OK, 5 rows affected (0.03 sec)
 Records: 5  Duplicates: 0  Warnings: 0
+```
 
-mysql> CREATE VIEW v1 AS SELECT * FROM t1 WHERE c1 > 2;
+
+```sql
+CREATE VIEW v1 AS SELECT * FROM t1 WHERE c1 > 2;
+```
+
+```
 Query OK, 0 rows affected (0.11 sec)
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -44,8 +66,14 @@ mysql> SELECT * FROM t1;
 |  5 |  5 |
 +----+----+
 5 rows in set (0.00 sec)
+```
 
-mysql> SELECT * FROM v1;
+
+```sql
+SELECT * FROM v1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -54,11 +82,23 @@ mysql> SELECT * FROM v1;
 |  5 |  5 |
 +----+----+
 3 rows in set (0.00 sec)
+```
 
-mysql> DROP VIEW v1;
+
+```sql
+DROP VIEW v1;
+```
+
+```
 Query OK, 0 rows affected (0.23 sec)
+```
 
-mysql> SELECT * FROM t1;
+
+```sql
+SELECT * FROM t1;
+```
+
+```
 +----+----+
 | id | c1 |
 +----+----+
@@ -73,9 +113,9 @@ mysql> SELECT * FROM t1;
 
 ## MySQL 兼容性
 
-TiDB 中的 `DROP VIEW` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，[请报告一个 bug](https://docs.pingcap.com/tidb/stable/support)。
+`DROP VIEW` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## See also
 
 * [CREATE VIEW](/sql-statements/sql-statement-create-view.md)
 * [DROP TABLE](/sql-statements/sql-statement-drop-table.md)

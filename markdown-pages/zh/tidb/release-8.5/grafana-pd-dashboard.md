@@ -1,157 +1,156 @@
 ---
-title: Key Monitoring Metrics of PD
-summary: Learn some key metrics displayed on the Grafana PD dashboard.
+title: PD 重要监控指标详解
+summary: PD 重要监控指标详解：使用 TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Grafana)，监控架构参见 [TiDB 监控框架概述]。Grafana Dashboard 分为 PD、TiDB、TiKV、Node_exporter、Overview、Performance_overview 等。通过观察 PD 面板上的 Metrics，可以了解 PD 当前的状态。监控包括 PD role、Storage capacity、Current storage size、Current storage usage、Normal stores、Number of Regions、Abnormal stores、Region health、Current peer count 等。Cluster、Operator、Statistics - Balance、Statistics - hot write、Statistics - hot read、Scheduler、gRPC、etcd、TiDB、Heartbeat、Region storage 等指标也很重要。
 ---
 
-# Key Monitoring Metrics of PD
+# PD 重要监控指标详解
 
-If you use TiUP to deploy the TiDB cluster, the monitoring system (Prometheus & Grafana) is deployed at the same time. For more information, see [Overview of the Monitoring Framework](/tidb-monitoring-framework.md).
+使用 TiUP 部署 TiDB 集群时，一键部署监控系统 (Prometheus & Grafana)，监控架构参见 [TiDB 监控框架概述](/tidb-monitoring-framework.md)。
 
-The Grafana dashboard is divided into a series of sub dashboards which include Overview, PD, TiDB, TiKV, Node\_exporter, Disk Performance, and Performance\_overview. A lot of metrics are there to help you diagnose.
+目前 Grafana Dashboard 整体分为 PD、TiDB、TiKV、Node\_exporter、Overview、Performance\_overview 等。
 
-You can get an overview of the component PD status from the PD dashboard, where the key metrics are displayed. This document provides a detailed description of these key metrics.
+对于日常运维，我们通过观察 PD 面板上的 Metrics，可以了解 PD 当前的状态。
 
-The following is the description of PD Dashboard metrics items:
+以下为 PD Dashboard 监控说明：
 
-- PD role: The role of the current PD instance
-- Storage capacity: The total storage capacity for this TiDB cluster
-- Current storage size: The storage size that is currently used by the TiDB cluster
-- Current storage usage: The current storage usage rate
-- Normal stores: The count of healthy storage instances
-- Number of Regions: The total count of cluster Regions
-- Abnormal stores: The count of unhealthy stores. The normal value is `0`. If the number is bigger than `0`, it means at least one instance is abnormal.
-- Region health: The health status of Regions indicated via the count of unusual Regions including pending peers, down peers, extra peers, offline peers, missing peers, learner peers and incorrect namespaces. Generally, the number of pending peers should be less than `100`. The missing peers should not be persistently greater than `0`. If many empty Regions exist, enable Region Merge in time.
-- Current peer count: The current count of all cluster peers
-![PD Dashboard - Header](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-header-v4.png)
-
-## Key metrics description
+- PD role：当前 PD 的角色
+- Storage capacity：TiDB 集群总可用数据库空间大小
+- Current storage size：TiDB 集群目前已用数据库空间大小
+- Current storage usage：TiDB 集群存储空间的使用率
+- Normal stores：处于正常状态的节点数目
+- Number of Regions：当前集群的 Region 总量
+- Abnormal stores：处于异常状态的节点数目，正常情况应当为 0
+- Region health：集群所有 Region 的状态。通常情况下，pending 或 down 的 peer 应该少于 100，miss 的 peer 不能一直大于 0，empty Region 过多需及时打开 Region Merge
+- Current peer count：当前集群 peer 的总量
+![PD Dashboard - Header](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-header-v4.png)
 
 ## Cluster
 
-- PD scheduler config: The list of PD scheduler configurations
-- Cluster ID: The unique identifier of the cluster
-- Current TSO: The physical part of current allocated TSO
-- Current ID allocation: The maximum allocatable ID for new store/peer
-- Region label isolation level: The number of Regions in different label levels
-- Label distribution: The distribution status of the labels in the cluster
-- Store Limit: The flow control limitation of scheduling on the Store
+- PD scheduler config：PD 调度配置列表
+- Cluster ID：集群的 cluster id，唯一标识
+- Current TSO：当前分配 TSO 的物理时间戳部分
+- Current ID allocation：当前可分配 ID 的最大值
+- Region label isolation level：不同 label 所在的 level 的 Region 数量
+- Label distribution：集群中 TiKV 节点的 label 分布情况
+- Store Limit：Store 的调度限流状态
 
-![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-cluster-v4.png)
+![PD Dashboard - Cluster metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-cluster-v4.png)
 
 ## Operator
 
-- Schedule operator create: The number of newly created operators per type
-- Schedule operator check: The number of checked operator per type. It mainly checks whether the current step is finished; if yes, it returns the next step to be executed
-- Schedule operator finish: The number of finished operators per type
-- Schedule operator timeout: The number of timeout operators per type
-- Schedule operator replaced or canceled: The number of replaced or canceled operators per type
-- Schedule operators count by state: The number of operators per state
-- Operator finish duration: The maximum duration of finished operators
-- Operator step duration: The maximum duration of finished operator steps
+- Schedule operator create：新创建的不同 operator 的数量，单位 opm 代表一分钟内创建的个数 
+- Schedule operator check：已检查的 operator 的次数，主要检查是否当前步骤已经执行完成，如果是，则执行下一个步骤
+- Schedule operator finish：已完成调度的 operator 的数量
+- Schedule operator timeout：已超时的 operator 的数量
+- Schedule operator replaced or canceled：已取消或者被替换的 operator 的数量
+- Schedule operators count by state：不同状态的 operator 的数量
+- Operator finish duration：已完成的 operator 所花费的最长时间
+- Operator step duration：已完成的 operator 的步骤所花费的最长时间
 
-![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-operator-v4.png)
+![PD Dashboard - Operator metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-operator-v4.png)
 
 ## Statistics - Balance
 
-- Store capacity: The capacity size per TiKV instance
-- Store available: The available capacity size per TiKV instance
-- Store used: The used capacity size per TiKV instance
-- Size amplification: The size amplification ratio per TiKV instance, which is equal to (Store Region size)/(Store used capacity size)
-- Size available ratio: The size availability ratio per TiKV instance, which is equal to (Store available capacity size)/(Store capacity size)
-- Store leader score: The leader score per TiKV instance
-- Store Region score: The Region score per TiKV instance
-- Store leader size: The total leader size per TiKV instance
-- Store Region size: The total Region size per TiKV instance
-- Store leader count: The leader count per TiKV instance
-- Store Region count: The Region count per TiKV instance
+- Store capacity：每个 TiKV 实例的总的空间大小
+- Store available：每个 TiKV 实例的可用空间大小
+- Store used：每个 TiKV 实例的已使用空间大小
+- Size amplification：每个 TiKV 实例的空间放大比率
+- Size available ratio：每个 TiKV 实例的可用空间比率
+- Store leader score：每个 TiKV 实例的 leader 分数
+- Store Region score：每个 TiKV 实例的 Region 分数
+- Store leader size：每个 TiKV 实例上所有 leader 的大小
+- Store Region size：每个 TiKV 实例上所有 Region 的大小
+- Store leader count：每个 TiKV 实例上所有 leader 的数量
+- Store Region count：每个 TiKV 实例上所有 Region 的数量
 
-![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-balance-v4.png)
+![PD Dashboard - Balance metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-balance-v4.png)
 
 ## Statistics - hot write
 
-- Hot Region's leader distribution: The total number of leader Regions that have become write hotspots on each TiKV instance
-- Total written bytes on hot leader Regions: The total written bytes by leader Regions that have become write hotspots on each TiKV instance
-- Hot write Region's peer distribution: The total number of peer Regions that have become write hotspots on each TiKV instance
-- Total written bytes on hot peer Regions: The written bytes of all peer Regions that have become write hotspots on each TiKV instance
-- Store Write rate bytes: The total written bytes on each TiKV instance
-- Store Write rate keys: The total written keys on each TiKV instance
-- Hot cache write entry number: The number of peers on each TiKV instance that are in the write hotspot statistics module
-- Selector events: The event count of Selector in the hotspot scheduling module
-- Direction of hotspot move leader: The direction of leader movement in the hotspot scheduling. The positive number means scheduling into the instance. The negative number means scheduling out of the instance
-- Direction of hotspot move peer: The direction of peer movement in the hotspot scheduling. The positive number means scheduling into the instance. The negative number means scheduling out of the instance
+- Hot Region's leader distribution：每个 TiKV 实例上成为写入热点的 leader 的数量
+- Total written bytes on hot leader Regions：每个 TiKV 实例上所有成为写入热点的 leader 的总的写入流量大小
+- Hot write Region's peer distribution：每个 TiKV 实例上成为写入热点的 peer 的数量
+- Total written bytes on hot peer Regions：每个 TiKV 实例上所有成为写入热点的 peer 的写入流量大小
+- Store Write rate bytes：每个 TiKV 实例总的写入的流量
+- Store Write rate keys：每个 TiKV 实例总的写入 keys
+- Hot cache write entry number：每个 TiKV 实例进入热点统计模块的 peer 的数量
+- Selector events：热点调度中选择器的事件发生次数
+- Direction of hotspot move leader：热点调度中 leader 的调度方向，正数代表调入，负数代表调出
+- Direction of hotspot move peer：热点调度中 peer 的调度方向，正数代表调入，负数代表调出
 
-![PD Dashboard - Hot write metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotwrite-v4.png)
+![PD Dashboard - Hot write metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hotwrite-v4.png)
 
 ## Statistics - hot read
 
-- Hot Region's peer distribution: The total number of peer Regions that have become read hotspots on each TiKV instance
-- Total read bytes on hot peer Regions: The total read bytes of peers that have become read hotspots on each TiKV instance
-- Store read rate bytes: The total read bytes of each TiKV instance
-- Store read rate keys: The total read keys of each TiKV instance
-- Hot cache read entry number: The number of peers that are in the read hotspot statistics module on each TiKV instance
+- Hot Region's peer distribution：每个 TiKV 实例上成为读取热点的 peer 的数量
+- Total read bytes on hot peer Regions：每个 TiKV 实例上所有成为读取热点的 peer 的总的读取流量大小
+- Store read rate bytes：每个 TiKV 实例总的读取的流量
+- Store read rate keys：每个 TiKV 实例总的读取 keys
+- Store read cpu：每个 TiKV 实例的读 CPU 使用量。从 v8.5.7 开始，PD 将该指标用于基于 CPU 使用情况的读热点调度。
+- Hot cache read entry number：每个 TiKV 实例进入热点统计模块的 peer 的数量
 
-![PD Dashboard - Hot read metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-hotread-v4.png)
+![PD Dashboard - Hot read metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-hotread-v4.png)
 
 ## Scheduler
 
-- Scheduler is running: The current running schedulers
-- Balance leader movement: The leader movement details among TiKV instances
-- Balance Region movement: The Region movement details among TiKV instances
-- Balance leader event: The count of balance leader events
-- Balance Region event: The count of balance Region events
-- Balance leader scheduler: The inner status of balance leader scheduler
-- Balance Region scheduler: The inner status of balance Region scheduler
-- Replica checker: The replica checker's status
-- Rule checker: The rule checker's status
-- Region merge checker: The merge checker's status
-- Filter target: The number of attempts that the store is selected as the scheduling target but failed to pass the filter
-- Filter source: The number of attempts that the store is selected as the scheduling source but failed to pass the filter
-- Balance Direction: The number of times that the Store is selected as the target or source of scheduling
+- Scheduler is running：所有正在运行的 scheduler
+- Balance leader movement：leader 移动的详细情况
+- Balance Region movement：Region 移动的详细情况
+- Balance leader event：balance leader 的事件数量
+- Balance Region event：balance Region 的事件数量
+- Balance leader scheduler：balance-leader scheduler 的状态
+- Balance Region scheduler：balance-region scheduler 的状态
+- Replica checker：replica checker 的状态
+- Rule checker：rule checker 的状态
+- Region merge checker：merge checker 的状态
+- Filter target：尝试选择 Store 作为调度 target 时没有通过 Filter 的计数
+- Filter source：尝试选择 Store 作为调度 source 时没有通过 Filter 的计数
+- Balance Direction：Store 被选作调度 target 或 source 的次数
 
-![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-scheduler-v4.png)
+![PD Dashboard - Scheduler metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-scheduler-v4.png)
 
 ## gRPC
 
-- Completed commands rate: The rate per command type at which gRPC commands are completed
-- 99% Completed commands duration: The rate per command type at which gRPC commands are completed (P99)
+- Completed commands rate：gRPC 命令的完成速率
+- 99% Completed commands duration：99% 命令的最长消耗时间
 
-![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-grpc-v2.png)
+![PD Dashboard - gRPC metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-grpc-v2.png)
 
 ## etcd
 
-- Handle transactions count: The rate at which etcd handles transactions
-- 99% Handle transactions duration: The transaction handling rate (P99)
-- 99% WAL fsync duration: The time consumed for writing WAL into the persistent storage. It is less than `1s` (P99)
-- 99% Peer round trip time seconds: The network latency for etcd (P99) | The value is less than `1s`
-- etcd disk WAL fsync rate: The rate of writing WAL into the persistent storage
-- Raft term: The current term of Raft
-- Raft committed index: The last committed index of Raft
-- Raft applied index: The last applied index of Raft
+- Handle transactions count：etcd 的事务个数
+- 99% Handle transactions duration：99% 的情况下，处理 etcd 事务所需花费的时间
+- 99% WAL fsync duration：99% 的情况下，持久化 WAL 所需花费的时间，这个值通常应该小于 1s
+- 99% Peer round trip time seconds：99% 的情况下，etcd 的网络延时，这个值通常应该小于 1s
+- etcd disk WAL fsync rate：etcd 持久化 WAL 的速率
+- Raft term：当前 Raft 的 term
+- Raft committed index：最后一次 commit 的 Raft index
+- Raft applied index：最后一次 apply 的 Raft index
 
-![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-etcd-v2.png)
+![PD Dashboard - etcd metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-etcd-v2.png)
 
 ## TiDB
 
-- PD Server TSO handle time and Client recv time: The duration between PD receiving the TSO request and the PD client getting the TSO response
-- Handle requests count: The count of TiDB requests
-- Handle requests duration: The time consumed for handling TiDB requests. It should be less than `100ms` (P99)
+- PD Server TSO handle time and Client recv time：从 PD 开始处理 TSO 请求到 client 端接收到 TSO 的总耗时
+- Handle requests count：TiDB 的请求数量
+- Handle requests duration：每个请求所花费的时间，99% 的情况下，应该小于 100ms
 
-![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-tidb-v4.png)
+![PD Dashboard - TiDB metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-tidb-v4.png)
 
 ## Heartbeat
 
-- Heartbeat region event QPS: The QPS of handling heartbeat messages, including updating the cache and persisting data
-- Region heartbeat report: The count of heartbeats reported to PD per instance
-- Region heartbeat report error: The count of heartbeats with the `error` status
-- Region heartbeat report active: The count of heartbeats with the `ok` status
-- Region schedule push: The count of corresponding schedule commands sent from PD per TiKV instance
-- 99% Region heartbeat latency: The heartbeat latency per TiKV instance (P99)
+- Heartbeat region event QPS：心跳处理 region 的 QPS，包括更新缓存和持久化
+- Region heartbeat report：TiKV 向 PD 发送的心跳个数
+- Region heartbeat report error：TiKV 向 PD 发送的异常的心跳个数
+- Region heartbeat report active：TiKV 向 PD 发送的正常的心跳个数
+- Region schedule push：PD 向 TiKV 发送的调度命令的个数
+- 99% Region heartbeat latency：99% 的情况下，心跳的延迟
 
-![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-heartbeat-v4.png)
+![PD Dashboard - Heartbeat metrics](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-heartbeat-v4.png)
 
 ## Region storage
 
-- Syncer Index: The maximum index in the Region change history recorded by the leader
-- history last index: The last index where the Region change history is synchronized successfully with the follower
+- Syncer Index：Leader 记录 Region 变更历史的最大 index
+- history last index：Follower 成功同步的 Region 变更历史的 index
 
-![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs/pd-dashboard-region-storage.png)
+![PD Dashboard - Region storage](https://docs-download.pingcap.com/media/images/docs-cn/pd-dashboard-region-storage.png)

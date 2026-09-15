@@ -1,27 +1,28 @@
 ---
-title: Decorrelation of Correlated Subquery
-summary: 了解如何对相关子查询进行去相关处理。
+title: 关联子查询去关联
+summary: 了解如何给关联子查询解除关联。
 ---
 
-# Decorrelation of Correlated Subquery
+# 关联子查询去关联
 
-[Subquery related optimizations](/subquery-optimization.md) 描述了当没有相关列时，TiDB 如何处理子查询。由于相关子查询的去相关化较为复杂，本文介绍一些简单场景以及优化规则适用的范围。
+[子查询相关的优化](/subquery-optimization.md)中介绍了当没有关联列时，TiDB 是如何处理子查询的。由于为关联子查询解除关联依赖比较复杂，本文档中会介绍一些简单的场景以及这个优化规则的适用范围。
 
-## 引言
+## 简介
 
-以 `select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.b)` 为例。这里的子查询 `t1.a < (select sum(t2.a) from t2 where t2.b = t1.b)` 涉及到查询条件中的相关列 `t2.b=t1.b`，这个条件恰好是等价条件，因此可以将查询重写为 `select t1.* from t1, (select b, sum(a) sum_a from t2 group by b) t2 where t1.b = t2.b and t1.a < t2.sum_a;`。通过这种方式，相关子查询被重写为 `JOIN`。
+以 `select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.b)` 为例，这里子查询 `t1.a < (select sum(t2.a) from t2 where t2.b = t1.b)` 中涉及了关联列上的条件 `t2.b=t1.b`，不过恰好由于这是一个等值条件，因此可以将其等价的改写为 `select t1.* from t1, (select b, sum(a) sum_a from t2 group by b) t2 where t1.b = t2.b and t1.a < t2.sum_a;`。这样，一个关联子查询就被重新改写为 `JOIN` 的形式。
 
-TiDB 需要进行此类重写的原因在于，相关子查询每次执行时都必须绑定到外部查询的结果。在上述示例中，如果 `t1.a` 有 1000 万个值，这个子查询会重复执行 1000 万次，因为条件 `t2.b=t1.b` 会随着 `t1.a` 的值变化。当某种程度上解除相关性后，这个子查询只需执行一次。
+TiDB 之所以要进行这样的改写，是因为关联子查询每次子查询执行时都是要和它的外部查询结果绑定的。在上面的例子中，如果 `t1.a` 有一千万个值，那这个子查询就要被重复执行一千万次，因为 `t2.b=t1.b` 这个条件会随着 `t1.a` 值的不同而发生变化。当通过一些手段将关联依赖解除后，这个子查询就只需要被执行一次了。
 
-## 限制条件
+## 限制
 
-这种重写的缺点在于，当没有解除相关性时，优化器可以利用相关列上的索引。也就是说，虽然这个子查询可能会重复多次，但每次都可以利用索引过滤数据。使用重写规则后，相关列的位置通常会发生变化。虽然子查询只执行一次，但单次执行的时间可能会比未去相关化时更长。
+这种改写的弊端在于，在关联没有被解除时，优化器是可以使用关联列上的索引的。也就是说，虽然这个子查询可能被重复执行多次，但是每次都可以使用索引过滤数据。而解除关联的变换上，通常是会导致关联列的位置发生改变而导致虽然子查询只被执行了一次，但是单次执行的时间会比没有解除关联时的单次执行时间长。
 
-因此，当外部值较少时，不建议进行去相关化，这样可能会带来更好的执行性能。在这种情况下，你可以通过使用 [`NO_DECORRELATE`](/optimizer-hints.md#no_decorrelate) 优化器提示，或者在 [优化规则和表达式下推的黑名单](/blocklist-control-plan.md) 中禁用“子查询去相关化”优化规则。大多数情况下，建议结合 [SQL Plan Management](/sql-plan-management.md) 使用优化器提示，以禁用去相关化。
+因此，在外部的值比较少的情况下，不解除关联依赖反而可能对执行性能更有帮助。这时可以通过使用 Optimizer Hint [`NO_DECORRELATE`](/optimizer-hints.md#no_decorrelate) 或[优化规则及表达式下推的黑名单](/blocklist-control-plan.md)中关闭“子查询去关联”优化规则的方式来关闭这个优化。在一般情况下，推荐使用 Optimizer Hint 并在需要时配合[执行计划管理](/sql-plan-management.md)功能来禁止解除关联。
 
-从 v8.5.7 开始，你还可以使用系统变量 [`tidb_opt_enable_alternative_logical_plans`](/system-variables.md#tidb_opt_enable_alternative_logical_plans-new-in-v857) 来优化此类场景。启用该变量后，如果去相关化后的候选计划无法生成与原始关联子查询具有相同访问方向的等效 `IndexJoin` 候选计划，优化器会额外保留一个未去相关化的候选计划，对去相关化和未去相关化的候选计划都进行评估，并选择成本更低的[执行计划](/explain-subqueries.md)。
+从 v8.5.7 起，你还可以使用系统变量 [`tidb_opt_enable_alternative_logical_plans`](/system-variables.md#tidb_opt_enable_alternative_logical_plans-从-v857-版本开始引入) 来优化这类场景。开启该变量后，如果去关联后的候选计划未能生成与原始关联子查询访问方向相同的等价 `IndexJoin` 候选计划，优化器会额外保留一个“不去关联”的候选计划，并同时评估“去关联”和“不去关联”两类候选计划，最终选择代价更低的[执行计划](/explain-subqueries.md)。
 
-## 示例
+## 样例
+
 
 ```sql
 create table t1(a int, b int);
@@ -46,9 +47,9 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 
 ```
 
-以上是优化生效的示例。`HashJoin_11` 是一个普通的 `inner join`。
+上面是优化生效的情况，可以看到 `HashJoin_11` 是一个普通的 `inner join`。
 
-然后，你可以使用 `NO_DECORRELATE` 优化器提示，告诉优化器不要对子查询进行去相关化：
+接下来，通过 Optimizer Hint `NO_DECORRELATE` 提示优化器不对该子查询解除关联：
 
 
 ```sql
@@ -72,7 +73,8 @@ explain select * from t1 where t1.a < (select /*+ NO_DECORRELATE() */ sum(t2.a) 
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 ```
 
-禁用子查询去相关化规则后，也可以达到相同效果：
+也可以通过全局关闭关联规则达到同样的效果：
+
 
 ```sql
 insert into mysql.opt_rule_blacklist values("decorrelate");
@@ -80,7 +82,7 @@ admin reload opt_rule_blacklist;
 explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.b);
 ```
 
-```sql
+```
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 | id                                       | estRows   | task      | access object          | operator info                                                                        |
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
@@ -97,4 +99,4 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 ```
 
-禁用子查询去相关化规则后，你可以在 `operator info` 中看到 `range: decided by [eq(test.t2.b, test.t1.b)]`，这意味着没有进行相关子查询的去相关化，TiDB 使用了索引范围查询。
+在执行了关闭关联规则的语句后，可以在 `IndexRangeScan_42(Build)` 的 `operator info` 中看到 `range: decided by [eq(test.t2.b, test.t1.b)]`。这部分信息就是关联依赖未被解除时，TiDB 使用关联条件进行索引范围查询的显示结果。

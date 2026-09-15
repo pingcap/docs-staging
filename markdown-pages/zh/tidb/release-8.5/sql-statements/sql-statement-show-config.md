@@ -1,17 +1,13 @@
 ---
 title: SHOW CONFIG
-summary: Overview of the use of SHOW CONFIG in the TiDB database
+summary: TiDB 数据库中 SHOW CONFIG 的使用概况。
 ---
 
 # SHOW CONFIG
 
-The `SHOW CONFIG` statement is used to show the current configuration of various components of TiDB. Note that the configuration and system variables act on different dimensions and should not be mixed up. If you want to obtain the system variable information, use the [SHOW VARIABLES](/sql-statements/sql-statement-show-variables.md) syntax.
+`SHOW CONFIG` 语句用于展示 TiDB 各个组件当前正在应用的配置，请注意，配置与系统变量作用于不同维度，请不要混淆，如果希望获取系统变量信息，请使用 [SHOW VARIABLES](/sql-statements/sql-statement-show-variables.md) 语法。
 
-> **Note:**
->
-> This feature is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/). 
-
-## Synopsis
+## 语法图
 
 ```ebnf+diagram
 ShowConfigStmt ::=
@@ -22,9 +18,9 @@ ShowLikeOrWhere ::=
 |   "WHERE" Expression
 ```
 
-## Examples
+## 示例
 
-Show all configurations:
+显示所有配置：
 
 ```sql
 SHOW CONFIG;
@@ -41,7 +37,7 @@ SHOW CONFIG;
 120 rows in set (0.01 sec)
 ```
 
-Show the configuration where the `type` is `tidb`:
+显示 `type` 是 `tidb` 的配置：
 
 ```sql
 SHOW CONFIG WHERE type = 'tidb' AND name = 'advertise-address';
@@ -56,7 +52,7 @@ SHOW CONFIG WHERE type = 'tidb' AND name = 'advertise-address';
 1 row in set (0.05 sec)
 ```
 
-You can also use the `LIKE` clause to show the configuration where the `type` is `tidb`:
+也可以用 `LIKE` 子句来显示 `type` 是 `tidb` 的配置：
 
 ```sql
 SHOW CONFIG LIKE 'tidb';
@@ -73,10 +69,10 @@ SHOW CONFIG LIKE 'tidb';
 40 rows in set (0.01 sec)
 ```
 
-## MySQL compatibility
+## MySQL 兼容性
 
-This statement is a TiDB extension to MySQL syntax.
+该语句是 TiDB 对 MySQL 语法的扩展。
 
-## See also
+## 另请参阅
 
 * [SHOW VARIABLES](/sql-statements/sql-statement-show-variables.md)

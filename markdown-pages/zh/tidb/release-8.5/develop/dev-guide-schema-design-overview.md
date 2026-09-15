@@ -1,104 +1,68 @@
 ---
-title: TiDB 数据库模式设计概述
-summary: 了解 TiDB 数据库模式设计的基础知识。
+title: 概述
+summary: TiDB 数据库模式设计的概述。
+aliases: ['/zh/tidb/dev/schema-design-overview','/zh/tidb/stable/dev-guide-schema-design-overview/','/zh/tidb/dev/dev-guide-schema-design-overview/','/zh/tidbcloud/dev-guide-schema-design-overview/']
 ---
 
-# TiDB 数据库模式设计概述
+# 概述
 
-本文档提供了 TiDB 数据库模式设计的基础知识，包括 TiDB 中的对象、访问控制、数据库模式变更以及对象限制。
+本页概述了 TiDB 中的数据库模式。将从本页开始围绕 [Bookshop](/develop/dev-guide-bookshop-schema-design.md) 这个应用程序来对 TiDB 的设计数据库部分展开介绍。并使用此数据库做后续数据的写入、读取示例。
 
-在后续的文档中，[Bookshop](/develop/dev-guide-bookshop-schema-design.md) 将作为示例，向你展示如何设计数据库以及在数据库中进行数据读写操作。
+## 术语歧义
 
-## TiDB 中的对象
+此处术语会有歧义，为消除歧义，在此作出数据库模式设计文档部分中的术语简要约定：
 
-为区分一些常用术语，以下是对 TiDB 中使用术语的简要说明：
+为避免和通用术语[数据库 (Database)](https://en.wikipedia.org/wiki/Database) 混淆，因此将逻辑对象称为**数据库 (Database)**，TiDB 仍使用原名称，并将 TiDB 的部署实例称为**集群 (Cluster)**。
 
-- 为避免与通用术语 [database](https://en.wikipedia.org/wiki/Database) 混淆，本文档中的 **database** 指的是逻辑对象，**TiDB** 指的是 TiDB 本身，**cluster** 指的是部署的 TiDB 实例。
+因为 TiDB 使用与 MySQL 兼容的语法，在此语法下，**模式 (Schema)** 仅代表[通用术语定义](https://en.wiktionary.org/wiki/schema)，并无逻辑对象定义，可参考此[官方文档](https://dev.mysql.com/doc/refman/8.0/en/create-database.html)。若你从其他拥有 **Schema** 逻辑对象的数据库（如：[PostgreSQL](https://www.postgresql.org/docs/current/ddl-schemas.html)、[Oracle](https://docs.oracle.com/en/database/oracle/oracle-database/21/tdddg/creating-managing-schema-objects.html)、[Microsoft SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/create-a-database-schema?view=sql-server-ver15) 等）迁移而来，请注意此区别。
 
-- TiDB 使用与 MySQL 兼容的语法，其中 **schema** 表示通用术语 [schema](https://en.wiktionary.org/wiki/schema)，而不是数据库中的逻辑对象。更多信息请参见 [MySQL 文档](https://dev.mysql.com/doc/refman/8.0/en/create-database.html)。如果你从具有逻辑对象 schema 的数据库迁移（例如 [PostgreSQL](https://www.postgresql.org/docs/current/ddl-schemas.html)、[Oracle](https://docs.oracle.com/en/database/oracle/oracle-database/21/tdddg/creating-managing-schema-objects.html)、[Microsoft SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/create-a-database-schema?view=sql-server-ver15)），请务必注意这一差异。
+## 数据库 Database
 
-### Database
+TiDB 语境中的 Database 或者说数据库，可以认为是表和索引等对象的集合。
 
-TiDB 中的 database 是一组对象的集合，例如表和索引。
+TiDB 集群包含一个名为 `test` 的数据库。但建议你自行创建数据库，而不是使用 `test` 数据库。
 
-TiDB 默认带有一个名为 `test` 的 database。然而，建议你创建自己的 database，而不是使用 `test`。
+## 表 Table
 
-### Table
+TiDB 语境中的 Table 或者说表，从属于某个[数据库](#数据库-database)。
 
-Table 是在 [database](#database) 中相关数据的集合。
+表包含数据**行**。每行数据中的每个值都属于一个特定的**列**。每列都只允许单一数据类型的数据值。列可添加[约束](/constraints.md)来进一步限定。你还可以添加[生成列](/generated-columns.md)用于计算。
 
-每个 table 由 **rows** 和 **columns** 组成。每行中的每个值属于特定的 **column**。每个 column 只允许一种数据类型。为了进一步限定列，可以添加一些 [constraints](/constraints.md)。为了加快计算速度，可以添加 [generated columns](/generated-columns.md)。
+## 索引 Index
 
-### Index
+索引是单个表中行的副本，按列或列集排序。TiDB 查询使用索引来更有效的查找表内的数据，同时可以给出特定列的值。每个索引都是从属于某个[表](#表-table)的。
 
-Index 是 table 中选定列的副本。你可以使用一个或多个列创建索引。通过索引，TiDB 可以快速定位数据，而不必每次都搜索 table 中的每一行，从而大大提高查询性能。
+索引有两种常见的类型，分别为：
 
-常见的索引类型有：
+- **Primary Key**: 即主键索引，即标识在主键列上的索引。
+- **Secondary Index**: 即二级索引，即在非主键上标识的索引。
 
-- **Primary Key**：在主键列上的索引。
-- **Secondary Index**：在非主键列上的索引。
-
-> **Note:**
+> **注意：**
 >
-> 在 TiDB 中，**Primary Key** 的默认定义与 [InnoDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html)（MySQL 常用存储引擎）中的定义不同。
+> TiDB 中，关于 **Primary Key** 的默认定义与 MySQL 常用存储引擎 [InnoDB](https://dev.mysql.com/doc/refman/8.0/en/innodb-storage-engine.html) 不一致。**InnoDB** 中，**Primary Key** 的语义为：唯一，不为空，**且为聚簇索引**。
 >
-> - 在 InnoDB 中，**Primary Key** 是唯一的、非空的，并且是 **clustered index**。
-> - 在 TiDB 中，**Primary Key** 是唯一的、非空的，但不保证是 **clustered index**。如果要指定主键是否为聚簇索引，可以在 `CREATE TABLE` 语句中在 `PRIMARY KEY` 后添加非保留关键字 `CLUSTERED` 或 `NONCLUSTERED`。如果语句未明确指定这些关键字，默认行为由系统变量 `@@global.tidb_enable_clustered_index` 控制。更多信息请参见 [Clustered Indexes](/clustered-indexes.md)。
+> 而在 TiDB 中，**Primary Key** 的定义为：唯一，不为空。但主键不保证为**聚簇索引**。而是由另一组关键字 `CLUSTERED`、`NONCLUSTERED` 额外控制 **Primary Key** 是否为聚簇索引，若不指定，则由系统变量 `@@global.tidb_enable_clustered_index` 影响，具体说明请看[聚簇索引](/clustered-indexes.md)。
 
-#### 专用索引
+### 专用索引
 
-<CustomContent platform="tidb">
+TiDB 支持一些特殊场景专用的索引，用以提高特定用例中的查询性能。具体请参考[索引和约束](/basic-features.md#索引和约束)。
 
-为了提升各种用户场景下的查询性能，TiDB 提供了一些专用类型的索引。每种类型的详细信息，请参见 [Indexing and constraints](/basic-features.md#indexing-and-constraints)。
+## 其他对象
 
-</CustomContent>
+TiDB 支持一些和**表**同级的对象：
 
-<CustomContent platform="tidb-cloud">
-
-为了提升各种用户场景下的查询性能，TiDB 提供了一些专用类型的索引。每种类型的详细信息，请参见 [Indexing and constraints](https://docs.pingcap.com/tidb/stable/basic-features#indexing-and-constraints)。
-
-</CustomContent>
-
-### 其他支持的逻辑对象
-
-TiDB 支持以下与 **table** 同级的逻辑对象：
-
-- [View](/views.md)：视图作为虚拟表，其 schema 由创建视图的 `SELECT` 语句定义。
-- [Sequence](/sql-statements/sql-statement-create-sequence.md)：序列用于生成和存储连续的数据。
-- [Temporary table](/temporary-tables.md)：临时表，其数据不持久化。
+- [视图](/views.md): 视图是一张虚拟表，该虚拟表的结构由创建视图时的 `SELECT` 语句定义，TiDB 目前不支持物化视图。
+- [序列](/sql-statements/sql-statement-create-sequence.md): 创建和存储顺序数据。
+- [临时表](/temporary-tables.md): 临时表是数据不持久化的表。
 
 ## 访问控制
 
-<CustomContent platform="tidb">
+TiDB 支持基于用户或角色的访问控制。你可以通过[角色](/role-based-access-control.md)或直接指向[用户](/user-account-management.md)，从而授予**用户**查看、修改或删除数据对象和数据模式的[权限](/privilege-management.md)。
 
-TiDB 支持基于用户和基于角色的访问控制。为了允许用户查看、修改或删除数据对象和数据 schema，你可以直接授予 [privileges](/privilege-management.md) 给 [users](/user-account-management.md)，或者通过 [roles](/role-based-access-control.md) 授予 [privileges](/privilege-management.md)。
+## 执行数据库模式更改
 
-</CustomContent>
+不推荐使用客户端的 Driver 或 ORM 来执行数据库模式的更改。以经验来看，作为最佳实践，建议使用 [MySQL 客户端](https://dev.mysql.com/doc/refman/8.0/en/mysql.html)或使用任意你喜欢的 GUI 客户端来进行数据库模式的更改。本文档中，将在大多数场景下，使用 **MySQL 客户端** 传入 SQL 文件来执行数据库模式的更改。
 
-<CustomContent platform="tidb-cloud">
+## 对象大小限制
 
-TiDB 支持基于用户和基于角色的访问控制。为了允许用户查看、修改或删除数据对象和数据 schema，你可以直接授予 [privileges](https://docs.pingcap.com/tidb/stable/privilege-management) 给 [users](https://docs.pingcap.com/tidb/stable/user-account-management)，或者通过 [roles](https://docs.pingcap.com/tidb/stable/role-based-access-control) 授予 [privileges](https://docs.pingcap.com/tidb/stable/privilege-management)。
-
-</CustomContent>
-
-## 数据库模式变更
-
-作为最佳实践，建议你使用 [MySQL 客户端](https://dev.mysql.com/doc/refman/8.0/en/mysql.html) 或图形界面客户端，而非驱动或 ORM 来执行数据库模式变更。
-
-## 对象限制
-
-更多信息请参见 [TiDB Limitations](/tidb-limitations.md)。
-
-## 需要帮助？
-
-<CustomContent platform="tidb">
-
-可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或者 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-可以在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 上向社区提问，或者 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>
+具体限制请参考 [TiDB 使用限制](/tidb-limitations.md)。

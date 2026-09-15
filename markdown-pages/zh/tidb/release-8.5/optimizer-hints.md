@@ -1,94 +1,93 @@
 ---
-title: 优化器 Hint
-summary: 使用优化器 Hint 影响查询执行计划
+title: Optimizer Hints
+summary: 介绍 TiDB 中 Optimizer Hints 的语法和不同生效范围的 Hint 的使用方法。
 ---
 
-# 优化器 Hint
+# Optimizer Hints
 
-TiDB 支持优化器 Hint，其基于 MySQL 5.7 引入的类似注释的语法。例如，常见的语法之一为 `/*+ HINT_NAME([t1_name [, t2_name] ...]) */`。当 TiDB 优化器选择了次优的查询计划时，建议使用优化器 Hint。
+TiDB 支持 Optimizer Hints 语法，它基于 MySQL 5.7 中介绍的类似 comment 的语法，例如 `/*+ HINT_NAME(t1, t2) */`。当 TiDB 优化器选择的不是最优查询计划时，建议使用 Optimizer Hints。
 
-如果你遇到 Hint 未生效的情况，请参见[排查 Hint 不生效的常见问题](#排查-hint-不生效的常见问题)。
+如果遇到 Hint 无法生效的情况，请参考[常见 Hint 不生效问题排查](#常见-hint-不生效问题排查)。
 
 ## 语法
 
-优化器 Hint 不区分大小写，需写在 SQL 语句中 `SELECT`、`INSERT`、`UPDATE` 或 `DELETE` 关键字后面的 `/*+ ... */` 注释内。
+Optimizer Hints 不区分大小写，通过 `/*+ ... */` 注释的形式跟在 `SELECT`、`INSERT`、`UPDATE` 或 `DELETE` 关键字的后面。
 
-可以通过逗号分隔指定多个 Hint。例如，以下查询使用了三种不同的 Hint：
+多个不同的 Hint 之间需用逗号隔开，例如：
+
 
 ```sql
 SELECT /*+ USE_INDEX(t1, idx1), HASH_AGG(), HASH_JOIN(t1) */ count(*) FROM t t1, t t2 WHERE t1.a = t2.b;
 ```
 
-优化器 Hint 对查询执行计划的影响可以通过 [`EXPLAIN`](/sql-statements/sql-statement-explain.md) 和 [`EXPLAIN ANALYZE`](/sql-statements/sql-statement-explain-analyze.md) 的输出结果观察。
+可以通过 [`Explain`](/sql-statements/sql-statement-explain.md)/[`Explain Analyze`](/sql-statements/sql-statement-explain-analyze.md) 语句的输出，来查看 Optimizer Hints 对查询执行计划的影响。
 
-错误或不完整的 Hint 不会导致语句报错。这是因为 Hint 仅作为对查询执行的 _建议_ 语义。同样地，如果 Hint 不适用，TiDB 最多只会返回一个警告。
+如果 Optimizer Hints 包含语法错误或不完整，查询语句不会报错，而是按照没有 Optimizer Hints 的情况执行。如果 Hint 不适用于当前语句，TiDB 会返回 Warning，用户可以在查询结束后通过 `Show Warnings` 命令查看具体信息。
 
 > **注意：**
 >
-> 如果注释没有紧跟在指定关键字后面，则会被当作普通 MySQL 注释处理。此时注释不生效，也不会报出警告。
+> 如果注释不是跟在指定的关键字后，会被当作是普通的 MySQL comment，注释不会生效，且不会上报 warning。
 
-目前，TiDB 支持两类 Hint，作用域不同。第一类 Hint 在查询块作用域内生效，如 [`/*+ HASH_AGG() */`](#hash_agg)；第二类 Hint 在整个查询内生效，如 [`/*+ MEMORY_QUOTA(1024 MB)*/`](#memory_quotan)。
+TiDB 目前支持的 Optimizer Hints 根据生效范围的不同可以划分为两类：第一类是在查询块范围生效的 Hint，例如 [`/*+ HASH_AGG() */`](#hash_agg)；第二类是在整个查询范围生效的 Hint，例如 [`/*+ MEMORY_QUOTA(1024 MB)*/`](#memory_quotan)。
 
-每个语句中的查询或子查询对应一个不同的查询块，每个查询块有自己的名称。例如：
+每条语句中每一个查询和子查询都对应着一个不同的查询块，每个查询块有自己对应的名字。以下面这条语句为例：
+
 
 ```sql
 SELECT * FROM (SELECT * FROM t) t1, (SELECT * FROM t) t2;
 ```
 
-上述查询语句有三个查询块：最外层的 `SELECT` 对应第一个查询块，名称为 `sel_1`；两个 `SELECT` 子查询分别对应第二、第三个查询块，名称分别为 `sel_2` 和 `sel_3`。数字的顺序根据 `SELECT` 从左到右出现的顺序决定。如果将第一个 `SELECT` 替换为 `DELETE` 或 `UPDATE`，则对应的查询块名称为 `del_1` 或 `upd_1`。
+该查询语句有 3 个查询块，最外面一层 `SELECT` 所在的查询块的名字为 `sel_1`，两个 `SELECT` 子查询的名字依次为 `sel_2` 和 `sel_3`。其中数字序号根据 `SELECT` 出现的位置从左到右计数。如果分别用 `DELETE` 和 `UPDATE` 查询替代第一个 `SELECT` 查询，则对应的查询块名字分别为 `del_1` 和 `upd_1`。
 
-## 查询块作用域内生效的 Hint
+## 查询块范围生效的 Hint
 
-此类 Hint 可以跟在**任意** `SELECT`、`UPDATE` 或 `DELETE` 关键字后。要控制 Hint 的生效范围，可在 Hint 中使用查询块名称。通过准确标识查询中的每个表（以防表名或别名重复），可以明确 Hint 的参数。如果 Hint 未指定查询块，则默认在当前块生效。
+这类 Hint 可以跟在查询语句中**任意** `SELECT`、`UPDATE` 或 `DELETE` 关键字的后面。通过在 Hint 中使用查询块名字可以控制 Hint 的生效范围，以及准确标识查询中的每一个表（有可能表的名字或者别名相同），方便明确 Hint 的参数指向。若不显式地在 Hint 中指定查询块，Hint 默认作用于当前查询块。以如下查询为例：
 
-例如：
 
 ```sql
 SELECT /*+ HASH_JOIN(@sel_1 t1@sel_1, t3) */ * FROM (SELECT t1.a, t1.b FROM t t1, t t2 WHERE t1.a = t2.a) t1, t t3 WHERE t1.b = t3.b;
 ```
 
-该 Hint 在 `sel_1` 查询块中生效，参数为 `sel_1` 中的 `t1` 和 `t3` 表（`sel_2` 也包含一个 `t1` 表）。
+该 Hint 在 `sel_1` 这个查询块中生效，参数分别为 `sel_1` 中的 `t1` 表（`sel_2` 中也有一个 `t1` 表）和 `t3` 表。
 
-如上所述，你可以通过以下方式在 Hint 中指定查询块名称：
-
-- 将查询块名称作为 Hint 的第一个参数，并用空格与其他参数分隔。除 `QB_NAME` 外，本节列出的所有 Hint 还支持一个可选的隐藏参数 `@QB_NAME`。通过该参数可以指定 Hint 的生效范围。
-- 在参数中的表名后追加 `@QB_NAME`，以显式指定该表属于哪个查询块。
+如上例所述，在 Hint 中使用查询块名字的方式有两种：第一种是作为 Hint 的第一个参数，与其他参数用空格隔开。除 `QB_NAME` 外，本节所列的所有 Hint 除自身明确列出的参数外都有一个隐藏的可选参数 `@QB_NAME`，通过使用这个参数可以指定该 Hint 的生效范围；第二种在 Hint 中使用查询块名字的方式是在参数中的某一个表名后面加 `@QB_NAME`，用以明确指出该参数是哪个查询块中的表。
 
 > **注意：**
 >
-> 必须将 Hint 放在其生效的查询块内或之前。如果 Hint 放在查询块之后，则无法生效。
+> Hint 声明的位置必须在指定生效的查询块之中或之前，不能是在之后的查询块中，否则无法生效。
 
 ### QB_NAME
 
-当查询语句较为复杂，包含多层嵌套查询时，某个查询块的 ID 和名称可能被误识别。此时可以使用 Hint `QB_NAME`。
+当查询语句是包含多层嵌套子查询的复杂语句时，识别某个查询块的序号和名字很可能会出错，Hint `QB_NAME` 可以方便我们使用查询块。`QB_NAME` 是 Query Block Name 的缩写，用于为某个查询块指定新的名字，同时查询块原本默认的名字依然有效。例如：
 
-`QB_NAME` 表示查询块名称。你可以为查询块指定一个新名称。指定的 `QB_NAME` 和之前的默认名称均有效。例如：
 
 ```sql
 SELECT /*+ QB_NAME(QB1) */ * FROM (SELECT * FROM t) t1, (SELECT * FROM t) t2;
 ```
 
-该 Hint 将外层 `SELECT` 查询块的名称指定为 `QB1`，此时 `QB1` 和默认名称 `sel_1` 对该查询块均有效。
+这条 Hint 将最外层 `SELECT` 查询块的命名为 `QB1`，此时 `QB1` 和默认名称 `sel_1` 对于这个查询块来说都是有效的。
 
 > **注意：**
 >
-> 在上述示例中，如果 Hint 将 `QB_NAME` 指定为 `sel_2`，且未为原第二个 `SELECT` 查询块指定新 `QB_NAME`，则 `sel_2` 对第二个 `SELECT` 查询块无效。
+> 上述例子中，如果指定的 `QB_NAME` 为 `sel_2`，并且不给原本 `sel_2` 对应的第二个查询块指定新的 `QB_NAME`，则第二个查询块的默认名字 `sel_2` 会失效。
 
 ### MERGE_JOIN(t1_name [, tl_name ...])
 
-`MERGE_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用排序合并连接算法。通常，该算法内存消耗较少，但处理时间较长。如果数据量很大或系统内存不足，建议使用该 Hint。例如：
+`MERGE_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表使用 Sort Merge Join 算法。这个算法通常会占用更少的内存，但执行时间会更久。当数据量太大，或系统内存不足时，建议尝试使用。例如：
+
 
 ```sql
-select /*+ MERGE_JOIN(t1, t2) */ * from t1, t2 where t1.id = t2.id;
+SELECT /*+ MERGE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 ```
 
 > **注意：**
 >
-> `TIDB_SMJ` 是 TiDB 3.0.x 及以下版本中 `MERGE_JOIN` 的别名。如果你使用这些版本，必须采用 `TIDB_SMJ(t1_name [, tl_name ...])` 语法。对于更高版本，`TIDB_SMJ` 和 `MERGE_JOIN` 均可用，但推荐使用 `MERGE_JOIN`。
+> `MERGE_JOIN` 的别名是 `TIDB_SMJ`，在 3.0.x 及之前版本仅支持使用该别名；之后的版本同时支持使用这两种名称，但推荐使用 `MERGE_JOIN`。
 
 ### NO_MERGE_JOIN(t1_name [, tl_name ...])
 
-`NO_MERGE_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表不使用排序合并连接算法。例如：
+`NO_MERGE_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表不要使用 Sort Merge Join 算法。例如：
+
 
 ```sql
 SELECT /*+ NO_MERGE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -98,25 +97,27 @@ SELECT /*+ NO_MERGE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 > **注意：**
 >
-> 某些情况下，`INL_JOIN` Hint 可能不生效。详情参见 [`INL_JOIN` Hint 不生效](#inl_join-hint-不生效)。
+> 部分情况下 `INL_JOIN` Hint 可能无法生效，详情请参阅 [`INL_JOIN` Hint 不生效](#inl_join-hint-不生效)。
 
-`INL_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用索引嵌套循环连接算法。在某些场景下，该算法可能消耗更少的系统资源且处理时间更短，但在其他场景下可能相反。如果外表经 `WHERE` 条件过滤后结果集小于 10000 行，建议使用该 Hint。例如：
+`INL_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表使用 Index Nested Loop Join 算法。这个算法可能会在某些场景更快，消耗更少系统资源，有的场景会更慢，消耗更多系统资源。对于外表经过 WHERE 条件过滤后结果集较小（小于 1 万行）的场景，可以尝试使用。例如：
+
 
 ```sql
 SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1, t2, t3 WHERE t1.id = t2.id AND t2.id = t3.id;
 ```
 
-在上述 SQL 语句中，`INL_JOIN(t1, t2)` Hint 告诉优化器对 `t1` 和 `t2` 使用索引嵌套循环连接算法。注意，这并不意味着 `t1` 和 `t2` 之间直接使用索引嵌套循环连接，而是指 `t1` 和 `t2` 各自与其他表（如 `t3`）使用该算法。
+在上面的 SQL 中，`INL_JOIN(t1, t2)` 会提示优化器对 `t1` 和 `t2` 使用 Index Nested Loop Join 算法。注意它并不是指 `t1` 和 `t2` 之间使用 Index Nested Loop Join 算法，而是 `t1` 和 `t2` 分别与其他表 (`t3`) 之间使用 Index Nested Loop Join 算法。
 
-`INL_JOIN()` 中给定的参数是在生成查询计划时作为内表的候选表。例如，`INL_JOIN(t1)` 表示 TiDB 只考虑将 `t1` 作为内表生成查询计划。如果候选表有别名，必须在 `INL_JOIN()` 中使用别名；没有别名则用原表名。例如，在 `select /*+ INL_JOIN(t1) */ * from t t1, t t2 where t1.a = t2.b;` 查询中，必须使用表 `t` 的别名 `t1` 或 `t2`，而不能直接用 `t` 作为 `INL_JOIN()` 的参数。
+`INL_JOIN()` 中的参数是建立查询计划时内表的候选表，比如 `INL_JOIN(t1)` 只会考虑使用 `t1` 作为内表构建查询计划。表如果指定了别名，就只能使用表的别名作为 `INL_JOIN()` 的参数；如果没有指定别名，则用表的本名作为其参数。比如在 `SELECT /*+ INL_JOIN(t1) */ * FROM t t1, t t2 WHERE t1.a = t2.b;` 中，`INL_JOIN()` 的参数只能使用 `t` 的别名 `t1` 或 `t2`，不能用 `t`。
 
 > **注意：**
 >
-> `TIDB_INLJ` 是 TiDB 3.0.x 及以下版本中 `INL_JOIN` 的别名。如果你使用这些版本，必须采用 `TIDB_INLJ(t1_name [, tl_name ...])` 语法。对于更高版本，`TIDB_INLJ` 和 `INL_JOIN` 均可用，但推荐使用 `INL_JOIN`。
+> `INL_JOIN` 的别名是 `TIDB_INLJ`，在 3.0.x 及之前版本仅支持使用该别名；之后的版本同时支持使用这两种名称，但推荐使用 `INL_JOIN`。
 
 ### NO_INDEX_JOIN(t1_name [, tl_name ...])
 
-`NO_INDEX_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表不使用索引嵌套循环连接算法。例如：
+`NO_INDEX_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表不要使用 Index Nested Loop Join 算法。例如：
+
 
 ```sql
 SELECT /*+ NO_INDEX_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -124,39 +125,41 @@ SELECT /*+ NO_INDEX_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 ### INL_HASH_JOIN
 
-`INL_HASH_JOIN(t1_name [, tl_name])` Hint 告诉优化器使用索引嵌套循环哈希连接算法。该算法的使用条件与索引嵌套循环连接算法相同。两者的区别在于，`INL_JOIN` 在被连接的内表上构建哈希表，而 `INL_HASH_JOIN` 在被连接的外表上构建哈希表。`INL_HASH_JOIN` 的内存使用有固定上限，而 `INL_JOIN` 的内存消耗取决于内表匹配的行数。
+`INL_HASH_JOIN(t1_name [, tl_name])` 提示优化器使用 Index Nested Loop Hash Join 算法。该算法与 Index Nested Loop Join 使用条件完全一样，两者的区别是 `INL_JOIN` 会在连接的内表上建哈希表，而 `INL_HASH_JOIN` 会在连接的外表上建哈希表，后者对于内存的使用是有固定上限的，而前者使用的内存使用取决于内表匹配到的行数。
 
 ### NO_INDEX_HASH_JOIN(t1_name [, tl_name ...])
 
-`NO_INDEX_HASH_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表不使用索引嵌套循环哈希连接算法。
+`NO_INDEX_HASH_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表不要使用 Index Nested Loop Hash Join 算法。
 
 ### INL_MERGE_JOIN
 
-> **警告：**
+> **警告：** 
 >
-> 从 TiDB v8.3.0 开始，`INL_MERGE_JOIN` hint 已被弃用且不再生效，因为它可能返回错误结果。如果查询指定了此 hint，TiDB 会忽略它并选择另一种连接算法。
+> 从 TiDB v8.3.0 开始，`INL_MERGE_JOIN` Hint 已废弃且不再生效，因为它可能返回错误结果。如果查询中指定了该 Hint，TiDB 会忽略它并选择其他 Join 算法。
 
-在 v8.3.0 之前，`INL_MERGE_JOIN(t1_name [, tl_name])` Hint 告诉优化器使用索引嵌套循环合并连接算法。该算法的使用条件与索引嵌套循环连接算法相同。
+在 v8.3.0 之前，`INL_MERGE_JOIN(t1_name [, tl_name])` 提示优化器使用 Index Nested Loop Merge Join 算法，该算法与 Index Nested Loop Join 使用条件完全一样。
 
 ### NO_INDEX_MERGE_JOIN(t1_name [, tl_name ...])
 
-`NO_INDEX_MERGE_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表不使用索引嵌套循环合并连接算法。
+`NO_INDEX_MERGE_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表不要使用 Index Nested Loop Merge Join 算法。
 
 ### HASH_JOIN(t1_name [, tl_name ...])
 
-`HASH_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用哈希连接算法。该算法允许查询通过多线程并发执行，处理速度更快，但内存消耗更大。例如：
+`HASH_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表使用 Hash Join 算法。这个算法多线程并发执行，执行速度较快，但会消耗较多内存。例如：
+
 
 ```sql
-select /*+ HASH_JOIN(t1, t2) */ * from t1, t2 where t1.id = t2.id;
+SELECT /*+ HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 ```
 
 > **注意：**
 >
-> `TIDB_HJ` 是 TiDB 3.0.x 及以下版本中 `HASH_JOIN` 的别名。如果你使用这些版本，必须采用 `TIDB_HJ(t1_name [, tl_name ...])` 语法。对于更高版本，`TIDB_HJ` 和 `HASH_JOIN` 均可用，但推荐使用 `HASH_JOIN`。
+> `HASH_JOIN` 的别名是 `TIDB_HJ`，在 3.0.x 及之前版本仅支持使用该别名；之后的版本同时支持使用这两种名称，推荐使用 `HASH_JOIN`。
 
 ### NO_HASH_JOIN(t1_name [, tl_name ...])
 
-`NO_HASH_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表不使用哈希连接算法。例如：
+`NO_HASH_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表不要使用 Hash Join 算法。例如：
+
 
 ```sql
 SELECT /*+ NO_HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -164,7 +167,7 @@ SELECT /*+ NO_HASH_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 ### HASH_JOIN_BUILD(t1_name [, tl_name ...])
 
-`HASH_JOIN_BUILD(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用哈希连接算法，并将这些表作为 Build 端。这样可以指定用哪些表构建哈希表。例如：
+`HASH_JOIN_BUILD(t1_name [, tl_name ...])` 提示优化器对指定表使用 Hash Join 算法，同时将指定表作为 Hash Join 算法的 Build 端，即用指定表来构建哈希表。例如：
 
 ```sql
 SELECT /*+ HASH_JOIN_BUILD(t1) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -172,7 +175,7 @@ SELECT /*+ HASH_JOIN_BUILD(t1) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 ### HASH_JOIN_PROBE(t1_name [, tl_name ...])
 
-`HASH_JOIN_PROBE(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用哈希连接算法，并将这些表作为 Probe 端。这样可以指定用哪些表作为 Probe 端执行哈希连接。例如：
+`HASH_JOIN_PROBE(t1_name [, tl_name ...])` 提示优化器对指定表使用 Hash Join 算法，同时将指定表作为 Hash Join 算法的探测（Probe）端，即用指定表作为探测端来执行 Hash Join 算法。例如：
 
 ```sql
 SELECT /*+ HASH_JOIN_PROBE(t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -180,16 +183,15 @@ SELECT /*+ HASH_JOIN_PROBE(t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 ### SEMI_JOIN_REWRITE()
 
-`SEMI_JOIN_REWRITE()` Hint 告诉优化器将半连接查询重写为普通连接查询。目前该 Hint 仅对 `EXISTS` 子查询生效。
+`SEMI_JOIN_REWRITE()` 提示优化器将查询语句中的半连接 (Semi Join) 改写为普通的内连接。目前该 Hint 只作用于 `EXISTS` 子查询。
 
-如果不使用该 Hint 进行重写，当执行计划选择哈希连接时，半连接查询只能用子查询构建哈希表。此时，如果子查询结果比外层查询大，执行速度可能低于预期。
+如果不使用该 Hint 进行改写，Semi Join 在选择 Hash Join 的执行方式时，只能够使用子查询构建哈希表，因此在子查询比外查询结果集大时，执行速度可能会不及预期。Semi Join 在选择 Index Join 的执行方式时，只能够使用外查询作为驱动表，因此在子查询比外查询结果集小时，执行速度可能会不及预期。
 
-同样地，当执行计划选择索引连接时，半连接查询只能用外层查询作为驱动表。此时，如果子查询结果比外层查询小，执行速度也可能低于预期。
+在使用了 `SEMI_JOIN_REWRITE()` 进行改写后，优化器便可以扩大选择范围，选择更好的执行方式。
 
-使用 `SEMI_JOIN_REWRITE()` 进行重写后，优化器可以扩展选择范围，选择更优的执行计划。
 
 ```sql
--- 未使用 SEMI_JOIN_REWRITE() 重写查询。
+-- 不使用 SEMI_JOIN_REWRITE() 进行改写
 EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT 1 FROM t1 WHERE t1.a = t.a);
 ```
 
@@ -205,8 +207,9 @@ EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT 1 FROM t1 WHERE t1.a = t.a);
 +-----------------------------+---------+-----------+------------------------+---------------------------------------------------+
 ```
 
+
 ```sql
--- 使用 SEMI_JOIN_REWRITE() 重写查询。
+-- 使用 SEMI_JOIN_REWRITE() 进行改写
 EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT /*+ SEMI_JOIN_REWRITE() */ 1 FROM t1 WHERE t1.a = t.a);
 ```
 
@@ -224,11 +227,11 @@ EXPLAIN SELECT * FROM t WHERE EXISTS (SELECT /*+ SEMI_JOIN_REWRITE() */ 1 FROM t
 +------------------------------+---------+-----------+------------------------+---------------------------------------------------------------------------------------------------------------+
 ```
 
-从上述示例可以看到，使用 `SEMI_JOIN_REWRITE()` Hint 后，TiDB 可以基于驱动表 `t1` 选择 IndexJoin 的执行方式。
+在上述例子中可以看到，在使用了 Hint 之后，TiDB 可以选择由表 `t1` 作为驱动表的 IndexJoin 的执行方式。
 
 ### SHUFFLE_JOIN(t1_name [, tl_name ...])
 
-`SHUFFLE_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用 Shuffle Join 算法。该 Hint 仅在 MPP 模式下生效。例如：
+`SHUFFLE_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表使用 Shuffle Join 算法，该 Hint 只在 MPP 模式下生效。例如：
 
 ```sql
 SELECT /*+ SHUFFLE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -236,12 +239,12 @@ SELECT /*+ SHUFFLE_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 > **注意：**
 >
-> - 使用该 Hint 前，请确保当前 TiDB 集群支持在查询中使用 TiFlash MPP 模式。详情参见[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
-> - 该 Hint 可与 [`HASH_JOIN_BUILD` Hint](#hash_join_buildt1_name--tl_name-) 和 [`HASH_JOIN_PROBE` Hint](#hash_join_probet1_name--tl_name-) 结合使用，以控制 Shuffle Join 算法的 Build 端和 Probe 端。
+> - 使用该 Hint 前，需要保证当前 TiDB 集群能够支持在查询中使用 TiFlash MPP 模式，具体细节见文档[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
+> - 该 Hint 能与 [`HASH_JOIN_BUILD` Hint](#hash_join_buildt1_name--tl_name-) 和 [`HASH_JOIN_PROBE` Hint](#hash_join_probet1_name--tl_name-) 组合使用，达到控制 Shuffle Join 算法的 Build 端和 Probe 端的作用。
 
 ### BROADCAST_JOIN(t1_name [, tl_name ...])
 
-`BROADCAST_JOIN(t1_name [, tl_name ...])` Hint 告诉优化器对指定表使用 Broadcast Join 算法。该 Hint 仅在 MPP 模式下生效。例如：
+`BROADCAST_JOIN(t1_name [, tl_name ...])` 提示优化器对指定表使用 Broadcast Join 算法，该 Hint 只在 MPP 模式下生效。例如：
 
 ```sql
 SELECT /*+ BROADCAST_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
@@ -249,24 +252,26 @@ SELECT /*+ BROADCAST_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id = t2.id;
 
 > **注意：**
 >
-> - 使用该 Hint 前，请确保当前 TiDB 集群支持在查询中使用 TiFlash MPP 模式。详情参见[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
-> - 该 Hint 可与 [`HASH_JOIN_BUILD` Hint](#hash_join_buildt1_name--tl_name-) 和 [`HASH_JOIN_PROBE` Hint](#hash_join_probet1_name--tl_name-) 结合使用，以控制 Broadcast Join 算法的 Build 端和 Probe 端。
+> - 使用该 Hint 前，需要保证当前 TiDB 集群能够支持在查询中使用 TiFlash MPP 模式，具体细节见文档[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
+> - 该 Hint 能与 [`HASH_JOIN_BUILD` Hint](#hash_join_buildt1_name--tl_name-) 和 [`HASH_JOIN_PROBE` Hint](#hash_join_probet1_name--tl_name-) 组合使用，达到控制 Broadcast Join 算法的 Build 端和 Probe 端的作用。
 
 ### NO_DECORRELATE()
 
-`NO_DECORRELATE()` Hint 告诉优化器不要尝试对指定查询块中的关联子查询进行去关联。该 Hint 适用于包含关联列（即关联子查询）的 `EXISTS`、`IN`、`ANY`、`ALL`、`SOME` 子查询和标量子查询。
+`NO_DECORRELATE()` 提示优化器不要尝试解除指定查询块中对应子查询的关联。该 Hint 适用于包含关联列的 `EXISTS`、`IN`、`ANY`、`ALL`、`SOME` 和标量子查询，即关联子查询。
 
-当在查询块中使用该 Hint 时，优化器不会尝试对子查询与外层查询块之间的关联列进行去关联，而是始终使用 Apply 运算符执行查询。
+将该 Hint 写在一个查询块中后，对于该子查询和其外部查询块之间的关联列，优化器将不再尝试解除关联，而是始终使用 Apply 算子来执行查询。
 
-默认情况下，TiDB 会尝试对关联子查询[进行去关联](/correlated-subquery-optimization.md)，以获得更高的执行效率。但在[某些场景](/correlated-subquery-optimization.md#restrictions)下，去关联反而可能降低执行效率。此时可以使用该 Hint 手动告知优化器不要进行去关联。例如：
+默认情况下，TiDB 会尝试对关联子查询[解除关联](/correlated-subquery-optimization.md)，以达到更高的执行效率。但是在[一部分场景](/correlated-subquery-optimization.md#限制)下，解除关联反而会降低执行效率。这种情况下，可以使用该 Hint 来人工提示优化器不要进行解除关联操作。例如：
+
 
 ```sql
 create table t1(a int, b int);
 create table t2(a int, b int, index idx(b));
 ```
 
+
 ```sql
--- 未使用 NO_DECORRELATE()。
+-- 不使用 NO_DECORRELATE()
 explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.b);
 ```
 
@@ -286,10 +291,11 @@ explain select * from t1 where t1.a < (select sum(t2.a) from t2 where t2.b = t1.
 +----------------------------------+----------+-----------+---------------+--------------------------------------------------------------------------------------------------------------+
 ```
 
-从上述执行计划可以看到，优化器已自动进行了去关联。去关联后的执行计划不再有 Apply 运算符，而是将子查询与外层查询块之间的原有关联列过滤条件（`t2.b = t1.b`）转为普通连接条件。
+从以上执行计划中可以发现，优化器自动解除了关联。解除关联之后的执行计划不包含 Apply 算子，取而代之的是子查询和外部查询块之间的 Join 运算，而原本的带有关联列的过滤条件 `t2.b = t1.b` 也变成了一个普通的 join 条件。
+
 
 ```sql
--- 使用 NO_DECORRELATE()。
+-- 使用 NO_DECORRELATE()
 explain select * from t1 where t1.a < (select /*+ NO_DECORRELATE() */ sum(t2.a) from t2 where t2.b = t1.b);
 ```
 
@@ -310,27 +316,29 @@ explain select * from t1 where t1.a < (select /*+ NO_DECORRELATE() */ sum(t2.a) 
 +------------------------------------------+-----------+-----------+------------------------+--------------------------------------------------------------------------------------+
 ```
 
-从上述执行计划可以看到，优化器未进行去关联，执行计划中仍包含 Apply 运算符，且带有关联列的过滤条件（`t2.b = t1.b`）依然作为访问 `t2` 表时的过滤条件。
+从以上执行计划中可以发现，优化器没有解除关联。执行计划中包含 Apply 算子，而带有关联列的条件 `t2.b = t1.b` 仍然是访问 `t2` 表时的过滤条件。
 
 ### HASH_AGG()
 
-`HASH_AGG()` Hint 告诉优化器在指定查询块的所有聚合函数中使用哈希聚合算法。该算法允许查询通过多线程并发执行，处理速度更快，但内存消耗更大。例如：
+`HASH_AGG()` 提示优化器对指定查询块中所有聚合函数使用 Hash Aggregation 算法。这个算法多线程并发执行，执行速度较快，但会消耗较多内存。例如：
+
 
 ```sql
-select /*+ HASH_AGG() */ count(*) from t1, t2 where t1.a > 10 group by t1.id;
+SELECT /*+ HASH_AGG() */ count(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.id;
 ```
 
 ### STREAM_AGG()
 
-`STREAM_AGG()` Hint 告诉优化器在指定查询块的所有聚合函数中使用流式聚合算法。通常，该算法内存消耗较少，但处理时间较长。如果数据量很大或系统内存不足，建议使用该 Hint。例如：
+`STREAM_AGG()` 提示优化器对指定查询块中所有聚合函数使用 Stream Aggregation 算法。这个算法通常会占用更少的内存，但执行时间会更久。数据量太大，或系统内存不足时，建议尝试使用。例如：
+
 
 ```sql
-select /*+ STREAM_AGG() */ count(*) from t1, t2 where t1.a > 10 group by t1.id;
+SELECT /*+ STREAM_AGG() */ count(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.id;
 ```
 
 ### MPP_1PHASE_AGG()
 
-`MPP_1PHASE_AGG()` 告诉优化器在指定查询块的所有聚合函数中使用一阶段聚合算法。该 Hint 仅在 MPP 模式下生效。例如：
+`MPP_1PHASE_AGG()` 提示优化器对指定查询块中所有聚合函数使用一阶段聚合算法，该 Hint 只在 MPP 模式下生效。例如：
 
 ```sql
 SELECT /*+ MPP_1PHASE_AGG() */ COUNT(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.id;
@@ -338,11 +346,11 @@ SELECT /*+ MPP_1PHASE_AGG() */ COUNT(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.
 
 > **注意：**
 >
-> 使用该 Hint 前，请确保当前 TiDB 集群支持在查询中使用 TiFlash MPP 模式。详情参见[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
+> 使用该 Hint 前，需要保证当前 TiDB 集群能够支持在查询中使用 TiFlash MPP 模式，具体细节见文档[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
 
 ### MPP_2PHASE_AGG()
 
-`MPP_2PHASE_AGG()` 告诉优化器在指定查询块的所有聚合函数中使用两阶段聚合算法。该 Hint 仅在 MPP 模式下生效。例如：
+`MPP_2PHASE_AGG()` 提示优化器对指定查询块中所有聚合函数使用二阶段聚合算法，该 Hint 只在 MPP 模式下生效。例如：
 
 ```sql
 SELECT /*+ MPP_2PHASE_AGG() */ COUNT(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.id;
@@ -350,11 +358,14 @@ SELECT /*+ MPP_2PHASE_AGG() */ COUNT(*) FROM t1, t2 WHERE t1.a > 10 GROUP BY t1.
 
 > **注意：**
 >
-> 使用该 Hint 前，请确保当前 TiDB 集群支持在查询中使用 TiFlash MPP 模式。详情参见[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
+> 使用该 Hint 前，需要保证当前 TiDB 集群能够支持在查询中使用 TiFlash MPP 模式，具体细节见文档[使用 TiFlash MPP 模式](/tiflash/use-tiflash-mpp-mode.md)。
 
 ### USE_INDEX(t1_name, idx1_name [, idx2_name ...])
 
-`USE_INDEX(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器对指定的 `t1_name` 表仅使用给定索引。例如，应用以下 Hint 与执行 `select * from t t1 use index(idx1, idx2);` 语句效果相同。
+`USE_INDEX(t1_name, idx1_name [, idx2_name ...])` 提示优化器对指定表仅使用给出的索引。
+
+下面例子的效果等价于 `SELECT * FROM t t1 use index(idx1, idx2);`：
+
 
 ```sql
 SELECT /*+ USE_INDEX(t1, idx1, idx2) */ * FROM t1;
@@ -362,15 +373,16 @@ SELECT /*+ USE_INDEX(t1, idx1, idx2) */ * FROM t1;
 
 > **注意：**
 >
-> 如果该 Hint 只指定了表名而未指定索引名，则执行时不会考虑任何索引，而是全表扫描。
+> 当该 Hint 中只指定表名，不指定索引名时，表示不考虑使用任何索引，而是选择全表扫。
 
 ### FORCE_INDEX(t1_name, idx1_name [, idx2_name ...])
 
-`FORCE_INDEX(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器仅使用给定索引。
+`FORCE_INDEX(t1_name, idx1_name [, idx2_name ...])` 提示优化器对指定表仅使用给出的索引。
 
-`FORCE_INDEX(t1_name, idx1_name [, idx2_name ...])` 的用法和效果与 `USE_INDEX(t1_name, idx1_name [, idx2_name ...])` 相同。
+`FORCE_INDEX(t1_name, idx1_name [, idx2_name ...])` 的使用方法、作用和 `USE_INDEX(t1_name, idx1_name [, idx2_name ...])` 相同。
 
-以下 4 个查询效果一致：
+以下四个查询语句的效果相同：
+
 
 ```sql
 SELECT /*+ USE_INDEX(t, idx1) */ * FROM t;
@@ -381,21 +393,24 @@ SELECT * FROM t force index(idx1);
 
 ### IGNORE_INDEX(t1_name, idx1_name [, idx2_name ...])
 
-`IGNORE_INDEX(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器对指定的 `t1_name` 表忽略给定索引。例如，应用以下 Hint 与执行 `select * from t t1 ignore index(idx1, idx2);` 语句效果相同。
+`IGNORE_INDEX(t1_name, idx1_name [, idx2_name ...])` 提示优化器对指定表忽略给出的索引。
+
+下面例子的效果等价于 `SELECT * FROM t t1 ignore index(idx1, idx2);`：
+
 
 ```sql
-select /*+ IGNORE_INDEX(t1, idx1, idx2) */ * from t t1;
+SELECT /*+ IGNORE_INDEX(t1, idx1, idx2) */ * FROM t t1;
 ```
 
 ### ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])
 
-`ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器对指定表仅使用给定索引，并按顺序读取指定索引。
+`ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])` 提示优化器对指定表仅使用给出的索引，并且按顺序读取指定的索引。
 
 > **警告：**
 >
-> 该 Hint 可能导致 SQL 语句执行失败。建议先进行测试，如测试报错请移除该 Hint；如测试正常可继续使用。
+> 这个 hint 有可能会导致 SQL 语句报错，建议先进行测试。如果测试时发生报错，请移除该 Hint。如果测试时运行正常，则可以继续使用。
 
-该 Hint 通常用于如下场景：
+此 hint 通常应用在下面这种场景中：
 
 ```sql
 CREATE TABLE t(a INT, b INT, key(a), key(b));
@@ -413,18 +428,19 @@ EXPLAIN SELECT /*+ ORDER_INDEX(t, a) */ a FROM t ORDER BY a LIMIT 10;
 +----------------------------+---------+-----------+---------------------+-------------------------------+
 ```
 
-优化器会为该查询生成两类计划：`Limit + IndexScan(keep order: true)` 和 `TopN + IndexScan(keep order: false)`。使用 `ORDER_INDEX` Hint 时，优化器会选择前者，即顺序读取索引。
+优化器对该查询会生成两类计划：`Limit + IndexScan(keep order: true)` 和 `TopN + IndexScan(keep order: false)`，当使用了 `ORDER_INDEX` Hint，优化器会选择前一种按照顺序读取索引的计划。
 
 > **注意：**
 >
-> - 如果查询本身不需要顺序读取索引（即不加 Hint 时，优化器在任何情况下都不会生成顺序读取索引的计划），则使用 `ORDER_INDEX` Hint 会报错 `Can't find a proper physical plan for this query`。此时需移除对应的 `ORDER_INDEX` Hint。
-> - 分区表上的索引无法顺序读取，因此不要在分区表及其相关索引上使用 `ORDER_INDEX` Hint。
+> - 如果查询本身并不需要按顺序读取索引，即在不使用 Hint 的前提下，优化器在任何情况下都不会生成按顺序读取索引的计划。此时，如果指定了 `ORDER_INDEX` Hint，会出现报错 `Can't find a proper physical plan for this query`，此时应考虑移除对应的 `ORDER_INDEX` Hint。
+>
+> - 分区表上的索引无法支持按顺序读取，所以不应该对分区表及其相关的索引使用 `ORDER_INDEX` Hint。
 
 ### NO_ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])
 
-`NO_ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器对指定表仅使用给定索引，并且不顺序读取指定索引。该 Hint 通常用于如下场景。
+`NO_ORDER_INDEX(t1_name, idx1_name [, idx2_name ...])` 提示优化器对指定表仅使用给出的索引，并且不按顺序读取指定的索引。通常应用在下面这种场景中:
 
-以下示例表明该查询语句效果等同于 `SELECT * FROM t t1 use index(idx1, idx2);`：
+以下示例中查询语句的效果等价于 `SELECT * FROM t t1 use index(idx1, idx2);`：
 
 ```sql
 CREATE TABLE t(a INT, b INT, key(a), key(b));
@@ -442,13 +458,13 @@ EXPLAIN SELECT /*+ NO_ORDER_INDEX(t, a) */ a FROM t ORDER BY a LIMIT 10;
 +----------------------------+----------+-----------+---------------------+--------------------------------+
 ```
 
-与 `ORDER_INDEX` Hint 示例类似，优化器会为该查询生成两类计划：`Limit + IndexScan(keep order: true)` 和 `TopN + IndexScan(keep order: false)`。使用 `NO_ORDER_INDEX` Hint 时，优化器会选择后者，即无序读取索引。
+和 `ORDER_INDEX` Hint 的示例相同，优化器对该查询会生成两类计划：`Limit + IndexScan(keep order: true)` 和 `TopN + IndexScan(keep order: false)`，当使用了 `NO_ORDER_INDEX` Hint，优化器会选择后一种不按照顺序读取索引的计划。
 
-### INDEX_LOOKUP_PUSHDOWN(t1_name, idx1_name [, idx2_name ...]) <span class="version-mark">New in v8.5.5</span>
+### INDEX_LOOKUP_PUSHDOWN(t1_name, idx1_name [, idx2_name ...]) <span class="version-mark">从 v8.5.5 版本开始引入</span>
 
-`INDEX_LOOKUP_PUSHDOWN(t1_name, idx1_name [, idx2_name ...])` Hint 指示优化器仅使用指定索引访问指定表，并将 `IndexLookUp` 运算符下推到 TiKV 执行。
+`INDEX_LOOKUP_PUSHDOWN(t1_name, idx1_name [, idx2_name ...])` 提示优化器仅使用指定的索引访问指定的表，并将 `IndexLookUp` 算子下推到 TiKV 执行。
 
-以下示例展示了使用该 Hint 时生成的执行计划：
+以下示例展示了使用该 Hint 后生成的执行计划：
 
 ```sql
 CREATE TABLE t1(a INT, b INT, KEY(a));
@@ -467,48 +483,50 @@ EXPLAIN SELECT /*+ INDEX_LOOKUP_PUSHDOWN(t1, a) */ a, b FROM t1;
 +-----------------------------+----------+-----------+----------------------+--------------------------------+
 ```
 
-使用 `INDEX_LOOKUP_PUSHDOWN` Hint 时，原执行计划中 TiDB 侧最外层的 Build 运算符会被替换为 `LocalIndexLookUp` 并下推到 TiKV 执行。在扫描索引时，TiKV 会尝试本地回表读取对应行数据。由于索引和行数据可能分布在不同 Region，下推到 TiKV 的请求可能无法覆盖所有目标行，因此执行计划仍会在 TiDB 侧保留 `TableRowIDScan` 运算符以获取未命中 TiKV 的行。
+使用 `INDEX_LOOKUP_PUSHDOWN` Hint 后，执行计划中原本位于 TiDB 侧的最外层 Build 算子会被替换为 `LocalIndexLookUp`，并下推到 TiKV 执行。TiKV 在扫描索引的同时，会尝试在本地回表读取行数据。由于索引和行数据可能分布在不同的 Region，下推到 TiKV 的请求可能无法覆盖所有目标行。因此，执行计划中仍会保留 TiDB 侧的 `TableRowIDScan` 算子，用于补齐未在 TiKV 侧命中的行数据。
 
-`INDEX_LOOKUP_PUSHDOWN` Hint 目前有如下限制：
+`INDEX_LOOKUP_PUSHDOWN` Hint 目前存在以下限制：
 
-- 不支持缓存表和临时表。
-- 不支持使用[全局索引](/global-indexes.md)的查询。
-- 不支持使用[多值索引](/choose-index.md#use-multi-valued-indexes)的查询。
-- 不支持 `REPEATABLE-READ` 以外的隔离级别。
-- 不支持 [Follower Read](/follower-read.md)。
-- 不支持 [Stale Read](/stale-read.md) 及通过 [`tidb_snapshot`](/read-historical-data.md) 读取历史数据。
-- 下推的 `LocalIndexLookUp` 运算符不支持 `keep order`。如果执行计划包含基于索引列的 `ORDER BY`，则查询会回退为常规 `IndexLookUp`。
-- 下推的 `LocalIndexLookUp` 运算符不支持以分页模式发送 Coprocessor 请求。
-- 下推的 `LocalIndexLookUp` 运算符不支持 [Coprocessor Cache](/coprocessor-cache.md)。
+- 不支持缓存表 (cached table) 和临时表。
+- 暂不支持使用[全局索引](/global-indexes.md)的查询。
+- 暂不支持使用[多值索引](/choose-index.md#使用多值索引)的查询。
+- 暂不支持除 `REPEATABLE-READ` 之外的其他隔离级别。
+- 暂不支持 [Follower Read](/follower-read.md)。
+- 暂不支持 [Stale Read](/stale-read.md) 或[使用 `tidb_snapshot` 来读取历史数据](/read-historical-data.md)。
+- 下推的 `LocalIndexLookUp` 算子暂不支持 `keep order`。如果执行计划包含基于索引列的 `ORDER BY`，查询将回退为普通的 `IndexLookUp`。
+- 下推的 `LocalIndexLookUp` 算子暂不支持以分页 (paging) 方式发送 Coprocessor 请求。
+- 下推的 `LocalIndexLookUp` 算子暂不支持[下推计算结果缓存](/coprocessor-cache.md)。
 
-### NO_INDEX_LOOKUP_PUSHDOWN(t1_name) <span class="version-mark">New in v8.5.5</span>
+### NO_INDEX_LOOKUP_PUSHDOWN(t1_name) <span class="version-mark">从 v8.5.5 版本开始引入</span>
 
-`NO_INDEX_LOOKUP_PUSHDOWN(t1_name)` Hint 显式禁止对指定表下推 `IndexLookUp`。该 Hint 通常与 [`tidb_index_lookup_pushdown_policy`](/system-variables.md#tidb_index_lookup_pushdown_policy-new-in-v855) 系统变量配合使用。当该变量值为 `force` 或 `affinity-force` 时，可用该 Hint 禁止对特定表下推 `IndexLookUp`。
+`NO_INDEX_LOOKUP_PUSHDOWN(t1_name)` 用于显式禁止对指定表执行 `IndexLookUp` 下推。该 Hint 通常与系统变量 [`tidb_index_lookup_pushdown_policy`](/system-variables.md#tidb_index_lookup_pushdown_policy-从-v855-版本开始引入) 配合使用。当该变量的值为 `force` 或 `affinity-force` 时，你可以使用此 Hint 阻止特定表下推 `IndexLookUp`。
 
-以下示例将 `tidb_index_lookup_pushdown_policy` 变量设置为 `force`，自动为当前会话所有 `IndexLookUp` 运算符开启下推。如果在查询中指定了 `NO_INDEX_LOOKUP_PUSHDOWN` Hint，则对应表不会下推 `IndexLookUp`：
+以下示例将 `tidb_index_lookup_pushdown_policy` 变量设置为 `force`，使当前会话中的所有 `IndexLookUp` 算子自动下推。如果在查询中指定了 `NO_INDEX_LOOKUP_PUSHDOWN` Hint，则对应表不会下推 `IndexLookUp`：
 
 ```sql
 SET @@tidb_index_lookup_pushdown_policy = 'force';
 
--- IndexLookUp 运算符不会下推。
+-- 不会下推 IndexLookUp 算子
 SELECT /*+ NO_INDEX_LOOKUP_PUSHDOWN(t) */ * FROM t WHERE a > 1;
 ```
 
 > **注意：**
 >
-> `NO_INDEX_LOOKUP_PUSHDOWN` 优先级高于 [`INDEX_LOOKUP_PUSHDOWN`](#index_lookup_pushdownt1_name-idx1_name--idx2_name--new-in-v855)。当同一查询中同时指定两者时，`NO_INDEX_LOOKUP_PUSHDOWN` 生效。
+> `NO_INDEX_LOOKUP_PUSHDOWN` 的优先级高于 [`INDEX_LOOKUP_PUSHDOWN`](#index_lookup_pushdownt1_name-idx1_name--idx2_name--从-v855-版本开始引入)。当同一个查询中同时指定这两个 Hint 时，`NO_INDEX_LOOKUP_PUSHDOWN` 生效。
 
 ### AGG_TO_COP()
 
-`AGG_TO_COP()` Hint 告诉优化器将指定查询块中的聚合操作下推到 Coprocessor。如果优化器未下推某些适合下推的聚合函数，建议使用该 Hint。例如：
+`AGG_TO_COP()` 提示优化器将指定查询块中的聚合函数下推到 coprocessor。如果优化器没有下推某些适合下推的聚合函数，建议尝试使用。例如：
+
 
 ```sql
-select /*+ AGG_TO_COP() */ sum(t1.a) from t t1;
+SELECT /*+ AGG_TO_COP() */ sum(t1.a) FROM t t1;
 ```
 
 ### LIMIT_TO_COP()
 
-`LIMIT_TO_COP()` Hint 告诉优化器将指定查询块中的 `Limit` 和 `TopN` 运算符下推到 Coprocessor。如果优化器未进行下推，建议使用该 Hint。例如：
+`LIMIT_TO_COP()` 提示优化器将指定查询块中的 `Limit` 和 `TopN` 算子下推到 coprocessor。优化器没有下推 `Limit` 或者 `TopN` 算子时建议尝试使用该提示。例如：
+
 
 ```sql
 SELECT /*+ LIMIT_TO_COP() */ * FROM t WHERE a = 1 AND b > 10 ORDER BY c LIMIT 1;
@@ -516,56 +534,61 @@ SELECT /*+ LIMIT_TO_COP() */ * FROM t WHERE a = 1 AND b > 10 ORDER BY c LIMIT 1;
 
 ### READ_FROM_STORAGE(TIFLASH[t1_name [, tl_name ...]], TIKV[t2_name [, tl_name ...]])
 
-`READ_FROM_STORAGE(TIFLASH[t1_name [, tl_name ...]], TIKV[t2_name [, tl_name ...]])` Hint 告诉优化器从指定存储引擎读取指定表。目前该 Hint 支持 `TIKV` 和 `TIFLASH` 两种存储引擎参数。如果表有别名，需在 `READ_FROM_STORAGE()` 中使用别名；无别名则用原表名。例如：
+`READ_FROM_STORAGE(TIFLASH[t1_name [, tl_name ...]], TIKV[t2_name [, tl_name ...]])` 提示优化器从指定的存储引擎来读取指定的表，目前支持的存储引擎参数有 `TIKV` 和 `TIFLASH`。如果为表指定了别名，就只能使用表的别名作为 `READ_FROM_STORAGE()` 的参数；如果没有指定别名，则用表的本名作为其参数。例如：
+
 
 ```sql
-select /*+ READ_FROM_STORAGE(TIFLASH[t1], TIKV[t2]) */ t1.a from t t1, t t2 where t1.a = t2.a;
+SELECT /*+ READ_FROM_STORAGE(TIFLASH[t1], TIKV[t2]) */ t1.a FROM t t1, t t2 WHERE t1.a = t2.a;
 ```
 
 ### USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])
 
-`USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])` Hint 告诉优化器对指定表使用索引合并方法访问。索引合并分为交集型和并集型两种。详情参见[Explain 使用索引合并的语句](/explain-index-merge.md)。
+`USE_INDEX_MERGE(t1_name, idx1_name [, idx2_name ...])` 提示优化器通过索引合并的方式来访问指定的表。索引合并分为并集型和交集型两种类型，详情参见[用 EXPLAIN 查看索引合并的 SQL 执行计划](/explain-index-merge.md)。
 
-如果显式指定索引列表，TiDB 会从该列表中选择索引构建索引合并；未指定则从所有可用索引中选择。
+若显式地指定索引列表，优化器会尝试在索引列表中选取索引来构建索引合并。若不指定索引列表，优化器会尝试在所有可用的索引中选取索引来构建索引合并。
 
-对于交集型索引合并，Hint 中的索引列表为必选参数；对于并集型索引合并，索引列表为可选参数。例如：
+对于交集型索引合并，索引列表是必选参数。对于并集型索引合并，Hint 中的索引列表为可选参数。示例如下。
+
 
 ```sql
 SELECT /*+ USE_INDEX_MERGE(t1, idx_a, idx_b, idx_c) */ * FROM t1 WHERE t1.a > 10 OR t1.b > 10;
 ```
 
-当对同一表指定多个 `USE_INDEX_MERGE` Hint 时，优化器会尝试从这些 Hint 指定的索引集合的并集中选择索引。
+当对同一张表有多个 `USE_INDEX_MERGE` Hint 时，优化器会从这些 Hint 指定的索引列表的并集中尝试选取索引。
 
 > **注意：**
 >
-> `USE_INDEX_MERGE` 的参数为索引名，而非列名。主键的索引名为 `primary`。
+> `USE_INDEX_MERGE` 的参数是索引名，而不是列名。对于主键索引，索引名为 `primary`。
 
 ### LEADING(t1_name [, tl_name ...])
 
-`LEADING(t1_name [, tl_name ...])` Hint 提示优化器在生成执行计划时，按照 Hint 中指定的表名顺序确定多表连接顺序。例如：
+`LEADING(t1_name [, tl_name ...])` 提示优化器在生成多表连接的执行计划时，按照 hint 中表名出现的顺序来确定多表连接的顺序。例如：
+
 
 ```sql
 SELECT /*+ LEADING(t1, t2) */ * FROM t1, t2, t3 WHERE t1.id = t2.id and t2.id = t3.id;
 ```
 
-在上述多表连接查询中，连接顺序由 `LEADING()` Hint 指定的表名顺序决定。优化器会先连接 `t1` 和 `t2`，再与 `t3` 连接。该 Hint 比 [`STRAIGHT_JOIN`](#straight_join) 更通用。
+在以上多表连接查询语句中，`LEADING()` 中表出现的顺序决定了优化器将会先对表 `t1` 和 `t2` 进行连接，再将结果和表 `t3` 进行连接。该 hint 比 [`STRAIGHT_JOIN`](#straight_join) 更为通用。
 
-以下情况 `LEADING` Hint 不生效：
+`LEADING` hint 在以下情况下会失效：
 
-+ 指定了多个 `LEADING` Hint。
-+ `LEADING` Hint 中指定的表名不存在。
-+ `LEADING` Hint 中指定了重复的表名。
-+ 优化器无法按 `LEADING` Hint 指定顺序进行连接。
-+ 已存在 `straight_join()` Hint。
-+ 查询包含外连接且有笛卡尔积。
++ 指定了多个 `LEADING` hint
++ `LEADING` hint 中指定的表名不存在
++ `LEADING` hint 中指定了重复的表名
++ 优化器无法按照 `LEADING` hint 指定的顺序进行表连接
++ 已经存在 `straight_join()` hint
++ 查询语句中包含 outer join 且同时指定了包含笛卡尔积的情况
 
-上述情况会产生警告。
+当出现了上述失效的情况，会输出 warning 警告。
 
 ```sql
--- 指定了多个 `LEADING` Hint。
+-- 指定了多个 LEADING hint
+
 SELECT /*+ LEADING(t1, t2) LEADING(t3) */ * FROM t1, t2, t3 WHERE t1.id = t2.id and t2.id = t3.id;
 
--- 查看 `LEADING` Hint 失效原因
+-- 通过执行 `show warnings` 了解具体产生冲突的原因
+
 SHOW WARNINGS;
 ```
 
@@ -579,226 +602,236 @@ SHOW WARNINGS;
 
 > **注意：**
 >
-> 如果查询语句包含外连接，则 Hint 中只能指定连接顺序可交换的表。如果 Hint 中包含连接顺序不可交换的表，则 Hint 失效。例如，在 `SELECT * FROM t1 LEFT JOIN (t2 JOIN t3 JOIN t4) ON t1.a = t2.a;` 中，若要控制 `t2`、`t3`、`t4` 的连接顺序，不能在 `LEADING` Hint 中指定 `t1`。
+> 如果查询语句中包含了 outer join，你只能在 hint 中指定可以用于交换连接顺序的表。如果 hint 中存在不能用于交换的表，则该 hint 会失效。例如在 `SELECT * FROM t1 LEFT JOIN (t2 JOIN t3 JOIN t4) ON t1.a = t2.a;` 中，如果想要控制 `t2`、`t3`、`t4` 表的连接顺序，那么在使用 `LEADING` hint 时，hint 中不能出现 `t1` 表。
 
 ### MERGE()
 
-在包含公共表表达式（CTE）的查询中使用 `MERGE()` Hint，可禁用子查询的物化，将子查询内联展开为 CTE。该 Hint 仅适用于非递归 CTE。在某些场景下，使用 `MERGE()` 比默认的分配临时空间有更高的执行效率，例如谓词下推或嵌套 CTE 查询：
+在含有[公共表表达式](/develop/dev-guide-use-common-table-expression.md)的查询中使用 `MERGE()` hint，可关闭对当前子查询的物化过程，并将内部查询的内联展开到外部查询。该 hint 适用于非递归的公共表表达式查询，在某些场景下，使用该 hint 会比默认分配一块临时空间的语句执行效率更高。例如将外部查询的条件下推或在嵌套的 CTE 查询中：
+
 
 ```sql
--- 使用 Hint 下推外层查询的谓词。
-WITH CTE AS (SELECT /*+ MERGE() */ * FROM tc WHERE tc.a < 60) SELECT * FROM CTE WHERE CTE.a < 18;
+-- 使用 hint 将外部查询条件的谓词下推
+WITH CTE AS (SELECT /*+ MERGE() */ * FROM tc WHERE tc.a < 60) SELECT * FROM CTE WHERE CTE.a <18;
 
--- 在嵌套 CTE 查询中使用 Hint，将 CTE 内联展开到外层查询。
+-- 在嵌套 CTE 查询中使用该 hint 来指定将某个 CTE 内联展开到外部查询
 WITH CTE1 AS (SELECT * FROM t1), CTE2 AS (WITH CTE3 AS (SELECT /*+ MERGE() */ * FROM t2), CTE4 AS (SELECT * FROM t3) SELECT * FROM CTE3, CTE4) SELECT * FROM CTE1, CTE2;
 ```
 
 > **注意：**
 >
-> `MERGE()` 仅适用于简单 CTE 查询，不适用于以下情况：
+> `MERGE()` 只适用于简单的 CTE 查询，在以下情况下无法使用该 hint：
 >
-> - [递归 CTE](https://docs.pingcap.com/tidb/stable/dev-guide-use-common-table-expression#recursive-cte)
-> - 不能内联展开的子查询，如聚合运算符、窗口函数和 `DISTINCT`。
+> - [递归的 CTE 查询](/develop/dev-guide-use-common-table-expression.md#递归的-cte)
+> - 子查询中有无法进行内联展开的部分，例如聚合算子、窗口函数以及 `DINSTINCT` 等
 >
-> 当 CTE 被引用次数过多时，查询性能可能低于默认物化行为。
+> 当 CTE 引用次数过多时，查询性能可能低于默认的物化方式。
 
 ## 全局生效的 Hint
 
-全局 Hint 可在 [视图](/views.md) 中生效。作为全局 Hint 指定时，查询中定义的 Hint 可在视图内部生效。要指定全局 Hint，需先用 `QB_NAME` Hint 定义查询块名称，再以 `ViewName@QueryBlockName` 形式添加目标 Hint。
+全局生效的 Hint 和[视图](/views.md)有关，可以使查询中定义的 Hint 能够在视图内部生效。添加这类 Hint 需要两步：先用 `QB_NAME` Hint 为视图内的查询块命名，再以“视图名@查询块名”的方式加入实际需要的 Hint。
 
-### 步骤 1：使用 `QB_NAME` Hint 定义视图的查询块名称
+### 第 1 步：使用 `QB_NAME` Hint 重命名视图内的查询块
 
-使用 [`QB_NAME` Hint](#qb_name) 为视图的每个查询块定义新名称。视图的 `QB_NAME` Hint 定义方式与[查询块](#qb_name)一致，但语法从 `QB_NAME(QB)` 扩展为 `QB_NAME(QB, ViewName@QueryBlockName [.ViewName@QueryBlockName .ViewName@QueryBlockName ...])`。
+首先使用 [`QB_NAME` Hint](#qb_name) 重命名视图内部的查询块。其中针对视图的 `QB_NAME` Hint 的概念与[查询块范围生效的 `QB_NAME` Hint](#qb_name)相同，只是在语法上进行了相应的拓展。从 `QB_NAME(QB)` 拓展为 `QB_NAME(QB, 视图名@查询块名 [.视图名@查询块名 .视图名@查询块名 ...])`。
 
 > **注意：**
 >
-> `@QueryBlockName` 与紧随其后的 `.ViewName@QueryBlockName` 之间有空格，否则 `.ViewName@QueryBlockName` 会被当作 `QueryBlockName` 的一部分。例如，`QB_NAME(v2_1, v2@SEL_1 .@SEL_1)` 有效，而 `QB_NAME(v2_1, v2@SEL_1.@SEL_1)` 无法正确解析。
+> `@查询块名` 与后面紧跟的 `.视图名@查询块名` 部分之间需要有一个空格，否则 `.视图名@查询块名` 会被视作前面 `@查询块名` 的一部分。例如，`QB_NAME(v2_1, v2@SEL_1 .@SEL_1)` 不能写为 `QB_NAME(v2_1, v2@SEL_1.@SEL_1)`。
 
-- 对于仅包含单个视图且无子查询的简单语句，以下示例指定了视图 `v` 的第一个查询块名称：
+- 对于单个视图、不包含子查询的简单语句，下面以重命名视图 `v` 的第一个查询块为例：
 
     ```sql
-    SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM v;
+    SELECT /* 注释：当前查询块的名字为默认的 @SEL_1 */ * FROM v;
     ```
 
-    对于视图 `v`，从查询语句起始的视图名称列表（`ViewName@QueryBlockName [.ViewName@QueryBlockName .ViewName@QueryBlockName ...]`）的第一个为 `v@SEL_1`。视图 `v` 的第一个查询块可声明为 `QB_NAME(v_1, v@SEL_1 .@SEL_1)`，也可简写为 `QB_NAME(v_1, v)`，省略 `@SEL_1`：
+    对于视图 `v` 来说，从查询语句开始的首个视图是 `v@SEL_1`。视图 `v` 的第一个查询块可以声明为 `QB_NAME(v_1, v@SEL_1 .@SEL_1)`，也可以省略 `@SEL_1` 简写成 `QB_NAME(v_1, v)`：
 
     ```sql
-    CREATE VIEW v AS SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM t;
+    CREATE VIEW v AS SELECT /* 注释：当前查询块的名字为默认的 @SEL_1 */ * FROM t;
 
-    -- 指定全局 Hint
+    -- 使用全局生效的 Hint
     SELECT /*+ QB_NAME(v_1, v) USE_INDEX(t@v_1, idx) */ * FROM v;
     ```
 
-- 对于包含嵌套视图和子查询的复杂语句，以下示例为视图 `v1` 和 `v2` 的两个查询块分别指定了名称：
+- 对于嵌套视图和包含子查询的复杂语句，下面以重命名视图 `v1`、`v2` 的两个查询块为例：
 
     ```sql
-    SELECT /* Comment: The name of the current query block is the default @SEL_1 */ * FROM v2 JOIN (
-        SELECT /* Comment: The name of the current query block is the default @SEL_2 */ * FROM v2) vv;
+    SELECT /* 注释：当前查询块的名字为默认的 @SEL_1 */ * FROM v2 JOIN (
+        SELECT /* 注释：当前查询块的名字为默认的 @SEL_2 */ * FROM v2) vv;
     ```
 
-    对于第一个视图 `v2`，从第一个查询语句起始的视图名称列表的第一个为 `v2@SEL_1`。对于第二个视图 `v2`，第一个视图名称为 `v2@SEL_2`。以下示例仅考虑第一个视图 `v2`。
+    对于第一个视图 `v2` 来说，从上面的语句开始的首个视图是 `v2@SEL_1`。对于第二个视图 `v2` 来说，首个视图表为 `v2@SEL_2`。下面的查询部分仅考虑第一个视图 `v2`。
 
-    视图 `v2` 的第一个查询块可声明为 `QB_NAME(v2_1, v2@SEL_1 .@SEL_1)`，第二个查询块可声明为 `QB_NAME(v2_2, v2@SEL_1 .@SEL_2)`：
+    视图 `v2` 的第一个查询块可以声明为 `QB_NAME(v2_1, v2@SEL_1 .@SEL_1)`，视图 `v2` 的第二个查询块可以声明为 `QB_NAME(v2_2, v2@SEL_1 .@SEL_2)`：
 
     ```sql
     CREATE VIEW v2 AS
-        SELECT * FROM t JOIN /* Comment: For view v2, the name of the current query block is the default @SEL_1. So, the current query block view list is v2@SEL_1 .@SEL_1 */
+        SELECT * FROM t JOIN /* 注释：对于视图 v2 来说，当前查询块的名字为默认的 @SEL_1，因此当前查询块的视图列表是 v2@SEL_1 .@SEL_1 */
         (
-            SELECT COUNT(*) FROM t1 JOIN v1 /* Comment: For view v2, the name of the current query block is the default @SEL_2. So, the current query block view list is v2@SEL_1 .@SEL_2 */
+            SELECT COUNT(*) FROM t1 JOIN v1 /* 注释：对于视图 v2 来说，当前查询块的名字为默认的 @SEL_2，因此当前查询块的视图列表是 v2@SEL_1 .@SEL_2 */
         ) tt;
     ```
 
-    对于视图 `v1`，从上述语句起始的视图名称列表的第一个为 `v2@SEL_1 .v1@SEL_2`。视图 `v1` 的第一个查询块可声明为 `QB_NAME(v1_1, v2@SEL_1 .v1@SEL_2 .@SEL_1)`，第二个查询块可声明为 `QB_NAME(v1_2, v2@SEL_1 .v1@SEL_2 .@SEL_2)`：
+    对于视图 `v1` 来说，从上面的语句开始的首个视图是 `v2@SEL_1 .v1@SEL_2`。视图 `v1` 的第一个查询块可以声明为 `QB_NAME(v1_1, v2@SEL_1 .v1@SEL_2 .@SEL_1)`，视图 `v1` 的第二个查询块可以声明为 `QB_NAME(v1_2, v2@SEL_1 .v1@SEL_2 .@SEL_2)`：
 
     ```sql
-    CREATE VIEW v1 AS SELECT * FROM t JOIN /* Comment: For view `v1`, the name of the current query block is the default @SEL_1. So, the current query block view list is v2@SEL_1 .@SEL_2 .v1@SEL_1 */
+    CREATE VIEW v1 AS SELECT * FROM t JOIN /* 注释：对于视图 v1 来说，当前查询块的名字为默认的 @SEL_1，因此当前查询块的视图列表是 v2@SEL_1 .v1@SEL_2 .@SEL_1 */
         (
-            SELECT COUNT(*) FROM t1 JOIN t2 /* Comment: For view `v1`, the name of the current query block is the default @SEL_2. So, the current query block view list is v2@SEL_1 .@SEL_2 .v1@SEL_2 */
+            SELECT COUNT(*) FROM t1 JOIN t2 /* 注释：对于视图 v1 来说，当前查询块的名字为默认的 @SEL_2，因此当前查询块的视图列表是 v2@SEL_1 .v1@SEL_2 .@SEL_2 */
         ) tt;
     ```
 
 > **注意：**
 >
-> - 在视图中使用全局 Hint，必须在视图中定义对应的 `QB_NAME` Hint，否则全局 Hint 不生效。
+> - 与视图相关的全局生效的 Hint 必须先定义了对应的 `QB_NAME` Hint 才能使用。
 >
-> - 在视图中用 Hint 指定多个表名时，需确保同一 Hint 中出现的表名在同一视图的同一查询块内。
+> - 使用一个 Hint 来指定视图内的多个表名时，需要保证在同一个 Hint 中出现的表名处于同一个视图的同一个查询块中。
 >
-> - 在视图的最外层查询块中定义 `QB_NAME` Hint 时：
+> - 对于最外层的查询来说，在定义和视图相关的 `QB_NAME` Hint 时：
 >
->     - 对于 `QB_NAME` 视图列表的第一个条目，如果未显式声明 `@SEL_`，则默认与定义 `QB_NAME` 的查询块位置一致。即 `SELECT /*+ QB_NAME(qb1, v2) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2) */ * FROM v2) vv;` 等价于 `SELECT /*+ QB_NAME(qb1, v2@SEL_1) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2@SEL_2) */ * FROM v2) vv;`。
->     - 对于 `QB_NAME` 视图列表中除第一个外的条目，仅 `@SEL_1` 可省略。即若当前视图的第一个查询块声明了 `@SEL_1`，则可省略，否则不可省略。上述示例中：
->
->         - 视图 `v2` 的第一个查询块可声明为 `QB_NAME(v2_1, v2)`。
->         - 视图 `v2` 的第二个查询块可声明为 `QB_NAME(v2_2, v2.@SEL_2)`。
->         - 视图 `v1` 的第一个查询块可声明为 `QB_NAME(v1_1, v2.v1@SEL_2)`。
->         - 视图 `v1` 的第二个查询块可声明为 `QB_NAME(v1_2, v2.v1@SEL_2 .@SEL_2)`。
+>     - 对于 `QB_NAME` Hint 中视图列表序列的第一项，在不显式声明 `@SEL_` 时，默认和定义 `QB_NAME` Hint 的查询块位置保持一致，即省略 `@SEL_` 的查询 `SELECT /*+ QB_NAME(qb1, v2) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2) */ * FROM v2) vv;` 相当于 `SELECT /*+ QB_NAME(qb1, v2@SEL_1) */ * FROM v2 JOIN (SELECT /*+ QB_NAME(qb2, v2@SEL_2) */ * FROM v2) vv;`。
+>     - 对于 `QB_NAME` Hint 中视图列表序列第一项之外的其他部分，只有 `@SEL_1` 可省略。即，如果声明处于当前部分的第一个查询块中，则 `@SEL_1` 可以省略，否则，不能省略 `@SEL_`。对于上面的例子：
+>         - 视图 `v2` 的第一个查询块可以声明为 `QB_NAME(v2_1, v2)`
+>         - 视图 `v2` 的第二个查询块可以声明为 `QB_NAME(v2_2, v2.@SEL_2)`
+>         - 视图 `v1` 的第一个查询块可以声明为 `QB_NAME(v1_1, v2.v1@SEL_2)`
+>         - 视图 `v1` 的第二个查询块可以声明为 `QB_NAME(v1_2, v2.v1@SEL_2 .@SEL_2)`
 
-### 步骤 2：添加目标 Hint
+### 第 2 步：添加实际需要的 Hint
 
-为视图的查询块定义好 `QB_NAME` Hint 后，可以以 `ViewName@QueryBlockName` 形式添加所需的[查询块作用域内生效的 Hint](#查询块作用域内生效的-hint)，使其在视图内部生效。例如：
+在定义好视图查询块部分的 `QB_NAME` Hint 后，你可以通过查询块的名字使用[查询块范围生效的 Hint](#查询块范围生效的-hint)，以“视图名@查询块名”的方式加入实际需要的 Hint，使其在视图内部生效。例如：
 
-- 为视图 `v2` 的第一个查询块指定 `MERGE_JOIN()` Hint：
+- 指定视图 `v2` 中第一个查询块的 `MERGE_JOIN()` Hint：
 
     ```sql
     SELECT /*+ QB_NAME(v2_1, v2) merge_join(t@v2_1) */ * FROM v2;
     ```
 
-- 为视图 `v2` 的第二个查询块指定 `MERGE_JOIN()` 和 `STREAM_AGG()` Hint：
+- 指定视图 `v2` 中第二个查询块的 `MERGE_JOIN()` 和 `STREAM_AGG()` Hint：
 
     ```sql
     SELECT /*+ QB_NAME(v2_2, v2.@SEL_2) merge_join(t1@v2_2) stream_agg(@v2_2) */ * FROM v2;
     ```
 
-- 为视图 `v1` 的第一个查询块指定 `HASH_JOIN()` Hint：
+- 指定视图 `v1` 中第一个查询块的 `HASH_JOIN()` Hint：
 
     ```sql
     SELECT /*+ QB_NAME(v1_1, v2.v1@SEL_2) hash_join(t@v1_1) */ * FROM v2;
     ```
 
-- 为视图 `v1` 的第二个查询块指定 `HASH_JOIN()` 和 `HASH_AGG()` Hint：
+- 指定视图 `v1` 中第二个查询块的 `HASH_JOIN()` 和 `HASH_AGG()` Hint：
 
     ```sql
     SELECT /*+ QB_NAME(v1_2, v2.v1@SEL_2 .@SEL_2) hash_join(t1@v1_2) hash_agg(@v1_2) */ * FROM v2;
     ```
 
-## 整个查询生效的 Hint
+## 查询范围生效的 Hint
 
-此类 Hint 只能跟在**第一个** `SELECT`、`UPDATE` 或 `DELETE` 关键字后，相当于在执行该查询时修改指定系统变量的值。Hint 的优先级高于已有系统变量。
+这类 Hint 只能跟在语句中**第一个** `SELECT`、`UPDATE` 或 `DELETE` 关键字的后面，等同于在当前这条查询运行时对指定的系统变量进行修改，其优先级高于现有系统变量的值。
 
 > **注意：**
 >
-> 此类 Hint 也有一个可选的隐藏变量 `@QB_NAME`，但即使指定该变量，Hint 也在整个查询生效。
+> 这类 Hint 虽然也有隐藏的可选变量 `@QB_NAME`，但就算指定了该值，Hint 还是会在整个查询范围生效。
 
 ### NO_INDEX_MERGE()
 
-`NO_INDEX_MERGE()` Hint 禁用优化器的索引合并功能。
+`NO_INDEX_MERGE()` 会关闭优化器的 index merge 功能。
 
-例如，以下查询不会使用索引合并：
+下面的例子不会使用 index merge：
+
 
 ```sql
-select /*+ NO_INDEX_MERGE() */ * from t where t.a > 0 or t.b > 0;
+SELECT /*+ NO_INDEX_MERGE() */ * FROM t WHERE t.a > 0 or t.b > 0;
 ```
 
-除了该 Hint，还可通过设置 `tidb_enable_index_merge` 系统变量控制是否启用该功能。
+除了 Hint 外，系统变量 `tidb_enable_index_merge` 也能决定是否开启该功能。
 
 > **注意：**
 >
-> - `NO_INDEX_MERGE` 优先级高于 `USE_INDEX_MERGE`。两者同时使用时，`USE_INDEX_MERGE` 不生效。
-> - 对于子查询，`NO_INDEX_MERGE` 仅在放在最外层时生效。
+> - `NO_INDEX_MERGE` 优先级高于 `USE_INDEX_MERGE`，当这两类 Hint 同时存在时，`USE_INDEX_MERGE` 不会生效。
+> - 当存在子查询时，`NO_INDEX_MERGE` 放在最外层才能生效。
 
 ### USE_TOJA(boolean_value)
 
-`boolean_value` 参数可为 `TRUE` 或 `FALSE`。`USE_TOJA(TRUE)` Hint 使优化器将包含子查询的 `in` 条件转换为连接和聚合操作。`USE_TOJA(FALSE)` Hint 禁用该功能。
+参数 `boolean_value` 可以是 `TRUE` 或者 `FALSE`。`USE_TOJA(TRUE)` 会开启优化器尝试将 in (subquery) 条件转换为 join 和 aggregation 的功能。相对地，`USE_TOJA(FALSE)` 会关闭该功能。
 
-例如，以下查询会将 `in (select t2.a from t2) subq` 转换为相应的连接和聚合操作：
+下面的例子会将 `in (SELECT t2.a FROM t2) subq` 转换为等价的 join 和 aggregation：
+
 
 ```sql
-select /*+ USE_TOJA(TRUE) */ t1.a, t1.b from t1 where t1.a in (select t2.a from t2) subq;
+SELECT /*+ USE_TOJA(TRUE) */ t1.a, t1.b FROM t1 WHERE t1.a in (SELECT t2.a FROM t2) subq;
 ```
 
-除了该 Hint，还可通过设置 `tidb_opt_insubq_to_join_and_agg` 系统变量控制是否启用该功能。
+除了 Hint 外，系统变量 `tidb_opt_insubq_to_join_and_agg` 也能决定是否开启该功能。
 
 ### MAX_EXECUTION_TIME(N)
 
-`MAX_EXECUTION_TIME(N)` Hint 为语句设置超时时间限制 `N`（单位为毫秒），超时后服务器会终止该语句。以下 Hint 中，`MAX_EXECUTION_TIME(1000)` 表示超时时间为 1000 毫秒（即 1 秒）：
+`MAX_EXECUTION_TIME(N)` 把语句的执行时间限制在 `N` 毫秒以内，超时后服务器会终止这条语句的执行。
+
+下面的 Hint 设置了 1000 毫秒（即 1 秒）超时：
+
 
 ```sql
-select /*+ MAX_EXECUTION_TIME(1000) */ * from t1 inner join t2 where t1.id = t2.id;
+SELECT /*+ MAX_EXECUTION_TIME(1000) */ * FROM t1 inner join t2 WHERE t1.id = t2.id;
 ```
 
-除了该 Hint，还可通过 `global.max_execution_time` 系统变量限制语句执行时间。
+除了 Hint 之外，系统变量 `global.max_execution_time` 也能对语句执行时间进行限制。
 
 ### MEMORY_QUOTA(N)
 
-`MEMORY_QUOTA(N)` Hint 为语句设置内存使用上限 `N`（单位为 MB 或 GB）。当语句内存使用超出该限制时，TiDB 会根据超限行为记录日志或直接终止语句。
+`MEMORY_QUOTA(N)` 用于限制语句执行时的内存使用。该 Hint 支持 MB 和 GB 两种单位。内存使用超过该限制时会根据当前设置的内存超限行为来打出一条 log 或者终止语句的执行。
 
-以下 Hint 中，`MEMORY_QUOTA(1024 MB)` 表示内存使用上限为 1024 MB：
+下面的 Hint 设置了 1024 MB 的内存限制：
+
 
 ```sql
-select /*+ MEMORY_QUOTA(1024 MB) */ * from t;
+SELECT /*+ MEMORY_QUOTA(1024 MB) */ * FROM t;
 ```
 
-除了该 Hint，还可通过 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 系统变量限制语句内存使用。
+除了 Hint 外，系统变量 [`tidb_mem_quota_query`](/system-variables.md#tidb_mem_quota_query) 也能限制语句执行的内存使用。
 
 ### READ_CONSISTENT_REPLICA()
 
-`READ_CONSISTENT_REPLICA()` Hint 启用从 TiKV Follower 节点读取一致性数据的功能。例如：
+`READ_CONSISTENT_REPLICA()` 会开启从数据一致的 TiKV follower 节点读取数据的特性。
+
+下面的例子会从 follower 节点读取数据：
+
 
 ```sql
-select /*+ READ_CONSISTENT_REPLICA() */ * from t;
+SELECT /*+ READ_CONSISTENT_REPLICA() */ * FROM t;
 ```
 
-除了该 Hint，还可通过将 `tidb_replica_read` 环境变量设置为 `'follower'` 或 `'leader'` 控制是否启用该功能。
+除了 Hint 外，环境变量 `tidb_replica_read` 设为 `'follower'` 或者 `'leader'` 也能决定是否开启该特性。
 
 ### IGNORE_PLAN_CACHE()
 
-`IGNORE_PLAN_CACHE()` Hint 提示优化器在处理当前 `prepare` 语句时不使用 Plan Cache。
+`IGNORE_PLAN_CACHE()` 提示优化器在处理当前 `prepare` 语句时不使用 plan cache。
 
-该 Hint 用于在[prepare-plan-cache](/sql-prepared-plan-cache.md) 启用时，临时禁用某类查询的 Plan Cache。
+该 Hint 用于在 [Prepared Plan Cache](/sql-prepared-plan-cache.md) 开启的场景下临时对某类查询禁用 plan cache。
 
-以下示例在执行 `prepare` 语句时强制禁用 Plan Cache。
+以下示例强制该 `prepare` 语句不使用 plan cache：
+
 
 ```sql
-prepare stmt from 'select  /*+ IGNORE_PLAN_CACHE() */ * from t where t.id = ?';
+prepare stmt FROM 'SELECT  /*+ IGNORE_PLAN_CACHE() */ * FROM t WHERE t.id = ?';
 ```
 
 ### SET_VAR(VAR_NAME=VAR_VALUE)
 
-你可以通过 `SET_VAR(VAR_NAME=VAR_VALUE)` Hint 在语句执行期间临时修改系统变量的值。语句执行结束后，会自动将当前会话中的系统变量值恢复为原值。该 Hint 可用于修改部分与优化器和执行器相关的系统变量。可通过[系统变量](/system-variables.md)文档查看支持通过该 Hint 修改的变量列表。
+`SET_VAR(VAR_NAME=VAR_VALUE)` 允许在语句执行期间以 Hint 形式临时修改会话级系统变量的值。当语句执行完成后，系统变量将在当前会话中自动恢复为原始值。通过这个 Hint 可以修改一部分与优化器、执行器相关的系统变量行为。支持通过 `SET_VAR(VAR_NAME=VAR_VALUE)` Hint 修改的系统变量请查看[系统变量](/system-variables.md)。
 
 > **警告：**
 >
-> - 强烈建议不要修改未明确支持的变量，否则可能导致不可预期的行为。
-> - 不要在子查询中写 `SET_VAR`，否则可能不生效。详情参见[在子查询中写 `SET_VAR` 不生效](#set_var-在子查询中写不生效)。
+> - 强烈建议不要利用此 Hint 修改没有明确支持的变量，这可能会引发不可预知的行为。
+> - 注意不要把 `SET_VAR` 写在子查询中，否则可能会不生效。详情请参考 [`SET_VAR` 写在子查询中不生效](#set_var-写在子查询中不生效)。
 
-以下为示例：
+下面是一个使用示例：
 
 ```sql
 SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=1234) */ @@MAX_EXECUTION_TIME;
 SELECT @@MAX_EXECUTION_TIME;
 ```
 
-执行上述 SQL 后，第一条查询返回 Hint 中设置的 `1234`，而不是 `MAX_EXECUTION_TIME` 的默认值。第二条查询返回变量的默认值。
+执行上述 SQL，第一个查询返回的结果是 Hint 中设置的 `1234`，而不是变量 `MAX_EXECUTION_TIME` 的默认值。第二个查询会返回变量的默认值。
 
 ```sql
 +----------------------+
@@ -817,7 +850,8 @@ SELECT @@MAX_EXECUTION_TIME;
 
 ### STRAIGHT_JOIN()
 
-`STRAIGHT_JOIN()` Hint 提示优化器在生成连接计划时，按照 `FROM` 子句中表名的顺序进行连接。
+`STRAIGHT_JOIN()` 提示优化器在生成表连接顺序时按照表名在 `FROM` 子句中出现的顺序进行连接。
+
 
 ```sql
 SELECT /*+ STRAIGHT_JOIN() */ * FROM t t1, t t2 WHERE t1.a = t2.a;
@@ -825,18 +859,19 @@ SELECT /*+ STRAIGHT_JOIN() */ * FROM t t1, t t2 WHERE t1.a = t2.a;
 
 > **注意：**
 >
-> - `STRAIGHT_JOIN` 优先级高于 `LEADING`。两者同时使用时，`LEADING` 不生效。
-> - 推荐使用更通用的 `LEADING` Hint。
+> - `STRAIGHT_JOIN` 优先级高于 `LEADING`，当这两类 Hint 同时存在时，`LEADING` 不会生效。
+> - 建议使用 `LEADING` Hint，它比 `STRAIGHT_JOIN` Hint 更通用。
 
 ### NTH_PLAN(N)
 
-`NTH_PLAN(N)` Hint 提示优化器在物理优化阶段选择第 `N` 个物理计划。`N` 必须为正整数。
+`NTH_PLAN(N)` 提示优化器选用在物理优化阶段搜索到的第 `N` 个物理计划。`N` 必须是正整数。
 
-如果指定的 `N` 超出物理优化的搜索范围，TiDB 会返回警告，并在忽略该 Hint 的情况下选择最优物理计划。
+如果指定的 `N` 超出了物理优化阶段的搜索范围，TiDB 会返回 warning，并根据不存在该 Hint 时一样的策略选择最优物理计划。
 
-启用 cascades planner 时，该 Hint 不生效。
+该 Hint 在启用 cascades planner 的情况下不会生效。
 
-以下示例强制优化器在物理优化阶段选择第三个物理计划：
+以下示例会强制优化器在物理阶段选择搜索到的第 3 个物理计划：
+
 
 ```sql
 SELECT /*+ NTH_PLAN(3) */ count(*) from t where a > 5;
@@ -844,11 +879,11 @@ SELECT /*+ NTH_PLAN(3) */ count(*) from t where a > 5;
 
 > **注意：**
 >
-> `NTH_PLAN(N)` 主要用于测试，后续版本不保证兼容性。**请谨慎使用**。
+> `NTH_PLAN(N)` 主要用于测试用途，并且在未来不保证其兼容性，请谨慎使用。
 
 ### RESOURCE_GROUP(resource_group_name)
 
-`RESOURCE_GROUP(resource_group_name)` 用于[资源管控](/tidb-resource-control-ru-groups.md)实现资源隔离。该 Hint 临时将当前语句在指定资源组下执行。如果指定的资源组不存在，则该 Hint 被忽略。
+`RESOURCE_GROUP(resource_group_name)` 用于[使用资源管控 (Resource Control) 实现资源组限制和流控](/tidb-resource-control-ru-groups.md)。此 Hint 将临时使用指定的资源组执行当前的语句。如果指定的资源组不存在，则该 Hint 将被忽略。
 
 示例：
 
@@ -858,26 +893,26 @@ SELECT /*+ RESOURCE_GROUP(rg1) */ * FROM t limit 10;
 
 > **注意：**
 >
-> 从 v8.2.0 起，TiDB 对该 Hint 引入了权限管控。当系统变量 [`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-new-in-v820) 设置为 `ON` 时，需具备 `SUPER` 或 `RESOURCE_GROUP_ADMIN` 或 `RESOURCE_GROUP_USER` 权限才能使用该 Hint。否则该 Hint 被忽略，TiDB 返回警告。可在查询后执行 `SHOW WARNINGS;` 查看详情。
+> 自 v8.2.0 版本开始，TiDB 为此 Hint 引入权限控制。当系统变量 [`tidb_resource_control_strict_mode`](/system-variables.md#tidb_resource_control_strict_mode-从-v820-版本开始引入) 设置为 `ON` 时，你需要有 `SUPER` 或者 `RESOURCE_GROUP_ADMIN` 或者 `RESOURCE_GROUP_USER` 权限才能使用此 Hint。如果没有所需权限，则此 Hint 会被忽略，同时 TiDB 会返回 warning，你可以在查询结束后通过 `SHOW WARNINGS;` 命令查看具体信息。
 
-## 排查 Hint 不生效的常见问题
+## 常见 Hint 不生效问题排查
 
-### MySQL 命令行客户端剥离 Hint 导致 Hint 不生效
+### MySQL 命令行客户端清除 Hint 导致不生效
 
-5.7.7 之前的 MySQL 命令行客户端默认会剥离优化器 Hint。如果你想在这些版本中使用 Hint 语法，启动客户端时需加上 `--comments` 选项。例如：`mysql -h 127.0.0.1 -P 4000 -uroot --comments`。
+MySQL 命令行客户端在 5.7.7 版本之前默认清除了 Optimizer Hints。如果需要在这些早期版本的客户端中使用 Hint 语法，需要在启动客户端时加上 `--comments` 选项。例如 `mysql -h 127.0.0.1 -P 4000 -uroot --comments`。
 
-### 未指定数据库名导致 Hint 不生效
+### 创建连接时不指定库名导致 Hint 不生效
 
-如果连接时未指定数据库名，Hint 可能不生效。例如：
+如果创建连接时未指定数据库名，则可能出现 Hint 失效的情况。例如：
 
-连接 TiDB 时，使用 `mysql -h127.0.0.1 -P4000 -uroot` 命令（未加 `-D` 选项），然后执行以下 SQL：
+使用 `mysql -h127.0.0.1 -P4000 -uroot` 命令连接数据库时，未使用 `-D` 参数指定数据库名。然后执行下面的 SQL 语句：
 
 ```sql
 SELECT /*+ use_index(t, a) */ a FROM test.t;
 SHOW WARNINGS;
 ```
 
-由于 TiDB 无法识别表 `t` 所属数据库，`use_index(t, a)` Hint 不生效。
+由于无法识别表 `t` 对应的数据库名，因此 `use_index(t, a)` Hint 无法生效。
 
 ```sql
 +---------+------+----------------------------------------------------------------------+
@@ -888,9 +923,9 @@ SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-### 跨库查询未显式指定数据库名导致 Hint 不生效
+### 跨库查询不指定库名导致 Hint 不生效
 
-执行跨库查询时，需显式指定数据库名，否则 Hint 可能不生效。例如：
+对于跨库查询中需要访问的表，需要显式地指定数据库名，否则可能出现 Hint 失效的情况。例如执行下面跨库查询的 SQL 语句：
 
 ```sql
 USE test1;
@@ -901,7 +936,7 @@ SELECT /*+ use_index(t1, a) */ * FROM test1.t1, t2;
 SHOW WARNINGS;
 ```
 
-上述语句中，因 `t1` 不在当前 `test2` 数据库，`use_index(t1, a)` Hint 不生效。
+由于 `t1` 不在当前数据库 `test2` 下，因此 `use_index(t1, a)` Hint 无法被正确地识别。
 
 ```sql
 +---------+------+----------------------------------------------------------------------------------+
@@ -912,18 +947,18 @@ SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-此时需将 Hint 写为 `use_index(test1.t1, a)`，而非 `use_index(t1, a)`。
+此时，需要显式地指定库名，即将 `use_index(t1, a)` 修改为 `use_index(test1.t1, a)`。
 
-### Hint 位置错误导致 Hint 不生效
+### Hint 位置不正确导致不生效
 
-Hint 未直接放在指定关键字后时无法生效。例如：
+如果没有按照 Optimizer Hints 语法将 Hint 正确地放在指定关键字的后面，它将无法生效。例如：
 
 ```sql
 SELECT * /*+ use_index(t, a) */ FROM t;
 SHOW WARNINGS;
 ```
 
-警告如下：
+Warning 信息如下：
 
 ```sql
 +---------+------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -934,15 +969,15 @@ SHOW WARNINGS;
 1 row in set (0.01 sec)
 ```
 
-此时需将 Hint 放在 `SELECT` 关键字后。详情参见[语法](#语法)章节。
+在上面的示例中，你需要将 Hint 直接放在 `SELECT` 关键字之后。具体的语法规则参见 [Hint 语法](#语法)部分。
 
 ### `INL_JOIN` Hint 不生效
 
-#### 使用内置函数连接表时 `INL_JOIN` Hint 不生效
+#### 关联表的列上使用内置函数导致 `INL_JOIN` Hint 不生效
 
-某些情况下，如果在连接表的列上使用了内置函数，优化器可能无法选择 `IndexJoin` 计划，导致 `INL_JOIN` Hint 也不生效。
+在某些情况下，如果在关联表的列上使用了内置函数，优化器可能无法选择 `IndexJoin` 计划，导致 `INL_JOIN` Hint 也无法生效。
 
-例如，以下查询在连接列 `tname` 上使用了内置函数 `substr`：
+例如，以下查询在关联表的列 `tname` 上使用了内置函数 `substr`：
 
 ```sql
 CREATE TABLE t1 (id varchar(10) primary key, tname varchar(10));
@@ -950,7 +985,7 @@ CREATE TABLE t2 (id varchar(10) primary key, tname varchar(10));
 EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id=t2.id and SUBSTR(t1.tname,1,2)=SUBSTR(t2.tname,1,2);
 ```
 
-执行计划如下：
+查询计划输出结果如下：
 
 ```sql
 +------------------------------+----------+-----------+---------------+-----------------------------------------------------------------------+
@@ -980,9 +1015,9 @@ SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-如上所示，`INL_JOIN` Hint 未生效。这是由于优化器限制，无法将 `Projection` 或 `Selection` 运算符作为 `IndexJoin` 的 probe 端。
+从该示例中可以看到，`INL_JOIN` Hint 没有生效。该问题的根本原因是优化器限制导致无法使用 `Projection` 或者 `Selection` 算子作为 `IndexJoin` 的探测 (Probe) 端。
 
-自 TiDB v8.0.0 起，可通过将 [`tidb_enable_inl_join_inner_multi_pattern`](/system-variables.md#tidb_enable_inl_join_inner_multi_pattern-new-in-v700) 设置为 `ON` 规避该问题。
+从 TiDB v8.0.0 起，你通过设置 [`tidb_enable_inl_join_inner_multi_pattern`](/system-variables.md#tidb_enable_inl_join_inner_multi_pattern-从-v700-版本开始引入) 为 `ON` 来避免该问题。
 
 ```sql
 SET @@tidb_enable_inl_join_inner_multi_pattern=ON;
@@ -1003,9 +1038,9 @@ EXPLAIN SELECT /*+ INL_JOIN(t1, t2) */ * FROM t1, t2 WHERE t1.id=t2.id AND SUBST
 7 rows in set (0.00 sec)
 ```
 
-#### 由于排序规则不兼容，`INL_JOIN`、`INL_HASH_JOIN` 和 `INL_MERGE_JOIN` Hint 不生效
+#### 排序规则不兼容导致 `INL_JOIN` Hint、`INL_HASH_JOIN` Hint、`INL_MERGE_JOIN` Hint 不生效
 
-当连接键的排序规则在两表间不兼容时，无法使用 `IndexJoin` 运算符执行查询，此时 [`INL_JOIN`](#inl_joint1_name--tl_name-)、[`INL_HASH_JOIN`](#inl_hash_join) 和 [`INL_MERGE_JOIN`](#inl_merge_join) Hint 均不生效。例如：
+如果两个表的 Join key 的排序规则不能兼容，将无法使用 IndexJoin 来执行查询。此时 [`INL_JOIN` Hint](#inl_joint1_name--tl_name-)、[`INL_HASH_JOIN` Hint](#inl_hash_join)、[`INL_MERGE_JOIN` Hint](#inl_merge_join) 将无法生效。例如：
 
 ```sql
 CREATE TABLE t1 (k varchar(8), key(k)) COLLATE=utf8mb4_general_ci;
@@ -1013,7 +1048,7 @@ CREATE TABLE t2 (k varchar(8), key(k)) COLLATE=utf8mb4_bin;
 EXPLAIN SELECT /*+ tidb_inlj(t1) */ * FROM t1, t2 WHERE t1.k=t2.k;
 ```
 
-执行计划如下：
+查询计划输出结果如下：
 
 ```sql
 +-----------------------------+----------+-----------+----------------------+----------------------------------------------+
@@ -1028,7 +1063,7 @@ EXPLAIN SELECT /*+ tidb_inlj(t1) */ * FROM t1, t2 WHERE t1.k=t2.k;
 5 rows in set, 1 warning (0.00 sec)
 ```
 
-上述语句中，`t1.k` 和 `t2.k` 的排序规则分别为 `utf8mb4_general_ci` 和 `utf8mb4_bin`，不兼容，导致 `INL_JOIN` 或 `TIDB_INLJ` Hint 不生效。
+上面的 SQL 语句中 `t1.k` 和 `t2.k` 的排序规则不能相互兼容（分别为 `utf8mb4_general_ci` 和 `utf8mb4_bin`），导致 IndexJoin 无法适用。因此 `INL_JOIN` 或 `TIDB_INLJ` Hint 也无法生效。
 
 ```sql
 SHOW WARNINGS;
@@ -1040,9 +1075,9 @@ SHOW WARNINGS;
 1 row in set (0.00 sec)
 ```
 
-#### 由于连接顺序，`INL_JOIN` Hint 不生效
+#### 连接顺序导致 `INL_JOIN` Hint 不生效
 
-[`INL_JOIN(t1, t2)`](#inl_joint1_name--tl_name-) 或 `TIDB_INLJ(t1, t2)` Hint 的语义是让 `t1` 和 `t2` 作为 `IndexJoin` 运算符的内表与其他表连接，而不是直接用 `IndexJoin` 连接二者。例如：
+[`INL_JOIN(t1, t2)`](#inl_joint1_name--tl_name-) 或 `TIDB_INLJ(t1, t2)` 的语义是让 `t1` 和 `t2` 作为 `IndexJoin` 的内表与其他表进行连接，而不是直接将 `t1` 和 `t2` 进行 `IndexJoin` 连接。例如：
 
 ```sql
 EXPLAIN SELECT /*+ inl_join(t1, t3) */ * FROM t1, t2, t3 WHERE t1.id = t2.id AND t2.id = t3.id AND t1.id = t3.id;
@@ -1060,9 +1095,9 @@ EXPLAIN SELECT /*+ inl_join(t1, t3) */ * FROM t1, t2, t3 WHERE t1.id = t2.id AND
 +---------------------------------+----------+-----------+---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```
 
-如上例，`t1` 和 `t3` 并未直接通过 `IndexJoin` 连接。
+在上面例子中，`t1` 和 `t3` 并没有直接被一个 `IndexJoin` 连接起来。
 
-如需让 `t1` 和 `t3` 直接通过 `IndexJoin` 连接，可先用 [`LEADING(t1, t3)` Hint](#leadingt1_name--tl_name-) 指定连接顺序，再用 `INL_JOIN` Hint 指定连接算法。例如：
+如果想要直接使用 `IndexJoin` 来连接 `t1` 和 `t3`，需要先使用 [`LEADING` Hint](#leadingt1_name--tl_name-) 指定 `t1` 和 `t3` 的连接顺序，然后再配合使用 `INL_JOIN`。例如：
 
 ```sql
 EXPLAIN SELECT /*+ leading(t1, t3), inl_join(t3) */ * FROM t1, t2, t3 WHERE t1.id = t2.id AND t2.id = t3.id AND t1.id = t3.id;
@@ -1082,12 +1117,12 @@ EXPLAIN SELECT /*+ leading(t1, t3), inl_join(t3) */ * FROM t1, t2, t3 WHERE t1.i
 9 rows in set (0.01 sec)
 ```
 
-### 使用 Hint 导致 `Can't find a proper physical plan for this query` 错误
+### 使用 Hint 导致错误 `Can't find a proper physical plan for this query`
 
-以下场景可能出现 `Can't find a proper physical plan for this query` 错误：
+在下面几种情况下，可能会出现 `Can't find a proper physical plan for this query` 错误：
 
-- 查询本身不需要顺序读取索引。即对于该查询，优化器在任何情况下都不会生成顺序读取索引的计划。此时若指定了 `ORDER_INDEX` Hint，会报此错误。解决方法为移除对应的 `ORDER_INDEX` Hint。
-- 通过 `NO_JOIN` 相关 Hint 排除了所有可能的连接方式。
+- 查询本身并不需要按顺序读取索引，即在不使用 Hint 的前提下，优化器在任何情况下都不会生成按顺序读取索引的计划。此时，如果指定了 `ORDER_INDEX` Hint，会出现此报错，此时应考虑移除对应的 `ORDER_INDEX` Hint。
+- 查询使用了 `NO_JOIN` 相关的 Hint 排除了所有可能的 Join 方式。
 
 ```sql
 CREATE TABLE t1 (a INT);
@@ -1096,7 +1131,7 @@ EXPLAIN SELECT /*+ NO_HASH_JOIN(t1), NO_MERGE_JOIN(t1) */ * FROM t1, t2 WHERE t1
 ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query
 ```
 
-- 系统变量 [`tidb_opt_enable_hash_join`](/system-variables.md#tidb_opt_enable_hash_join-new-in-v656-v712-and-v740) 设置为 `OFF`，且其他连接类型也被排除。
+- 系统变量 [`tidb_opt_enable_hash_join`](/system-variables.md#tidb_opt_enable_hash_join-从-v656v712-和-v740-版本开始引入) 设置为 `OFF`，而且其他 Join 方式也都被排除了。
 
 ```sql
 CREATE TABLE t1 (a INT);
@@ -1106,11 +1141,11 @@ EXPLAIN SELECT /*+ NO_MERGE_JOIN(t1) */ * FROM t1, t2 WHERE t1.a=t2.a;
 ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query
 ```
 
-### 在子查询中写 `SET_VAR` 不生效
+### `SET_VAR` 写在子查询中不生效
 
-`SET_VAR` 用于修改当前语句的系统变量值。不要在子查询中写 `SET_VAR`，否则可能因子查询的特殊处理而不生效。
+`SET_VAR` 用来设置当前语句的系统变量，不要写在子查询中。如果写在子查询中，由于子查询会被特殊处理，可能导致 `SET_VAR` 无法生效。
 
-以下示例中，`SET_VAR` 写在子查询中，因此不生效。
+下面示例把 `SET_VAR` 写在了子查询中，所以没有生效。
 
 ```sql
 mysql> SELECT @@MAX_EXECUTION_TIME, a FROM (SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=123) */ 1 as a) t;
@@ -1122,7 +1157,7 @@ mysql> SELECT @@MAX_EXECUTION_TIME, a FROM (SELECT /*+ SET_VAR(MAX_EXECUTION_TIM
 1 row in set (0.00 sec)
 ```
 
-以下示例中，`SET_VAR` 未写在子查询中，因此生效。
+下面示例没有把 SET_VAR 写在子查询中，所以可以生效。
 
 ```sql
 mysql> SELECT /*+ SET_VAR(MAX_EXECUTION_TIME=123) */ @@MAX_EXECUTION_TIME, a FROM (SELECT 1 as a) t;

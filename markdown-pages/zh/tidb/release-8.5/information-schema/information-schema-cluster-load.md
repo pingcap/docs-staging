@@ -1,15 +1,11 @@
 ---
 title: CLUSTER_LOAD
-summary: Learn the `CLUSTER_LOAD` information_schema table.
+summary: 了解 information_schema 表 `CLUSTER_LOAD`。
 ---
 
 # CLUSTER_LOAD
 
-The `CLUSTER_LOAD` cluster load table provides the current load information of the server where each instance of the TiDB cluster is located.
-
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+集群负载表 `CLUSTER_LOAD` 提供集群各个实例所在服务器的当前负载信息。
 
 
 ```sql
@@ -31,20 +27,20 @@ DESC cluster_load;
 6 rows in set (0.00 sec)
 ```
 
-Field description:
+字段解释：
 
-* `TYPE`: Corresponds to the `TYPE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) table. The optional values are `tidb`, `pd`, and `tikv`.
-* `INSTANCE`: Corresponds to the `INSTANCE` field in the [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) cluster information table.
-* `DEVICE_TYPE`: Hardware type. Currently, you can query the `cpu`, `memory`, `disk`, and `net` types.
-* `DEVICE_NAME`: Hardware name. The value of `DEVICE_NAME` varies with `DEVICE_TYPE`.
-    * `cpu`: The hardware name is cpu.
-    * `disk`: The disk name.
-    * `net`: The network card name.
-    * `memory`: The hardware name is memory.
-* `NAME`: Different load types. For example, cpu has three load types: `load1`, `load5`, and `load15`, which respectively mean the average load of cpu within 1 minute, 5 minutes, and 15 minutes.
-* `VALUE`: The value of the hardware load. For example, `1min`, `5min`, and `15min` respectively mean the average load of the hardware within 1 minute, 5 minutes, and 15 minutes.
+* `TYPE`：对应于节点信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `TYPE` 字段，可取值为 `tidb`，`pd` 和 `tikv`。
+* `INSTANCE`：对应于节点信息表 [`information_schema.cluster_info`](/information-schema/information-schema-cluster-info.md) 中的 `INSTANCE` 字段。
+* `DEVICE_TYPE`：硬件类型，目前可以查询的硬件类型有 `cpu`、`memory`、`disk` 和 `net`。
+* `DEVICE_NAME`：硬件名。对于不同的 `DEVICE_TYPE`，`DEVICE_NAME` 取值不同。
+    * `cpu`：硬件名为 cpu。
+    * `disk`：磁盘名。
+    * `net`：网卡名。
+    * `memory`：硬件名为 memory。
+* `NAME`：不同的负载类型。例如 cpu 有 `load1`/`load5`/`load15` 三个负载类型，分别表示 cpu 在 1min/5min/15min 内的平均负载。
+* `VALUE`：硬件负载的值，例如 cpu 在 1min/5min/15min 内的平均负载。
 
-The following example shows how to query the current load information of cpu using the `CLUSTER_LOAD` table:
+查询集群当前的 CPU 负载信息示例如下：
 
 
 ```sql

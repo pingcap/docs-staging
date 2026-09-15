@@ -1,61 +1,57 @@
 ---
 title: tiup dm display
-summary: tiup dm display command efficiently checks the operational status of each component in a DM cluster. It requires the cluster name and can also specify node IDs and roles. The output includes cluster name, version, SSH client type, and a table with fields like ID, Role, Host, Ports, OS/Arch, Status, Data Dir, and Deploy Dir.
+summary: tiup-dm 提供了 `tiup dm display` 命令来高效查看集群中每个组件的运行状态。命令语法为 `tiup dm display <cluster-name>`，可指定要查询的节点和角色。输出包括集群名称、版本、SSH 客户端类型，以及节点 ID、角色、IP、端口号、操作系统、状态、数据目录和部署目录等信息。
 ---
 
 # tiup dm display
 
-If you want to check the operational status of each component in a DM cluster, it is inefficient to log in to each machine one by one. Therefore, tiup-dm provides the `tiup dm display` command to do this job efficiently.
+如果想查看集群中每个组件的运行状态，逐一登录到各个机器上查看显然很低效。因此，tiup-dm 提供了 `tiup dm display` 命令来高效完成这件工作。
 
-## Syntax
+## 语法
 
 ```shell
 tiup dm display <cluster-name> [flags]
 ```
 
-`<cluster-name>` is the name of the cluster to be operated. If you forget the cluster name, you can check it using the [`tiup dm list`](/tiup/tiup-component-dm-list.md) command.
+`<cluster-name>` 为要操作的集群名字，如果忘记集群名字可查看[集群列表](/tiup/tiup-component-dm-list.md)。
 
-## Options
+## 选项
 
-### -N, --node
+### -N, --node（strings，默认为 []，表示所有节点）
 
-- Specifies the IDs of the nodes to query, splitting by commas for multiple nodes. If you are not sure about the ID of a node, you can skip this option in the command to show the IDs and status of all nodes in the output.
-- Data type: `STRING`
-- This option is enabled by default with `[]` (which means all nodes) passed in.
+指定要查询的节点，不指定则表示所有节点。该选项的值为以逗号分割的节点 ID 列表，如果不确定要查询节点的 ID，不指定此选项，输出会显示所有节点的 ID 和状态信息。
 
-> **Note:**
-> 
-> If `-R, --role` is also specified, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are queried.
+> **注意：**
+>
+> 若同时指定了 `-R, --role`，那么将查询它们的交集中的服务状态。
 
-### -R, --role
+### -R, --role（strings，默认为 []，表示所有角色）
 
-- Specifies the roles to query, splitting by commas for multiple roles. If you are not sure about the role deployed on a node, you can skip this option in the command to show the roles and status of all nodes in the output.
-- Data type: `STRING`
-- This option is enabled by default with `[]` (which means all roles) passed in.
+指定要查询的角色，不指定则表示所有角色。该选项的值为以逗号分割的节点角色列表，如果不确定要查询节点的角色，不指定此选项，输出会显示所有节点的角色和状态信息。
 
-> **Note:**
-> 
-> If `-N, --node` is also specified, only the service nodes that match both the specifications of `-N, --node` and `-R, --role` are queried.
+> **注意：**
+>
+> 若同时指定了 `-N, --node`，那么将查询它们的交集中的服务状态。
 
 ### -h, --help
 
-- Prints the help information.
-- Data type: `BOOLEAN`
-- This option is disabled by default with the `false` value. To enable this option, add this option to the command, and either pass the `true` value or do not pass any value.
+- 输出帮助信息。
+- 数据类型：`BOOLEAN`
+- 该选项默认关闭，默认值为 `false`。在命令中添加该选项，并传入 `true` 值或不传值，均可开启此功能。
 
-## Output
+## 输出
 
-- Cluster name
-- Cluster version
-- SSH client type
-- A table containing the following fields:
-    - `ID`: the node ID, consisting of IP:PORT.
-    - `Role`: the service role deployed on the node (for example, TiDB or TiKV).
-    - `Host`: the IP address of the machine corresponding to the node.
-    - `Ports`: the port number used by the service.
-    - `OS/Arch`: the operating system and machine architecture of the node.
-    - `Status`: the current status of the services on the node.
-    - `Data Dir`: the data directory of the service. `-` means that there is no data directory.
-    - `Deploy Dir`: the deployment directory of the service.
+- 集群名称
+- 集群版本
+- SSH 客户端类型
+- 含有以下字段的表格：
+    - ID：节点 ID，由 IP:PORT 构成
+    - Role：该节点部署的服务角色（如 TiDB 和 TiKV 等）
+    - Host：该节点对应的机器 IP
+    - Ports：服务占用的端口号
+    - OS/Arch：该节点的操作系统和机器架构
+    - Status：该节点服务当前的状态
+    - Data Dir：服务的数据目录，`-` 表示没有数据目录
+    - Deploy Dir：服务的部署目录
 
-[<< Back to the previous page - TiUP DM command list](/tiup/tiup-component-dm.md#command-list)
+[<< 返回上一页 - TiUP DM 命令清单](/tiup/tiup-component-dm.md#命令清单)

@@ -1,123 +1,205 @@
 ---
-title: Merge and Migrate Data from Sharded Tables in the Pessimistic Mode
-summary: Learn how DM merges and migrates data from sharded tables in the pessimistic mode.
+title: 悲观模式下分库分表合并迁移
+summary: 介绍 DM 提供的悲观模式（默认模式）下分库分表的合并迁移功能。
 ---
 
-# Merge and Migrate Data from Sharded Tables in the Pessimistic Mode
+# 悲观模式下分库分表合并迁移
 
-This document introduces the sharding support feature provided by Data Migration (DM) in the pessimistic mode (the default mode). This feature allows you to merge and migrate the data of tables with the same table schema in the upstream MySQL or MariaDB instances into one same table in the downstream TiDB.
+本文介绍了 DM 提供的悲观模式（默认模式）下分库分表合并迁移功能。此功能用于将上游 MySQL/MariaDB 实例中结构相同的表迁移到下游 TiDB 的同一个表中。
 
-## Restrictions
+## 使用限制
 
-DM has the following sharding DDL usage restrictions in the pessimistic mode:
+DM 在悲观模式下进行分表 DDL 的迁移有以下几点使用限制：
 
-- For a logical **sharding group** (composed of all sharded tables that need to be merged and migrated into one same downstream table), it is limited to use one task containing exactly the sources of sharded tables to perform the migration.
-- In a logical **sharding group**, the same DDL statements must be executed in the same order in all upstream sharded tables (the schema name and the table name can be different), and the next DDL statement cannot be executed unless the current DDL operation is completely finished.
-    - For example, if you add `column A` to `table_1` before you add `column B`, then you cannot add `column B` to `table_2` before you add `column A`. Executing the DDL statements in a different order is not supported.
-- In a sharding group, the corresponding DDL statements should be executed in all upstream sharded tables.
-    - For example, if DDL statements are not executed on one or more upstream sharded tables corresponding to `DM-worker-2`, then other DM-workers that have executed the DDL statements pause their migration task and wait for `DM-worker-2` to receive the upstream DDL statements.
-- The sharding group migration task does not support `DROP DATABASE`/`DROP TABLE`.
-    - The sync unit in DM-worker automatically ignores the `DROP DATABASE`/`DROP TABLE` statement of upstream sharded tables.
-- The sharding group migration task does not support `TRUNCATE TABLE`.
-    - The sync unit in DM-worker automatically ignores the `TRUNCATE TABLE` statement of upstream sharded tables.
-- The sharding group migration task supports `RENAME TABLE`, but with the following limitations (online DDL is supported in another solution):
-    - A table can only be renamed to a new name that is not used by any other table.
-    - A single `RENAME TABLE` statement can only involve a single `RENAME` operation.
-- The sharding group migration task requires each DDL statement to involve operations on only one table.
-- The table schema of each sharded table must be the same at the starting point of the incremental replication task, so as to make sure the DML statements of different sharded tables can be migrated into the downstream with a definite table schema, and the subsequent sharding DDL statements can be correctly matched and migrated.
-- If you need to change the [table routing](/dm/dm-table-routing.md) rule, you have to wait for the migration of all sharding DDL statements to complete.
-    - During the migration of sharding DDL statements, an error is reported if you use `dmctl` to change `router-rules`.
-- If you need to `CREATE` a new table to a sharding group where DDL statements are being executed, you have to make sure that the table schema is the same as the newly modified table schema.
-    - For example, both the original `table_1` and `table_2` have two columns (a, b) initially, and have three columns (a, b, c) after the sharding DDL operation, so after the migration the newly created table should also have three columns (a, b, c).
-- Because the DM-worker that has received the DDL statements will pause the task to wait for other DM-workers to receive their DDL statements, the delay of data migration will be increased.
+- 对于一个逻辑 sharding group（需要合并迁移到下游同一个表的所有分表组成的 group），只能使用一个仅包含这些分表所在数据源的任务进行迁移。
 
-## Background
+- 在一个逻辑 sharding group 内，所有上游分表必须以相同的顺序执行相同的 DDL 语句（库名和表名可以不同），并且只有在所有分表执行完当前一条 DDL 语句后，下一条 DDL 语句才能执行。
 
-Currently, DM uses the binlog in the `ROW` format to perform the migration task. The binlog does not contain the table schema information. When you use the `ROW` binlog to migrate data, if you have not migrated multiple upstream tables into the same downstream table, then there only exist DDL operations of one upstream table that can update the table schema of the downstream table. The `ROW` binlog can be considered to have the nature of self-description. During the migration process, the DML statements can be constructed accordingly with the column values and the downstream table schema.
+    - 比如，如果在 table_1 表中先增加列 a 后再增加列 b，则在 table_2 表中就不能先增加列 b 后再增加列 a，因为 DM 不支持以不同的顺序来执行相同的 DDL 语句。
 
-However, in the process of merging and migrating sharded tables, if DDL statements are executed on the upstream tables to modify the table schema, then you need to perform extra operations to migrate the DDL statements so as to avoid the inconsistency between the DML statements produced by the column values and the actual downstream table schema.
+- 在一个逻辑 sharding group 内，所有上游分表都应该执行对应的 DDL 语句。
 
-Here is a simple example:
+    - 比如，若 DM-worker-2 对应的一个或多个上游分表未执行 DDL 语句，则其他已执行 DDL 语句的 DM-worker 都会暂停迁移任务，直到等到 DM-worker-2 收到上游对应的 DDL 语句。
 
-![shard-ddl-example-1](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-1.png)
+- sharding group 数据迁移任务不支持 `DROP DATABASE/TABLE` 语句。
 
-In the above example, the merging process is simplified, where only two MySQL instances exist in the upstream and each instance has only one table. When the migration begins, the table schema version of two sharded tables is marked as `schema V1`, and the table schema version after executing DDL statements is marked as `schema V2`.
+    - DM-worker 中的 binlog 复制单元（sync）会自动忽略掉上游分表的 `DROP DATABASE` 和 `DROP TABLE` 语句。
 
-Now assume that in the migration process, the binlog data received from the two upstream sharded tables has the following time sequence:
+- sharding group 数据迁移任务不支持 `TRUNCATE TABLE` 语句。
 
-1. When the migration begins, the sync unit in DM-worker receives the DML events of `schema V1` from the two sharded tables.
-2. At `t1`, the sharding DDL events from instance 1 are received.
-3. From `t2` on, the sync unit receives the DML events of `schema V2` from instance 1; but from instance 2, it still receives the DML events of `schema V1`.
-4. At `t3`, the sharding DDL events from instance 2 are received.
-5. From `t4` on, the sync unit receives the DML events of `schema V2` from instance 2 as well.
+    - DM-worker 中的 binlog 复制单元（sync）会自动忽略掉上游分表的 `TRUNCATE TABLE` 语句。
 
-Assume that the DDL statements of sharded tables are not processed during the migration process. After DDL statements of instance 1 are migrated to the downstream, the downstream table schema is changed to `schema V2`. But for instance 2, the sync unit in DM-worker is still receiving DML events of `schema V1` from `t2` to `t3`. Therefore, when the DML statements of `schema V1` are migrated to the downstream, the inconsistency between the DML statements and the table schema can cause errors and the data cannot be migrated successfully.
+- sharding group 数据迁移任务支持 `RENAME TABLE` 语句，但有如下限制（online DDL 中的 `RENAME` 有特殊方案进行支持）：
 
-## Principles
+    - 只支持 `RENAME TABLE` 到一个不存在的表。
+    - 一条 `RENAME TABLE` 语句只能包含一个 `RENAME` 操作。
 
-This section shows how DM migrates DDL statements in the process of merging sharded tables based on the above example in the pessimistic mode.
+- sharding group 数据迁移任务要求一个 DDL 语句仅包含对一张表的操作。
 
-![shard-ddl-flow](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-flow.png)
+- 增量复制任务需要确认开始迁移的 binlog position 上各分表的表结构必须一致，才能确保来自不同分表的 DML 语句能够迁移到表结构确定的下游，并且后续各分表的 DDL 语句能够正确匹配与迁移。
 
-In this example, `DM-worker-1` migrates the data from MySQL instance 1 and `DM-worker-2` migrates the data from MySQL instance 2. `DM-master` coordinates the DDL migration among multiple DM-workers. Starting from `DM-worker-1` receiving the DDL statements, the DDL migration process is simplified as follows:
+- 如果需要变更 [table routing 规则](/dm/dm-table-routing.md)，必须先等所有 sharding DDL 语句迁移完成。
 
-1. `DM-worker-1` receives the DDL statement from MySQL instance 1 at `t1`, pauses the data migration of the corresponding DDL and DML statements, and sends the DDL information to `DM-master`.
-2. `DM-master` decides that the migration of this DDL statement needs to be coordinated based on the received DDL information, creates a lock for this DDL statement, sends the DDL lock information back to `DM-worker-1` and marks `DM-worker-1` as the owner of this lock at the same time.
-3. `DM-worker-2` continues migrating the DML statement until it receives the DDL statement from MySQL instance 2 at `t3`, pauses the data migration of this DDL statement, and sends the DDL information to `DM-master`.
-4. `DM-master` decides that the lock of this DDL statement already exists based on the received DDL information, and sends the lock information directly to `DM-worker-2`.
-5. Based on the configuration information when the task is started, the sharded table information in the upstream MySQL instances, and the deployment topology information, `DM-master` decides that it has received this DDL statement of all upstream sharded tables to be merged, and requests the owner of the DDL lock (`DM-worker-1`) to migrate this DDL statement to the downstream.
-6. `DM-worker-1` verifies the DDL statement execution request based on the DDL lock information received at Step #2, migrates this DDL statement to the downstream, and sends the results to `DM-master`. If this operation is successful, `DM-worker-1` continues migrating the subsequent (starting from the binlog at `t2`) DML statements.
-7. `DM-master` receives the response from the lock owner that the DDL is successfully executed, and requests all other DM-workers (`DM-worker-2`) that are waiting for the DDL lock to ignore this DDL statement and then continue to migrate the subsequent (starting from the binlog at `t4`) DML statements.
+    - 在 sharding DDL 语句迁移过程中，使用 dmctl 尝试变更 router-rules 会报错。
 
-The characteristics of DM handling the sharding DDL migration among multiple DM-workers can be concluded as follows:
+- 如果需要创建新表加入到一个正在执行 DDL 语句的 sharding group 中，则必须保持新表结构和最新更改的表结构一致。
 
-- Based on the task configuration and DM cluster deployment topology information, a logical sharding group is built in `DM-master` to coordinate DDL migration. The group members are DM-workers that handle each sub-task divided from the migration task).
-- After receiving the DDL statement from the binlog event, each DM-worker sends the DDL information to `DM-master`.
-- `DM-master` creates or updates the DDL lock based on the DDL information received from each DM-worker and the sharding group information.
-- If all members of the sharding group receive a same specific DDL statement, this indicates that all DML statements before the DDL execution on the upstream sharded tables have been completely migrated, and this DDL statement can be executed. Then DM can continue to migrate the subsequent DML statements.
-- After being converted by the [table router](/dm/dm-table-routing.md), the DDL statement of the upstream sharded tables must be consistent with the DDL statement to be executed in the downstream. Therefore, this DDL statement only needs to be executed once by the DDL owner and all other DM-workers can ignore this DDL statement.
+    - 比如，原 table_1, table_2 表初始时有 (a, b) 两列，sharding DDL 语句执行后有 (a, b, c) 三列，则迁移完成后新创建的表也应当有 (a, b, c) 三列。
 
-In the above example, only one sharded table needs to be merged in the upstream MySQL instance corresponding to each DM-worker. But in actual scenarios, there might be multiple sharded tables in multiple sharded schemas to be merged in one MySQL instance. And when this happens, it becomes more complex to coordinate the sharding DDL migration.
+- 由于已经收到 DDL 语句的 DM-worker 会暂停任务以等待其他 DM-worker 收到对应的 DDL 语句，因此数据迁移延迟会增加。
 
-Assume that there are two sharded tables, namely `table_1` and `table_2`, to be merged in one MySQL instance:
+## 背景
 
-![shard-ddl-example-2](https://docs-download.pingcap.com/media/images/docs/dm/shard-ddl-example-2.png)
+目前，DM 使用 ROW 格式的 binlog 进行数据迁移，且 binlog 中不包含表结构信息。在 ROW 格式的 binlog 迁移过程中，如果不需要将多个上游表合并迁移到下游的同一个表，则只存在一个上游表的 DDL 语句会更新对应下游表结构。ROW 格式的 binlog 可以认为是具有 self-description 属性。
 
-Because data comes from the same MySQL instance, all the data is obtained from the same binlog stream. In this case, the time sequence is as follows:
+分库分表合并迁移过程中，可以根据 column values 及下游的表结构构造出相应的 DML 语句，但此时若上游的分表执行 DDL 语句进行了表结构变更，则必须对该 DDL 语句进行额外迁移处理，以避免因为表结构和 binlog 数据不一致而造成迁移出错的问题。
 
-1. The sync unit in DM-worker receives the DML statements of `schema V1` from both sharded tables when the migration begins.
-2. At `t1`, the sync unit in DM-worker receives the DDL statements of `table_1`.
-3. From `t2` to `t3`, the received data includes the DML statements of `schema V2` from `table_1` and the DML statements of `schema V1` from `table_2`.
-4. At `t3`, the sync unit in DM-worker receives the DDL statements of `table_2`.
-5. From `t4` on, the sync unit in DM-worker receives the DML statements of `schema V2` from both tables.
+以下是一个简化后的例子：
 
-If the DDL statements are not processed particularly during the data migration, when the DDL statement of `table_1` is migrated to the downstream and changes the downstream table schema, the DML statement of `schema V1` from `table_2` cannot be migrated successfully. Therefore, within a single DM-worker, a logical sharding group similar to that within `DM-master` is created, except that members of this group are different sharded tables in the same upstream MySQL instance.
+![shard-ddl-example-1](https://docs-download.pingcap.com/media/images/docs-cn/dm/shard-ddl-example-1.png)
 
-But when a DM-worker coordinates the migration of the sharding group within itself, it is not totally the same as that performed by `DM-master`. The reasons are as follows:
+在上图的例子中，分表的合库合表过程简化成了上游只有两个 MySQL 实例，每个实例内只有一个表。假设在数据迁移开始时，将两个分表的表结构版本记为 schema V1，将 DDL 语句执行完后的表结构版本记为 schema V2。
 
-- When the DM-worker receives the DDL statement of `table_1`, it cannot pause the migration and needs to continue parsing the binlog to get the subsequent DDL statements of `table_2`. This means it needs to continue parsing between `t2` and `t3`.
-- During the binlog parsing process between `t2` and `t3`, the DML statements of `schema V2` from `table_1` cannot be migrated to the downstream until the sharding DDL statement is migrated and successfully executed.
+现在，假设数据迁移过程中，DM-worker 内的 binlog 复制单元（sync）从两个上游分表收到的 binlog 数据有如下时序：
 
-In DM, the simplified migration process of sharding DDL statements within the DM worker is as follows:
+1. 开始迁移时，sync 从两个分表收到的都是 schema V1 版本的 DML 语句。
 
-1. When receiving the DDL statement of `table_1` at `t1`, the DM-worker records the DDL information and the current position of the binlog.
-2. DM-worker continues parsing the binlog between `t2` and `t3`.
-3. DM-worker ignores the DML statement with the `schema V2` schema that belongs to `table_1`, and migrates the DML statement with the `schema V1` schema that belongs to `table_2` to the downstream.
-4. When receiving the DDL statement of `table_2` at `t3`, the DM-worker records the DDL information and the current position of the binlog.
-5. Based on the information of the migration task configuration and the upstream schemas and tables, the DM-worker decides that the DDL statements of all sharded tables in the MySQL instance have been received and migrates them to the downstream to modify the downstream table schema.
-6. DM-worker sets the starting point of parsing the new binlog stream to be the position saved at Step #1.
-7. DM-worker resumes parsing the binlog between `t2` and `t3`.
-8. DM-worker migrates the DML statement with the `schema V2` schema that belongs to `table_1` to the downstream, and ignores the DML statement with the `schema V1` schema that belongs to `table_2`.
-9. After parsing the binlog position saved at Step #4, the DM-worker decides that all DML statements that have been ignored in Step #3 have been migrated to the downstream again.
-10. DM-worker resumes the migration starting from the binlog position at `t4`.
+2. 在 t1 时刻，sync 收到实例 1 上分表的 DDL 语句。
 
-You can conclude from the above analysis that DM mainly uses two-level sharding groups for coordination and control when handling migration of the sharding DDL. Here is the simplified process:
+3. 从 t2 时刻开始，sync 从实例 1 收到的是 schema V2 版本的 DML 语句；但从实例 2 收到的仍是 schema V1 版本的 DML 语句。
 
-1. Each DM-worker independently coordinates the DDL statements migration for the corresponding sharding group composed of multiple sharded tables within the upstream MySQL instance.
-2. After the DM-worker receives the DDL statements of all sharded tables, it sends the DDL information to `DM-master`.
-3. `DM-master` coordinates the DDL migration of the sharding group composed of the DM-workers based on the received DDL information.
-4. After receiving the DDL information from all DM-workers, `DM-master` requests the DDL lock owner (a specific DM-worker) to execute the DDL statement.
-5. The DDL lock owner executes the DDL statement and returns the result to `DM-master`. Then the owner restarts the migration of the previously ignored DML statements during the internal coordination of DDL migration.
-6. After `DM-master` confirms that the owner has successfully executed the DDL statement, it asks all other DM-workers to continue the migration.
-7. All other DM-workers separately restart the migration of the previously ignored DML statements during the internal coordination of DDL migration.
-8. After finishing migrating the ignored DML statements again, all DM-workers resume the normal migration process.
+4. 在 t3 时刻，sync 收到实例 2 上分表的 DDL 语句。
+
+5. 从 t4 时刻开始，sync 从实例 2 收到的也是 schema V2 版本的 DML 语句。
+
+假设在数据迁移过程中，不对分表的 DDL 语句进行额外处理。当实例 1 的 DDL 语句迁移到下游后，下游的表结构会变更成为 schema V2 版本。但在 t2 到 t3 这段时间内，sync 从实例 2 上收到的仍是 schema V1 版本的 DML 语句。当尝试把这些 schema V1 版本的 DML 语句迁移到下游时，就会由于 DML 语句与表结构的不一致而发生错误，从而无法正确迁移数据。
+
+## 实现原理
+
+基于上述例子，本部分介绍了 DM 在默认的悲观模式下合库合表过程中进行 DDL 迁移的实现原理。
+
+```mermaid
+---
+config:
+    themeCSS: |
+        /* hide the ugly borders */
+        rect.rect {
+            stroke: none;
+        }
+---
+sequenceDiagram
+    autonumber
+    box rgba(0,255,0,0.08)
+        participant Worker1 as DM-worker 1
+    end
+    box rgba(255,255,0,0.08)
+        participant Master as DM-master
+    end
+    box rgba(0,255,0,0.08)
+        participant Worker2 as DM-worker 2
+    end
+
+    Worker1->>Master: 1. DDL info
+    Master->>Worker1: 2. DDL lock info
+    Worker2->>Master: 3. DDL info
+    Master->>Worker2: 4. DDL lock info
+    Master->>Worker1: 5. DDL execute request
+    Worker1->>Master: 6. DDL executed
+    Master-->>Worker2: 7. DDL ignore request
+```
+
+在这个例子中，DM-worker-1 负责迁移来自 MySQL 实例 1 的数据，DM-worker-2 负责迁移来自 MySQL 实例 2 的数据，DM-master 负责协调多个 DM-worker 间的 DDL 迁移。
+
+从 DM-worker-1 收到 DDL 语句开始，简化后的 DDL 迁移流程为：
+
+1. 在 t1 时刻，DM-worker-1 收到来自 MySQL 实例 1 的 DDL 语句，自身暂停该 DDL 语句对应任务的 DDL 及 DML 数据迁移，并将 DDL 相关信息发送给 DM-master。
+
+2. DM-master 根据收到的 DDL 信息判断得知需要协调该 DDL 语句的迁移，于是为该 DDL 语句创建一个锁，并将 DDL 锁信息发回给 DM-worker-1，同时将 DM-worker-1 标记为这个锁的 owner。
+
+3. DM-worker-2 继续进行 DML 语句的迁移，直到在 t3 时刻收到来自 MySQL 实例 2 的 DDL 语句，自身暂停该 DDL 语句对应任务的数据迁移，并将 DDL 相关信息发送给 DM-master。
+
+4. DM-master 根据收到的 DDL 信息判断得知该 DDL 语句对应的锁信息已经存在，于是直接将对应锁信息发回给 DM-worker-2。
+
+5. 根据任务启动时的配置信息、上游 MySQL 实例分表信息、部署拓扑信息等，DM-master 判断得知自身已经收到了来自待合表的所有上游分表的 DDL 语句，于是请求 DDL 锁的 owner（DM-worker-1）向下游迁移执行该 DDL。
+
+6. DM-worker-1 根据第二步收到的 DDL 锁信息验证 DDL 语句执行请求；向下游执行 DDL，并将执行结果反馈给 DM-master；若 DDL 语句执行成功，则自身开始继续迁移后续的（从 t2 时刻对应的 binlog 开始的）DML 语句。
+
+7. DM-master 收到来自 owner 执行 DDL 语句成功的响应，于是请求在等待该 DDL 锁的所有其他 DM-worker（DM-worker-2）忽略该 DDL 语句，直接继续迁移后续的（从 t4 时刻对应的 binlog 开始的）DML 语句。
+
+根据上面的流程，可以归纳出 DM 协调多个 DM-worker 间 sharding DDL 迁移的特点：
+
+- 根据任务配置与 DM 集群部署拓扑信息，DM-master 内部也会建立一个逻辑 sharding group 来协调 DDL 迁移，group 中的成员为负责处理该迁移任务拆解后的各子任务的 DM-worker。
+
+- 各 DM-worker 从 binlog event 中收到 DDL 语句后，会将 DDL 信息发送给 DM-master。
+
+- DM-master 根据来自 DM-worker 的 DDL 信息及 sharding group 信息创建或更新 DDL 锁。
+
+- 如果 sharding group 的所有成员都收到了某一条相同的 DDL 语句，则表明上游分表在该 DDL 执行前的 DML 语句都已经迁移完成，此时可以执行该 DDL 语句，并继续后续的 DML 迁移。
+
+- 上游所有分表的 DDL 在经过 [table router](/dm/dm-table-routing.md) 转换后需要保持一致，因此仅需 DDL 锁的 owner 执行一次该 DDL 语句即可，其他 DM-worker 可直接忽略对应的 DDL 语句。
+
+在上面的示例中，每个 DM-worker 对应的上游 MySQL 实例中只有一个待合并的分表。但在实际场景下，一个 MySQL 实例可能有多个分库内的多个分表需要进行合并，这种情况下，sharding DDL 的协调迁移过程将更加复杂。
+
+假设同一个 MySQL 实例中有 table_1 和 table_2 两个分表需要进行合并：
+
+![shard-ddl-example-2](https://docs-download.pingcap.com/media/images/docs-cn/dm/shard-ddl-example-2.png)
+
+在这个例子中，由于数据来自同一个 MySQL 实例，因此所有数据都是从同一个 binlog 流中获得，时序如下：
+
+1. 开始迁移时，DM-worker 内的 sync 从两个分表收到的数据都是 schema V1 版本的 DML 语句。
+
+2. 在 t1 时刻，sync 收到 table_1 分表的 DDL 语句。
+
+3. 从 t2 到 t3 时刻，sync 收到的数据同时包含 table_1 的 DML 语句（schema V2 版本）及 table_2 的 DML 语句（schema V1 版本）。
+
+4. 在 t3 时刻，sync 收到 table_2 分表的 DDL 语句。
+
+5. 从 t4 时刻开始，sync 从两个分表收到的数据都是 schema V2 版本的 DML 语句。
+
+假设在数据迁移过程中，不对分表的 DDL 语句进行额外处理。当 table_1 的 DDL 语句迁移到下游从而变更下游表结构后，table_2 的 DML 语句（schema V1 版本）将无法正常迁移。因此，在单个 DM-worker 内部，我们也构造了与 DM-master 内类似的逻辑 sharding group，但 group 的成员是同一个上游 MySQL 实例的不同分表。
+
+DM-worker 内协调处理 sharding group 的迁移与 DM-master 处理 DM-worker 之间的迁移不完全一致，主要原因包括：
+
+- 当 DM-worker 收到 table_1 分表的 DDL 语句时，迁移不能暂停，需要继续解析 binlog 才能获得后续 table_2 分表的 DDL 语句，即需要从 t2 时刻继续解析直到 t3 时刻。
+
+- 在继续解析 t2 到 t3 时刻的 binlog 的过程中，table_1 分表的 DML 语句（schema V2 版本）不能向下游迁移；但当 sharding DDL 迁移并执行成功后，这些 DML 语句则需要迁移到下游。
+
+DM-worker 内部 sharding DDL 迁移的简化流程为：
+
+1. 在 t1 时刻，DM-worker 收到 table_1 的 DDL 语句，并记录 DDL 信息及此时的 binlog 位置点信息。
+
+2. DM-worker 继续向前解析 t2 到 t3 时刻的 binlog。
+
+3. 对于 table_1 的 DML 语句（schema V2 版本），忽略；对于 table_2 的 DML 语句（schema V1 版本），正常迁移到下游。
+
+4. 在 t3 时刻，DM-worker 收到 table_2 的 DDL 语句，并记录 DDL 信息及此时的 binlog 位置点信息。
+
+5. 根据迁移任务配置信息、上游库表信息等，DM-worker 判断得知该 MySQL 实例上所有分表的 DDL 语句都已收到；于是将该 DDL 语句迁移到下游执行并变更下游表结构。
+
+6. DM-worker 设置 binlog 流的新解析起始位置点为第一步时保存的位置点。
+
+7. DM-worker 重新开始解析从 t2 到 t3 时刻的 binlog。
+
+8. 对于 table_1 的 DML 语句（schema V2 版本），正常迁移到下游；对于 table_2 的 DML 语句（schema V1 版本），忽略。
+
+9. 解析到达第四步时保存的 binlog 位置点，可得知在第三步时被忽略的所有 DML 语句都已经重新迁移到下游。
+
+10. DM-worker 继续从 t4 时刻对应的 binlog 位置点开始正常迁移。
+
+综上可知，DM 在处理 sharding DDL 迁移时，主要通过两级 sharding group 来进行协调控制，简化的流程为：
+
+1. 各 DM-worker 独立地协调对应上游 MySQL 实例内多个分表组成的 sharding group 的 DDL 迁移。
+
+2. 当 DM-worker 收到所有分表的 DDL 语句时，向 DM-master 发送 DDL 相关信息。
+
+3. DM-master 根据 DM-worker 发来的 DDL 信息，协调由各 DM-worker 组成的 sharing group 的 DDL 迁移。
+
+4. 当 DM-master 收到所有 DM-worker 的 DDL 信息时，请求 DDL 锁的 owner（某个 DM-worker） 执行该 DDL 语句。
+
+5. DDL 锁的 owner 执行 DDL 语句，并将结果反馈给 DM-master；自身开始重新迁移在内部协调 DDL 迁移过程中被忽略的 DML 语句。
+
+6. 当 DM-master 收到 owner 执行 DDL 成功的消息后，请求其他所有 DM-worker 继续开始迁移。
+
+7. 其他所有 DM-worker 各自开始重新迁移在内部协调 DDL 迁移过程中被忽略的 DML 语句。
+
+8. 在完成被忽略的 DML 语句的重新迁移后，所有 DM-worker 继续正常迁移。

@@ -1,15 +1,11 @@
 ---
 title: PLACEMENT_POLICIES
-summary: 了解 `PLACEMENT_POLICIES` information_schema 表。
+summary: 了解 information_schema 表 `PLACEMENT_POLICIES`。
 ---
 
 # PLACEMENT_POLICIES
 
-`PLACEMENT_POLICIES` 表提供了所有放置策略的信息。详情请参阅 [Placement Rules in SQL](/placement-rules-in-sql.md)。
-
-> **Note:**
->
-> 该表在 [TiDB Cloud Starter](https://docs.pingcap.com/tidbcloud/select-cluster-tier#starter) 和 [TiDB Cloud Essential](https://docs.pingcap.com/tidbcloud/select-cluster-tier#essential) 实例中不可用。
+`PLACEMENT_POLICIES` 表展示所有放置策略 (placement policy) 的信息，见 [Placement Rules in SQL](/placement-rules-in-sql.md)。
 
 
 ```sql
@@ -39,15 +35,15 @@ DESC placement_policies;
 
 ## 示例
 
-`PLACEMENT_POLICIES` 表仅展示所有放置策略。要查看放置规则的规范版本（包括所有放置策略以及被分配放置策略的对象），请使用 `SHOW PLACEMENT` 语句：
+`PLACEMENT_POLICIES` 表只展示放置策略 (placement policy) 的信息。如需查看所有信息的规范版本（放置策略，以及绑定放置策略的对象），请改用 `SHOW PLACEMENT` 语句：
 
 
 ```sql
-CREATE TABLE t1 (a INT); 
+CREATE TABLE t1 (a INT);
 CREATE PLACEMENT POLICY p1 primary_region="us-east-1" regions="us-east-1";
 CREATE TABLE t3 (a INT) PLACEMENT POLICY=p1;
-SHOW PLACEMENT; -- Shows all information, including table t3.
-SELECT * FROM information_schema.placement_policies; -- Only shows placement policies, excluding t3.
+SHOW PLACEMENT; -- 显示所有信息，包含 t3。
+SELECT * FROM information_schema.placement_policies; -- 只显示放置策略，不包含 t3。
 ```
 
 ```sql
@@ -61,7 +57,7 @@ Query OK, 0 rows affected (0.08 sec)
 | Target        | Placement                                      | Scheduling_State |
 +---------------+------------------------------------------------+------------------+
 | POLICY p1     | PRIMARY_REGION="us-east-1" REGIONS="us-east-1" | NULL             |
-| TABLE test.t3 | PRIMARY_REGION="us-east-1" REGIONS="us-east-1" | PENDING          |
+| TABLE test.t3 | PRIMARY_REGION="us-east-1" REGIONS="us-east-1" | SCHEDULED        |
 +---------------+------------------------------------------------+------------------+
 2 rows in set (0.00 sec)
 

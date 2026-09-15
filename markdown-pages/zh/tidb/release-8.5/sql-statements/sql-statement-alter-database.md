@@ -1,13 +1,13 @@
 ---
-title: ALTER DATABASE | TiDB SQL 语句参考
-summary: 关于 TiDB 数据库中 ALTER DATABASE 的用法概述。
+title: ALTER DATABASE
+summary: TiDB 数据库中 ALTER DATABASE 的使用概况。
 ---
 
 # ALTER DATABASE
 
-`ALTER DATABASE` 用于指定或修改当前数据库的默认字符集和排序规则。`ALTER SCHEMA` 与 `ALTER DATABASE` 具有相同的效果。
+`ALTER DATABASE` 用于修改指定或当前数据库的默认字符集和排序规则。`ALTER SCHEMA` 跟 `ALTER DATABASE` 操作效果一样。
 
-## 概要
+## 语法图
 
 ```ebnf+diagram
 AlterDatabaseStmt ::=
@@ -19,7 +19,7 @@ DatabaseOption ::=
 
 ## 示例
 
-将测试数据库的字符集修改为 utf8mb4 ：
+修改数据库 `test` 的字符集为 `utf8mb4`：
 
 
 ```sql
@@ -30,13 +30,13 @@ ALTER DATABASE test DEFAULT CHARACTER SET = utf8mb4;
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-目前，TiDB 仅支持部分字符集和排序规则。详细信息请参见 [Character Set and Collation Support](/character-set-and-collation.md)。
+目前 TiDB 只支持部分的字符集和排序规则，详情参阅[字符集支持](/character-set-and-collation.md)。
 
 ## MySQL 兼容性
 
-TiDB 中的 `ALTER DATABASE` 语句与 MySQL 完全兼容。如果你发现任何兼容性差异，请 [report a bug](https://docs.pingcap.com/tidb/stable/support)。
+`ALTER DATABASE` 语句与 MySQL 完全兼容。如发现任何兼容性差异，请尝试 [TiDB 支持资源](/support.md)。
 
-## 相关链接
+## 另请参阅
 
 * [CREATE DATABASE](/sql-statements/sql-statement-create-database.md)
 * [SHOW DATABASES](/sql-statements/sql-statement-show-databases.md)

@@ -1,31 +1,27 @@
 ---
-title: TiDB Data Migration Overview
-summary: Learn about the Data Migration tool, the architecture, the key components, and features.
+title: TiDB Data Migration 简介
+summary: 了解 TiDB Data Migration
 ---
 
-<!-- markdownlint-disable MD007 -->
-
-# TiDB Data Migration Overview
+# TiDB Data Migration 简介
 
 <!--
 ![star](https://img.shields.io/github/stars/pingcap/tiflow?style=for-the-badge&logo=github) ![license](https://img.shields.io/github/license/pingcap/tiflow?style=for-the-badge) ![forks](https://img.shields.io/github/forks/pingcap/tiflow?style=for-the-badge)
 -->
 
-[TiDB Data Migration](https://github.com/pingcap/tiflow/tree/release-8.5/dm) (DM) is an integrated data migration task management platform, which supports the full data migration and the incremental data replication from MySQL-compatible databases (such as MySQL, MariaDB, and Aurora MySQL) into TiDB. It can help to reduce the operation cost of data migration and simplify the troubleshooting process.
+[TiDB Data Migration](https://github.com/pingcap/tiflow/tree/release-8.5/dm) (DM) 是一款便捷的数据迁移工具，支持从与 MySQL 协议兼容的数据库（MySQL、MariaDB、Aurora MySQL）到 TiDB 的全量数据迁移和增量数据同步。使用 DM 工具有利于简化数据迁移过程，降低数据迁移运维成本。
 
-## Basic features
+## 产品特性
 
-- **Compatibility with MySQL.** DM is compatible with the MySQL protocol and most of the features and syntax of MySQL 5.7 and MySQL 8.0.
-- **Replicating DML and DDL events.** It supports parsing and replicating DML and DDL events in MySQL binlog.
-- **Migrating and merging MySQL shards.** DM supports migrating and merging multiple MySQL database instances upstream to one TiDB database downstream. It supports customizing replication rules for different migration scenarios. It can automatically detect and handle DDL changes of upstream MySQL shards, which greatly reduces the operational cost.
-- **Various types of filters.** You can predefine event types, regular expressions, and SQL expressions to filter out MySQL binlog events during the data migration process.
-- **Centralized management.** DM supports thousands of nodes in a cluster. It can run and manage a large number of data migration tasks concurrently.
-- **Optimization of the third-party Online Schema Change process.** In the MySQL ecosystem, tools such as gh-ost and pt-osc are widely used. DM optimizes its change process to avoid unnecessary migration of intermediate data. For details, see [online-ddl](/dm/dm-online-ddl-tool-support.md).
-- **High availability.** DM supports data migration tasks to be scheduled freely on different nodes. The running tasks are not affected when a small number of nodes crash.
+- **与 TiDB 同样保持 MySQL 兼容性。**高度兼容 MySQL 协议、MySQL 5.7 和 MySQL 8.0 的常用功能及语法。
+- **支持 DML & DDL 事件同步。**支持解析和同步 binlog 中的 DML 和 DDL 事件。
+- **支持合库合表同步模式。**可以方便的将上游各个分片 MySQL 实例的各个分表数据，合并同步到下游 TiDB 的一张表。支持自定义编写同步规则以方便各种可能的同步需求，且具备自动识别和处理上游分片 MySQL 的 DDL 变更，大幅简化运维成本。
+- **内置多种过滤器以灵活适应不同场景。**支持以预定义事件类型、正则表达式、SQL 表达式等多种方式在数据同步过程中对 MySQL binlog 事件进行过滤。
+- **集中管理。**DM 支持上千个节点的集群规模，可同时运行并集中管理大量数据迁移同步任务。
+- **对第三方 Online Schema Change 工具变更过程的同步优化。**在 MySQL 生态中，gh-ost 与 pt-osc 等工具被广泛使用，DM 对其变更过程进行了特殊的优化，以避免对不必要的中间数据进行迁移。详细信息可参考 [online-ddl](/dm/dm-online-ddl-tool-support.md)。
+- **高可用。**支持迁移任务在不同节点自由调度，少量工作节点宕机并不会影响进行中的任务。
 
-## Quick installation
-
-Run the following command to install DM:
+## 快速安装
 
 
 ```shell
@@ -33,63 +29,71 @@ curl --proto '=https' --tlsv1.2 -sSf https://tiup-mirrors.pingcap.com/install.sh
 tiup install dm dmctl
 ```
 
-## Usage restrictions
+## 使用限制
 
-Before using the DM tool, note the following restrictions:
+在使用 DM 工具之前，需了解以下限制：
 
-+ Database version requirements
++ 数据库版本要求
 
-    - MySQL version 5.6 ~ 8.0
-    - MariaDB version >= 10.1.2 (experimental features)
+    - MySQL 版本 5.6 ~ 8.0
+    - MariaDB 版本 >= 10.1.2 （实验特性）
 
-    > **Note:**
+    > **注意：**
     >
-    > If there is a primary-secondary migration structure between the upstream MySQL/MariaDB servers, then choose the following version.
-    >
-    > - MySQL version > 5.7.1
-    > - MariaDB version >= 10.1.3
+    > 如果上游 MySQL/MariaDB servers 间构成主从复制结构，则需要 MySQL 版本高于 5.7.1 或者 MariaDB 版本等于或高于 10.1.3。
 
-+ DDL syntax compatibility
++ DDL 语法兼容性限制
 
-    - Currently, TiDB is not compatible with all the DDL statements that MySQL supports. Because DM uses the TiDB parser to process DDL statements, it only supports the DDL syntax supported by the TiDB parser. For details, see [MySQL Compatibility](/mysql-compatibility.md#ddl-operations).
+    - 目前，TiDB 部分兼容 MySQL 支持的 DDL 语句。因为 DM 使用 TiDB parser 来解析处理 DDL 语句，所以目前仅支持 TiDB parser 支持的 DDL 语法。详见 [TiDB DDL 语法支持](/mysql-compatibility.md#ddl-的限制)。
 
-    - DM reports an error when it encounters an incompatible DDL statement. To solve this error, you need to manually handle it using dmctl, either skipping this DDL statement or replacing it with specified DDL statements. For details, see [Skip or replace abnormal SQL statements](/dm/dm-faq.md#how-to-handle-incompatible-ddl-statements).
+    - DM 遇到不兼容的 DDL 语句时会报错。要解决此报错，需要使用 dmctl 手动处理，要么跳过该 DDL 语句，要么用指定的 DDL 语句来替换它。详见[如何处理不兼容的 DDL 语句](/dm/dm-faq.md#如何处理不兼容的-ddl-语句)。
 
-    - DM does not replicate view-related DDL statements and DML statements to the downstream TiDB cluster. It is recommended that you create the view in the downstream TiDB cluster manually.
+    - DM 不会将视图的 DDL 语句同步到下游的 TiDB 集群，也不会将针对视图的 DML 语句同步到下游。在该场景下，建议用户在下游 TiDB 集群中自行创建视图。
 
-+ GBK character set compatibility
++ GBK 字符集兼容性限制
 
-    - DM does not support migrating `charset=GBK` tables to TiDB clusters earlier than v5.4.0.
+    - DM 在 v5.4.0 之前不支持将 `charset=GBK` 的表迁移到 TiDB。
 
-+ Binlog compatibility
++ Binlog 兼容性限制
 
-    - DM does not support the MySQL 8.0 new feature binlog [Transaction_payload_event](https://dev.mysql.com/doc/refman/8.0/en/binary-log-transaction-compression.html). Using binlog Transaction_payload_event might result in data inconsistency between upstream and downstream.
+    - DM 不支持 MySQL 8.0 的新特性 binlog 事务压缩 [Transaction_payload_event](https://dev.mysql.com/doc/refman/8.0/en/binary-log-transaction-compression.html)。使用 binlog 事务压缩有导致上下游数据不一致的风险。
 
-+ Vector data type replication
++ 向量类型数据同步
 
-    - DM does not support migrating or replicating MySQL 9.0 vector data types to TiDB.
+    - DM 不支持迁移或同步 MySQL 的向量数据类型到 TiDB。
 
 ## Contributing
 
-You are welcome to participate in the DM open sourcing project. Your contribution would be highly appreciated. For more details, see [CONTRIBUTING.md](https://github.com/pingcap/tiflow/blob/release-8.5/dm/CONTRIBUTING.md).
+欢迎参与 DM 开源项目并万分感谢您的贡献，可以查看 [CONTRIBUTING.md](https://github.com/pingcap/tiflow/blob/release-8.5/dm/CONTRIBUTING.md) 了解更多信息。
 
-## Community support
+## 社区技术支持
 
-You can learn about DM through the online documentation. If you have any questions, contact us on [GitHub](https://github.com/pingcap/tiflow/tree/release-8.5/dm).
+您可以通过在线文档了解和使用 DM，如果您遇到无法解决的问题，可以选择以下途径之一联系我们。
+
+- [GitHub](https://github.com/pingcap/tiflow/tree/release-8.5/dm)
+- [AskTUG](https://pingkai.cn/tidbcommunity/forum/tags/dm)
 
 ## License
 
-DM complies with the Apache 2.0 license. For more details, see [LICENSE](https://github.com/pingcap/tiflow/blob/release-8.5/LICENSE).
+DM 遵循 Apache 2.0 协议，在 [LICENSE](https://github.com/pingcap/tiflow/blob/release-8.5/LICENSE) 了解更多信息。
 
-## DM versions
+## 版本变更说明
 
-Before v5.4, the DM documentation is independent of the TiDB documentation. To access these earlier versions of the DM documentation, click one of the following links:
+在 v5.4 之前，DM 工具的文档独立于 TiDB 文档。要访问这些早期版本的 DM 文档，请点击以下链接：
 
-- [DM v5.3 documentation](https://docs.pingcap.com/tidb-data-migration/v5.3)
-- [DM v2.0 documentation](https://docs.pingcap.com/tidb-data-migration/v2.0/)
-- [DM v1.0 documentation](https://docs.pingcap.com/tidb-data-migration/v1.0/)
+- [DM v5.3 文档](https://docs-archive.pingcap.com/zh/tidb-data-migration/v5.3)
+- [DM v2.0 文档](https://docs-archive.pingcap.com/zh/tidb-data-migration/v2.0/)
+- [DM v1.0 文档](https://docs-archive.pingcap.com/zh/tidb-data-migration/v1.0/)
 
-> **Note:**
+> **注意：**
 >
-> - Since October 2021, DM's GitHub repository has been moved to [pingcap/tiflow](https://github.com/pingcap/tiflow/tree/release-8.5/dm). If you see any issues with DM, submit your issue to the `pingcap/tiflow` repository for feedback.
-> - In earlier versions (v1.0 and v2.0), DM uses version numbers that are independent of TiDB. Since v5.3, DM uses the same version number as TiDB. The next version of DM v2.0 is DM v5.3. There are no compatibility changes from DM v2.0 to v5.3, and the upgrade process is the same as a normal upgrade, only an increase in version number.
+> - DM 的 GitHub 代码仓库已于 2021 年 10 月迁移至 [pingcap/tiflow](https://github.com/pingcap/tiflow/tree/release-8.5/dm)。如有任何关于 DM 的问题，请在 `pingcap/tiflow` 仓库提交，以获得后续支持。
+> - 在较早版本中（v1.0 和 v2.0），DM 采用独立于 TiDB 的版本号。从 DM v5.3 起，DM 采用与 TiDB 相同的版本号。DM v2.0 的下一个版本为 DM v5.3。DM v2.0 到 v5.3 无兼容性变更，升级过程与正常升级无差异。
+
+要快速了解 DM 的原理架构、适用场景，建议先观看下面的培训视频。注意本视频只作为学习参考，具体操作步骤和最新功能，请以文档内容为准。
+
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn%2FLesson20_dm_part01.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson20.png"></video>
+
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn/Lesson20_dm_part02.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson20.png"></video>
+
+<video src="https://docs-download.pingcap.com/media/videos/docs-cn/Lesson20_part03.mp4" width="100%" height="100%" controls="controls" poster="https://docs-download.pingcap.com/media/videos/docs-cn/poster_lesson20.png"></video>

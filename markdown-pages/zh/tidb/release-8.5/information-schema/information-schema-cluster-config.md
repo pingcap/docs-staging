@@ -1,15 +1,11 @@
 ---
 title: CLUSTER_CONFIG
-summary: Learn the `CLUSTER_CONFIG` information_schema table.
+summary: 了解 information_schema 表 `CLUSTER_CONFIG`。
 ---
 
 # CLUSTER_CONFIG
 
-You can use the `CLUSTER_CONFIG` cluster configuration table to get the current configuration of all server components in the cluster. This simplifies the usage over earlier releases of TiDB, where obtaining similar information would require accessing the HTTP API endpoints of each instance.
-
-> **Note:**
->
-> This table is only applicable to TiDB Self-Managed and not available on [TiDB Cloud](https://docs.pingcap.com/tidbcloud/).
+`CLUSTER_CONFIG` 表用于获取集群当前所有组件实例的配置。在 TiDB 早期的版本，用户需要逐个访问各个实例的 HTTP API 才能收集到所有组件配置。TiDB v4.0 后，该表的引入提高了易用性。
 
 
 ```sql
@@ -28,14 +24,14 @@ DESC cluster_config;
 +----------+--------------+------+------+---------+-------+
 ```
 
-Field description:
+字段解释：
 
-* `TYPE`: The instance type. The optional values are `tidb`, `pd`, and `tikv`.
-* `INSTANCE`: The service address of the instance.
-* `KEY`: The configuration item name.
-* `VALUE`: The configuration item value.
+* `TYPE`：节点的类型，可取值为 `tidb`，`pd` 和 `tikv`。
+* `INSTANCE`：节点的服务地址。
+* `KEY`：配置项名。
+* `VALUE`：配置项值。
 
-The following example shows how to query the `coprocessor` configuration on the TiKV instance using the `CLUSTER_CONFIG` table:
+以下示例查询 TiKV 实例的 `coprocessor` 相关配置：
 
 
 ```sql

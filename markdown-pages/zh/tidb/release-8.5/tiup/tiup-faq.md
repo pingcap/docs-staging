@@ -1,61 +1,55 @@
 ---
-title: TiUP FAQs
-summary: Provide answers to common questions asked by TiUP users.
+title: TiUP FAQ
+summary: TiUP 支持自定义镜像源，可以使用环境变量 TIUP_MIRRORS 指定镜像源地址。开发者可以通过 tiup-publish 组件将自己编写的组件发布到 TiUP 的官方镜像仓库。TiUP Playground 用于快速搭建开发环境，而 TiUP Cluster 用于部署生产环境集群。拓扑文件样例包括两地三中心、最小部署和完整拓扑文件。同一主机可以部署多个实例，但需要配置不同的端口和目录信息。集群部署期间可能出现 ssh 连接错误，可尝试加大 ssh 默认连接数并重启 sshd 服务解决。
 ---
 
-# TiUP FAQs
+# TiUP FAQ
 
-This document collects the frequently asked questions (FAQs) about TiUP.
+## TiUP 是否可以不使用官方镜像源？
 
-## Can TiUP not use the official mirror source?
+TiUP 支持通过环境变量 `TIUP_MIRRORS` 指定镜像源，镜像源的地址可以是一个本地目录或 HTTP 服务器地址。如果用户的环境不能访问网络，可以建立自己的离线镜像源使用 TiUP。
 
-TiUP supports specifying the mirror source through the `TIUP_MIRRORS` environment variable. The address of the mirror source can be a local directory or an HTTP server address. If your environment cannot access the network, you can create your own offline mirror source to use TiUP.
+如果在使用非官方镜像之后想要切回官方镜像可以采取以下任一措施：
 
-After using an unofficial mirror, if you want the official mirror back and use it, take one of the following measures:
+- 将 `TIUP_MIRRORS` 变量设置成官方镜像的地址：`https://tiup-mirrors.pingcap.com`。
+- 先确保 `TIUP_MIRRORS` 变量没有设置，再使用执行 `tiup mirror set https://tiup-mirrors.pingcap.com` 命令。
 
-- Set the `TIUP_MIRRORS` variable to the official mirror address: `https://tiup-mirrors.pingcap.com`.
-- Make sure that the `TIUP_MIRRORS` variable is not set, and then execute the `tiup mirror set https://tiup-mirrors.pingcap.com` command.
+## 如何将自己编写的组件放入 TiUP 镜像仓库？
 
-## How do I put my own component into the TiUP mirrors?
+TiUP 暂时不支持外部开发的组件，但是 TiUP Team 已经制定了 TiUP 组件开发规范，同时正在开发 tiup-publish 组件，完成 tiup-publish 组件后，开发者可以通过 `tiup publish <comp> <version>` 将自己开发的组件发布到 TiUP 的官方镜像仓库。
 
-TiUP does not support third-party components for the time being, but the TiUP Team has developed the TiUP component development specifications and is developing the tiup-publish component. After everything is ready, a contributor can publish their own components to TiUP's official mirrors by using the `tiup publish <comp> <version>` command.
+## tiup-playground 和 tiup-cluster 有什么区别？
 
-## What is the difference between the TiUP playground and TiUP cluster components?
+TiUP Playground 组件主要定位是快速上手和搭建单机的开发环境，支持 Linux/macOS，要运行一个指定版本的 TiUP 集群更加简单。TiUP Cluster 组件主要是部署生产环境集群，通常是一个大规模的集群，还包含运维相关操作。TiUP Playground 部署的 TiDB 集群可能会缺失部分功能和运维操作，不建议用于完整的功能性测试和稳定性测试。
 
-The TiUP playground component is mainly used to build a stand-alone development environment on Linux or macOS operating systems. It helps you get started quickly and run a specified version of the TiUP cluster easily. The TiUP cluster component is mainly used to deploy and maintain a production environment cluster, which is usually a large-scale cluster. TiDB clusters deployed by TiUP Playground might lack some features and operational capabilities, and it is not recommended for complete functional and stability testing.
+## 怎么样编写 tiup-cluster 组件的拓扑文件？
 
-## How do I write the topology file for the TiUP cluster component?
+可以参考拓扑文件的[样例](https://github.com/pingcap/tiup/tree/master/embed/examples/cluster)，样例中包含了：
 
-Refer to [these templates](https://github.com/pingcap/tiup/tree/master/embed/examples/cluster) to write the topology file. The templates include:
+1. 两地三中心
+2. 最小部署拓扑
+3. 完整拓扑文件
 
-- Multi-DC deployment topology
-- Minimal deployment topology
-- Complete topology file
+可以根据自己的需求选择不同的模板，进行编辑。
 
-You can edit your topology file based on the templates and your needs.
+## 同一个主机是否可以部署多个实例？
 
-## Can multiple instances be deployed on the same host?
+同一个主机可以使用 TiUP Cluster 部署多个实例，但是需要配置不同的端口和目录信息，否则可能导致目录以及端口冲突。
 
-You can use the TiUP cluster component to deploy multiple instances on the same host, but with different ports and directories configured; otherwise, directory and port conflicts might occur.
+## 是否可以检测同一个集群内的端口和目录冲突？
 
-## Are port and directory conflicts detected within the same cluster?
+同一个集群的端口和目录冲突会在部署和扩容的时候进行检测，如果有目录和端口冲突，本次部署或扩容会中断。
 
-Port and directory conflicts in the same cluster are detected during deployment and scaling. If there is any directory or port conflict, the deployment or scaling process is interrupted.
+## 是否可以检测不同集群的端口和目录冲突？
 
-## Are port and directory conflicts detected among different clusters?
+如果不同集群是由同一个 TiUP 中控机部署的，会在部署和扩容时进行检测，如果属于不同的 TiUP 中控机，目前不支持检测。
 
-If multiple different clusters are deployed by the same TiUP control machine, the port and directory conflicts among these clusters are detected during deployment and scaling. If the clusters are deployed by different TiUP control machines, conflict detection is not supported currently.
+## 集群部署期间，TiUP 收到报错 `ssh: handshake failed: read tcp 10.10.10.34:38980 -> 10.10.10.34:3600: read: connection reset by peer`
 
-## During cluster deployment, TiUP received an `ssh: handshake failed: read tcp 10.10.10.34:38980 -> 10.10.10.34:3600: read: connection reset by peer` error
+该报错可能是因为 TiUP 默认并发超过 ssh 默认最大连接数导致，可尝试加大 ssh 默认连接数，然后重启 sshd 服务解决：
 
-The error might occur because the default number of concurrent threads of TiUP exceeds the default maximum number of SSH connections. To solve the issue, you can increase the default number of SSH connections, and then restart the sshd service:
-
-
-```shell
-vi /etc/ssh/sshd_config
 ```
-
-```bash
+vi /etc/ssh/sshd_config
 MaxSessions 1000
 MaxStartups 1000
 ```

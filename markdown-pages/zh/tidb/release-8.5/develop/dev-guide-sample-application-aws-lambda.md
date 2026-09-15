@@ -1,64 +1,53 @@
 ---
-title: 使用 mysql2 在 AWS Lambda 函数中连接 TiDB
-summary: 本文介绍如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 构建一个 CRUD 应用，并提供一个简单的示例代码片段。
+title: 在 AWS Lambda 函数中使用 mysql2 连接到 TiDB
+summary: 本文介绍如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 构建一个 CRUD 应用程序，并给出了简单示例代码片段。
+aliases: ['/zh/tidb/stable/dev-guide-sample-application-aws-lambda/','/zh/tidb/dev/dev-guide-sample-application-aws-lambda/','/zh/tidbcloud/dev-guide-sample-application-aws-lambda/']
 ---
 
-# 使用 mysql2 在 AWS Lambda 函数中连接 TiDB
+# 在 AWS Lambda 函数中使用 mysql2 连接到 TiDB
 
-TiDB 是一个与 MySQL 兼容的数据库，[AWS Lambda 函数](https://aws.amazon.com/lambda/) 是一项计算服务，[mysql2](https://github.com/sidorares/node-mysql2) 是一个流行的开源 Node.js 驱动程序。
+TiDB 是一个兼容 MySQL 的数据库。[AWS Lambda 函数](https://aws.amazon.com/lambda/)是一个计算服务，[mysql2](https://github.com/sidorares/node-mysql2) 是当前流行的开源 Node.js Driver 之一。
 
-在本教程中，你可以学习如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 来完成以下任务：
+本文档将展示如何在 AWS Lambda 函数中使用 TiDB 和 mysql2 来完成以下任务：
 
-- 设置你的环境。
-- 使用 mysql2 连接到你的 TiDB 集群。
-- 构建并运行你的应用程序。可选地，你可以查阅 [示例代码片段](#sample-code-snippets) 来了解基本的 CRUD 操作。
+- 配置你的环境。
+- 使用 mysql2 驱动连接到 TiDB。
+- 构建并运行你的应用程序。你也可以参考[示例代码片段](#示例代码片段)，完成基本的 CRUD 操作。
 - 部署你的 AWS Lambda 函数。
 
 > **Note**
 >
-> 本教程适用于 TiDB Cloud Starter 和 TiDB 自托管版本。
+> 本文档适用于 TiDB Cloud Starter、TiDB Cloud Essential、TiDB Cloud Premium 和本地部署的 TiDB。
 
-## 前提条件
+## 前置需求
 
-完成本教程，你需要：
+为了能够顺利完成本教程，你需要提前：
 
-- [Node.js **18**](https://nodejs.org/en/download/) 或更高版本。
-- [Git](https://git-scm.com/downloads)。
-- 一个 TiDB 集群。
-- 一个具有管理员权限的 [AWS 用户](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users.html)。
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+- 在你的机器上安装 [Node.js](https://nodejs.org/en) 18.x 或以上版本。
+- 在你的机器上安装 [Git](https://git-scm.com/downloads)。
+- 准备一个 TiDB 集群。
+- 准备一个具有管理员权限的 [AWS IAM 用户](https://docs.aws.amazon.com/zh_cn/IAM/latest/UserGuide/id_users.html)。
+- 在你的机器上安装 [AWS CLI](https://docs.aws.amazon.com/zh_cn/cli/latest/userguide/getting-started-install.html)。
+- 在你的机器上安装 [AWS SAM CLI](https://docs.aws.amazon.com/zh_cn/serverless-application-model/latest/developerguide/install-sam-cli.html)。
 
-<CustomContent platform="tidb">
+如果你还没有 TiDB 集群，可以按照以下方式创建：
 
-**如果你还没有 TiDB 集群，可以按照以下方式创建：**
+- （推荐方式）[创建 TiDB Cloud Starter 实例](/develop/dev-guide-build-cluster-in-cloud.md)。
+- [部署本地测试 TiDB Self-Managed 集群](/quick-start-with-tidb.md#deploy-a-local-test-cluster)或[部署正式 TiDB Self-Managed 集群](/production-deployment-using-tiup.md)。
 
-- (推荐) 参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
-- 参考 [Deploy a local test TiDB cluster](/quick-start-with-tidb.md#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](/production-deployment-using-tiup.md) 来创建本地集群。
+如果你还没有 AWS 账户或用户，可以按照 [Lambda 入门](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/getting-started.html)文档中的步骤来创建它们。
 
-</CustomContent>
-<CustomContent platform="tidb-cloud">
+## 运行代码并连接到 TiDB
 
-**如果你还没有 TiDB 集群，可以按照以下方式创建：**
-
-- (推荐) 参考 [Creating a TiDB Cloud Starter cluster](/develop/dev-guide-build-cluster-in-cloud.md) 来创建你自己的 TiDB Cloud 集群。
-- 参考 [Deploy a local test TiDB cluster](https://docs.pingcap.com/tidb/stable/quick-start-with-tidb#deploy-a-local-test-cluster) 或 [Deploy a production TiDB cluster](https://docs.pingcap.com/tidb/stable/production-deployment-using-tiup) 来创建本地集群。
-
-</CustomContent>
-
-如果你没有 AWS 账号或用户，可以按照 [Getting Started with Lambda](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html) 指南中的步骤创建。
-
-## 运行示例应用以连接到 TiDB
-
-本节演示如何运行示例应用代码并连接到 TiDB。
+本小节演示如何运行示例应用程序的代码，并连接到 TiDB。
 
 > **Note**
 >
-> 有关完整的代码片段和运行说明，请参考 [tidb-samples/tidb-aws-lambda-quickstart](https://github.com/tidb-samples/tidb-aws-lambda-quickstart) GitHub 仓库。
+> 完整代码及其运行方式，见代码仓库 [tidb-samples/tidb-aws-lambda-quickstart](https://github.com/tidb-samples/tidb-aws-lambda-quickstart)。
 
-### 第 1 步：克隆示例应用仓库
+### 第 1 步：克隆示例代码仓库到本地
 
-在终端窗口中运行以下命令以克隆示例代码仓库：
+运行以下命令，将示例代码仓库克隆到本地：
 
 ```bash
 git clone git@github.com:tidb-samples/tidb-aws-lambda-quickstart.git
@@ -67,7 +56,7 @@ cd tidb-aws-lambda-quickstart
 
 ### 第 2 步：安装依赖
 
-运行以下命令以安装示例应用所需的包（包括 `mysql2`）：
+运行以下命令，安装示例代码所需要的依赖（包括 mysql2）：
 
 ```bash
 npm install
@@ -75,34 +64,34 @@ npm install
 
 ### 第 3 步：配置连接信息
 
-根据你选择的 TiDB 部署方式，连接到你的 TiDB 集群。
+根据不同的 TiDB 部署方式，使用不同的方法连接到 TiDB。
 
 <SimpleTab>
 
-<div label="TiDB Cloud Starter">
+<div label="TiDB Cloud Starter 或 Essential">
 
-1. 进入 [**Clusters**](https://tidbcloud.com/console/clusters) 页面，然后点击目标集群的名称，进入其概览页面。
+1. 在 TiDB Cloud 的 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，选择你的 TiDB Cloud Starter 或 Essential 实例，进入实例的 **Overview** 页面。
 
-2. 点击右上角的 **Connect**，显示连接对话框。
+2. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
 
-3. 确认连接对话框中的配置与你的操作环境一致。
+3. 确认对话框中的选项配置和你的运行环境一致。
 
-    - **Connection Type** 设置为 `Public`
-    - **Branch** 设置为 `main`
-    - **Connect With** 设置为 `General`
-    - **Operating System** 与你的环境匹配。
+    - **Connection Type** 为 `Public`。
+    - **Branch** 选择 `main`。
+    - **Connect With** 选择 `General`。
+    - **Operating System** 为运行示例代码所在的操作系统。
 
     > **Note**
     >
-    > 在 Node.js 应用中，你无需提供 SSL CA 证书，因为 Node.js 在建立 TLS（SSL）连接时默认使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
+    > 在 Node.js 应用程序中，你无需提供 SSL CA 证书，因为在建立 TLS (SSL) 连接时，默认情况下 Node.js 使用内置的 [Mozilla CA 证书](https://wiki.mozilla.org/CA/Included_Certificates)。
 
-4. 点击 **Generate Password** 以生成随机密码。
+4. 如果你还没有设置密码，点击 **Generate Password** 按钮生成一个随机的密码。
 
     > **Tip**
     >
-    > 如果之前已生成过密码，可以使用原密码，或点击 **Reset Password** 生成新密码。
+    > 如果你之前已经生成过密码，可以直接使用原密码，或点击 **Reset Password** 重新生成密码。
 
-5. 复制并粘贴相应的连接字符串到 `env.json` 中。示例如下：
+5. 编辑 `env.json` 文件，按照如下格式设置连接信息：
 
     ```json
     {
@@ -110,18 +99,58 @@ npm install
         "TIDB_HOST": "{gateway-region}.aws.tidbcloud.com",
         "TIDB_PORT": "4000",
         "TIDB_USER": "{prefix}.root",
-        "TIDB_PASSWORD": "{password}"
+        "TIDB_PASSWORD": "{password}",
+        "TIDB_ENABLE_SSL": "true"
       }
     }
     ```
 
-    将 `{}` 中的占位符替换为连接对话框中获得的值。
+    将占位符 `{}` 替换为从连接对话框中复制的参数值。
 
 </div>
 
-<div label="TiDB Self-Managed">
+<div label="TiDB Cloud Premium">
 
-复制并粘贴相应的连接字符串到 `env.json` 中。示例如下：
+1. 在 [**My TiDB**](https://tidbcloud.com/tidbs) 页面中，点击你目标 TiDB Cloud Premium 实例的名字，进入实例的 **Overview** 页面。
+
+2. 在左侧导航栏中，点击 **Settings** > **Networking**。
+
+3. 在 **Networking** 页面，点击 **Public Endpoint** 的 **Enable**，然后点击 **Add IP Address**。
+
+    确保你的客户端 IP 地址已添加到访问列表中。
+
+4. 在左侧导航栏中，点击 **Overview** 返回实例概览页面。
+
+5. 点击右上角的 **Connect** 按钮，将会弹出连接对话框。
+
+6. 在连接对话框中，从 **Connection Type** 下拉列表中选择 **Public**。
+
+    - 如果提示 Public Endpoint 正在开启，请等待该过程完成。
+    - 如果你尚未设置密码，请在对话框中点击 **Set Root Password**。
+    - 如果需要验证服务器证书或连接失败且需要 CA 证书，请点击 **CA cert** 下载证书。
+    - 除 **Public** 连接类型外，TiDB Cloud Premium 还支持 **Private Endpoint** 连接。详情请参阅[通过 AWS PrivateLink 连接到 TiDB Cloud Premium](https://docs.pingcap.com/tidbcloud/connect-to-premium-via-aws-private-endpoint/?plan=premium)。
+
+7. 复制并粘贴对应连接字符串至 `env.json`。示例如下：
+
+    ```json
+    {
+      "Parameters": {
+        "TIDB_HOST": "{host}",
+        "TIDB_PORT": "4000",
+        "TIDB_USER": "root",
+        "TIDB_PASSWORD": "{password}",
+        "TIDB_ENABLE_SSL": "false"
+      }
+    }
+    ```
+
+    将占位符 `{}` 替换为从连接对话框中复制的参数值。
+
+</div>
+
+<div label="本地部署的 TiDB">
+
+编辑 `env.json` 文件，按照如下格式设置连接信息，将占位符 `{}` 替换为你的 TiDB 集群的连接参数值：
 
 ```json
 {
@@ -129,22 +158,21 @@ npm install
     "TIDB_HOST": "{tidb_server_host}",
     "TIDB_PORT": "4000",
     "TIDB_USER": "root",
-    "TIDB_PASSWORD": "{password}"
+    "TIDB_PASSWORD": "{password}",
+    "TIDB_ENABLE_SSL": "false"
   }
 }
 ```
-
-将 `{}` 中的占位符替换为在 **Connect** 窗口中获得的值。
 
 </div>
 
 </SimpleTab>
 
-### 第 4 步：运行代码并检查结果
+### 第 4 步：运行代码并查看结果
 
-1. （前提）安装 [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)。
+1. （前置需求）安装 [AWS SAM CLI](https://docs.aws.amazon.com/zh_cn/serverless-application-model/latest/developerguide/install-sam-cli.html)。
 
-2. 构建包：
+2. 构建应用程序包：
 
     ```bash
     npm run build
@@ -156,29 +184,29 @@ npm install
     sam local invoke --env-vars env.json -e events/event.json "tidbHelloWorldFunction"
     ```
 
-4. 在终端中查看输出。如果输出类似如下内容，说明连接成功：
+4. 检查终端中的输出。如果输出类似于以下内容，则表示连接成功：
 
     ```bash
     {"statusCode":200,"body":"{\"results\":[{\"Hello World\":\"Hello World\"}]}"}
     ```
 
-确认连接成功后，你可以按照 [下一节](#deploy-the-aws-lambda-function) 进行 AWS Lambda 函数的部署。
+确认连接成功后，你可以按照[部署 AWS Lambda 函数](#部署-aws-lambda-函数)中的步骤进行部署。
 
 ## 部署 AWS Lambda 函数
 
-你可以使用 [SAM CLI](#sam-cli-deployment-recommended) 或 [AWS Lambda 控制台](#web-console-deployment) 来部署 AWS Lambda 函数。
+你可以通过 [SAM CLI](#通过-sam-cli-部署推荐) 或 [AWS Lambda 控制台](#通过网页控制台部署)部署 AWS Lambda 函数。
 
-### SAM CLI 部署（推荐）
+### 通过 SAM CLI 部署（推荐）
 
-1. （前提）安装 [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)。
+1. （[前置需求](#前置需求)）安装 [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)。
 
-2. 构建包：
+2. 构建应用程序包：
 
     ```bash
     npm run build
     ```
 
-3. 更新 [`template.yml`](https://github.com/tidb-samples/tidb-aws-lambda-quickstart/blob/main/template.yml) 中的环境变量：
+3. 更新 [`template.yml`](https://github.com/tidb-samples/tidb-aws-lambda-quickstart/blob/main/template.yml) 文件中的环境变量：
 
     ```yaml
     Environment:
@@ -189,7 +217,7 @@ npm install
         TIDB_PASSWORD: {password}
     ```
 
-4. 设置 AWS 环境变量（参考 [Short-term credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-authentication-short-term.html)）：
+4. 参考[使用短期凭证进行身份验证](https://docs.aws.amazon.com/zh_cn/cli/latest/userguide/cli-authentication-short-term.html)文档，设置 AWS 环境变量：
 
     ```bash
     export AWS_ACCESS_KEY_ID={your_access_key_id}
@@ -202,65 +230,75 @@ npm install
     ```bash
     sam deploy --guided
 
-    # 示例：
+    # Example:
 
-    # 配置 SAM 部署
+    # Configuring SAM deploy
     # ======================
 
-    #        正在查找配置文件 [samconfig.toml] ：未找到
+    #        Looking for config file [samconfig.toml] :  Not found
 
-    #        设置 'sam deploy' 的默认参数
+    #        Setting default arguments for 'sam deploy'
     #        =========================================
     #        Stack Name [sam-app]: tidb-aws-lambda-quickstart
     #        AWS Region [us-east-1]:
-    #        # 显示即将部署的资源变更，需要输入 'Y' 来确认
+    #        #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
     #        Confirm changes before deploy [y/N]:
-    #        # SAM 需要权限创建角色以连接模板中的资源
+    #        #SAM needs permission to be able to create roles to connect to the resources in your template
     #        Allow SAM CLI IAM role creation [Y/n]:
-    #        # 在操作失败时保留之前配置的资源状态
+    #        #Preserves the state of previously provisioned resources when an operation fails
     #        Disable rollback [y/N]:
-    #        tidbHelloWorldFunction 可能没有定义授权，是否继续？ [y/N]: y
-    #        (后续提示同样输入 y)
+    #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
+    #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
+    #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
+    #        tidbHelloWorldFunction may not have authorization defined, Is this okay? [y/N]: y
+    #        Save arguments to configuration file [Y/n]:
+    #        SAM configuration file [samconfig.toml]:
+    #        SAM configuration environment [default]:
+
+    #        Looking for resources needed for deployment:
+    #        Creating the required resources...
+    #        Successfully created!
     ```
 
-### Web 控制台部署
+### 通过网页控制台部署
 
-1. 构建包：
+1. 构建应用程序包：
 
     ```bash
     npm run build
 
-    # 打包为 AWS Lambda
+    # Bundle for AWS Lambda
     # =====================
     # dist/index.zip
     ```
 
 2. 访问 [AWS Lambda 控制台](https://console.aws.amazon.com/lambda/home#/functions)。
 
-3. 按照 [创建 Lambda 函数](https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html) 的步骤，创建一个 Node.js Lambda 函数。
+3. 按照[使用 Node.js 构建 Lambda 函数](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/lambda-nodejs.html)中的步骤创建一个 Node.js Lambda 函数。
 
-4. 按照 [Lambda 部署包](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html#gettingstarted-package-zip) 的步骤，上传 `dist/index.zip` 文件。
+4. 按照 [Lambda 部署程序包](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/gettingstarted-package.html#gettingstarted-package-zip)中的步骤，上传 `dist/index.zip` 文件。
 
-5. [复制并配置相应的连接字符串](https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html) 到 Lambda 函数中。
+5. 在 Lambda 函数中[复制并配置相应的连接字符串](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/configuration-envvars.html)。
 
-    1. 在 Lambda 控制台的 [Functions](https://console.aws.amazon.com/lambda/home#/functions) 页面，选择 **Configuration** 标签，然后选择 **Environment variables**。
-    2. 选择 **Edit**。
-    3. 添加数据库访问凭据，操作如下：
-        - 选择 **Add environment variable**，在 **Key** 中输入 `TIDB_HOST`，在 **Value** 中输入主机名。
-        - 选择 **Add environment variable**，在 **Key** 中输入 `TIDB_PORT`，在 **Value** 中输入端口（默认 4000）。
-        - 选择 **Add environment variable**，在 **Key** 中输入 `TIDB_USER`，在 **Value** 中输入用户名。
-        - 选择 **Add environment variable**，在 **Key** 中输入 `TIDB_PASSWORD`，在 **Value** 中输入你创建数据库时设置的密码。
-        - 点击 **Save**。
+    1. 在 Lambda 控制台的[**函数**](https://console.aws.amazon.com/lambda/home#/functions)页面中，选择**配置** > **环境变量**。
+    2. 点击**编辑**。
+    3. 按照以下步骤添加数据库访问凭证：
+
+        - 选择**添加环境变量**，然后在**键**中输入 `TIDB_HOST`，在**值**中输入主机名。
+        - 选择**添加环境变量**，然后在**键**中输入 `TIDB_PORT`，在**值**中输入端口号（默认 `4000`）。
+        - 选择**添加环境变量**，然后在**键**中输入 `TIDB_USER`，在**值**中输入用户名。
+        - 选择**添加环境变量**，然后在**键**中输入 `TIDB_PASSWORD`，在**值**中输入数据库的密码。
+        - 点击**保存**。
 
 ## 示例代码片段
 
-你可以参考以下示例代码片段，完成你自己的应用开发。
+你可参考以下关键代码片段，完成自己的应用开发。
 
-有关完整示例代码及运行方式，请查阅 [tidb-samples/tidb-aws-lambda-quickstart](https://github.com/tidb-samples/tidb-aws-lambda-quickstart) 仓库。
+完整代码及其运行方式，见代码仓库 [tidb-samples/tidb-aws-lambda-quickstart](https://github.com/tidb-samples/tidb-aws-lambda-quickstart)。
 
 ### 连接到 TiDB
 
-以下代码使用环境变量中定义的参数建立与 TiDB 的连接：
+下面的代码使用环境变量中定义的连接选项来建立与 TiDB 集群的连接。
 
 ```typescript
 // lib/tidb.ts
@@ -270,17 +308,17 @@ let pool: mysql.Pool | null = null;
 
 function connect() {
   return mysql.createPool({
-    host: process.env.TIDB_HOST, // TiDB host，例如：{gateway-region}.aws.tidbcloud.com
-    port: process.env.TIDB_PORT ? Number(process.env.TIDB_PORT) : 4000, // TiDB 端口，默认：4000
-    user: process.env.TIDB_USER, // TiDB 用户，例如：{prefix}.root
-    password: process.env.TIDB_PASSWORD, // TiDB 密码
-    database: process.env.TIDB_DATABASE || 'test', // TiDB 数据库名，默认：test
-    ssl: {
+    host: process.env.TIDB_HOST, // TiDB host, for example: {gateway-region}.aws.tidbcloud.com
+    port: process.env.TIDB_PORT ? Number(process.env.TIDB_PORT) : 4000, // TiDB port, default: 4000
+    user: process.env.TIDB_USER, // TiDB user, for example: {prefix}.root
+    password: process.env.TIDB_PASSWORD, // TiDB password
+    database: process.env.TIDB_DATABASE || 'test', // TiDB database name, default: test
+    ssl: process.env.TIDB_ENABLE_SSL === 'true' ? {
       minVersion: 'TLSv1.2',
       rejectUnauthorized: true,
-    },
-    connectionLimit: 1, // 在无服务器函数环境中，将 connectionLimit 设置为 1，有助于优化资源使用、降低成本、确保连接稳定性，并实现无缝扩展。
-    maxIdle: 1, // 最大空闲连接数，默认值与 `connectionLimit` 相同
+    } : null,
+    connectionLimit: 1, // Setting connectionLimit to "1" in a serverless function environment optimizes resource usage, reduces costs, ensures connection stability, and enables seamless scalability.
+    maxIdle: 1, // max idle connections, the default value is the same as `connectionLimit`
     enableKeepAlive: true,
   });
 }
@@ -295,29 +333,29 @@ export function getPool(): mysql.Pool {
 
 ### 插入数据
 
-以下查询创建一个 `Player` 记录，并返回一个 `ResultSetHeader` 对象：
+下面的查询会创建一条单独的 `Player` 记录，并返回一个 `ResultSetHeader` 对象：
 
 ```typescript
 const [rsh] = await pool.query('INSERT INTO players (coins, goods) VALUES (?, ?);', [100, 100]);
 console.log(rsh.insertId);
 ```
 
-更多信息请参考 [Insert data](/develop/dev-guide-insert-data.md)。
+更多信息参考[插入数据](/develop/dev-guide-insert-data.md)。
 
 ### 查询数据
 
-以下查询根据 ID `1` 返回一个 `Player` 记录：
+下面的查询会返回一条 `Player` 记录，其 ID 为 `1`：
 
 ```typescript
 const [rows] = await pool.query('SELECT id, coins, goods FROM players WHERE id = ?;', [1]);
 console.log(rows[0]);
 ```
 
-更多信息请参考 [Query data](/develop/dev-guide-get-data-from-single-table.md)。
+更多信息参考[查询数据](/develop/dev-guide-get-data-from-single-table.md)。
 
 ### 更新数据
 
-以下查询为 ID 为 `1` 的 `Player` 添加 `50` 个金币和 `50` 件商品：
+下面的查询会将 ID 为 `1` 的 `Player` 记录的 `coins` 和 `goods` 字段的值分别增加 `50`：
 
 ```typescript
 const [rsh] = await pool.query(
@@ -327,45 +365,37 @@ const [rsh] = await pool.query(
 console.log(rsh.affectedRows);
 ```
 
-更多信息请参考 [Update data](/develop/dev-guide-update-data.md)。
+更多信息参考[更新数据](/develop/dev-guide-update-data.md)。
 
 ### 删除数据
 
-以下查询删除 ID 为 `1` 的 `Player` 记录：
+下面的查询会删除一条 `Player` 记录，其 ID 为 `1`：
 
 ```typescript
 const [rsh] = await pool.query('DELETE FROM players WHERE id = ?;', [1]);
 console.log(rsh.affectedRows);
 ```
 
-更多信息请参考 [Delete data](/develop/dev-guide-delete-data.md)。
+更多信息参考[删除数据](/develop/dev-guide-delete-data.md)。
 
-## 有用的注意事项
+## 注意事项
 
-- 使用 [connection pools](https://github.com/sidorares/node-mysql2#using-connection-pools) 管理数据库连接，可以减少频繁建立和销毁连接带来的性能开销。
-- 为了避免 SQL 注入，建议使用 [prepared statements](https://github.com/sidorares/node-mysql2#using-prepared-statements)。
-- 在涉及不多复杂 SQL 语句的场景中，使用 ORM 框架如 [Sequelize](https://sequelize.org/)、[TypeORM](https://typeorm.io/)、或 [Prisma](https://www.prisma.io/) 可以大大提高开发效率。
-- 构建应用的 RESTful API 时，建议 [使用 AWS Lambda 搭配 API Gateway](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html)。
-- 关于使用 TiDB Cloud Starter 和 AWS Lambda 构建高性能应用的最佳实践，参考 [这篇博客](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)。
+- 推荐使用[连接池](https://github.com/sidorares/node-mysql2#using-connection-pools)来管理数据库连接，以减少频繁建立和销毁连接所带来的性能开销。
+- 为了避免 SQL 注入的风险，推荐使用[预处理语句](https://github.com/sidorares/node-mysql2#using-prepared-statements)执行 SQL。
+- 在不涉及大量复杂 SQL 语句的场景下，推荐使用 ORM 框架（例如：[Sequelize](https://sequelize.org/)、[TypeORM](https://typeorm.io/) 或 [Prisma](https://www.prisma.io/)）来提升你的开发效率。
+- 如需为你的应用程序构建一个 RESTful API，建议[将 AWS Lambda 与 Amazon API Gateway 结合使用](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/services-apigateway.html)。
+- 关于使用 TiDB Cloud Starter 和 AWS Lambda 设计高性能应用程序的更多信息，可以参考[这篇博客](https://aws.amazon.com/blogs/apn/designing-high-performance-applications-using-serverless-tidb-cloud-and-aws-lambda/)。
 
-## 后续步骤
+## 下一步
 
-- 想了解更多在 AWS Lambda 函数中使用 TiDB 的细节，可以查看我们的 [TiDB-Lambda-integration/aws-lambda-bookstore Demo](https://github.com/pingcap/TiDB-Lambda-integration/blob/main/aws-lambda-bookstore/README.md)。你也可以使用 AWS API Gateway 构建应用的 RESTful API。
-- 了解更多关于 `mysql2` 的用法，请参考 [mysql2 的文档](https://sidorares.github.io/node-mysql2/docs/documentation)。
-- 了解更多关于 AWS Lambda 的用法，请参考 [AWS 开发者指南中的 `Lambda`](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)。
-- 了解使用 [Developer guide](/develop/dev-guide-overview.md) 中的章节（如 [Insert data](/develop/dev-guide-insert-data.md)、[Update data](/develop/dev-guide-update-data.md)、[Delete data](/develop/dev-guide-delete-data.md)、[Single table reading](/develop/dev-guide-get-data-from-single-table.md)、[Transactions](/develop/dev-guide-transaction-overview.md)、[SQL performance optimization](/develop/dev-guide-optimize-sql-overview.md)）的 TiDB 应用开发最佳实践。
-- 通过专业的 [TiDB 开发者课程](https://www.pingcap.com/education/) 学习，并在考试通过后获得 [TiDB 认证](https://www.pingcap.com/education/certification/)。
+- 关于在 AWS Lambda 函数中使用 TiDB 的更多细节，可以参考 [`TiDB-Lambda-integration/aws-lambda-bookstore` 示例程序](https://github.com/pingcap/TiDB-Lambda-integration/blob/main/aws-lambda-bookstore/README.md)。你也可以使用 AWS API Gateway 为你的应用程序构建 RESTful API。
+- 关于 mysql2 的更多使用方法，可以参考 [mysql2 的官方文档](https://sidorares.github.io/node-mysql2/zh-CN/docs)。
+- 关于 AWS Lambda 的更多使用方法，可以参考 [AWS Lambda 开发者指南](https://docs.aws.amazon.com/zh_cn/lambda/latest/dg/welcome.html)。
+- 你可以继续阅读开发者文档的其它章节来获取更多 TiDB 应用开发的最佳实践。例如：[插入数据](/develop/dev-guide-insert-data.md)，[更新数据](/develop/dev-guide-update-data.md)，[删除数据](/develop/dev-guide-delete-data.md)，[单表读取](/develop/dev-guide-get-data-from-single-table.md)，[事务](/develop/dev-guide-transaction-overview.md)，[SQL 性能优化](/develop/dev-guide-optimize-sql-overview.md)等。
+- 如果你更倾向于参与课程进行学习，我们也提供专业的 [TiDB 开发者课程](https://pingkai.cn/learn)支持，并在考试后提供相应的[资格认证](https://learn.pingkai.cn/learner/certification-center)。
 
-## 需要帮助？
+## 需要帮助?
 
-<CustomContent platform="tidb">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](/support.md)。
-
-</CustomContent>
-
-<CustomContent platform="tidb-cloud">
-
-在 [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) 或 [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs) 社区提问，或 [提交支持工单](https://tidb.support.pingcap.com/)。
-
-</CustomContent>
+- 在 [AskTUG 论坛](https://pingkai.cn/tidbcommunity/forum/?utm_source=docs-cn-dev-guide) 上提问
+- [提交 TiDB Cloud 工单](https://tidb.support.pingcap.com/servicedesk/customer/portals)
+- [提交 TiDB 工单](/support.md)

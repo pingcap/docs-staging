@@ -1,193 +1,186 @@
 ---
-title: Merge and Migrate Data from Sharded Tables in Optimistic Mode
-summary: Learn how DM merges and migrates data from sharded tables in the optimistic mode.
+title: 乐观模式下分库分表合并迁移
+summary: 介绍 DM 提供的乐观模式下分库分表的合并迁移功能。
 ---
 
-# Merge and Migrate Data from Sharded Tables in Optimistic Mode
+# 乐观模式下分库分表合并迁移
 
-This document introduces the sharding support feature provided by Data Migration (DM) in the optimistic mode. This feature allows you to merge and migrate the data of tables with the same or different table schema(s) in the upstream MySQL or MariaDB instances into one same table in the downstream TiDB.
+本文介绍了 DM 提供的乐观模式下分库分表的合并迁移功能，此功能可用于将上游 MySQL/MariaDB 实例中结构相同/不同的表迁移到下游 TiDB 的同一个表中。
 
-> **Note:**
+> **注意：**
 >
-> If you do not have an in-depth understanding of the optimistic mode and its restrictions, it is **NOT** recommended to use this mode. Otherwise, migration interruption or even data inconsistency might occur.
+> 在没有深入了解乐观模式的原理和使用限制的情况下不建议使用该模式，否则可能造成迁移中断甚至数据不一致的严重后果。
 
-## Background
+## 背景
 
-DM supports executing DDL statements on sharded tables online, which is called sharding DDL, and uses the "pessimistic mode" by default. In this mode, when a DDL statement is executed in an upstream sharded table, data migration of this table is paused until the same DDL statement is executed in all other sharded tables. Only by then this DDL statement is executed in the downstream and data migration resumes.
+DM 支持在线上执行分库分表的 DDL 语句（通称 Sharding DDL），默认使用“悲观模式”，即当上游一个分表执行某一 DDL 后，这个分表的迁移会暂停，等待其他所有分表都执行了同样的 DDL 才在下游执行该 DDL 并继续数据迁移。这种“悲观协调”模式的优点是可以保证迁移到下游的数据不会出错，缺点是会暂停数据迁移而不利于对上游进行灰度变更。有些用户可能会花较长时间在单一分表执行 DDL，验证一定时间后才会更改其他分表的结构。在悲观模式迁移的设定下，这些 DDL 会阻塞迁移，binlog 事件会大量积压。
 
-The pessimistic mode guarantees that the data migrated to the downstream is always correct, but it pauses the data migration, which is bad for making A/B changes in the upstream. In some cases, users might spend a long time executing DDL statements in a single sharded table and change the schemas of other sharded tables only after a period of validation. In the pessimistic mode, these DDL statements block data migration and cause many binlog events to pile up.
+因此，需要提供一种新的“乐观协调”模式，在一个分表上执行的 DDL，自动修改成兼容其他分表的语句后，立即迁移到下游，不会阻挡任何分表执行的 DML 的迁移。
 
-Therefore, an "optimistic mode" is needed. In this mode, a DDL statement executed on a sharded table is automatically converted to a statement that is compatible with other sharded tables, and then immediately migrated to the downstream. In this way, the DDL statement does not block any sharded table from executing DML migration.
+## 乐观协调模式的配置
 
-## Configuration of the optimistic mode
+在任务的配置文件中指定 `shard-mode` 为 `optimistic` 则使用“乐观协调”模式，可通过开启 `strict-optimistic-shard-mode` 限制“乐观协调”模式的行为，示例配置文件可以参考 [DM 任务完整配置文件介绍](/dm/task-configuration-file-full.md)。
 
-To use the optimistic mode, specify the `shard-mode` item in the task configuration file as `optimistic`. You can restrict the behavior of the optimistic mode by enabling the `strict-optimistic-shard-mode` configuration. For the detailed sample configuration file, see [DM Advanced Task Configuration File](/dm/task-configuration-file-full.md).
+## 使用限制
 
-## Restrictions
+使用“乐观协调”模式有一定的风险，需要严格遵照以下方针：
 
-It takes some risks to use the optimistic mode. Follow these rules when you use it:
+- 执行每个批次的 DDL 前和后，要确保每个分表的结构达成一致。
+- 进行灰度 DDL 时，只集中在一个分表上测试。
+- 灰度完成后，在其他分表上尽量以最简单直接的 DDL 迁移到最终的 schema，而不要重新执行灰度测试中对或错的每一步。
+    - 例如：在分表执行过 `ADD COLUMN A INT; DROP COLUMN A; ADD COLUMN A FLOAT;`，在其他分表直接执行 `ADD COLUMN A FLOAT` 即可，不需要三条 DDL 都执行一遍。
+- 执行 DDL 时要注意观察 DM 迁移状态。当迁移报错时，需要判断这个批次的 DDL 是否会造成数据不一致。
 
-- Ensure that the schema of every sharded table is consistent with each other before and after you execute a batch of DDL statements.
-- If you perform an A/B test, perform the test **ONLY** on one sharded table.
-- After the A/B test is finished, migrate only the most direct DDL statement(s) to the final schema. Do not re-execute every right or wrong step of the test.
+“乐观协调”模式下，上游执行的大部分 DDL 无需特别关注，将自动同步，本文使用“一类 DDL” 指代。同时，还有一部分改变列名、列属性或列默认值的 DDL，称为“二类 DDL”，上游执行时要注意必须**保证该 DDL 在各分表中按相同的顺序**执行。
 
-    For example, if you have executed `ADD COLUMN A INT; DROP COLUMN A; ADD COLUMN A FLOAT;` in a sharded table, you only need to execute `ADD COLUMN A FLOAT` in other sharded tables. You do not need to execute all of the three DDL statements again.
+“二类 DDL” 举例如下：
 
-- Observe the status of the DM migration when executing the DDL statement. When an error is reported, you need to determine whether this batch of DDL statements will cause data inconsistency.
+- 修改列的类型：`ALTER TABLE table_name MODIFY COLUMN column_name VARCHAR(20)`。
+- 重命名列：`ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`。
+- 增加没有默认值且非空的列：`ALTER TABLE table_name ADD COLUMN column_1 NOT NULL;`。
+- 重命名索引：`ALTER TABLE table_name RENAME INDEX index_1 TO index_2;`。
 
-In the optimistic mode, most of the DDL statements executed in the upstream are automatically migrated to the downstream with no extra effort required. These DDL statements are called "Type 1 DDL".
+各分表在执行以上 DDL 时，如果指定 `strict-optimistic-shard-mode: true`，会直接中断任务并报错。如果指定 `strict-optimistic-shard-mode: false` 或未指定，若分表 DDL 顺序不同，将导致同步中断，例如下述场景：
 
-DDL statements that change the column name, the column type, or the column default value are called "Type 2 DDL". When you execute Type 2 DDL statements in the upstream, make sure that you execute the DDL statements in all sharded tables in the same order.
+- 分表 1 先重命名列，再修改列类型
+    1. 重命名列：`ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`。
+    2. 修改列类型：`ALTER TABLE table_name MODIFY COLUMN column_3 VARCHAR(20);`。
+- 分表 2 先修改列类型，再重命名列
+    1. 修改列类型：`ALTER TABLE table_name MODIFY COLUMN column_3 VARCHAR(20)`。
+    2. 重命名列：`ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`。
 
-Some examples of Type 2 DDL statements are as follows:
+此外，不论是使用“乐观协调”或“悲观协调”，DM 仍是有以下限制：
 
-- Alter the type of a column: `ALTER TABLE table_name MODIFY COLUMN column_name VARCHAR(20)`.
-- Rename a column: `ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`.
-- Add a `NOT NULL` column without a default value: `ALTER TABLE table_name ADD COLUMN column_1 NOT NULL;`.
-- Rename an index: `ALTER TABLE table_name RENAME INDEX index_1 TO index_2;`.
+- 不支持 `DROP TABLE`/`DROP DATABASE`。
+- 不支持 `TRUNCATE TABLE`。
+- 单条 DDL 语句要求仅包含对一张表的操作。
+- TiDB 不支持的 DDL 语句在 DM 也不支持。
+- 新增列的默认值不能包含 `current_timestamp`、`rand()`、`uuid()` 等，否则会造成上下游数据不一致。
 
-When the sharded tables execute the DDL statements above, if `strict-optimistic-shard-mode: true` is set, the task is directly interrupted and an error is reported. If `strict-optimistic-shard-mode: false` is set or not specified, different execution order of the DDL statements in sharded tables will cause migration interruption. For example:
+## 风险 
 
-- Shard 1 renames a column and then alters the column type:
-    1. Rename a column: `ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`.
-    2. Alter the column type: `ALTER TABLE table_name MODIFY COLUMN column_3 VARCHAR(20);`.
-- Shard 2 alters a column type and then renames the column:
-    1. Alter a column type: `ALTER TABLE table_name MODIFY COLUMN column_3 VARCHAR(20)`.
-    2. Rename a column: `ALTER TABLE table_name RENAME COLUMN column_1 TO column_2;`.
+使用乐观模式迁移时，由于 DDL 会即时迁移到下游，若使用不当，可能导致上下游数据不一致。
 
-In addition, the following restrictions apply to both the optimistic mode and the pessimistic mode:
+### 使数据不一致的操作
 
-- `DROP TABLE` or `DROP DATABASE` is not supported.
-- `TRUNCATE TABLE` is not supported.
-- Each DDL statement must involve operations on only one table.
-- The DDL statement that is not supported in TiDB is also not supported in DM.
-- The default value of a newly added column must not contain `current_timestamp`, `rand()`, `uuid()`; otherwise, data inconsistency between the upstream and the downstream might occur.
+- 各分表的表结构不兼容，例：
+    - 两个分表各自添加相同名称的列，但其类型不同。
+    - 两个分表各自添加相同名称的列，但其默认值不同。
+    - 两个分表各自添加相同名称的生成列，但其生成表达式不同。
+    - 两个分表各自添加相同名称的索引，但其键组合不同。
+    - 其他同名异构的情况。
+- 在分表上执行对数据具有破坏性的 DDL，然后尝试回滚，例：
+    - 刪除一列 X，之后又把 X 加回來。
 
-## Risks
+### 例子
 
-When you use the optimistic mode for a migration task, a DDL statement is migrated to the downstream immediately. If this mode is misused, data inconsistency between the upstream and the downstream might occur.
+例如以下三个分表合并迁移到 TiDB：
 
-### Operations that cause data inconsistency
+![optimistic-ddl-fail-example-1](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-fail-example-1.png)
 
-- The schema of each sharded table is incompatible with each other. For example:
-    - Two columns of the same name are added to two sharded tables respectively, but the columns are of different types.
-    - Two columns of the same name are added to two sharded tables respectively, but the columns have different default values.
-    - Two generated columns of the same name are added to two sharded tables respectively, but the columns are generated using different expressions.
-    - Two indexes of the same name are added to two sharded tables respectively, but the keys are different.
-    - Other different table schemas with the same name.
-- Execute the DDL statement that can corrupt data in the sharded table and then try to roll back.
+在 `tbl01` 新增一列 `Age`，默认值定为 `0`：
 
-    For example, drop a column `X` and then add this column back.
-
-### Example
-
-Merge and migrate the following three sharded tables to TiDB:
-
-![optimistic-ddl-fail-example-1](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-1.png)
-
-Add a new column `Age` in `tbl01` and set the default value of the column to `0`:
-
-```sql
+```SQL
 ALTER TABLE `tbl01` ADD COLUMN `Age` INT DEFAULT 0;
 ```
 
-![optimistic-ddl-fail-example-2](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-2.png)
+![optimistic-ddl-fail-example-2](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-fail-example-2.png)
 
-Add a new column `Age` in `tbl00` and set the default value of the column to `-1`:
+ 在 `tbl00` 新增一列 `Age`，但默认值定为 `-1`：
 
-```sql
+```SQL 
 ALTER TABLE `tbl00` ADD COLUMN `Age` INT DEFAULT -1;
 ```
 
-![optimistic-ddl-fail-example-3](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-fail-example-3.png)
+![optimistic-ddl-fail-example-3](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-fail-example-3.png)
 
-By then, the `Age` column of `tbl00` is inconsistent because `DEFAULT 0` and `DEFAULT -1` are incompatible with each other. In this situation, DM will report the error, but you have to manually fix the data inconsistency.
+此时所有来自 `tbl00` 的 `Age` 都不一致了。这是由于 `DEFAULT 0` 和 `DEFAULT -1` 互不兼容。虽然 DM 遇到这种情况会报错，但上下游不一致的问题就需要手动去解决。
 
-## Implementation principle
+## 原理
 
-In the optimistic mode, after DM-worker receives the DDL statement from the upstream, it forwards the updated table schema to DM-master. DM-worker tracks the current schema of each sharded table, and DM-master merges these schemas into a composite schema that is compatible with DML statements of every sharded table. Then DM-master migrates the corresponding DDL statement to the downstream. DML statements are directly migrated to the downstream.
+在“乐观协调”模式下，DM-worker 接收到来自上游的 DDL 后，会把更新后的表结构转送给 DM-master。DM-worker 会追踪各分表当前的表结构，DM-master 合并成可兼容来自每个分表 DML 的合成结构，然后把与此对应的 DDL 迁移到下游；对于 DML 会直接迁移到下游。
 
-![optimistic-ddl-flow](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-flow.png)
+![optimistic-ddl-flow](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-flow.png)
 
-### Examples
+### 例子
 
-Assume the upstream MySQL has three sharded tables (`tbl00`, `tbl01`, and `tbl02`). Merge and migrate these sharded tables to the `tbl` table in the downstream TiDB. See the following image:
+例如上游 MySQL 有三个分表（`tbl00`, `tbl01` 以及 `tbl02`），使用 DM 迁移到下游 TiDB 的 `tbl` 表中，如下图所示：
 
-![optimistic-ddl-example-1](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-1.png)
+![optimistic-ddl-example-1](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-1.png)
 
-Add a `Level` column in the upstream:
+在上游增加一列 `Level`：
 
-```sql
+```SQL
 ALTER TABLE `tbl00` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-2](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-2.png)
+![optimistic-ddl-example-2](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-2.png)
 
-Then TiDB will receive the DML statement from `tbl00` (with the `Level` column) and the DML statement from the `tbl01` and `tbl02` tables (without the `Level` column).
+此时下游 TiDB 要准备接受来自 `tbl00` 有 `Level` 的 DML、以及来自 `tbl01` 和 `tbl02` 没有 `Level` 的 DML。
 
-![optimistic-ddl-example-3](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-3.png)
+![optimistic-ddl-example-3](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-3.png)
 
-The following DML statements can be migrated to the downstream without any modification:
+这时候如下的 DML 无需修改就可以迁移到下游：
 
-```sql
+```SQL
 UPDATE `tbl00` SET `Level` = 9 WHERE `ID` = 1;
 INSERT INTO `tbl02` (`ID`, `Name`) VALUES (27, 'Tony');
 ```
 
-![optimistic-ddl-example-4](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-4.png)
+![optimistic-ddl-example-4](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-4.png)
 
-Also add a `Level` column in `tbl01`:
+在 `tbl01` 同样增加一列 `Level`：
 
-```sql
+```SQL
 ALTER TABLE `tbl01` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-5](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-5.png)
+![optimistic-ddl-example-5](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-5.png)
 
-At this time, the downstream already have had the same `Level` column, so DM-master performs no operation after comparing the table schemas.
+此时下游已经有相同的 Level 列了，所以 DM-master 比较表结构之后不做任何操作。
 
-Drop a `Name` column in `tbl01`:
+在 `tbl01` 刪除一列 `Name`：
 
-```sql
+```SQL
 ALTER TABLE `tbl01` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-6](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-6.png)
+![optimistic-ddl-example-6](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-6.png)
 
-Then the downstream will receive the DML statements from `tbl00` and `tbl02` with the `Name` column, so this column is not immediately dropped.
+此时下游仍需要接收来自 `tbl00` 和 `tbl02` 含 `Name` 的 DML 语句，因此不会立刻删除该列。
 
-In the same way, all DML statements can still be migrated to the downstream:
+同样，各种 DML 仍可直接迁移到下游：
 
-```sql
+```SQL
 INSERT INTO `tbl01` (`ID`, `Level`) VALUES (15, 7);
 UPDATE `tbl00` SET `Level` = 5 WHERE `ID` = 5;
 ```
 
-![optimistic-ddl-example-7](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-7.png)
+![optimistic-ddl-example-7](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-7.png)
 
-Add a `Level` column in `tbl02`:
+在 `tbl02` 增加一列 `Level`：
 
-```sql
+```SQL
 ALTER TABLE `tbl02` ADD COLUMN `Level` INT;
 ```
 
-![optimistic-ddl-example-8](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-8.png)
+![optimistic-ddl-example-8](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-8.png)
 
-By then, all sharded tables have the `Level` column.
+此时所有分表都已有 `Level` 列。
 
-Drop the `Name` columns in `tbl00` and `tbl02` respectively:
+在 `tbl00` 和 `tbl02` 各刪除一列 `Name`：
 
-```sql
+```SQL
 ALTER TABLE `tbl00` DROP COLUMN `Name`;
 ALTER TABLE `tbl02` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-9](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-9.png)
+![optimistic-ddl-example-9](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-9.png)
 
-By then, the `Name` columns are dropped from all sharded tables and can be safely dropped in the downstream:
+到此步 `Name` 列也从所有分表消失了，所以可以安全从下游移除：
 
-```sql
+```SQL
 ALTER TABLE `tbl` DROP COLUMN `Name`;
 ```
 
-![optimistic-ddl-example-10](https://docs-download.pingcap.com/media/images/docs/dm/optimistic-ddl-example-10.png)
+![optimistic-ddl-example-10](https://docs-download.pingcap.com/media/images/docs-cn/dm/optimistic-ddl-example-10.png)
