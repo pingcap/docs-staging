@@ -6,7 +6,7 @@ aliases: ['/ja/tidb/stable/vector-search-full-text-search-python/','/ja/tidbclou
 
 # Pythonによる全文検索 {#full-text-search-with-python}
 
-意味的な類似性に焦点を当てる[ベクトル検索](/ai/concepts/vector-search-overview.md)とは異なり、全文検索では正確なキーワードに基づいて文書を取得できます。検索拡張生成（RAG）シナリオでは、全文検索とベクトル検索を組み合わせて使用することで、検索品質を向上させることができます。
+意味的な類似性に焦点を当てる[ベクトル検索](/ai/guides/vector-search-overview.md)とは異なり、全文検索では正確なキーワードに基づいて文書を取得できます。検索拡張生成（RAG）シナリオでは、全文検索とベクトル検索を組み合わせて使用することで、検索品質を向上させることができます。
 
 TiDBの全文検索機能は、以下の機能を提供します。
 
@@ -34,7 +34,7 @@ TiDBの全文検索機能は、以下の機能を提供します。
 
 ## さあ始めましょう {#get-started}
 
-### ステップ1. <a href="https://github.com/pingcap/pytidb">pytidb</a> Python SDKをインストールします {#step-1-install-the-a-href-https-github-com-pingcap-pytidb-pytidb-a-python-sdk}
+### ステップ1. [pytidb](https://github.com/pingcap/pytidb) Python SDKをインストールします {#step-1-install-the-pytidb-python-sdk}
 
 [pytidb](https://github.com/pingcap/pytidb)はTiDBの公式Python SDKであり、開発者が効率的にAIアプリケーションを構築できるよう設計されています。ベクトル検索と全文検索の機能が組み込まれています。
 
@@ -95,7 +95,7 @@ db = TiDBClient.connect(
 
     上記の例はあくまでも説明のためのものです。パラメータにはご自身の値を入力し、安全に保管してください。
 
-### ステップ3．表と全文索引を作成する {#step-3-create-a-table-and-a-full-text-index}
+### ステップ3．表とフルテキストインデックスを作成する {#step-3-create-a-table-and-a-full-text-index}
 
 例として、 `chunks`という名前のテーブルを作成し、以下の列を追加します。
 
@@ -157,7 +157,7 @@ df = (
 
 ## フィードバックとヘルプ {#feedback-x26-help}
 
-全文検索はまだ開発初期段階であり、利用できる地域が限られています。まだ利用できない地域で全文検索を試してみたい場合、またはご意見やご質問がある場合は、お気軽にお問い合わせください。
+全文検索はまだ開発初期段階であり、利用できるリージョンが限られています。まだ利用できないリージョンで全文検索を試してみたい場合、またはご意見やご質問がある場合は、お気軽にお問い合わせください。
 
-- [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc)or [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs)コミュニティに質問してください。
+- [Discord](https://discord.gg/DQZ2dy3cuc?utm_source=doc) または [Slack](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=pingcap-docs)コミュニティに質問してください。
 - [TiDB Cloudのサポートチケットを送信してください](https://tidb.support.pingcap.com/servicedesk/customer/portals)
