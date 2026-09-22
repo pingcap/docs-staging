@@ -227,6 +227,23 @@
           "versions": ["master"]
         }
       }
+    },
+    "tidb-cloud-filesystem": {
+      "target": "release-8.5",
+      "languages": {
+        "en": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        },
+        "zh": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        },
+        "ja": {
+          "repo": "pingcap/docs",
+          "versions": ["master"]
+        }
+      }
     }
   },
   "redirect": {
