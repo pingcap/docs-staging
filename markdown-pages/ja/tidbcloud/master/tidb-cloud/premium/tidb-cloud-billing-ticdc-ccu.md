@@ -1,6 +1,6 @@
 ---
 title: Changefeed Billing for TiDB Cloud Essential and Premium
-summary: TiDB Cloud Essential と Premium における変更フィードの課金について学びましょう。
+summary: "TiDB Cloud Essential と Premium における変更フィードの課金について学びましょう。"
 ---
 
 # TiDB Cloud Premium の課金に関する変更履歴 {#changefeed-billing-for-tidb-cloud-premium}
