@@ -146,7 +146,7 @@ TiDB Cloud Premium<CustomContent plan="byoc">またはTiDB Cloud BYOC</CustomCon
 
 1. インスタンスの[**Backup**](#view-the-backup-page)ページに移動します。
 
-2. 削除したいバックアップファイルを見つけて、 **[アクション]**列の**[...]** &gt; **[削除]**をクリックします。
+2. 削除したいバックアップファイルを見つけて、 **Action**列の**...** > **Delete**をクリックします。
 
     > **Note:**
     >
