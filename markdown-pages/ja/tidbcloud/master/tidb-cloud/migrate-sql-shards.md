@@ -110,7 +110,7 @@ CSVファイルの名前は以下のようにしてください。
 
 詳細な手順については、 [データをAmazon S3クラウドストレージにエクスポートする](https://docs.pingcap.com/tidb/stable/dumpling-overview#export-data-to-amazon-s3-cloud-storage)を参照してください。
 
-### ステップ3. スキーマを作成します<CustomContent plan="starter">TiDB Cloud Starterインスタンス</CustomContent><CustomContent plan="essential">TiDB Cloud Essentialインスタンス</CustomContent><CustomContent plan="premium">TiDB Cloud Premiumインスタンス</CustomContent><CustomContent plan="dedicated">TiDB Cloud Dedicatedクラスター</CustomContent> {#step-3-create-schemas-in-customcontent-plan-starter-tidb-cloud-starter-instance-customcontent-customcontent-plan-essential-tidb-cloud-essential-instance-customcontent-customcontent-plan-premium-tidb-cloud-premium-instance-customcontent-customcontent-plan-dedicated-tidb-cloud-dedicated-cluster-customcontent}
+### ステップ3. <CustomContent plan="starter">TiDB Cloud Starterインスタンス</CustomContent><CustomContent plan="essential">TiDB Cloud Essentialインスタンス</CustomContent><CustomContent plan="premium">TiDB Cloud Premiumインスタンス</CustomContent><CustomContent plan="dedicated">TiDB Cloud Dedicatedクラスター</CustomContent>でスキーマを作成します {#step-3-create-schemas-in-customcontent-plan-starter-tidb-cloud-starter-instance-customcontent-customcontent-plan-essential-tidb-cloud-essential-instance-customcontent-customcontent-plan-premium-tidb-cloud-premium-instance-customcontent-customcontent-plan-dedicated-tidb-cloud-dedicated-cluster-customcontent}
 
 <CustomContent plan="starter">TiDB Cloud Starterインスタンス</CustomContent><CustomContent plan="essential">TiDB Cloud Essentialインスタンス</CustomContent><CustomContent plan="premium">TiDB Cloud Premiumインスタンス</CustomContent><CustomContent plan="dedicated">TiDB Cloud Dedicatedクラスター</CustomContent>でスキーマを次のように作成します。
 
@@ -195,7 +195,7 @@ Amazon S3へのアクセスを設定した後、 TiDB Cloudコンソールで次
     - **Folder URI** : ソースデータのバケット URI を入力してください。この例では、テーブルに対応する第 2 階層のディレクトリ`s3://dumpling-s3/store/sales/`を使用することで、 TiDB Cloud はすべての MySQL インスタンスのデータを`store.sales`に一度にインポートしてマージできます。
     - **Bucket Access** > **AWS Role ARN** ：取得したロールARNを入力してください。
 
-    バケットの場所が<CustomContent plan="starter">TiDB Cloud Starterインスタンス</CustomContent><CustomContent plan="essential">TiDB Cloud Essentialインスタンス</CustomContent><CustomContent plan="premium">TiDB Cloud Premiumインスタンス</CustomContent><CustomContent plan="dedicated">TiDB Cloud Dedicatedクラスター</CustomContent>クラスターと異なる場合は、クロスリージョンのコンプライアンスを確認してください。
+    バケットの場所が<CustomContent plan="starter">TiDB Cloud Starterインスタンス</CustomContent><CustomContent plan="essential">TiDB Cloud Essentialインスタンス</CustomContent><CustomContent plan="premium">TiDB Cloud Premiumインスタンス</CustomContent><CustomContent plan="dedicated">TiDB Cloud Dedicatedクラスター</CustomContent>と異なる場合は、クロスリージョンのコンプライアンスを確認してください。
 
     TiDB Cloudは、指定されたバケット URI 内のデータにアクセスできるかどうかの検証を開始します。検証後、 TiDB Cloudはデフォルトのファイル命名パターンを使用してデータソース内のすべてのファイルのスキャンを試行し、次のページの左側にスキャンの概要結果を返します。 `AccessDenied`エラーが発生した場合は、 [S3からのデータインポート中に発生するアクセス拒否エラーのトラブルシューティング](/tidb-cloud/troubleshoot-import-access-denied-error.md)を参照してください。
 
@@ -508,7 +508,7 @@ Starting component `dmctl`: /root/.tiup/components/dmctl/${tidb_version}/dmctl/d
 
 ### ステップ4．レプリケーションタスクのステータスを確認する {#step-4-check-the-replication-task-status}
 
-DM クラスターでレプリケーションタスクが進行中かどうかを確認し、タスクの状態を表示するには、 `query-status`を使用して`tiup dmctl`コマンドを実行します。
+DM クラスターでレプリケーションタスクが進行中かどうかを確認し、タスクの状態を表示するには、 `tiup dmctl`を使用して`query-status`コマンドを実行します。
 
 ```shell
 [root@localhost ~]# tiup dmctl --master-addr 192.168.11.110:9261 query-status test-task1
