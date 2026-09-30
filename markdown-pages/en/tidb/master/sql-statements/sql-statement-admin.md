@@ -35,7 +35,7 @@ This statement is a TiDB extension syntax, used to view the status of TiDB and c
 
 | Statement                                                                                | Description                 |
 |------------------------------------------------------------------------------------------|-----------------------------|
-| [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)             | Cancels a currently running DDL jobs. |
+| [`ADMIN CANCEL DDL JOBS`](/sql-statements/sql-statement-admin-cancel-ddl.md)             | Cancels the currently running DDL jobs. |
 | [`ADMIN CHECKSUM TABLE`](/sql-statements/sql-statement-admin-checksum-table.md)          | Calculates the CRC64 of all rows + indexes of a table. |
 | [<code>ADMIN CHECK [TABLE\|INDEX]</code>](/sql-statements/sql-statement-admin-check-table-index.md) | Checks for consistency of a table or index. |
 | [<code>ADMIN SHOW DDL [JOBS\|QUERIES]</code>](/sql-statements/sql-statement-admin-show-ddl.md)      | Shows details about currently running or recently completed DDL jobs. |
@@ -48,7 +48,7 @@ This statement is a TiDB extension syntax, used to view the status of TiDB and c
 ADMIN RELOAD expr_pushdown_blacklist;
 ```
 
-The above statement is used to reload the blocklist pushed down by the expression.
+The above statement is used to reload the blocklist of expression pushdown.
 
 ```sql
 ADMIN RELOAD opt_rule_blacklist;
@@ -92,7 +92,7 @@ The above statement can generate the binding of SQL Plan from the `SELECT` state
 ADMIN EVOLVE BINDINGS;
 ```
 
-After the automatic binding feature is enabled, the evolution of SQL Plan binding information is triggered every `bind-info-leave` (the default value is `3s`). The above statement is used to proactively trigger this evolution.
+After the automatic binding feature is enabled, the evolution of SQL Plan binding information is triggered every `bind-info-lease` (the default value is `3s`). The above statement is used to proactively trigger this evolution.
 
 ```sql
 ADMIN RELOAD BINDINGS;
