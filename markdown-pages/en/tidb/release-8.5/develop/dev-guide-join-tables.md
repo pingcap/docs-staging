@@ -87,7 +87,7 @@ public List<Author> getTop10AuthorsOrderByBooks() throws SQLException {
 
 ### LEFT OUTER JOIN
 
-The left outer join returns all the rows in the left table and the values ​​in the right table that match the join condition. If no rows are matched in the right table, it will be filled with `NULL`.
+The left outer join returns all the rows in the left table and the values in the right table that match the join condition. If no rows are matched in the right table, it will be filled with `NULL`.
 
 ![Left Outer Join](https://docs-download.pingcap.com/media/images/docs/develop/left-outer-join.png)
 
@@ -190,7 +190,7 @@ public List<Book> getLatestBooksWithAverageScore() throws SQLException {
 
 ### RIGHT OUTER JOIN
 
-A right outer join returns all the records in the right table and the values ​​in the left table that match the join condition. If there is no matching value, it is filled with `NULL`.
+A right outer join returns all the records in the right table and the values in the left table that match the join condition. If there is no matching value, it is filled with `NULL`.
 
 ![Right Outer Join](https://docs-download.pingcap.com/media/images/docs/develop/right-outer-join.png)
 
