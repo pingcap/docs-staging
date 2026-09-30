@@ -36,7 +36,7 @@ TiDBとの互換性を高めるため、TiDBインストールパッケージに
 
     > **Tip:**
     >
-    > リンク内の`{version}` TiDBのバージョン番号を示し、 `{arch}`システムのアーキテクチャ（ `amd64`または`arm64`を示します。例えば、 `amd64`アーキテクチャの`v8.5.4`のダウンロードリンクは`https://download.pingcap.com/tidb-community-toolkit-v8.5.4-linux-amd64.tar.gz`です。
+    > リンク内の`{version}`はTiDBのバージョン番号を示し、 `{arch}`はシステムのアーキテクチャ（ `amd64`または`arm64`）を示します。例えば、 `amd64`アーキテクチャの`v8.5.4`のダウンロードリンクは`https://download.pingcap.com/tidb-community-toolkit-v8.5.4-linux-amd64.tar.gz`です。
 
 2. 抽出したファイルで、 `prometheus-v{version}-linux-amd64.tar.gz`を見つけて抽出します。
 
@@ -62,7 +62,7 @@ Prometheus をアップグレードするには、次のコマンドを実行し
 tiup cluster patch <cluster-name> prometheus-v{new-version}.tar.gz -R prometheus --overwrite
 ```
 
-アップグレード後、Prometheusサーバーのホームページ (通常は`http://<Prometheus-server-host-name>:9090` ) に移動し、上部のナビゲーション メニューで**[ステータス]**をクリックして、 **[ランタイムとビルド情報]**ページを開き、Prometheus のバージョンを確認し、アップグレードが成功したかどうかを確認できます。
+アップグレード後、Prometheusサーバーのホームページ (通常は`http://<Prometheus-server-host-name>:9090` ) に移動し、上部のナビゲーション メニューで**ステータス**をクリックして、 **ランタイムとビルド情報**ページを開き、Prometheus のバージョンを確認し、アップグレードが成功したかどうかを確認できます。
 
 ## Grafanaのアップグレード {#upgrade-grafana}
 
@@ -85,7 +85,7 @@ TiDBとの互換性を高めるため、TiDBインストールパッケージに
 
     > **Tip:**
     >
-    > リンク内の`{version}` TiDBのバージョン番号を示し、 `{arch}`システムのアーキテクチャ（ `amd64`または`arm64`を示します。例えば、 `amd64`アーキテクチャの`v8.5.4`のダウンロードリンクは`https://download.pingcap.com/tidb-community-toolkit-v8.5.4-linux-amd64.tar.gz`です。
+    > リンク内の`{version}`はTiDBのバージョン番号を示し、 `{arch}`はシステムのアーキテクチャ（ `amd64`または`arm64`）を示します。例えば、 `amd64`アーキテクチャの`v8.5.4`のダウンロードリンクは`https://download.pingcap.com/tidb-community-toolkit-v8.5.4-linux-amd64.tar.gz`です。
 
 2. 抽出したファイルで、 `grafana-v{version}-linux-amd64.tar.gz`を見つけて抽出します。
 
@@ -130,4 +130,4 @@ Alertmanager をアップグレードするには、次のコマンドを実行�
 tiup cluster patch <cluster-name> alertmanager-v{new-version}-linux-amd64.tar.gz -R alertmanager --overwrite
 ```
 
-アップグレード後、Alertmanagerサーバーのホームページ (通常は`http://<Alertmanager-server-host-name>:9093` ) に移動し、上部のナビゲーション メニューで**[ステータス]**をクリックして、Alertmanager のバージョンを確認し、アップグレードが成功したかどうかを確認できます。
+アップグレード後、Alertmanagerサーバーのホームページ (通常は`http://<Alertmanager-server-host-name>:9093` ) に移動し、上部のナビゲーション メニューで**ステータス**をクリックして、Alertmanager のバージョンを確認し、アップグレードが成功したかどうかを確認できます。

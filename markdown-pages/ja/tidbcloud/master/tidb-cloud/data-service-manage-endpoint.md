@@ -192,7 +192,7 @@ Data Serviceでは、データアプリに直接追加できる事前定義済�
 
 - **Tag**：エンドポイントのグループを識別するために使用されるタグ。
 
-- **Pagination**：このプロパティは、リクエストメソッドが`GET`で、エンドポイントの最後の SQL文が`SELECT`操作の場合にのみ使用できます。**Pagination**が有効になっている場合、エンドポイントを呼び出す際にクエリパラメータとして`page`と`page_size`を指定することで、結果をページネーションできます（例`https://<region>.data.tidbcloud.com/api/v1beta/app/<App ID>/endpoint/my_endpoint/get_id?page=<Page Number>&page_size=<Page Size>` 。詳細については、[エンドポイントを呼び出す](#call-an-endpoint)を参照してください。
+- **Pagination**：このプロパティは、リクエストメソッドが`GET`で、エンドポイントの最後の SQL文が`SELECT`操作の場合にのみ使用できます。**Pagination**が有効になっている場合、エンドポイントを呼び出す際にクエリパラメータとして`page`と`page_size`を指定することで、結果をページネーションできます（例： `https://<region>.data.tidbcloud.com/api/v1beta/app/<App ID>/endpoint/my_endpoint/get_id?page=<Page Number>&page_size=<Page Size>`）。詳細については、[エンドポイントを呼び出す](#call-an-endpoint)を参照してください。
 
     > **Note:**
     >
@@ -314,7 +314,7 @@ Data Serviceでは、データアプリに直接追加できる事前定義済�
 
 1. プロジェクトの[**Data Service**](https://tidbcloud.com/project/data-service)ページに移動します。
 2. 左側のペインで、対象のデータアプリの名前をクリックすると、そのエンドポイントが表示されます。
-3. 名前を変更したいエンドポイントを見つけて、 **[...]** &gt; **Rename**をクリックし、エンドポイントの新しい名前を入力します。
+3. 名前を変更したいエンドポイントを見つけて、 **...** > **Rename**をクリックし、エンドポイントの新しい名前を入力します。
 
 > **Note:**
 >
@@ -385,7 +385,7 @@ TiDB Cloud Data Serviceは、エンドポイントを呼び出すのに役立つ
 
 2. 左側のペインで、対象のデータアプリの名前をクリックすると、そのエンドポイントが表示されます。
 
-3. 呼び出したいエンドポイントを見つけて、 **[...]** &gt; **Code Example**をクリックします。**Code Example**ダイアログボックスが表示されます。
+3. 呼び出したいエンドポイントを見つけて、 **...** > **Code Example**をクリックします。**Code Example**ダイアログボックスが表示されます。
 
     > **Tip:**
     >
@@ -485,7 +485,7 @@ TiDB Cloud Data Serviceは、エンドポイントを呼び出すのに役立つ
 
 1. プロジェクトの[**Data Service**](https://tidbcloud.com/project/data-service)ページに移動します。
 2. 左側のペインで、対象のデータアプリの名前をクリックすると、そのエンドポイントが表示されます。
-3. アンデプロイするエンドポイントを見つけて、 **[...]** &gt; **Undeploy**をクリックします。
+3. アンデプロイするエンドポイントを見つけて、 **...** > **Undeploy**をクリックします。
 4. デプロイ解除を確定するには、 **Undeploy**をクリックしてください。
 
 ## エンドポイントを削除します {#delete-an-endpoint}
