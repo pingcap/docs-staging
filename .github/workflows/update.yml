@@ -31,6 +31,8 @@ concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
 jobs:
   build:
+    permissions:
+      contents: write
     concurrency: update-${{ inputs.repo }}-${{ inputs.branch }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
