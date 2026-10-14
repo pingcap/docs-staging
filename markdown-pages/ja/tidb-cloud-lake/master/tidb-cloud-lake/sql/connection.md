@@ -9,7 +9,7 @@ summary: "TiDB Cloud Lake における connection とは、外部ストレージ
 
 TiDB Cloud Lake における connection とは、外部ストレージサービスとやり取りするために必要な詳細をまとめた、指定済みの設定を指します。これは、アクセス認証情報、エンドポイント URL、ストレージタイプなどのパラメータを一元化して再利用できるセットとして機能し、TiDB Cloud Lake とさまざまなストレージサービスとの統合を容易にします。
 
-Connection は、external stage、external table、および table の attach を作成する際に利用でき、TiDB Cloud Lake を通じて外部ストレージサービスに保存されたデータを管理およびアクセスするための、簡潔でモジュール化された方法を提供します。
+Connection は、外部 stage や外部テーブルの作成、およびテーブルのアタッチに利用でき、TiDB Cloud Lake を通じて外部ストレージサービスに保存されたデータを管理およびアクセスするための、簡潔でモジュール化された方法を提供します。
 
 ## Connection の管理 {#connection-management}
 
@@ -27,7 +27,7 @@ Connection は、external stage、external table、および table の attach �
 
 ### 使用例 {#usage-examples}
 
-このセクションの例では、まず Amazon S3 に接続するために必要な認証情報を含む connection を作成します。続いて、この作成済みの connection を使用して external stage を作成し、既存の table を attach します。
+このセクションの例では、まず Amazon S3 に接続するために必要な認証情報を含む connection を作成します。続いて、この作成済みの connection を使用して 外部 stage を作成し、既存のテーブルをアタッチします。
 
 次のステートメントは、必須の接続パラメータを指定して Amazon S3 への connection を開始します。
 
@@ -59,9 +59,9 @@ CREATE STAGE my_s3_stage
 
 ```
 
-#### 例 2: Connection を使用した Table の Attach {#example-2-attaching-table-with-connection}
+#### 例 2: Connection を使用したテーブルのアタッチ {#example-2-attaching-table-with-connection}
 
-[ATTACH TABLE](/tidb-cloud-lake/sql/attach-table.md) ページには、TiDB Cloud Lake 内の新しい table を TiDB Cloud Lake 内の既存の table に接続する方法を示す [例](/tidb-cloud-lake/sql/attach-table.md#examples) があります。データは "lake-toronto" という名前の Amazon S3 バケットに保存されています。各例では、Step 3 を、前に定義した 'toronto' という名前の connection を使用して簡略化できます。
+[ATTACH TABLE](/tidb-cloud-lake/sql/attach-table.md) ページには、TiDB Cloud Lake 内の新しいテーブルを TiDB Cloud Lake 内の既存のテーブルに接続する方法を示す [例](/tidb-cloud-lake/sql/attach-table.md#examples) があります。データは "lake-toronto" という名前の Amazon S3 バケットに保存されています。各例では、Step 3 を、前に定義した 'toronto' という名前の connection を使用して簡略化できます。
 
 ```sql title='In TiDB Cloud Lake:'
 ATTACH TABLE employees_backup
@@ -78,9 +78,9 @@ ATTACH TABLE population_readonly
 
 ```
 
-#### 例 3: Connection を使用した External Table の作成 {#example-3-creating-external-table-with-connection}
+#### 例 3: Connection を使用した外部テーブルの作成 {#example-3-creating-external-table-with-connection}
 
-この例では、前に定義した 'toronto' という名前の connection を使用して、'BOOKS' という名前の external table を作成する方法を示します。
+この例では、前に定義した 'toronto' という名前の connection を使用して、'BOOKS' という名前の外部テーブルを作成する方法を示します。
 
 ```sql
 CREATE TABLE BOOKS (

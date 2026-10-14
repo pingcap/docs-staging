@@ -7,7 +7,7 @@ summary: このページでは、TiDB Cloud Lake におけるデータベース�
 
 このページでは、TiDB Cloud Lake におけるデータベース操作の包括的な概要を、参照しやすいよう機能別に整理して紹介します。
 
-## データベースの作成と管理 {#database-creation-management}
+## データベースの作成と管理 {#database-creation--management}
 
 | コマンド | 説明 |
 |---------|-------------|

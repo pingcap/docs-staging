@@ -1,11 +1,11 @@
 ---
 title: DROP INVERTED INDEX
-summary: "TiDB Cloud Lake の inverted index を削除します。"
+summary: "TiDB Cloud Lake の転置インデックスを削除します。"
 ---
 
 # DROP INVERTED INDEX
 
-TiDB Cloud Lake の inverted index を削除します。
+TiDB Cloud Lake の転置インデックスを削除します。
 
 ## 構文 {#syntax}
 

@@ -13,7 +13,7 @@ summary: Apache Superset に TiDB Cloud Lake SQLAlchemy dialect をインスト�
 
 - Docker
 - TiDB Cloud Lake のアカウント、データベース、および Warehouse
-- 接続に使用する host、username、password、database、および warehouse 名
+- 接続に使用するホスト、ユーザー名、パスワード、データベース、および Warehouse 名
 
 接続情報の取得方法については、[Warehouse に接続する](/tidb-cloud-lake/guides/warehouse.md#connecting-to-a-warehouse) を参照してください。
 
@@ -29,7 +29,7 @@ RUN pip install --no-cache-dir tidbcloudlake-sqlalchemy
 USER superset
 ```
 
-`tidbcloudlake-sqlalchemy` パッケージは、必要な TiDB Cloud Lake Python driver を依存関係としてインストールします。
+`tidbcloudlake-sqlalchemy` パッケージは、必要な TiDB Cloud Lake Python ドライバーを依存関係としてインストールします。
 
 イメージをビルドします。
 

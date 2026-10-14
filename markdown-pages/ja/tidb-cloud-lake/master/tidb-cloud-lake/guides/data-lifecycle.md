@@ -7,7 +7,7 @@ summary: "TiDB Cloud Lake は、使い慣れた Data Definition Language (DDL) �
 
 TiDB Cloud Lake は、使い慣れた Data Definition Language (DDL) および Data Manipulation Language (DML) コマンドをサポートしており、データベースを簡単に管理できます。データの整理、保存、クエリ、変更、削除のいずれを行う場合でも、TiDB Cloud Lake は一般的な業界標準に従っています。
 
-## TiDB Cloud Lake のオブジェクト {#lake-objects}
+## TiDB Cloud Lake のオブジェクト {#-lake--objects}
 
 TiDB Cloud Lake は、以下のオブジェクトの作成および変更をサポートしています。
 

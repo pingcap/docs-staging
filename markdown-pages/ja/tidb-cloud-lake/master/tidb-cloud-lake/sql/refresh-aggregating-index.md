@@ -1,11 +1,11 @@
 ---
 title: REFRESH AGGREGATING INDEX
-summary: "TiDB Cloud Lake は、新しいデータが取り込みされると、`SYNC` モードの集計インデックスを自動的に管理します。すでにデータが含まれているテーブルにインデックスを導入する場合は、以前の行をバックフィルするために REFRESH AGGREGATING INDEX を実行します。"
+summary: "TiDB Cloud Lake は、新しいデータが取り込まれると、`SYNC` モードの集計インデックスを自動的に管理します。すでにデータが含まれているテーブルにインデックスを導入する場合は、以前の行をバックフィルするために REFRESH AGGREGATING INDEX を実行します。"
 ---
 
 # REFRESH AGGREGATING INDEX
 
-TiDB Cloud Lake は、新しいデータが取り込みされると、`SYNC` モードの集計インデックスを自動的に管理します。すでにデータが含まれているテーブルにインデックスを導入する場合は、以前の行をバックフィルするために `REFRESH AGGREGATING INDEX` を実行します。
+TiDB Cloud Lake は、新しいデータが取り込まれると、`SYNC` モードの集計インデックスを自動的に管理します。すでにデータが含まれているテーブルにインデックスを導入する場合は、以前の行をバックフィルするために `REFRESH AGGREGATING INDEX` を実行します。
 
 ## 構文 {#syntax}
 
