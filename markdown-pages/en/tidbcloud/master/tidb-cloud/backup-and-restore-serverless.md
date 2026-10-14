@@ -122,7 +122,10 @@ To restore your data to a new TiDB Cloud Starter or Essential instance, take the
 5. Update the capacity as needed.
 
     - For a TiDB Cloud Starter instance, if you need more resources than the [free quota](/tidb-cloud/select-cluster-tier.md#usage-quota), set a monthly spending limit.
-    - For a TiDB Cloud Essential instance, set the minimum RCU and maximum RCU, and then configure advanced settings as needed.
+    - For a new TiDB Cloud Essential instance, configure the following capacity settings based on the TiDB kernel version, and then configure advanced settings as needed.
+
+      - For a new TiDB Cloud Essential instance running on CLOUD.202603.x or later, **Elastic Mode** is selected by default and uses a fixed **Baseline RCU** of 2,000 RCUs. If you need to limit capacity, switch to **Limited Mode** and set the maximum RCU; the minimum billing RCU is calculated automatically.
+      - For a new TiDB Cloud Essential instance running on earlier TiDB versions, set the minimum RCU and maximum RCU.
 
 6. Click **Restore** to begin the restore process.
 
