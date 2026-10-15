@@ -1,11 +1,11 @@
 ---
-title: Connect to TiDB Cloud Premium via Public Connection
-summary: Learn how to connect to your TiDB Cloud Premium via public connection.
+title: Connect to TiDB Cloud Premium or TiDB Cloud BYOC via Public Connection
+summary: Learn how to connect to your TiDB Cloud Premium or TiDB Cloud BYOC via public connection.
 ---
 
-# Connect to TiDB Cloud Premium via Public Connection
+# Connect to TiDB Cloud Premium or TiDB Cloud BYOC via Public Connection
 
-This document describes how to connect to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance via public connection. The public connection exposes a public endpoint with traffic filters, so you can connect to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance via a SQL client from your laptop.
+This document describes how to connect to your TiDB Cloud Premium or TiDB Cloud BYOC instance via public connection. The public connection exposes a public endpoint with traffic filters, so you can connect to your TiDB Cloud Premium or TiDB Cloud BYOC instance via a SQL client from your laptop.
 
 <CustomContent plan="byoc">
 
@@ -22,11 +22,11 @@ This document describes how to connect to your TiDB Cloud Premium<CustomContent 
 
 ## Prerequisite: Configure IP access list
 
-For public connections, TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> only allows client connections from addresses in the IP access list. If you have not configured the IP access list, follow the steps in [Configure an IP Access List](/tidb-cloud/premium/configure-ip-access-list-premium.md) to configure it before your first connection.
+For public connections, TiDB Cloud only allows client connections from IP addresses in the IP access list. If you have not configured the IP access list, follow the steps in [Configure an IP Access List](/tidb-cloud/premium/configure-ip-access-list-premium.md) to configure it before your first connection.
 
 ## Connect to the instance
 
-To connect to a TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance via public connection, take the following steps:
+To connect to your instance via public connection, take the following steps:
 
 <CustomContent plan="premium">
 
@@ -76,4 +76,4 @@ To connect to a TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC
 
 ## What's next
 
-After you have successfully connected to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
+After you have successfully connected to your TiDB Cloud Premium or TiDB Cloud BYOC instance, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
