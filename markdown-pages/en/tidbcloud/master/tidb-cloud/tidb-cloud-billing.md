@@ -27,7 +27,9 @@ For TiDB Cloud Premium, you are billed based on the actual [Request Capacity Uni
 
 ### Pricing for TiDB Cloud BYOC {#pricing-for-byoc}
 
-For pricing information about TiDB Cloud BYOC, contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md).
+TiDB Cloud BYOC costs include infrastructure charges paid directly to your cloud provider, a PingCAP BYOC service fee based on provisioned vCPU capacity, and a separate support fee. BYOC requires the [Enterprise support plan or higher](/tidb-cloud/connected-care-overview.md#connected-care).
+
+For pricing information about TiDB Cloud BYOC, [contact Sales](https://www.pingcap.com/contact-us/).
 
 ### Pricing for TiDB Cloud Lake {#pricing-for-lake}
 
