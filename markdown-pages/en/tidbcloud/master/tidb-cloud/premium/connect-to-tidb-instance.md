@@ -1,11 +1,11 @@
 ---
-title: Connect to Your TiDB Cloud Premium Instance
-summary: Learn how to connect to your TiDB Cloud Premium instance via different methods.
+title: Connect to Your TiDB Cloud Premium or TiDB Cloud BYOC Instance
+summary: Learn how to connect to your TiDB Cloud Premium or TiDB Cloud BYOC instance via different methods.
 ---
 
-# Connect to Your TiDB Cloud Premium Instance
+# Connect to Your TiDB Cloud Premium or TiDB Cloud BYOC Instance
 
-This document describes how to connect to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance.
+This document describes how to connect to your TiDB Cloud Premium or TiDB Cloud BYOC instance.
 
 > **Tip:**
 >
@@ -13,7 +13,7 @@ This document describes how to connect to your TiDB Cloud Premium<CustomContent 
 
 ## Connection methods
 
-After your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance is created on TiDB Cloud, you can connect to it via direct connections.
+After your TiDB Cloud Premium or TiDB Cloud BYOC instance is created on TiDB Cloud, you can connect to it via direct connections.
 
 Direct connections mean the MySQL native connection system over TCP. You can connect to your instance using any tool that supports MySQL connection, such as [MySQL client](https://dev.mysql.com/doc/refman/8.0/en/mysql.html).
 
@@ -23,7 +23,7 @@ Direct connections mean the MySQL native connection system over TCP. You can con
 
 ## Network
 
-There are two network connection types for TiDB Cloud Premium<CustomContent plan="byoc"> and TiDB Cloud BYOC</CustomContent>:
+There are two network connection types for TiDB Cloud Premium and TiDB Cloud BYOC:
 
 - [Private endpoint](/tidb-cloud/premium/connect-to-premium-via-aws-private-endpoint.md) (recommended)
 
@@ -31,7 +31,7 @@ There are two network connection types for TiDB Cloud Premium<CustomContent plan
 
 - [Public endpoint](/tidb-cloud/premium/connect-to-premium-via-public-connection.md)
 
-    The standard connection exposes a public endpoint, so you can connect to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance via a SQL client from your laptop.
+    The standard connection exposes a public endpoint, so you can connect to your TiDB Cloud Premium or TiDB Cloud BYOC instance via a SQL client from your laptop.
 
 <!-- To ensure the security of data transmission, you need to [establish a TLS connection](/tidb-cloud/premium/tidb-cloud-tls-connect-to-premium.md) from your client to your instance. -->
 
@@ -43,4 +43,4 @@ The following table shows the network you can use:
 
 ## What's next
 
-After you have successfully connected to your TiDB Cloud Premium<CustomContent plan="byoc"> or TiDB Cloud BYOC</CustomContent> instance, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
+After you have successfully connected to your TiDB Cloud Premium or TiDB Cloud BYOC instance, you can [explore SQL statements with TiDB](/basic-sql-operations.md).
