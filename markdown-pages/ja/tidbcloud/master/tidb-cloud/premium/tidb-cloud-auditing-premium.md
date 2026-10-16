@@ -1,6 +1,6 @@
 ---
 title: "TiDB Cloud Premium または TiDB Cloud BYOC のデータベース監査ログ"
-summary: TiDB Cloud Premium または TiDB Cloud BYOC インスタンスでデータベース監査ログを有効にし、監査フィルターとクラウドストレージを設定する方法を学びましょう。
+summary: "TiDB Cloud Premium または TiDB Cloud BYOC インスタンスでデータベース監査ログを有効にし、監査フィルターとクラウドストレージを設定する方法を学びましょう。"
 ---
 
 # TiDB Cloud Premium or TiDB Cloud BYOC Database Audit Logging
