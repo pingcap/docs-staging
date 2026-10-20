@@ -165,7 +165,7 @@ TiDB Cloud Dedicated の changefeed の請求については、[TiDB Cloud Dedic
 
 <CustomContent plan="premium">
 
-TiDB Cloud Premium の changefeed の請求については、[TiDB Cloud Premium の Changefeed Billing](/tidb-cloud/premium/tidb-cloud-billing-ticdc-ccu.md) を参照してください。
+TiDB Cloud Premium の changefeed の請求については、[TiDB Cloud Premium の Changefeed 課金](/tidb-cloud/premium/tidb-cloud-billing-ticdc-ccu.md) を参照してください。
 
 </CustomContent>
 
