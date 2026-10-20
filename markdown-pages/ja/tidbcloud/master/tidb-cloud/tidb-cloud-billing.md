@@ -27,9 +27,9 @@ TiDB Cloud Premium の場合、基礎となるバックエンド ノードやプ
 
 ### TiDB Cloud BYOC の料金 {#pricing-for-byoc}
 
-TiDB Cloud BYOC の費用には、クラウドプロバイダに直接支払うインフラ料金、プロビジョニングされた vCPU 容量に基づく PingCAP BYOC サービス料金、および別途のサポート料金が含まれます。BYOC を利用するには、[Enterprise support plan or higher](/tidb-cloud/connected-care-overview.md#connected-care) が必要です。
+TiDB Cloud BYOC の費用には、クラウドプロバイダに直接支払うインフラ料金、プロビジョニングされた vCPU キャパシティに基づく PingCAP BYOC サービス料金、および別途のサポート料金が含まれます。BYOC を利用するには、[Enterprise サポートプラン以上](/tidb-cloud/connected-care-overview.md#connected-care) が必要です。
 
-TiDB Cloud BYOC の料金情報については、[Sales にお問い合わせください](https://www.pingcap.com/contact-us/)。
+TiDB Cloud BYOC の料金情報については、[営業担当にお問い合わせください](https://www.pingcap.com/contact-us/)。
 
 ### TiDB Cloud Lake の料金 {#pricing-for-lake}
 

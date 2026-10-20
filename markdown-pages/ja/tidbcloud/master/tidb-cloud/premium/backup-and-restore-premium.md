@@ -11,7 +11,7 @@ aliases: ['/ja/tidbcloud/restore-deleted-tidb-cluster']
 バックアップファイルは、以下のソースから生成される可能性があります。
 
 - アクティブな TiDB Cloud Premium または TiDB Cloud BYOC インスタンス
-- 削除された TiDB Cloud Premium または TiDB Cloud BYOC インスタンスのバックアップ用の Recycle Bin
+- 削除された TiDB Cloud Premium または TiDB Cloud BYOC インスタンスのバックアップ用のごみ箱
 
 > **Tip:**
 >
@@ -144,7 +144,7 @@ TiDB Cloud Premium または TiDB Cloud BYOC インスタンスの既存のバ�
 
 <CustomContent plan="premium">
 
-- **Storage location**：手動バックアップは、TiDBが管理するクラウドストレージに保存されます。
+- **保存場所**：手動バックアップは、TiDBが管理するクラウドストレージに保存されます。
 
 - **コスト**：手動バックアップは、削除するまで保持されるため、追加料金が発生します。
 
@@ -152,7 +152,7 @@ TiDB Cloud Premium または TiDB Cloud BYOC インスタンスの既存のバ�
 
 <CustomContent plan="byoc">
 
-- **Storage location**：手動バックアップは、お客様のクラウドアカウントに保存されます。
+- **保存場所**：手動バックアップは、お客様のクラウドアカウントに保存されます。
 
 - **コスト**：TiDB Cloud はバックアップまたは復元操作に対して料金を請求しません。クラウドアカウント内のバックアップファイルのストレージおよびデータ転送コストはお客様の負担となります。
 
@@ -227,7 +227,7 @@ TiDB Cloudは、新しいインスタンスへのデータ復元をサポート�
 
     TiDB Cloud BYOC の場合は、バックアップと同じクラウドプロバイダーおよびリージョンにあるアクティブなリソースプールを選択します。復元されたインスタンスは、選択したリソースプールの高可用性モードを継承します。同じバックアップをゾーンリソースプールまたはリージョンリソースプールに復元できます。適切なリソースプールがない場合は、`Organization Owner` がインスタンスを復元する前に作成できます。その他のロールではリソースプールを作成できません。詳細については、[Create a Resource Pool](/tidb-cloud/byoc/create-resource-pool-byoc.md) を参照してください。
 
-    選択したリソースプールに Pool vCPU Limit が設定されており、現在プロビジョニングされている vCPU がその制限以上である場合、TiDB Cloud は警告を表示し、そのリソースプールにはインスタンスを復元できません。続行するには、Resource Pool の詳細ページに移動して Pool vCPU Limit を増やすか無効にするか、別のリソースプールを選択してください。
+    選択したリソースプールに Pool vCPU Limit が設定されており、現在プロビジョニングされている vCPU がその制限以上である場合、TiDB Cloud は警告を表示し、そのリソースプールにはインスタンスを復元できません。続行するには、リソースプールの詳細ページに移動して Pool vCPU Limit を増やすか無効にするか、別のリソースプールを選択してください。
 
     > **Note:**
     >
@@ -357,7 +357,7 @@ TiDB Cloud Premium と TiDB Cloud BYOC は、クラウドストレージ（Amazo
 
     TiDB Cloud BYOC では、対象のクラウドプロバイダーとリージョンに一致するアクティブなリソースプールを選択してください。復元されたインスタンスは、選択したリソースプールの高可用性モードを継承します。同じバックアップをゾーンリソースプールまたはリージョンリソースプールに復元できます。適切なリソースプールがない場合は、`Organization Owner` がインスタンスを復元する前に作成できます。その他のロールではリソースプールを作成できません。詳細については、[Create a Resource Pool](/tidb-cloud/byoc/create-resource-pool-byoc.md)を参照してください。
 
-    選択したリソースプールに Pool vCPU Limit が設定されており、現在プロビジョニングされている vCPU がその制限以上である場合、TiDB Cloud は警告を表示し、そのリソースプールにはインスタンスを復元できません。続行するには、Resource Pool の詳細ページに移動して Pool vCPU Limit を増やすか無効にするか、別のリソースプールを選択してください。
+    選択したリソースプールに Pool vCPU Limit が設定されており、現在プロビジョニングされている vCPU がその制限以上である場合、TiDB Cloud は警告を表示し、そのリソースプールにはインスタンスを復元できません。続行するには、リソースプールの詳細ページに移動して Pool vCPU Limit を増やすか無効にするか、別のリソースプールを選択してください。
 
     > **Note:**
     >

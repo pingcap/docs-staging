@@ -1,11 +1,11 @@
 ---
-title: Import Data from Amazon S3 into TiDB Cloud Premium
-summary: コンソールウィザードを使用して、Amazon S3からTiDB Cloud PremiumインスタンスにCSVファイルをインポートする方法を学びましょう。
+title: Amazon S3からTiDB Cloud PremiumまたはTiDB Cloud BYOCにデータをインポートする
+summary: コンソールウィザードを使用して、Amazon S3からTiDB Cloud PremiumまたはTiDB Cloud BYOCインスタンスにCSVファイルをインポートする方法を学びましょう。
 ---
 
 # Amazon S3からTiDB Cloud PremiumまたはTiDB Cloud BYOCにデータをインポートする {#import-data-from-amazon-s3-into-tidb-cloud-premium}
 
-このドキュメントでは、Amazon Simple Storage Service (Amazon S3) からTiDB Cloud Premium インスタンスに CSV ファイルをインポートする方法について説明します。
+このドキュメントでは、Amazon Simple Storage Service (Amazon S3) からTiDB Cloud Premium または TiDB Cloud BYOC インスタンスに CSV ファイルをインポートする方法について説明します。
 
 > **Tip:**
 >
@@ -80,5 +80,5 @@ TiDB Cloud BYOC インスタンスで AWS Role ARN を使用する場合、IAM �
 
 ## 次のステップ {#next-steps}
 
-- スクリプトによるインポートについては[Import Data into TiDB Cloud Premium or TiDB Cloud BYOC using the MySQL Command-Line Client](/tidb-cloud/premium/import-with-mysql-cli-premium.md)を参照してください。
+- スクリプトによるインポートについては[MySQLコマンドラインクライアントを使用してTiDB Cloud PremiumまたはTiDB Cloud BYOCにデータをインポートする](/tidb-cloud/premium/import-with-mysql-cli-premium.md)を参照してください。
 - IAM関連の問題については[Amazon S3からのデータインポート中に発生するアクセス拒否エラーのトラブルシューティング](/tidb-cloud/troubleshoot-import-access-denied-error.md)を参照してください。
