@@ -11,7 +11,7 @@ By the snapshot ID or timestamp you specify in the command, TiDB Cloud Lake flas
 
 The capability to flash back a table is subject to these conditions:
 
-- The command only existing tables to their prior states. To recover a dropped table, use [UNDROP TABLE](/tidb-cloud-lake/sql/undrop-table.md).
+- The command only restores existing tables to their prior states. To recover a dropped table, use [UNDROP TABLE](/tidb-cloud-lake/sql/undrop-table.md).
 
 - Flashback a table is part of TiDB Cloud Lake's time travel feature. Before using the command, make sure the table you want to flashback is eligible for time travel. For example, the command doesn't work for transient tables because TiDB Cloud Lake does not create or store snapshots for such tables.
 
