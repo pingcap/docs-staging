@@ -13,7 +13,7 @@ Roles in TiDB Cloud Lake play a pivotal role in simplifying the management of pe
 
 Role granting enables one role to inherit permissions and responsibilities from another. This contributes to the creation of a flexible hierarchy, similar to the organizational structure, where two [Built-in Roles](#built-in-roles) exist: the highest being `account-admin` and the lowest being `public`.
 
-Consider the scenario where three roles are created: *manager*, *engineer*, and *intern*. In this example, the role of *intern* is granted to the engineer *role*. Consequently, the *engineer* not only possesses their own set of privileges but also inherits those associated with the *intern* role. Extending this hierarchy further, if the *engineer* role is granted to the *manager*, the *manager* now acquires both the inherent privileges of the *engineer* and the *intern* roles.
+Consider the scenario where three roles are created: *manager*, *engineer*, and *intern*. In this example, the role of *intern* is granted to the *engineer* role. Consequently, the *engineer* not only possesses their own set of privileges but also inherits those associated with the *intern* role. Extending this hierarchy further, if the *engineer* role is granted to the *manager*, the *manager* now acquires both the inherent privileges of the *engineer* and the *intern* roles.
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/access-control-4.png)
 

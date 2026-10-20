@@ -24,7 +24,7 @@ After TiDB Cloud Lake support shares the trusted principal information for your 
 
    For example: `arn:aws:iam::123456789012:role/xxxxxxx/tnabcdefg/xxxxxxx-tnabcdefg`
 
-2. Goto AWS Console:
+2. Go to AWS Console:
 
    <https://us-east-2.console.aws.amazon.com/iam/home?region=us-east-2#/policies>
 
@@ -50,7 +50,7 @@ After TiDB Cloud Lake support shares the trusted principal information for your 
 
    Click `Next`, and input the policy name: `lake-test`, and click `Create policy`
 
-3. Goto AWS Console:
+3. Go to AWS Console:
 
    <https://us-east-2.console.aws.amazon.com/iam/home?region=us-east-2#/roles>
 
@@ -58,7 +58,7 @@ After TiDB Cloud Lake support shares the trusted principal information for your 
 
    ![Create Role](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/create-role.png)
 
-   Input the the trust policy document:
+   Input the trust policy document:
 
    ```json
    {

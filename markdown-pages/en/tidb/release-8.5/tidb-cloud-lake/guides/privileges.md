@@ -119,7 +119,7 @@ TiDB Cloud Lake offers a range of privileges that allow you to exercise fine-gra
 | ALL               | Grants all the privileges for the specified object type.                                                          |
 | ALTER             | Adds or drops a table column. Alters a cluster key. Re-clusters a table.                                          |
 | CREATEROLE        | Creates a role.                                                                                                   |
-| CREAT DATABASE    | Creates a DATABASE.                                                                                               |
+| CREATE DATABASE   | Creates a DATABASE.                                                                                               |
 | CREATE WAREHOUSE  | Creates a WAREHOUSE.                                                                                              |
 | CREATE CONNECTION | Creates a CONNECTION.                                                                                             |
 | DROPUSER          | Drops a user.                                                                                                     |
