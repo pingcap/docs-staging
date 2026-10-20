@@ -90,7 +90,6 @@ SET GLOBAL DATA_RETENTION_TIME_IN_DAYS = 2;
 
 | Edition                                  | Default Retention | Max. Retention   |
 | ---------------------------------------- | ----------------- | ---------------- |
-| TiDB Cloud Lake Community & Enterprise Editions | 1 day (24 hours)  | 90 days          |
 | TiDB Cloud Lake (Personal)                | 1 day (24 hours)  | 1 day (24 hours) |
 | TiDB Cloud Lake (Business)                | 1 day (24 hours)  | 90 days          |
 

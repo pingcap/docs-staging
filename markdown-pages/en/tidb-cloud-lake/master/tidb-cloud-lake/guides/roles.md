@@ -26,7 +26,7 @@ TiDB Cloud Lake comes with the following built-in roles:
 | account-admin | Possesses all privileges, serves as the parent role for all other roles, and enables seamless switching to any role within the tenant. |
 | public        | Inherits no permissions, considers all roles as its parent roles, and allows any role to switch to the public role.                    |
 
-To assign the `account-admin` role to a user in TiDB Cloud Lake, select the role when inviting the user. You can also assign the role to a user after they join. If you're using TiDB Cloud Lake Community Edition or Enterprise Edition, configure an `account-admin` user during deployment first, and then assign the role to other users if needed.
+To assign the `account-admin` role to a user in TiDB Cloud Lake, select the role when inviting the user. You can also assign the role to a user after they join.
 
 ## Setting Default Role
 
