@@ -121,7 +121,7 @@ For detailed information on obtaining connection details, see [Connecting to a W
 
 ## Using Custom Plugin (Alternative)
 
-For advanced use cases requiring direct SQL access or when working with self-hosted TiDB Cloud Lake, you can use the Grafana TiDB Cloud Lake Data Source Plugin.
+For advanced use cases requiring direct SQL access, you can use the Grafana TiDB Cloud Lake Data Source Plugin.
 
 ### Step 1. Set up Environment
 
