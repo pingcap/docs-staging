@@ -60,7 +60,7 @@ DROP GLOBAL BINDING for
 
 [システム変数](/system-variables.md)を参照してください。
 
-## `ORDER BY`を省略した場合、結果の順序はMySQLと異なります。 {#the-order-of-results-is-different-from-mysql-when-order-by-is-omitted}
+## `ORDER BY`を省略した場合、結果の順序はMySQLと異なる {#the-order-of-results-is-different-from-mysql-when-order-by-is-omitted}
 
 これはバグではありません。レコードのデフォルトの順序は様々な状況に依存し、一貫性は保証されません。
 
@@ -271,7 +271,7 @@ DDL操作がブロックされておらず、各TiDBサーバーがスキーマ�
 
 - TiDBが終了し、PDとの正常な通信が不可能になります（電源オフ時を含む）。または、TiDBがコマンド`kill -9`によって終了し、PDから登録データを適切なタイミングでクリアできなくなります。
 
-- クラスター内の特定の TiDB ノードと PD または TiKV の間で通信の問題が発生し、TiDB が最新のバージョン情報を時間内に取得できなくなります。
+- クラスター内の特定の TiDB ノードと PD または TiKV の間で通信の問題が発生し、TiDB が最新のバージョン情報を速やかに取得できなくなります。
 
 ### `Information schema is changed`エラーの原因は何ですか? {#what-triggers-the-information-schema-is-changed-error}
 

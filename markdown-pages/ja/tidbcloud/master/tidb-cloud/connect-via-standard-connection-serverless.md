@@ -37,7 +37,7 @@ TiDB Cloudプランに応じて、適切なエンドポイントモデルを選�
     > - MySQL互換のTiDB Cloud StarterおよびTiDB Cloud Essentialインスタンスでは、**Connection Type**ドロップダウンリストで**Private Endpoint**を選択することもできます。詳細については、以下のドキュメントを参照してください。
     >
     >     - [AWS PrivateLink経由でTiDB Cloud StarterまたはEssentialに接続します](/tidb-cloud/set-up-private-endpoint-connections-serverless.md)
-    >     - [Alibaba Cloudプライベートエンドポイント経由でTiDB Cloud StarterまたはEssentialに接続します](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
+    >     - [Alibaba Cloudプライベートエンドポイント経由でTiDB Cloud StarterまたはEssentialに接続する](/tidb-cloud/set-up-private-endpoint-connections-on-alibaba-cloud.md)
 
     </CustomContent>
 

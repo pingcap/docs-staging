@@ -280,14 +280,14 @@ MySQL [test]> select @@last_plan_from_cache; -- The cached plan cannot be select
 1 row in set (0.00 sec)
 ```
 
-現在、TiDBは`GLOBAL`実行プランキャッシュのクリアをサポートしていません。つまり、TiDBクラスタ全体のキャッシュされた実行プランをクリアすることはできません。`GLOBAL`実行プランキャッシュをクリアしようとすると、以下のエラーが報告されます。
+現在、TiDBは`GLOBAL`実行プランキャッシュのクリアをサポートしていません。つまり、TiDBクラスタ全体のキャッシュされた実行プランをクリアできません。`GLOBAL`実行プランキャッシュをクリアしようとすると、以下のエラーが報告されます。
 
 ```sql
 MySQL [test]> admin flush global plan_cache;
 ERROR 1105 (HY000): Do not support the 'admin flush global scope.'
 ```
 
-## `COM_STMT_CLOSE`コマンドと`DEALLOCATE PREPARE`文を無視します。 {#ignore-the-com_stmt_close-command-and-the-deallocate-prepare-statement}
+## `COM_STMT_CLOSE`コマンドと`DEALLOCATE PREPARE`文を無視する {#ignore-the-com_stmt_close-command-and-the-deallocate-prepare-statement}
 
 SQL文の構文解析コストを削減するには、 `prepare stmt` 1回実行し、次に`execute stmt`複数回実行してから`deallocate prepare`を実行することをお勧めします。
 
