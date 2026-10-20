@@ -158,7 +158,7 @@ Node            Check         Result  Message
 192.168.124.27  service       Fail    service firewalld is running but should be stopped
 ```
 
-no-sudoモードでは、 `tidb`ユーザーにはsudo権限がありません。そのため、 `tiup cluster check topology.yaml --apply --user tidb`を実行しても失敗したチェック項目を自動的に修正することはできません。対象マシンで`root`ユーザーを使用して手動で修正する必要があります。
+no-sudoモードでは、 `tidb`ユーザーにはsudo権限がありません。そのため、 `tiup cluster check topology.yaml --apply --user tidb`を実行しても失敗したチェック項目を自動的に修正できません。対象マシンで`root`ユーザーを使用して手動で修正する必要があります。
 
 詳細については、 [TiDB環境とシステム設定のチェック](/check-before-deployment.md)を参照してください。ドキュメントの手順[SSH相互信頼とパスワードなしのsudoを手動で設定する](/check-before-deployment.md#manually-configure-the-ssh-mutual-trust-and-sudo-without-password)をスキップする必要があることに注意してください。
 
@@ -200,7 +200,7 @@ tiup cluster upgrade mycluster v8.2.0
 
 ## FAQ {#faq}
 
-### user@.service の起動時に`Trying to run as user instance, but $XDG_RUNTIME_DIR is not set.`エラーが発生します。 {#the-trying-to-run-as-user-instance-but-xdg-runtime-dir-is-not-set-error-occurs-when-starting-x3c-user-service}
+### user@.service の起動時に`Trying to run as user instance, but $XDG_RUNTIME_DIR is not set.`エラーが発生する {#the-trying-to-run-as-user-instance-but-xdg-runtime-dir-is-not-set-error-occurs-when-starting-x3c-user-service}
 
 この問題は、 `/etc/pam.d/system-auth.ued`ファイルに`pam_systemd.so`が存在しないために発生する可能性があります。
 

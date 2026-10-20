@@ -13,7 +13,7 @@ summary: TiUPの使用中に問題が発生した場合のトラブルシュー�
 
 TiUPはミラーサーバーから最新のコンポーネントリストを毎回更新するわけではありません。`tiup list`を実行することで、コンポーネントリストを強制的に更新できます。
 
-### `tiup list &lt;component&gt;`を使用してコンポーネントの最新バージョン情報を表示できません {#cant-see-the-latest-version-information-of-a-component-using-tiup-list-component}
+### `tiup list <component>`を使用してコンポーネントの最新バージョン情報を表示できません {#cant-see-the-latest-version-information-of-a-component-using-tiup-list-component}
 
 前回の問題と同様に、コンポーネントのバージョン情報は、ローカルキャッシュが存在しない場合にのみミラーサーバーから取得されます。`tiup list <component>`を実行することでコンポーネントリストを更新できます。
 
@@ -51,6 +51,6 @@ CDNサーバーのキャッシュ時間が短いため、新しいチェック�
 
 同じコンポーネントの再起動されていないノードの数が比較的多い場合は、 `tiup cluster restart -R <component>`を実行して特定のタイプのコンポーネントを再起動することもできます。
 
-### アップグレード中に、 `node_exporter-9100.service/blackbox_exporter-9115.service`が存在しないことがわかります。 {#during-the-upgrade-you-find-that-node-exporter-9100-service-blackbox-exporter-9115-service-does-not-exist}
+### アップグレード中に、 `node_exporter-9100.service/blackbox_exporter-9115.service`が存在しないことがわかる {#during-the-upgrade-you-find-that-node-exporter-9100-service-blackbox-exporter-9115-service-does-not-exist}
 
 以前にTiDB Ansibleからクラスタを移行し、エクスポーターがTiDB Ansibleにデプロイされていない場合、この状況が発生する可能性があります。この問題を解決するには、当面の間、他のノードから新しいノードに不足しているファイルを手動でコピーしてください。TiUPチームは、移行プロセス中に不足しているコンポーネントを補完します。

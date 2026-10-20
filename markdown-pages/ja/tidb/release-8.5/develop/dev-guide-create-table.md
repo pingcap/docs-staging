@@ -113,7 +113,7 @@ CREATE TABLE `bookshop`.`books` (
 
 テーブルは、**主キー**なし、または非整数の**主キー**を使用して作成できます。この場合、TiDB は**暗黙の主キー**として`_tidb_rowid`を作成します。暗黙の主キー`_tidb_rowid`は単調増加する性質を持つため、書き込み負荷の高いシナリオでは書き込みホットスポットが発生する可能性があります。したがって、アプリケーションが書き込み負荷の高い場合は、 [`SHARD_ROW_ID_BITS`](/shard-row-id-bits.md)および[`PRE_SPLIT_REGIONS`](/sql-statements/sql-statement-split-region.md#pre_split_regions)パラメータを使用してデータをシャーディングすることを検討してください。ただし、これにより読み取り増幅が発生する可能性があるため、トレードオフを独自に判断する必要があります。
 
-テーブルの**主キー**が[整数型](/data-type-numeric.md#integer-types)で`AUTO_INCREMENT`が使用されている場合、 `SHARD_ROW_ID_BITS`を使用してもホットスポットを回避することはできません。ホットスポットを回避する必要があり、かつ連続的かつ増分的な主キーが必要ない場合は、 `AUTO_INCREMENT`の代わりに[`AUTO_RANDOM`](/auto-random.md)を使用して行 ID の連続性を排除できます。
+テーブルの**主キー**が[整数型](/data-type-numeric.md#integer-types)で`AUTO_INCREMENT`が使用されている場合、 `SHARD_ROW_ID_BITS`を使用してもホットスポットを回避できません。ホットスポットを回避する必要があり、かつ連続的かつ増分的な主キーが必要ない場合は、 `AUTO_INCREMENT`の代わりに[`AUTO_RANDOM`](/auto-random.md)を使用して行 ID の連続性を排除できます。
 
 TiDB Self-Managedでホットスポットの問題を処理する方法の詳細については、[ホットスポットの問題をトラブルシューティングする](/troubleshoot-hot-spot-issues.md)を参照してください。
 
@@ -293,7 +293,7 @@ EXPLAIN ANALYZE SELECT HOUR(`rated_at`), AVG(`score`) FROM `bookshop`.`ratings` 
 
 フィールド`cop[tiflash]`が表示された場合、タスクが処理のために**TiFlash**に送信されることを意味します。
 
-## `CREATE TABLE`文を実行します。 {#execute-the-create-table-statement}
+## `CREATE TABLE`文を実行する {#execute-the-create-table-statement}
 
 上記のルールに従ってすべてのテーブルを作成した後、[データベースの初期化](/develop/dev-guide-bookshop-schema-design.md#database-initialization-script-dbinitsql)スクリプトは次のようになります。テーブル情報を詳しく見たい場合は、 [表の説明](/develop/dev-guide-bookshop-schema-design.md#description-of-the-tables)を参照してください。
 

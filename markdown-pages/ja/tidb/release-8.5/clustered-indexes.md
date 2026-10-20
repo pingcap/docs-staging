@@ -90,7 +90,7 @@ ALTER TABLE t DROP PRIMARY KEY;
 ALTER TABLE t DROP INDEX `PRIMARY`;
 ```
 
-### 主キーがクラスター化インデックスであるかどうかを確認してください。 {#check-whether-the-primary-key-is-a-clustered-index}
+### 主キーがクラスター化インデックスであるかどうかを確認する {#check-whether-the-primary-key-is-a-clustered-index}
 
 テーブルの主キーがクラスター化インデックスであるかどうかは、以下のいずれかの方法で確認できます。
 
@@ -180,7 +180,7 @@ TiDB固有のコメント構文では、キーワード`CLUSTERED`と`NONCLUSTER
 - バックアップおよび復元ツール： BR、 Dumpling、 TiDB Lightning。
 - データ移行およびレプリケーションツール：DMとTiCDC。
 
-ただし、v5.0 BRツールを使用してテーブルをバックアップおよび復元しても、非クラスター化インデックスを持つテーブルをクラスター化インデックスを持つテーブルに変換することはできません。また、その逆も同様です。
+ただし、v5.0 BRツールを使用してテーブルをバックアップおよび復元しても、非クラスター化インデックスを持つテーブルをクラスター化インデックスを持つテーブルに変換できません。また、その逆も同様です。
 
 ### 他のTiDB機能との互換性 {#compatibility-with-other-tidb-features}
 

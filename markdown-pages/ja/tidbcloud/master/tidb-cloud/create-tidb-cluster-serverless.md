@@ -3,7 +3,7 @@ title: Create a TiDB Cloud Starter or Essential Instance
 summary: TiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスの作成方法を学びましょう。
 ---
 
-# TiDB Cloud StarterまたはEssentialインスタンスを作成します。 {#create-a-tidb-cloud-starter-or-essential-instance}
+# TiDB Cloud StarterまたはEssentialインスタンスを作成する {#create-a-tidb-cloud-starter-or-essential-instance}
 
 このドキュメントでは、[TiDB Cloudコンソール](https://tidbcloud.com/)でTiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスを作成する方法について説明します。
 
@@ -76,9 +76,9 @@ TiDB Cloudアカウントをお持ちでない場合は、[ここ](https://tidbc
 
     - **Essential**:
 
-        - CLOUD.202603.x以降で実行されるTiDB Cloud Essentialインスタンスでは、デフォルトで**Elastic Mode**が選択されています。Elastic Modeでは、RCUの最大数を設定しません。代わりに、インスタンスは固定の**Baseline RCU**である2,000 RCUを使用します。これは、課金対象となる最小のリクエストキャパシティユニット（RCU）数であり、自動スケーリングの初期容量でもあります。
+        - CLOUD.202603.x以降で実行されるTiDB Cloud Essentialインスタンスでは、デフォルトで**Elastic Mode**が選択されています。Elastic Modeでは、RCUの最大数を設定しません。代わりに、インスタンスは固定の**Baseline RCU**である2,000 RCUを使用します。これは、課金対象となる最小のリクエストキャパシティユニット（RCU）数であり、自動スケーリングの初期キャパシティでもあります。
 
-        - 容量を制限するには、**Limited Mode**を選択してから、インスタンスがスケールアップできるRCUの最大数を指定します。以前のバージョンのTiDB Cloud EssentialインスタンスはElastic Modeをサポートしていません。これらのインスタンスでは、RCUの最小数と最大数の両方を指定します。
+        - キャパシティを制限するには、**Limited Mode**を選択してから、インスタンスがスケールアップできるRCUの最大数を指定します。以前のバージョンのTiDB Cloud EssentialインスタンスはElastic Modeをサポートしていません。これらのインスタンスでは、RCUの最小数と最大数の両方を指定します。
 
         - RCUは、ワークロード用にプロビジョニングされたコンピューティングリソースを表します。TiDB Cloudは、需要に基づいてTiDB Cloud Essentialインスタンスを自動的にスケーリングします。ワークロードで一貫して100,000 RCUを超える必要がある場合は、潜在的なボトルネックを回避するためにTiDB Cloud Premiumへのアップグレードを検討してください。
 

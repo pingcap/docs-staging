@@ -19,7 +19,7 @@ TiDB Cloud は、次の2種類の SSO 認証をサポートしています。
 
 > **Note:**
 >
-> Cloud Organization SSO 機能は有料組織でのみご利用いただけます。
+> Cloud Organization SSO 機能は有料で利用している組織でのみ使用できます。
 
 ## 始める前に {#before-you-begin}
 
@@ -34,7 +34,7 @@ Cloud Organization SSO に移行する前に、組織についてこのセクシ
 
 Cloud Organization SSO が有効になっている場合、メンバーはTiDB Cloudにログインするために、パブリック ログイン URL ( `https://tidbcloud.com` ) ではなくカスタム URL を使用する必要があります。
 
-カスタム URL は有効化後に変更することはできないため、事前に使用する URL を決定する必要があります。
+カスタム URL は有効化後に変更できないため、事前に使用する URL を決定する必要があります。
 
 カスタム URL の形式は`https://tidbcloud.com/enterprise/signin/your-company-name`で、会社名をカスタマイズできます。
 

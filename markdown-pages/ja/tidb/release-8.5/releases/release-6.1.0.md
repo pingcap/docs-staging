@@ -240,7 +240,7 @@ TiDB バージョン: 6.1.0
 | [`tidb_committer_concurrency`](/system-variables.md#tidb_committer_concurrency-new-in-v610)                                   | 新しく追加された    | この設定は以前は`tidb.toml`オプション ( `performance.committer-concurrency` ) でしたが、TiDB v6.1.0 以降ではシステム変数に変更されました。                                        |
 | [`tidb_enable_auto_analyze`](/system-variables.md#tidb_enable_auto_analyze-new-in-v610)                                       | 新しく追加された | この設定は以前は`tidb.toml`オプション ( `run-auto-analyze` ) でしたが、TiDB v6.1.0 以降ではシステム変数に変更されました。                                                         |
 | [`tidb_enable_new_only_full_group_by_check`](/system-variables.md#tidb_enable_new_only_full_group_by_check-new-in-v610)       | 新しく追加された    | この変数は、TiDB が`ONLY_FULL_GROUP_BY`チェックを実行するときの動作を制御します。                                                                                        |
-| [`tidb_enable_outer_join_reorder`](/system-variables.md#tidb_enable_outer_join_reorder-new-in-v610)                           | 新しく追加された    | バージョン6.1.0以降、TiDBの結合したテーブルの再配置アルゴリズムは外部結合をサポートしています。この変数はサポートの動作を制御し、デフォルト値は`ON`です。                                                          |
+| [`tidb_enable_outer_join_reorder`](/system-variables.md#tidb_enable_outer_join_reorder-new-in-v610)                           | 新しく追加された    | バージョン6.1.0以降、TiDBの結合順序の並べ替えアルゴリズムは外部結合をサポートしています。この変数はサポートの動作を制御し、デフォルト値は`ON`です。                                                          |
 | [`tidb_enable_prepared_plan_cache`](/system-variables.md#tidb_enable_prepared_plan_cache-new-in-v610)                         | 新しく追加された    | この設定は以前は`tidb.toml`オプション ( `prepared-plan-cache.enabled` ) でしたが、TiDB v6.1.0 以降ではシステム変数に変更されました。                                              |
 | [`tidb_gc_max_wait_time`](/system-variables.md#tidb_gc_max_wait_time-new-in-v610)                                             | 新しく追加された    | この変数は、コミットされていないトランザクションによってブロックされる GC セーフポイントの最大時間を設定するために使用されます。                                                                          |
 | [tidb_max_auto_analyze_time](/system-variables.md#tidb_max_auto_analyze_time-new-in-v610)                                     | 新しく追加された    | この変数は、auto analyze の最大実行時間を指定するために使用されます。                                                                 |
@@ -319,7 +319,7 @@ TiDB バージョン: 6.1.0
 
 - ダッシュボード ページはDM WebUIから削除されます。
 
-- `dispatchers.topic`と`dispatchers.partition`が有効になっている場合、TiCDC を v6.1.0 より前のバージョンにダウングレードすることはできません。
+- `dispatchers.topic`と`dispatchers.partition`が有効になっている場合、TiCDC を v6.1.0 より前のバージョンにダウングレードできません。
 
 - Avro プロトコルを使用するTiCDC Changefeed は、v6.1.0 より前のバージョンにダウングレードできません。
 
@@ -336,7 +336,7 @@ TiDB バージョン: 6.1.0
 - TiKV
 
     - インメモリ悲観的ロック使用時の CDC の古い値のヒット率を改善 [#12279](https://github.com/tikv/tikv/issues/12279)
-    - ヘルスチェックを改善して、利用できないRaftstoreを検出し、TiKV クライアントがリージョンキャッシュを時間内に更新できるようにします[#12398](https://github.com/tikv/tikv/issues/12398)
+    - ヘルスチェックを改善して、利用できないRaftstoreを検出し、TiKV クライアントがリージョンキャッシュを速やかに更新できるようにします[#12398](https://github.com/tikv/tikv/issues/12398)
     - Raft Engine のメモリ制限設定をサポート [#12255](https://github.com/tikv/tikv/issues/12255)
     - TiKVは、破損したSSTファイルを自動的に検出して削除し、製品の可用性を向上させます[#10578](https://github.com/tikv/tikv/issues/10578)
     - CDCはRawKV をサポートしています [#11965](https://github.com/tikv/tikv/issues/11965)

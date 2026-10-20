@@ -259,7 +259,7 @@ BATCH ON id LIMIT 2 DELETE /*+ USE_INDEX(t)*/ FROM t WHERE v < 6;
 
 - アプリケーションデータの分布がわかっている場合は、条件`WHERE`に従って、バッチ処理後にデータをより狭い範囲に分割する列を選択します。
     - 理想的には、条件`WHERE`ではシャード列のインデックスを利用することで、バッチごとにスキャンするデータ量を削減できます。例えば、各トランザクションの開始時刻と終了時刻を記録するトランザクションテーブルがあり、終了時刻が1か月前であるすべてのトランザクションレコードを削除したいとします。トランザクションの開始時刻にインデックスがあり、トランザクションの開始時刻と終了時刻が比較的近い場合は、開始時刻列をシャード列として選択できます。
-    - 理想的とは言えないケースでは、シャード列のデータ分布は`WHERE`条件から完全に独立しており、シャード列のインデックスを使用してデータスキャンの範囲を縮小することはできません。
+    - 理想的とは言えないケースでは、シャード列のデータ分布は`WHERE`条件から完全に独立しており、シャード列のインデックスを使用してデータスキャンの範囲を縮小できません。
 - クラスター化インデックスが存在する場合は、実行効率を高めるために、主キー（ `INT`主キーと`_tidb_rowid`含む）をシャード列として使用することをお勧めします。
 - 重複する値が少ない列を選択してください。
 
@@ -319,7 +319,7 @@ batch-dml は、DML文の実行中にトランザクションを複数のトラ�
 
 ## よくある問題 {#common-issues}
 
-### 複数のテーブル結合ステートメントを実行すると`Unknown column xxx in 'where clause'`エラーが発生します。 {#executing-a-multiple-table-joins-statement-results-in-the-unknown-column-xxx-in-where-clause-error}
+### 複数のテーブル結合ステートメントを実行すると`Unknown column xxx in 'where clause'`エラーが発生する {#executing-a-multiple-table-joins-statement-results-in-the-unknown-column-xxx-in-where-clause-error}
 
 このエラーは、クエリ内で連結された`WHERE`句が、 [シャード列](#parameter-description)が定義されているテーブル以外のテーブルに関係する場合に発生します。例えば、次のSQL文では、シャード列は`t2.id`で、テーブル`t2`に定義されていますが、 `WHERE`句はテーブル`t2`と`t3`に関係しています。
 
@@ -357,7 +357,7 @@ SELECT t2.id, t2.v, t3.id FROM t2 JOIN t3 ON t2.id = t3.id
 +----------------+---------------+
 ```
 
-### 非トランザクションDML文でテーブルエイリアスを使用すると、 `Unknown column '&lt;alias&gt;.&lt;column&gt;' in 'where clause'`エラーが発生します。 {#the-unknown-column-aliascolumn-in-where-clause-error-occurs-when-using-table-aliases-in-non-transactional-dml-statements}
+### 非トランザクションDML文でテーブルエイリアスを使用すると、 `Unknown column '<alias>.<column>' in 'where clause'`エラーが発生する {#the-unknown-column-aliascolumn-in-where-clause-error-occurs-when-using-table-aliases-in-non-transactional-dml-statements}
 
 非トランザクションDML文を実行すると、TiDBは内部的にバッチを分割するためのクエリを構築し、実際の分割実行文を生成します。これらの2種類の文は、それぞれ[`DRY RUN QUERY`](/non-transactional-dml.md#query-the-batch-dividing-statement)と[`DRY RUN`](/non-transactional-dml.md#query-the-statements-corresponding-to-the-first-and-the-last-batches)で確認できます。
 
@@ -386,7 +386,7 @@ WHERE t.c1 IS NULL;
 
 さらに、他の同時書き込みが発生すると、各バッチで処理される行数は指定されたバッチサイズと異なる場合があります。
 
-### 実行中に、 `Failed to restore the delete statement, probably because of unsupported type of the shard column`エラーが発生します。 {#the-failed-to-restore-the-delete-statement-probably-because-of-unsupported-type-of-the-shard-column-error-occurs-during-execution}
+### 実行中に、 `Failed to restore the delete statement, probably because of unsupported type of the shard column`エラーが発生する {#the-failed-to-restore-the-delete-statement-probably-because-of-unsupported-type-of-the-shard-column-error-occurs-during-execution}
 
 シャード列は`ENUM` 、 `BIT` 、 `SET` 、 `JSON`型をサポートしていません。新しいシャード列を指定してください。整数型または文字列型の列を使用することをお勧めします。
 
@@ -402,7 +402,7 @@ WHERE t.c1 IS NULL;
 
 </CustomContent>
 
-### 非トランザクション`DELETE`は、通常の`DELETE`と同等ではない「例外的な」動作をします。 {#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete}
+### 非トランザクション`DELETE`は、通常の`DELETE`と同等ではない「例外的な」動作をする {#non-transactional-delete-has-exceptional-behavior-that-is-not-equivalent-to-ordinary-delete}
 
 非トランザクション DML文は、この DML文の元の形式と同等ではありません。次のような理由が考えられます。
 

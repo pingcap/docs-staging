@@ -20,7 +20,7 @@ summary: データ移行に関する FAQ について説明します。
 
 TiDB はほとんどの MySQL 構文をサポートしているため、ほとんどの場合、コードを 1 行も変更せずにアプリケーションを TiDB に移行できます。
 
-### データのインポートとエクスポートが遅く、他のエラーがないにもかかわらず、各コンポーネントのログに多くの再試行とEOFエラーが表示されます。 {#data-import-and-export-is-slow-and-many-retries-and-eof-errors-appear-in-the-log-of-each-component-without-other-errors}
+### データのインポートとエクスポートが遅く、他のエラーがないにもかかわらず、各コンポーネントのログに多くの再試行とEOFエラーが表示される {#data-import-and-export-is-slow-and-many-retries-and-eof-errors-appear-in-the-log-of-each-component-without-other-errors}
 
 他の論理エラーが発生していない場合、再試行とEOFエラーはネットワークの問題が原因である可能性があります。まずはツールを使用してネットワーク接続を確認することをお勧めします。次の例では、トラブルシューティングに[iperf](https://iperf.fr/)を使用しています。
 
@@ -156,7 +156,7 @@ Google Cloud Spanner には[同様の制限](https://cloud.google.com/spanner/do
 
 ### データをロードするときに、ターゲットテーブルで DDL 操作を実行できますか? {#can-i-execute-ddl-operations-on-the-target-table-when-loading-data}
 
-いいえ。データをロードするときに、ターゲットテーブルで DDL 操作を実行することはできません。そうしないと、データのロードに失敗します。
+いいえ。データをロードするときに、ターゲットテーブルで DDL 操作を実行できません。そうしないと、データのロードに失敗します。
 
 ### TiDB は`replace into`構文をサポートしていますか? {#does-tidb-support-the-replace-into-syntax}
 
