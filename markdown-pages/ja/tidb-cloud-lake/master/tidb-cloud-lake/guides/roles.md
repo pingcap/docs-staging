@@ -13,7 +13,7 @@ TiDB Cloud Lake のロールは、権限管理を簡素化するうえで重要�
 
 ロールの付与により、あるロールが別のロールから権限と責務を継承できるようになります。これにより、組織構造に似た柔軟な階層を作成できます。この階層には 2 つの [組み込みロール](#built-in-roles) があり、最上位が `account-admin`、最下位が `public` です。
 
-たとえば、*manager*、*engineer*、*intern* の 3 つのロールを作成したとします。この例では、*intern* ロールが engineer *role* に付与されます。その結果、*engineer* は自身の権限セットを持つだけでなく、*intern* ロールに関連付けられた権限も継承します。さらにこの階層を拡張して、*engineer* ロールが *manager* に付与されると、*manager* は *engineer* と *intern* の両方のロールに本来備わっている権限を取得します。
+たとえば、*manager*、*engineer*、*intern* の 3 つのロールを作成したとします。この例では、*intern* ロールが *engineer* ロールに付与されます。その結果、*engineer* は自身の権限セットを持つだけでなく、*intern* ロールに関連付けられた権限も継承します。さらにこの階層を拡張して、*engineer* ロールが *manager* に付与されると、*manager* は *engineer* と *intern* の両方のロールに本来備わっている権限を取得します。
 
 ![Alt text](https://docs-download.pingcap.com/media/images/docs/tidb-cloud-lake/access-control-4.png)
 
@@ -26,7 +26,7 @@ TiDB Cloud Lake には、次の組み込みロールがあります。
 | account-admin | すべての権限を持ち、他のすべてのロールの親ロールとして機能し、テナント内の任意のロールへシームレスに切り替えることができます。 |
 | public        | 権限を一切継承せず、すべてのロールを親ロールとして扱い、任意のロールが public ロールに切り替えることを許可します。 |
 
-TiDB Cloud Lake でユーザーに `account-admin` ロールを割り当てるには、ユーザー招待時にそのロールを選択します。ユーザー参加後にロールを割り当てることもできます。TiDB Cloud Lake Community Edition または Enterprise Edition を使用している場合は、まずデプロイ時に `account-admin` ユーザーを設定し、その後必要に応じて他のユーザーにこのロールを割り当てます。
+TiDB Cloud Lake でユーザーに `account-admin` ロールを割り当てるには、ユーザー招待時にそのロールを選択します。ユーザー参加後にロールを割り当てることもできます。
 
 ## デフォルトロールの設定 {#setting-default-role}
 

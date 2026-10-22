@@ -22,7 +22,7 @@ summary: このページでは、TiDB Cloud Lake におけるタスク操作の�
 |---------|-------------|
 | [SHOW TASKS](/tidb-cloud-lake/sql/show-tasks.md) | 現在のロールから参照可能なタスクを一覧表示します |
 | [TASK HISTORY](/tidb-cloud-lake/sql/task-history.md) | 1 つ以上のタスクの実行履歴を表示します |
-| [TASK ERROR INTEGRATION PAYLOAD](/tidb-cloud-lake/sql/task-error-notification-payload.md) | タスクエラー通知のエラーペイロード形式を表示します |
+| [TASK ERROR NOTIFICATION PAYLOAD](/tidb-cloud-lake/sql/task-error-notification-payload.md) | タスクエラー通知のエラーペイロード形式を表示します |
 
 > **Note:**
 >

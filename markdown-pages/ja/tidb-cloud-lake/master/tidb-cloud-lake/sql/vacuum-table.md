@@ -87,7 +87,6 @@ SET GLOBAL data_retention_time_in_days = 2;
 
 | エディション | デフォルト保持期間 | 最大保持期間 |
 | ---------------------------------------- | ----------------- | ---------------- |
-| TiDB Cloud Lake Community & Enterprise エディション | 1日 (24時間)  | 90日          |
 | TiDB Cloud Lake (Personal)                | 1日 (24時間)  | 1日 (24時間) |
 | TiDB Cloud Lake (Business)                | 1日 (24時間)  | 90日          |
 
