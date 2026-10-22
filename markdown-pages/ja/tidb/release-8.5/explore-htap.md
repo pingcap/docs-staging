@@ -65,7 +65,7 @@ TiDB HTAPの機能を検討する前に、TiDBとその列指向ストレージ�
 
     - 小規模な分析処理とアドホッククエリを伴うOLTPが必要な場合は、1台または複数台のTiFlashノードを導入してください。分析クエリの速度を劇的に向上させることができます。
     - OLTPのスループットがTiFlashノードのI/O使用率に大きな負荷をかけない場合、各TiFlashノードは計算により多くのリソースを使用するため、 TiFlashクラスタはほぼ線形のスケーラビリティを実現できます。TiFlashノードの数は、期待されるパフォーマンスと応答時間に基づいて調整する必要があります。
-    - OLTPのスループットが比較的高い場合（例えば、書き込みまたは更新のスループットが1時間あたり1,000万行を超える場合）、ネットワークディスクと物理ディスクの書き込み容量が限られているため、TiKVとTiFlash間のI/Oがボトルネックとなり、読み書きのホットスポットが発生しやすくなります。この場合、 TiFlashノードの数は解析処理の計算量と複雑な非線形関係にあるため、システムの実際の状態に基づいてTiFlashノードの数を調整する必要があります。
+    - OLTPのスループットが比較的高い場合（例えば、書き込みまたは更新のスループットが1時間あたり1,000万行を超える場合）、ネットワークディスクと物理ディスクの書き込みキャパシティが限られているため、TiKVとTiFlash間のI/Oがボトルネックとなり、読み書きのホットスポットが発生しやすくなります。この場合、 TiFlashノードの数は解析処理の計算量と複雑な非線形関係にあるため、システムの実際の状態に基づいてTiFlashノードの数を調整する必要があります。
 
 <!--    - Real-time stream processing
   - If you want to build an efficient and easy-to-use real-time data warehouse with TiDB and Flink, you are welcome to participate in Apache Flink x TiDB meetups.-->
@@ -87,7 +87,7 @@ TiDBでは、クエリや書き込みリクエストに対してSQL文を入力�
 >
 > - TiFlashの MPP モードを無効にするには、 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-new-in-v50)システム変数の値を`OFF`に設定します。
 > - TiFlashの MPP モードをクエリ実行用に強制的に有効にするには、 [`tidb_allow_mpp`](/system-variables.md#tidb_allow_mpp-new-in-v50)と[`tidb_enforce_mpp`](/system-variables.md#tidb_enforce_mpp-new-in-v51)の値を`ON`に設定します。
-> - TiDB が特定のクエリを実行する際に MPP モードを選択しているかどうかを確認するには、 [MPPモードの説明文](/explain-mpp.md#explain-statements-in-the-mpp-mode)を参照してください。 `EXPLAIN`文の出力に`ExchangeSender`および`ExchangeReceiver`オペレーターが含まれている場合、MPP モードが使用されています。
+> - TiDB が特定のクエリを実行する際に MPP モードを選択しているかどうかを確認するには、 [MPPモードのステートメントの実行計画](/explain-mpp.md#explain-statements-in-the-mpp-mode)を参照してください。 `EXPLAIN`文の出力に`ExchangeSender`および`ExchangeReceiver`オペレーターが含まれている場合、MPP モードが使用されています。
 
 ## パフォーマンス監視 {#performance-monitoring}
 
