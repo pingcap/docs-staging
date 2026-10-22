@@ -303,7 +303,7 @@ summary: 2025年のTiDB Cloudのリリースノートについて説明します
 
 - **TiDB Cloud Starter**
 
-    - 新しく作成された[TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter)クラスターでは、ゾーン高可用性のみが有効になっており、構成することはできません。
+    - 新しく作成された[TiDB Cloud Starter](/tidb-cloud/select-cluster-tier.md#starter)クラスターでは、ゾーン高可用性のみが有効になっており、構成できません。
     - **2025年 9月 9日**より前にリージョン高可用性が有効にされた既存のTiDB Cloud Starter クラスターの場合、リージョン高可用性は引き続きサポートされ、影響を受けません。
 
 <CustomContent language="en,zh">
@@ -537,12 +537,6 @@ summary: 2025年のTiDB Cloudのリリースノートについて説明します
 - [TiDB Cloud Serverless](/tidb-cloud/select-cluster-tier.md#starter)データベース監査ログ（ベータ版）がリクエストに応じて利用可能になりました。この機能を使用すると、ユーザーアクセスの詳細（実行されたSQL文など）の履歴をログに記録できます。
 
     この機能をリクエストするには、 [TiDB Cloudコンソール](https://tidbcloud.com)の右下にある**？**をクリックし、 **Request Support**をクリックします。次に、「説明」フィールドに「 TiDB Cloud Serverless データベース監査ログの申請」と入力し、 **Submit**をクリックします。
-
-- [TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)は、ユーザーによるログの秘匿化をサポートします。
-
-    TiDB Cloud Dedicatedクラスターのログの秘匿化を有効または無効にして、クラスターログの秘匿化の状態を自分で管理できるようになりました。
-
-    詳細については、 [ユーザーによるログの秘匿化](/tidb-cloud/tidb-cloud-log-redaction.md)を参照してください。
 
 - 顧客管理の暗号化キー (CMEK) を使用した保存時の暗号化が、AWS でホストされている[TiDB Cloud Dedicated](/tidb-cloud/select-cluster-tier.md#tidb-cloud-dedicated)クラスターで一般提供 (GA) されました。
 
