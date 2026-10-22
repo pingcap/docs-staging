@@ -199,7 +199,7 @@ TiDB Cloud Lake 的 CSV 实现符合 [RFC 4180](https://www.rfc-editor.org/rfc/r
 
 `Geometry` 列的编码格式。
 
-**可用值**：`EWKT`、`WKB`、`WKB`、`EWKB`、`GEOJSON`
+**可用值**：`EWKT`、`WKT`、`WKB`、`EWKB`、`GEOJSON`
 
 **默认值**：`EWKT`
 
