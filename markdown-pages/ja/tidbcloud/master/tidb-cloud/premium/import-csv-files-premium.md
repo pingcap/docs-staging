@@ -9,8 +9,8 @@ summary: Amazon Simple Storage Service（Amazon S3）からTiDB Cloud Premiumお
 
 > **Tip:**
 >
-> - TiDB Cloud Starter または Essential については、[Import CSV Files from Cloud Storage into TiDB Cloud Starter or Essential](/tidb-cloud/import-csv-files-serverless.md)を参照してください。
-> - TiDB Cloud Dedicated については、[Import CSV Files from Cloud Storage into TiDB Cloud Dedicated](/tidb-cloud/import-csv-files.md)を参照してください。
+> - TiDB Cloud Starter または Essential については、[TiDB Cloud StarterまたはEssentialにクラウドストレージからCSVファイルをインポートする](/tidb-cloud/import-csv-files-serverless.md)を参照してください。
+> - TiDB Cloud Dedicated については、[クラウドストレージからTiDB Cloud DedicatedにCSVファイルをインポートする](/tidb-cloud/import-csv-files.md)を参照してください。
 
 ## 制限事項 {#limitations}
 
@@ -42,7 +42,7 @@ summary: Amazon Simple Storage Service（Amazon S3）からTiDB Cloud Premiumお
     > - Snappy圧縮ファイルは[公式Snappyフォーマット](https://github.com/google/snappy)である必要があります。その他の Snappy 圧縮形式はサポートされていません。
     > - 非圧縮ファイルの場合、状況によっては前述のルールに従ってCSVファイル名を更新できないことがあります（例えば、CSVファイルのリンクが他のプログラムでも使用されている場合）。その場合は、ファイル名を変更せずに、[ステップ4](#step-4-import-csv-files)の**Mapping Settings**を使用してソースデータを単一のターゲットテーブルにインポートできます。
 
-## ステップ2．対象テーブルのスキーマを作成する {#step-2-create-the-target-table-schemas}
+## ステップ2. 対象テーブルのスキーマを作成する {#step-2-create-the-target-table-schemas}
 
 CSVファイルにはスキーマ情報が含まれていないため、CSVファイルからTiDB Cloud Premium または TiDB Cloud BYOC にデータをインポートする前に、以下のいずれかの方法を使用してテーブルスキーマを作成する必要があります。
 
@@ -81,11 +81,11 @@ CSVファイルにはスキーマ情報が含まれていないため、CSVフ�
         >
         > `${db_name}.${table_name}-schema.sql`ファイルには、単一の DDL文のみを含める必要があります。ファイルに複数の DDL文が含まれている場合、最初の文のみが有効になります。
 
-## ステップ3．アカウント間アクセスの設定 {#step-3-configure-cross-account-access}
+## ステップ3. アカウント間アクセスの設定 {#step-3-configure-cross-account-access}
 
 TiDB Cloud Premium または TiDB Cloud BYOC がクラウドストレージ内のCSVファイルにアクセスできるようにするには、該当するストレージプロバイダーに対してアカウント間アクセスを設定します。
 
-- CSVファイルがAmazon S3にある場合は、TiDB Cloud Premium または TiDB Cloud BYOC インスタンスに対して[Amazon S3へのアクセスを設定する](/tidb-cloud/configure-external-storage-access.md#configure-amazon-s3-access)。
+- CSVファイルがAmazon S3にある場合は、TiDB Cloud Premium または TiDB Cloud BYOC インスタンスに対して[Amazon S3へのアクセスを設定](/tidb-cloud/configure-external-storage-access.md#configure-amazon-s3-access)してください。
 
     バケットにアクセスするには、AWS アクセスキーまたはロール ARN のいずれかを使用できます。完了したら、[ステップ4](#step-4-import-csv-files)で必要となるため、アクセスキー (アクセスキー ID とシークレットアクセスキーを含む) またはロール ARN の値をメモしておいてください。
 
@@ -97,11 +97,11 @@ TiDB Cloud Premium または TiDB Cloud BYOC がクラウドストレージ内�
 
 <CustomContent plan="premium">
 
-- CSV ファイルが Alibaba Cloud Object Storage Service (OSS) にある場合は、 TiDB Cloud Premium インスタンスの[Alibaba Cloud Object Storage Service (OSS) へのアクセスを設定する](/tidb-cloud/configure-external-storage-access.md#configure-alibaba-cloud-object-storage-service-oss-access)。
+- CSV ファイルが Alibaba Cloud Object Storage Service (OSS) にある場合は、 TiDB Cloud Premium インスタンスの[Alibaba Cloud Object Storage Service (OSS) へのアクセスを設定](/tidb-cloud/configure-external-storage-access.md#configure-alibaba-cloud-object-storage-service-oss-access)してください。
 
 </CustomContent>
 
-## ステップ4．CSVファイルをインポートする {#step-4-import-csv-files}
+## ステップ4. CSVファイルをインポートする {#step-4-import-csv-files}
 
 CSVファイルをTiDB Cloud Premium または TiDB Cloud BYOC にインポートするには、以下の手順に従ってください。
 
