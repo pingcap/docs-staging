@@ -397,7 +397,7 @@
   - [ビュー](/views.md)
   - [パーティショニング](/partitioned-table.md)
   - [一時テーブル](/temporary-tables.md)
-  - [キャッシュされたテーブル](/cached-tables.md)
+  - [キャッシュテーブル](/cached-tables.md)
   - [外部キー制約](/foreign-key.md)
   - 文字セットと照合順序
     - [概要](/character-set-and-collation.md)
@@ -517,7 +517,7 @@
   - [upgrade](/tidb-cloud/ticloud-upgrade.md)
   - [help](/tidb-cloud/ticloud-help.md)
 - 一般参考資料
-  - TiDBクラシックアーキテクチャ
+  - TiDB Classic アーキテクチャ
     - [概要](/tidb-architecture.md)
     - [ストレージ](/tidb-storage.md)
     - [コンピューティング](/tidb-computing.md)
