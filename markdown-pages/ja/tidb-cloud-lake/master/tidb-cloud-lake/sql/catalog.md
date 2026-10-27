@@ -1,6 +1,6 @@
 ---
 title: Catalog
-summary: " TiDB Cloud Lake における Catalog 操作の概要。"
+summary: "TiDB Cloud Lake における Catalog 操作の概要。"
 ---
 
 # Catalog

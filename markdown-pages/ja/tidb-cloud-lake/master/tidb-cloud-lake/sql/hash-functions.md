@@ -1,11 +1,11 @@
 ---
 title: ハッシュ関数
-summary: このページでは、TiDB Cloud Lake の Hash 関数について、機能別に整理して包括的に紹介します。
+summary: このページでは、TiDB Cloud Lake のハッシュ関数について、機能別に整理して包括的に紹介します。
 ---
 
 # ハッシュ関数
 
-このページでは、TiDB Cloud Lake の Hash 関数について、機能別に整理して包括的に紹介します。
+このページでは、TiDB Cloud Lake のハッシュ関数について、機能別に整理して包括的に紹介します。
 
 ## 暗号学的ハッシュ関数 {#cryptographic-hash-functions}
 

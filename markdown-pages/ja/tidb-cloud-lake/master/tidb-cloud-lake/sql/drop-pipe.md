@@ -5,7 +5,7 @@ summary: "TiDB Cloud Lake で DROP PIPE コマンドを使用して取り込み�
 
 # DROP PIPE
 
-pipe を削除します。
+パイプを削除します。
 
 ## 構文 {#syntax}
 

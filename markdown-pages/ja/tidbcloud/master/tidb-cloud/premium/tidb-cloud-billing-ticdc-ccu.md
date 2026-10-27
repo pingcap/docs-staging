@@ -3,7 +3,7 @@ title: Changefeed Billing for TiDB Cloud Essential and Premium
 summary: "TiDB Cloud Essential と Premium における変更フィードの課金について学びましょう。"
 ---
 
-# TiDB Cloud Essential と Premium の変更フィードの課金 {#changefeed-billing-for-tidb-cloud-premium}
+# TiDB Cloud Essential と Premium の変更フィードの課金 {#changefeed-billing-for-tidb-cloud-essential-and-premium}
 
 このドキュメントでは、TiDB Cloud Essential と Premium における変更フィードの請求詳細について説明します。
 
@@ -47,4 +47,4 @@ TiDB Cloud Essential と Premium は、[変更フィード](/tidb-cloud/changefe
 
 **Private Link**または**Private Service Connect**ネットワーク接続方法を選択した場合、追加の**Private Data Link**料金が発生します。これらの料金は[データ転送コスト](https://www.pingcap.com/tidb-dedicated-pricing-details/#data-transfer-cost)カテゴリに分類されます。
 
-**Private Data Link**の価格は**$0.01/GiB**で、AWS Interface Endpoint の**Data Processed**の[AWS Interface Endpoint の料金](https://aws.amazon.com/privatelink/pricing/#Interface_Endpoint_pricing)、Google Cloud Private Service Connect の**Consumer data processing**の[Google Cloud Private Service Connect の料金](https://cloud.google.com/vpc/pricing#psc-forwarding-rules)、Azure Private Link の**Inbound/Outbound Data Processed**の[Azure Private Link の価格](https://azure.microsoft.com/en-us/pricing/details/private-link/)と同じです。
+**Private Data Link**の価格は**$0.01/GiB**で、[AWS Interface Endpoint の料金](https://aws.amazon.com/privatelink/pricing/#Interface_Endpoint_pricing)の**Data Processed**、[Google Cloud Private Service Connect の料金](https://cloud.google.com/vpc/pricing#psc-forwarding-rules)の**Consumer data processing**、および[Azure Private Link の料金](https://azure.microsoft.com/en-us/pricing/details/private-link/)の**Inbound/Outbound Data Processed**と同じです。

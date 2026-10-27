@@ -29,7 +29,7 @@ TiDB Cloud Lake アカウントにログインでき、Warehouse の接続情報
 
     | パラメータ | 説明 |
     | ---------------- | ---------------------------------- |
-    | Integration name | 例えば、`TiDB Cloud Lake`     |
+    | Integration name | たとえば、`TiDB Cloud Lake`     |
     | Host name        | 接続情報から取得します |
     | Port             | `443`                              |
     | Username         | `cloudapp`                         |

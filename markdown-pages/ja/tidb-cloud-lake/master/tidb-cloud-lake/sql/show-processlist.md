@@ -1,11 +1,11 @@
 ---
 title: SHOW PROCESSLIST
-summary: "TiDB Cloud Lake の process list は、サーバー内で実行されているスレッド群によって現在実行中の操作を示します。"
+summary: "TiDB Cloud Lake のプロセスリストは、サーバー内で実行されているスレッド群によって現在実行中の操作を示します。"
 ---
 
 # SHOW PROCESSLIST
 
-TiDB Cloud Lake の process list は、サーバー内で実行されているスレッド群によって現在実行中の操作を示します。
+TiDB Cloud Lake のプロセスリストは、サーバー内で実行されているスレッド群によって現在実行中の操作を示します。
 
 関連情報: [KILL](/tidb-cloud-lake/sql/kill.md)
 

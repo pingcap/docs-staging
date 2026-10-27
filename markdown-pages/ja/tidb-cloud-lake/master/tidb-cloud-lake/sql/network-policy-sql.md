@@ -1,11 +1,11 @@
 ---
 title: ネットワークポリシー
-summary: このページでは、TiDB Cloud Lake における Network Policy の操作について、機能別に整理して包括的に説明します。
+summary: このページでは、TiDB Cloud Lake におけるネットワークポリシーの操作について、参照しやすいよう機能別に整理して包括的に説明します。
 ---
 
 # ネットワークポリシー
 
-このページでは、TiDB Cloud Lake における Network Policy の操作について、機能別に整理して包括的に説明します。
+このページでは、TiDB Cloud Lake におけるネットワークポリシーの操作について、参照しやすいよう機能別に整理して包括的に説明します。
 
 ## ネットワークポリシー管理 {#network-policy-management}
 

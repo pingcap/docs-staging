@@ -98,4 +98,4 @@ TiDB Cloud Lake サポートから組織向けの信頼されたプリンシパ�
 
 > **Note:**
 >
-> これで、IAM Role を使用して TiDB Cloud Lake からご自身の AWS S3 バケットにアクセスできるようになりました。
+> おめでとうございます。これで、IAM Role を使用して TiDB Cloud Lake からご自身の AWS S3 バケットにアクセスできるようになりました。

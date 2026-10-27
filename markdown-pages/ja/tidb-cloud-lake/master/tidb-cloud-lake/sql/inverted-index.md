@@ -17,7 +17,7 @@ summary: このページでは、TiDB Cloud Lake における転置インデッ�
 
 ## 関連トピック {#related-topics}
 
-- [Full-Text Index](/tidb-cloud-lake/guides/full-text-index.md)
+- [フルテキストインデックス](/tidb-cloud-lake/guides/full-text-index.md)
 
 > **Note:**
 >

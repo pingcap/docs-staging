@@ -46,7 +46,7 @@ TiDB Cloud Starter インスタンスを作成するには、次の手順を実�
 
 ## ステップ 2. TiDB Cloud Starter インスタンスに接続する {#step-2-connect-to-your-starter-instance}
 
-PostgreSQL互換 TiDB Cloud Starter インスタンスは PostgreSQL wire protocol をサポートしているため、ほとんどの PostgreSQL ツール、ドライバー、ORM を使用して接続できます。以下の手順では、例として PostgreSQL CLI クライアント `psql` を使用します。
+PostgreSQL互換 TiDB Cloud Starter インスタンスは PostgreSQL ワイヤプロトコルをサポートしているため、ほとんどの PostgreSQL ツール、ドライバー、ORM を使用して接続できます。以下の手順では、例として PostgreSQL CLI クライアント `psql` を使用します。
 
 1. [**My TiDB**](https://tidbcloud.com/tidbs) ページに移動し、対象の TiDB Cloud Starter インスタンス名をクリックして概要ページを開きます。
 2. 右上の **Connect** をクリックします。接続パラメータを含む接続ダイアログが表示されます。

@@ -1,11 +1,11 @@
 ---
 title: REFRESH INVERTED INDEX
-summary: "TiDB Cloud Lake は、新しいデータが書き込まれるたびに `SYNC` モードで inverted index を自動的に更新します。`REFRESH INVERTED INDEX` は主に、インデックスが宣言される前から存在していた行をバックフィルするために使用します。"
+summary: "TiDB Cloud Lake は、新しいデータが書き込まれるたびに `SYNC` モードで転置インデックスを自動的に更新します。`REFRESH INVERTED INDEX` は主に、インデックスが宣言される前から存在していた行をバックフィルするために使用します。"
 ---
 
 # REFRESH INVERTED INDEX
 
-TiDB Cloud Lake は、新しいデータが書き込まれるたびに `SYNC` モードで inverted index を自動的に更新します。`REFRESH INVERTED INDEX` は主に、インデックスが宣言される前から存在していた行をバックフィルするために使用します。
+TiDB Cloud Lake は、新しいデータが書き込まれるたびに `SYNC` モードで転置インデックスを自動的に更新します。`REFRESH INVERTED INDEX` は主に、インデックスが宣言される前から存在していた行をバックフィルするために使用します。
 
 ## 構文 {#syntax}
 

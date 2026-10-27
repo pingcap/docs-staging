@@ -59,7 +59,7 @@ TiDB Cloud Lake は、ウィンドウ関数の 2 つの主要カテゴリをサ�
 
 **エイリアス:**
 
-| 関数 | 別名 |
+| 関数 | エイリアス元 |
 |----------|----------|
 | [FIRST](/tidb-cloud-lake/sql/first.md) | FIRST_VALUE |
 | [LAST](/tidb-cloud-lake/sql/last.md) | LAST_VALUE |

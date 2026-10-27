@@ -1,19 +1,19 @@
 ---
 title: マスキングポリシー
-summary: このページでは、TiDB Cloud Lake における Masking Policy の操作について、参照しやすいよう機能別に整理して包括的に説明します。
+summary: このページでは、TiDB Cloud Lake におけるマスキングポリシーの操作について、参照しやすいよう機能別に整理して包括的に説明します。
 ---
 
 # マスキングポリシー
 
-このページでは、TiDB Cloud Lake における Masking Policy の操作について、参照しやすいよう機能別に整理して包括的に説明します。
+このページでは、TiDB Cloud Lake におけるマスキングポリシーの操作について、参照しやすいよう機能別に整理して包括的に説明します。
 
-## Masking Policy の管理 {#masking-policy-management}
+## マスキングポリシーの管理 {#masking-policy-management}
 
 | コマンド | 説明 |
 |---------|-------------|
-| [CREATE MASKING POLICY](/tidb-cloud-lake/sql/create-masking-policy.md) | データの難読化のための新しい masking policy を作成します |
-| [DESCRIBE MASKING POLICY](/tidb-cloud-lake/sql/desc-masking-policy.md) | 特定の masking policy の詳細を表示します |
-| [DROP MASKING POLICY](/tidb-cloud-lake/sql/drop-masking-policy.md) | masking policy を削除します |
+| [CREATE MASKING POLICY](/tidb-cloud-lake/sql/create-masking-policy.md) | データの難読化のための新しいマスキングポリシーを作成します |
+| [DESCRIBE MASKING POLICY](/tidb-cloud-lake/sql/desc-masking-policy.md) | 特定のマスキングポリシーの詳細を表示します |
+| [DROP MASKING POLICY](/tidb-cloud-lake/sql/drop-masking-policy.md) | マスキングポリシーを削除します |
 
 ## 関連トピック {#related-topics}
 
@@ -21,4 +21,4 @@ summary: このページでは、TiDB Cloud Lake における Masking Policy の
 
 > **Note:**
 >
-> TiDB Cloud Lake の masking policy を使用すると、適切な権限を持たないユーザーがクエリを実行した際に、機密データを動的に変換または難読化して保護できます。
+> TiDB Cloud Lake のマスキングポリシーを使用すると、適切な権限を持たないユーザーがクエリを実行した際に、機密データを動的に変換または難読化して保護できます。

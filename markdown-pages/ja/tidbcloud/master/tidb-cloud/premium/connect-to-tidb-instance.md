@@ -1,6 +1,6 @@
 ---
-title: Connect to Your TiDB Cloud Premium Instance
-summary: さまざまな方法でTiDB Cloud Premiumインスタンスに接続する方法を学びましょう。
+title: Connect to Your TiDB Cloud Premium or TiDB Cloud BYOC Instance
+summary: さまざまな方法でTiDB Cloud PremiumまたはTiDB Cloud BYOCインスタンスに接続する方法を学びましょう。
 ---
 
 # TiDB Cloud Premium または TiDB Cloud BYOC インスタンスに接続する

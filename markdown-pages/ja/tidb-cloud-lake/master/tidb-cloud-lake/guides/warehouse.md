@@ -7,9 +7,9 @@ summary: Warehouse は TiDB Cloud Lake の重要なコンポーネントです�
 
 Warehouse は TiDB Cloud Lake の重要なコンポーネントです。Warehouse は CPU、メモリ、ローカルキャッシュを含むコンピュートリソースのセットを表します。次のような SQL タスクを実行するには、Warehouse を実行する必要があります。
 
-- `SELECT` 文を使用したデータのクエリ
-- `INSERT`、`UPDATE`、または `DELETE` 文を使用したデータの変更
-- `COPY INTO` コマンドを使用したテーブルへのデータのロード (load)
+- SELECT 文を使用したデータのクエリ
+- INSERT、UPDATE、または DELETE 文を使用したデータの変更
+- COPY INTO コマンドを使用したテーブルへのデータのロード (load)
 
 Warehouse を実行すると費用が発生します。詳細は、[Warehouse の料金](/tidb-cloud-lake/guides/pricing-billing.md) を参照してください。
 

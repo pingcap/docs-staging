@@ -1,11 +1,11 @@
 ---
 title: ファイル形式
-summary: このページでは、TiDB Cloud Lake における File Format 操作の包括的な概要を、参照しやすいよう機能別に整理して説明します。
+summary: このページでは、TiDB Cloud Lake におけるファイル形式の操作の包括的な概要を、参照しやすいよう機能別に整理して説明します。
 ---
 
 # ファイル形式
 
-このページでは、TiDB Cloud Lake における File Format 操作の包括的な概要を、参照しやすいよう機能別に整理して説明します。
+このページでは、TiDB Cloud Lake におけるファイル形式の操作の包括的な概要を、参照しやすいよう機能別に整理して説明します。
 
 ## ファイル形式の管理 {#file-format-management}
 
