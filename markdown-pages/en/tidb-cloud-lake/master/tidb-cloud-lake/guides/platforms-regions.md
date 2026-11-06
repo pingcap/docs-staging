@@ -15,6 +15,7 @@ TiDB Cloud Lake is a cloud-native solution that currently supports the following
 | AWS            | Asia Pacific (Singapore) | ap-southeast-1 |
 | AWS            | Asia Pacific (Mumbai)    | ap-south-1     |
 | Alibaba Cloud  | Japan (Tokyo)            | ap-northeast-1 |
+| Alibaba Cloud  | Singapore                | ap-southeast-1 |
 
 > **Note:**
 >
