@@ -204,7 +204,7 @@
           },
           {
             "id": "v1beta2",
-            "pathname": "v1beta2/premium",
+            "pathname": "v1beta2",
             "production": "https://docs-download.pingcap.com/api/tidbcloud-oas-v1beta2-premium.swagger.json",
             "preview": "https://docs-download.pingcap.com/api/preview-tidbcloud-oas-v1beta2-premium.swagger.json"
           }
