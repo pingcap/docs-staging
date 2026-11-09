@@ -67,6 +67,37 @@ To set the backup time for a TiDB Cloud Essential instance, perform the followin
 
 4. Click **Confirm**.
 
+## Manual backups
+
+For TiDB Cloud Essential instances with TiDB version `CLOUD.202603.x` or later, you can create a manual backup before high-risk operations, such as critical data deletion or irreversible schema changes.
+
+> **Note:**
+>
+> - You can check the TiDB version of an TiDB Cloud Essential instance on its overview page in the TiDB Cloud console.
+> - TiDB Cloud Essential instances with TiDB version `v8.5.3` or earlier and TiDB Cloud Starter do not support manual backups.
+
+### Retention and deletion
+
+Manual backups are retained until you explicitly delete them. The automatic backup retention setting does not apply to manual backups. If you delete an TiDB Cloud Essential instance, its manual backups move to the Recycle Bin and remain there until you manually delete them. Backups in the Recycle Bin continue to incur charges until deleted. For more information, see [Delete a TiDB Cloud Resource](/tidb-cloud/delete-tidb-cluster.md).
+
+### Create a manual backup in the console
+
+1. Navigate to the [**Backup**](#view-the-backup-page) page of your TiDB Cloud Essential instance.
+
+2. In the upper-right corner, click **...**, and then click **Manual Backup**.
+
+3. Confirm the operation. The backup appears in the **Backup List**.
+
+4. Wait until the backup completes successfully before using it for a [snapshot restore](#restore-to-a-new-instance).
+
+### Delete a manual backup
+
+1. Navigate to the [**Backup**](#view-the-backup-page) page of your TiDB Cloud Essential instance. If the instance has been deleted, locate its backups in the [Recycle Bin](#restore-from-recycle-bin).
+
+2. Locate the manual backup you want to delete, click **...** in its row, and then click **Delete**.
+
+3. Confirm the deletion. The deleted backup can no longer be used to restore your data.
+
 ## Restore
 
 TiDB Cloud offer restore functionality to help recover data in case of accidental loss or corruption.
@@ -75,12 +106,14 @@ TiDB Cloud offer restore functionality to help recover data in case of accidenta
 
 TiDB Cloud supports snapshot restore and point-in-time restore for your TiDB Cloud Starter or Essential instance.
 
-- **Snapshot Restore**: restores your TiDB Cloud Starter or Essential instance from a specific backup snapshot.
+- **Snapshot Restore**: restores data from a specific backup snapshot to a new TiDB Cloud Starter or Essential instance. For TiDB Cloud Essential instances with TiDB version `CLOUD.202603.x` or later, you can restore from either an automatic or a manual backup.
 
 - **Point-in-Time Restore (PREVIEW)**: restores your TiDB Cloud Essential instance to a specific time.
 
     - TiDB Cloud Starter instances: not supported.
     - TiDB Cloud Essential instances: restores to any time within the backup retention, but not earlier than the TiDB Cloud Essential instance creation time or later than one minute before the current time.
+
+    Point-in-time restore applies to automatic backups and is not supported for manual backups.
 
 ### Restore destination
 
@@ -112,7 +145,7 @@ To restore your data to a new TiDB Cloud Starter or Essential instance, take the
     To restore from a selected backup snapshot, take the following steps:
 
     1. Click **Snapshot Restore**.
-    2. Select the backup snapshot you want to restore from.
+    2. Select the backup snapshot you want to restore from. To restore a manual backup of an TiDB Cloud Essential instance, select the completed manual backup.
 
     </div>
     <div label="Point-in-Time Restore">
@@ -154,7 +187,7 @@ To restore a deleted TiDB Cloud Essential instance from the Recycle Bin, take th
 
 2. On the **Recycle Bin** page, click the **Essential** tab to go to the recycle bin of TiDB Cloud Essential instances.
 
-3. Locate the TiDB Cloud Essential instance you want to restore, and then click the **>** button to expand the available backups of the instance.
+3. Locate the TiDB Cloud Essential instance you want to restore, and then click the **>** button to expand the available backups of the instance. For instances with TiDB version `CLOUD.202603.x` or later, this list can include manual backups. Manual backups remain available until you explicitly delete them.
 
     > **Note:**
     >
@@ -167,5 +200,6 @@ To restore a deleted TiDB Cloud Essential instance from the Recycle Bin, take th
 ## Limitations
 
 - If a TiFlash replica is enabled, it will be unavailable for a period after the restore, because the data needs to be rebuilt in TiFlash.
-- Manual backups are not supported for TiDB Cloud Starter and TiDB Cloud Essential instances.
+- Manual backups are not supported for TiDB Cloud Starter instances. For TiDB Cloud Essential instances, manual backups require TiDB version `CLOUD.202603.x` or later.
+- Manual backups do not support point-in-time restore or partial backups, such as table-level or database-level backups. Each restore creates a new instance; restoring a manual backup to an existing instance is not supported.
 - A TiDB Cloud Starter or TiDB Cloud Essential instance with more than 1 TiB of data does not support restoring to a new instance by default. Contact [TiDB Cloud Support](/tidb-cloud/tidb-cloud-support.md) for assistance with larger datasets.
