@@ -42,7 +42,7 @@ TiDB Cloud Lake 使用一套全面的访问控制系统，结合了以下机制�
 
 ### 存储加密 {#storage-encryption}
 
-TiDB Cloud Lake Enterprise 支持在 Object Storage Service (OSS) 中进行服务端加密。此功能支持您为存储在 OSS 中的数据启用服务端加密，从而增强数据安全性和隐私保护。您可以选择最适合自身需求的加密方式：
+TiDB Cloud Lake 支持在 Object Storage Service (OSS) 中进行服务端加密。此功能支持您为存储在 OSS 中的数据启用服务端加密，从而增强数据安全性和隐私保护。您可以选择最适合自身需求的加密方式：
 
 - AES-256 加密
 - 客户管理密钥 (CMK)

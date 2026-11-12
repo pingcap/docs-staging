@@ -15,6 +15,7 @@ TiDB Cloud Lake 是一种云原生解决方案，目前支持以下云服务提�
 | AWS            | Asia Pacific (Singapore) | ap-southeast-1 |
 | AWS            | Asia Pacific (Mumbai)    | ap-south-1     |
 | Alibaba Cloud  | Japan (Tokyo)            | ap-northeast-1 |
+| Alibaba Cloud  | Singapore                | ap-southeast-1 |
 
 > **注意：**
 >
