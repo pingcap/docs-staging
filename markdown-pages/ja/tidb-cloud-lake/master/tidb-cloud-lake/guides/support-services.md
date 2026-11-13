@@ -39,14 +39,3 @@ TiDB Cloud Lake は、サブスクリプションのティアに応じて異な�
 > Business および Dedicated のお客様のみが、サポートインシデントに対する Service Level Agreement (SLA) の対象となる点にご注意ください。Personal エディションをご利用の場合、できるだけ早くご質問に回答するよう努めますが、あわせてコミュニティリソースの活用もおすすめします。
 >
 > - [TiDB Cloud Lake Community Slack Channel](https://slack.tidb.io/invite?team=tidb-community&channel=everyone&ref=tidbcloud)
-
-## エンタープライズサポート {#enterprise-support}
-
-ミッションクリティカルなデプロイを行うお客様向けに、Dedicated エディションでは次のような強化されたサポートオプションを提供しています。
-
-- すべての重大度レベルに対する優先応答時間
-- 専任のサポートエンジニア
-- プロアクティブな監視と問題解決
-- 定期的なヘルスチェックと最適化の推奨
-
-エンタープライズサポートの詳細については、[営業チーム](https://www.pingcap.com/contact-us/) までお問い合わせください。

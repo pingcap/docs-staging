@@ -28,7 +28,7 @@ TiDB Cloud Lake サポートから組織向けの信頼されたプリンシパ�
 
    <https://us-east-2.console.aws.amazon.com/iam/home?region=us-east-2#/policies>
 
-   `Create policy` をクリックし、`Custom trust policy` を選択して、S3 バケットアクセス用のポリシードキュメントを入力します。
+   `Create policy` をクリックします。`Policy editor` セクションで `JSON` をクリックし、S3 バケットアクセス用のポリシードキュメントを入力します。
 
    ```json
    {
