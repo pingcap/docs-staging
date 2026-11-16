@@ -33,6 +33,117 @@ const CLOUD_TOC_LIST = [
   "TOC-tidb-cloud-releases.md",
 ];
 
+export const ALLOWED_LANGS = new Set(["en", "zh", "ja"]);
+
+export function validateRepo(repo) {
+  if (typeof repo !== "string" || repo.length === 0) {
+    throw new Error("Invalid repo parameter: must be a non-empty string");
+  }
+  if (
+    !/^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/.test(repo) ||
+    repo.includes("..")
+  ) {
+    throw new Error(`Invalid repo parameter: "${repo}"`);
+  }
+  const [owner, name] = repo.split("/");
+  if (
+    owner === "." ||
+    name === "." ||
+    owner.startsWith("-") ||
+    name.startsWith("-")
+  ) {
+    throw new Error(`Invalid repo parameter: "${repo}"`);
+  }
+  return repo;
+}
+
+export function validateRef(ref) {
+  if (typeof ref !== "string" || ref.length === 0) {
+    throw new Error("Invalid ref parameter: must be a non-empty string");
+  }
+  if (
+    !/^[A-Za-z0-9._/-]+$/.test(ref) ||
+    ref.startsWith("/") ||
+    ref.endsWith("/") ||
+    ref.startsWith(".") ||
+    ref.endsWith(".") ||
+    ref.startsWith("-") ||
+    ref.includes("..") ||
+    ref.includes("//")
+  ) {
+    throw new Error(`Invalid ref parameter: "${ref}"`);
+  }
+  const segments = ref.split("/");
+  if (
+    segments.some(
+      (seg) => !seg || seg.startsWith(".") || seg.endsWith(".")
+    )
+  ) {
+    throw new Error(`Invalid ref parameter: "${ref}"`);
+  }
+  return ref;
+}
+
+export function validateLang(lang) {
+  if (typeof lang !== "string" || !ALLOWED_LANGS.has(lang)) {
+    throw new Error(
+      `Invalid lang parameter: "${lang}". Allowed values: ${[
+        ...ALLOWED_LANGS,
+      ].join(", ")}`
+    );
+  }
+  return lang;
+}
+
+export function validateSubPath(subPath) {
+  if (subPath === undefined || subPath === null || subPath === "") {
+    return "";
+  }
+  if (typeof subPath !== "string") {
+    throw new Error("Invalid path parameter: must be a string");
+  }
+  if (
+    !/^[A-Za-z0-9._/-]+$/.test(subPath) ||
+    subPath.startsWith("/") ||
+    subPath.startsWith("-") ||
+    subPath.includes("..") ||
+    subPath.includes("//")
+  ) {
+    throw new Error(`Invalid path parameter: "${subPath}"`);
+  }
+  const trimmed = subPath.replace(/\/+$/, "");
+  const segments = trimmed ? trimmed.split("/") : [];
+  if (
+    segments.length === 0 ||
+    segments.some((seg) => !seg || seg === "." || seg === "..")
+  ) {
+    throw new Error(`Invalid path parameter: "${subPath}"`);
+  }
+  return segments.join("/");
+}
+
+export function resolveSafeChildPath(baseDir, ...segments) {
+  const resolvedBase = path.normalize(path.resolve(baseDir));
+  const normalizedSegments = segments.map((segment) => {
+    if (typeof segment !== "string" || segment.length === 0) {
+      throw new Error("Invalid path segment: must be a non-empty string");
+    }
+    return path.normalize(segment);
+  });
+  const resolvedTarget = path.normalize(
+    path.resolve(resolvedBase, ...normalizedSegments)
+  );
+  const relative = path.relative(resolvedBase, resolvedTarget);
+
+  if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
+    throw new Error(
+      `Path traversal detected: "${resolvedTarget}" escapes base directory "${resolvedBase}"`
+    );
+  }
+
+  return resolvedTarget;
+}
+
 const isCloudTOC = (relativePathInZip) => {
   return CLOUD_TOC_LIST.includes(relativePathInZip);
 };
@@ -56,7 +167,10 @@ export async function retrieveAllMDs(
   options,
   defaultVariables
 ) {
-  const { repo, ref, path = "" } = metaInfo;
+  const repo = validateRepo(metaInfo.repo);
+  const ref = validateRef(metaInfo.ref);
+  const subPath = validateSubPath(metaInfo.path);
+  const resolvedDestDir = path.normalize(path.resolve(destDir));
   const { ignore = [], pipelines = [] } = options;
 
   // Get variables.json from root directory
@@ -82,12 +196,12 @@ export async function retrieveAllMDs(
   // Add variablesReplaceStream to pipelines
   const ppls = [...pipelines, variablesReplaceStream(variables)];
 
-  const data = (await getContent(repo, ref, path)).data;
+  const data = (await getContent(repo, ref, subPath)).data;
 
   if (Array.isArray(data)) {
     data.forEach((d) => {
       const { type, name, download_url } = d;
-      const nextDest = `${destDir}/${name}`;
+      const nextDest = resolveSafeChildPath(resolvedDestDir, name);
 
       if (ignore.includes(name)) {
         return;
@@ -98,7 +212,7 @@ export async function retrieveAllMDs(
           {
             repo,
             ref,
-            path: `${path}/${name}`,
+            path: subPath ? `${subPath}/${name}` : name,
           },
           nextDest,
           options,
@@ -114,7 +228,9 @@ export async function retrieveAllMDs(
     if (data.name.endsWith(".md")) {
       writeContent(
         data.download_url,
-        destDir.endsWith(".md") ? destDir : `${destDir}/${data.name}`,
+        resolvedDestDir.endsWith(".md")
+          ? resolvedDestDir
+          : resolveSafeChildPath(resolvedDestDir, data.name),
         ppls
       );
     }
@@ -126,23 +242,49 @@ export async function retrieveAllMDs(
  *
  * @export
  * @param {string} repo
- * @param {string} path
+ * @param {string} subPath
  * @param {string} destDir
  */
-export function genDest(repo, path, destDir, sync) {
+export function genDest(repo, subPath, destDir, sync) {
+  const safeSubPath = validateSubPath(subPath);
+  let resolvedBase = path.normalize(path.resolve(destDir));
+
   if (["pingcap/docs-dm", "pingcap/docs-tidb-operator"].includes(repo)) {
-    const pathArr = path.split("/");
-    const lang = pathArr[0];
+    if (!safeSubPath) {
+      throw new Error(
+        `Invalid path parameter for ${repo}: must start with a valid lang`
+      );
+    }
+    const pathArr = safeSubPath.split("/");
+    const lang = validateLang(pathArr[0]);
     const pathWithoutLang = pathArr.slice(1).join("/");
 
     if (sync) {
-      destDir = destDir.replace("en", lang);
+      const enSegment = `${path.sep}en${path.sep}`;
+      const lastIdx = resolvedBase.lastIndexOf(enSegment);
+      if (lastIdx !== -1) {
+        resolvedBase = path.normalize(
+          path.resolve(
+            resolvedBase.slice(0, lastIdx) +
+              `${path.sep}${lang}${path.sep}` +
+              resolvedBase.slice(lastIdx + enSegment.length)
+          )
+        );
+      } else {
+        resolvedBase = path.normalize(
+          path.resolve(destDir.replace("en", lang))
+        );
+      }
     }
 
-    return `${destDir}${pathWithoutLang ? "/" + pathWithoutLang : ""}`;
+    return pathWithoutLang
+      ? resolveSafeChildPath(resolvedBase, pathWithoutLang)
+      : resolvedBase;
   }
 
-  return path ? `${destDir}/${path}` : destDir;
+  return safeSubPath
+    ? resolveSafeChildPath(resolvedBase, safeSubPath)
+    : resolvedBase;
 }
 
 /**
@@ -209,7 +351,9 @@ export async function retrieveTiDBMDsFromZip(
   options,
   retry = 5
 ) {
-  const { repo, ref } = metaInfo;
+  const repo = validateRepo(metaInfo.repo);
+  const ref = validateRef(metaInfo.ref);
+  const resolvedDestDir = path.normalize(path.resolve(destDir));
   const { ignore = [], pipelines = [] } = options;
 
   // Replace slashes in branch name to avoid path issues
@@ -238,6 +382,9 @@ export async function retrieveTiDBMDsFromZip(
       const relativePathNameList = entryName.split("/");
       relativePathNameList.shift();
       const relativePathInZip = relativePathNameList.join("/");
+      if (!relativePathInZip) {
+        return;
+      }
       // Ignore if cloud file
       if (
         relativePathInZip.startsWith(`tidb-cloud/`) ||
@@ -253,7 +400,7 @@ export async function retrieveTiDBMDsFromZip(
         return;
       }
       writeFile(
-        `${destDir}/${relativePathNameList.join("/")}`,
+        resolveSafeChildPath(resolvedDestDir, relativePathInZip),
         zipEntry.getData(),
         ppls
       );
@@ -275,7 +422,9 @@ export async function retrieveCloudMDsFromZip(
   options,
   retry = 5
 ) {
-  const { repo, ref } = metaInfo;
+  const repo = validateRepo(metaInfo.repo);
+  const ref = validateRef(metaInfo.ref);
+  const resolvedDestDir = path.normalize(path.resolve(destDir));
   const { ignore = [], pipelines = [] } = options;
 
   // Replace slashes in branch name to avoid path issues
@@ -318,6 +467,9 @@ export async function retrieveCloudMDsFromZip(
       const relativePathNameList = entryName.split("/");
       relativePathNameList.shift();
       const relativePathInZip = relativePathNameList.join("/");
+      if (!relativePathInZip) {
+        return;
+      }
       // Ignore if not in cloud filelist
       if (
         !(
@@ -336,10 +488,14 @@ export async function retrieveCloudMDsFromZip(
         return;
       }
       if (relativePathInZip === `TOC-tidb-cloud.md`) {
-        writeFile(`${destDir}/TOC.md`, zipEntry.getData(), ppls);
+        writeFile(
+          resolveSafeChildPath(resolvedDestDir, "TOC.md"),
+          zipEntry.getData(),
+          ppls
+        );
       } else {
         writeFile(
-          `${destDir}/${relativePathNameList.join("/")}`,
+          resolveSafeChildPath(resolvedDestDir, relativePathInZip),
           zipEntry.getData(),
           ppls
         );

@@ -6,13 +6,18 @@ import {
   retrieveCloudMDsFromZip,
   copyFilesFromToc,
   copyDirectorySync,
+  validateRepo,
+  validateRef,
+  validateLang,
+  validateSubPath,
+  resolveSafeChildPath,
 } from "./utils.js";
 import {
   replaceCopyableStream,
   replaceImagePathStream,
 } from "@pingcap/docs-content";
 
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import fs from "fs";
 import { genContentFromOutline } from "./gen.js";
 import { handleSync } from "./sync.js";
@@ -54,63 +59,72 @@ function renameDoc(repo) {
 
 export function download(argv) {
   const { repo, path, ref, destination, config, dryRun } = argv;
+  const safeRepo = validateRepo(repo);
+  const safeRef = validateRef(ref);
+  const safePath = validateSubPath(path);
   const dest = nPath.resolve(destination);
-  const options = genOptions(repo, config, dryRun);
+  const options = genOptions(safeRepo, config, dryRun);
 
-  switch (repo) {
-    case "pingcap/docs-cn":
-      const docsCnDestPath = genDest(
-        repo,
-        path,
-        nPath.resolve(dest, `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`)
+  switch (safeRepo) {
+    case "pingcap/docs-cn": {
+      const docsCnLang = validateLang(safeRepo.endsWith("-cn") ? "zh" : "en");
+      const docsCnBaseDir = resolveSafeChildPath(
+        dest,
+        docsCnLang,
+        "tidb",
+        safeRef
       );
+      const docsCnDestPath = genDest(safeRepo, safePath, docsCnBaseDir);
       rimraf.sync(docsCnDestPath);
       retrieveTiDBMDsFromZip(
         {
-          repo,
-          path,
-          ref,
+          repo: safeRepo,
+          path: safePath,
+          ref: safeRef,
         },
         docsCnDestPath,
         options
       );
       break;
+    }
     case "pingcap/docs":
-      if (ref.startsWith("i18n-")) {
-        const refDataList = ref.split("-");
+      if (safeRef.startsWith("i18n-")) {
+        const refDataList = safeRef.split("-");
         refDataList.shift();
-        const refLang = refDataList.shift();
-        const refVer = refDataList.join("-");
-        const docsDestPath = genDest(
-          repo,
-          path,
-          nPath.resolve(dest, `${refLang}/tidb/${refVer}`)
+        const refLang = validateLang(refDataList.shift());
+        const refVer = validateRef(refDataList.join("-"));
+        const i18nBaseDir = resolveSafeChildPath(
+          dest,
+          refLang,
+          "tidb",
+          refVer
         );
+        const docsDestPath = genDest(safeRepo, safePath, i18nBaseDir);
         rimraf.sync(docsDestPath);
         retrieveTiDBMDsFromZip(
           {
-            repo,
-            path,
-            ref,
+            repo: safeRepo,
+            path: safePath,
+            ref: safeRef,
           },
           docsDestPath,
           options
         );
       } else {
-        const docsDestPath = genDest(
-          repo,
-          path,
-          nPath.resolve(
-            dest,
-            `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`
-          )
+        const docsLang = validateLang(safeRepo.endsWith("-cn") ? "zh" : "en");
+        const docsBaseDir = resolveSafeChildPath(
+          dest,
+          docsLang,
+          "tidb",
+          safeRef
         );
+        const docsDestPath = genDest(safeRepo, safePath, docsBaseDir);
         rimraf.sync(docsDestPath);
         retrieveTiDBMDsFromZip(
           {
-            repo,
-            path,
-            ref,
+            repo: safeRepo,
+            path: safePath,
+            ref: safeRef,
           },
           docsDestPath,
           options
@@ -118,8 +132,8 @@ export function download(argv) {
       }
       break;
     case "pingcap/docs-dm":
-    case "pingcap/docs-tidb-operator":
-      if (!path) {
+    case "pingcap/docs-tidb-operator": {
+      if (!safePath) {
         sig.warn(
           "For docs-dm/docs-tidb-operator/docs-appdev, you must provide en or zh path."
         );
@@ -127,44 +141,49 @@ export function download(argv) {
         return;
       }
 
-      const name = renameDoc(repo);
-      const dmOpDestPath = genDest(
-        repo,
-        path,
-        nPath.resolve(dest, `${path.split("/")[0]}/${name}/${ref}`)
+      const dmOpLang = validateLang(safePath.split("/")[0]);
+      const name = renameDoc(safeRepo);
+      const dmOpBaseDir = resolveSafeChildPath(
+        dest,
+        dmOpLang,
+        name,
+        safeRef
       );
+      const dmOpDestPath = genDest(safeRepo, safePath, dmOpBaseDir);
       rimraf.sync(dmOpDestPath);
 
       retrieveAllMDs(
         {
-          repo,
-          path,
-          ref,
+          repo: safeRepo,
+          path: safePath,
+          ref: safeRef,
         },
         dmOpDestPath,
         options
       );
 
       break;
-    default:
+    }
+    default: {
       // ! TO REMOVE
+      const defaultLang = validateLang(safeRepo.endsWith("-cn") ? "zh" : "en");
+      const defaultBaseDir = resolveSafeChildPath(
+        dest,
+        defaultLang,
+        "tidb",
+        "master"
+      );
       retrieveTiDBMDsFromZip(
         {
-          repo,
-          path,
-          ref,
+          repo: safeRepo,
+          path: safePath,
+          ref: safeRef,
         },
-        genDest(
-          repo,
-          path,
-          nPath.resolve(
-            dest,
-            `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/master`
-          )
-        ),
+        genDest(safeRepo, safePath, defaultBaseDir),
         options
       );
       break;
+    }
   }
 }
 
@@ -172,87 +191,100 @@ export const clean = rimraf;
 
 export function sync(argv) {
   const { repo, ref, base, head, destination, config, dryRun } = argv;
+  const safeRepo = validateRepo(repo);
+  const safeRef = validateRef(ref);
   const dest = nPath.resolve(destination);
-  const options = genOptions(repo, config, dryRun);
+  const options = genOptions(safeRepo, config, dryRun);
 
-  switch (repo) {
+  switch (safeRepo) {
     case "pingcap/docs":
-      if (ref.startsWith("i18n-")) {
-        const refDataList = ref.split("-");
+      if (safeRef.startsWith("i18n-")) {
+        const refDataList = safeRef.split("-");
         refDataList.shift();
-        const refLang = refDataList.shift();
-        const refVer = refDataList.join("-");
+        const refLang = validateLang(refDataList.shift());
+        const refVer = validateRef(refDataList.join("-"));
         handleSync(
           {
-            repo,
-            ref,
+            repo: safeRepo,
+            ref: safeRef,
             base,
             head,
           },
-          nPath.resolve(dest, `${refLang}/tidb/${refVer}`),
+          resolveSafeChildPath(dest, refLang, "tidb", refVer),
           options
         );
       } else {
         handleSync(
           {
-            repo,
-            ref,
+            repo: safeRepo,
+            ref: safeRef,
             base,
             head,
           },
-          nPath.resolve(dest, `en/tidb/${ref}`),
+          resolveSafeChildPath(dest, "en", "tidb", safeRef),
           options
         );
       }
       break;
-    case "pingcap/docs-cn":
+    case "pingcap/docs-cn": {
+      const syncLang = validateLang(safeRepo.endsWith("-cn") ? "zh" : "en");
       handleSync(
         {
-          repo,
-          ref,
+          repo: safeRepo,
+          ref: safeRef,
           base,
           head,
         },
-        nPath.resolve(
-          dest,
-          `${repo.endsWith("-cn") ? "zh" : "en"}/tidb/${ref}`
-        ),
+        resolveSafeChildPath(dest, syncLang, "tidb", safeRef),
         options
       );
       break;
+    }
     case "pingcap/docs-dm":
-    case "pingcap/docs-tidb-operator":
-      const name = renameDoc(repo);
+    case "pingcap/docs-tidb-operator": {
+      const name = renameDoc(safeRepo);
 
       handleSync(
         {
-          repo,
-          ref,
+          repo: safeRepo,
+          ref: safeRef,
           base,
           head,
         },
-        nPath.resolve(dest, `en/${name}/${ref}`), // use en as a placeholder
+        resolveSafeChildPath(dest, "en", name, safeRef), // use en as a placeholder
         options
       );
 
       break;
+    }
   }
 }
 
 export function gen(argv) {
   const { repo, ref, from, output } = argv;
-  const repoDest = `${nPath.dirname(from)}/${repo}`;
+  const safeRepo = validateRepo(repo);
+  const safeRef = validateRef(ref);
+  const repoDest = resolveSafeChildPath(nPath.dirname(from), safeRepo);
 
   if (!fs.existsSync(repoDest)) {
     sig.start("Clone", repoDest, "...");
 
-    execSync(
-      `git clone git@github.com:${repo}.git ${repoDest} --branch ${ref} --depth 1`,
+    execFileSync(
+      "git",
+      [
+        "clone",
+        `git@github.com:${safeRepo}.git`,
+        repoDest,
+        "--branch",
+        safeRef,
+        "--depth",
+        "1",
+      ],
       { stdio: "inherit" }
     );
   }
 
-  genContentFromOutline(repo, from, output);
+  genContentFromOutline(safeRepo, from, output);
 }
 
 // export function filterCloud(argv) {
@@ -275,23 +307,29 @@ export function filterCloud(argv) {
     path,
     ref,
     destination,
-    lang,
+    lang = "en",
     config,
     dryRun,
   } = argv;
+  const safeRepo = validateRepo(repo);
+  const safeRef = validateRef(ref);
+  const safeLang = validateLang(lang);
+  const safePath = validateSubPath(path);
   const dest = nPath.resolve(destination);
-  const options = genOptions(repo, config, dryRun);
-  const docsDestPath = genDest(
-    repo,
-    path,
-    nPath.resolve(dest, `${lang}/tidbcloud/master`)
+  const options = genOptions(safeRepo, config, dryRun);
+  const cloudBaseDir = resolveSafeChildPath(
+    dest,
+    safeLang,
+    "tidbcloud",
+    "master"
   );
+  const docsDestPath = genDest(safeRepo, safePath, cloudBaseDir);
   rimraf.sync(docsDestPath);
   retrieveCloudMDsFromZip(
     {
-      repo,
-      path,
-      ref,
+      repo: safeRepo,
+      path: safePath,
+      ref: safeRef,
     },
     docsDestPath,
     options

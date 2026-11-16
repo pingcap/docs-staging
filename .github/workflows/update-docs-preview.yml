@@ -21,6 +21,8 @@ on:
 
 env:
   DOCS_STAGING_PREVIEW_BRANCH: premium-preview
+  INPUT_REPO: ${{ inputs.repo }}
+  INPUT_BRANCH: ${{ inputs.branch }}
 
 concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
@@ -34,6 +36,30 @@ jobs:
       - uses: actions/checkout@v3
         with:
           ref: "${{ env.DOCS_STAGING_PREVIEW_BRANCH }}"
+      - name: Validate workflow inputs
+        run: |
+          case "${INPUT_REPO}" in
+            pingcap/docs) ;;
+            *)
+              echo "::error::Invalid repo input: ${INPUT_REPO}"
+              exit 1
+              ;;
+          esac
+
+          if [[ -z "${INPUT_BRANCH}" ]] || \
+             [[ ! "${INPUT_BRANCH}" =~ ^[A-Za-z0-9._/-]+$ ]] || \
+             [[ "${INPUT_BRANCH}" == /* ]] || \
+             [[ "${INPUT_BRANCH}" == */ ]] || \
+             [[ "${INPUT_BRANCH}" == .* ]] || \
+             [[ "${INPUT_BRANCH}" == *. ]] || \
+             [[ "${INPUT_BRANCH}" == -* ]] || \
+             [[ "${INPUT_BRANCH}" == *".."* ]] || \
+             [[ "${INPUT_BRANCH}" == *"//"* ]] || \
+             ! git check-ref-format --branch "${INPUT_BRANCH}" >/dev/null 2>&1; then
+            echo "::error::Invalid branch input: ${INPUT_BRANCH}"
+            exit 1
+          fi
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -51,7 +77,7 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
+          yarn download:tidb-cloud:en --ref "${INPUT_BRANCH}"
 
       - name: Update all folder
         if: ${{ inputs.full }}
@@ -59,7 +85,7 @@ jobs:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           sudo rm -fr ./markdown-pages/*
-          yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
+          yarn download:tidb-cloud:en --ref "${INPUT_BRANCH}"
 
       - name: Git commit
         run: |
@@ -70,7 +96,7 @@ jobs:
           then
             git status
           else
-            git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
+            git commit -m "update MD by dispatch event ${INPUT_REPO} ${INPUT_BRANCH}"
           fi
 
       - name: Git push

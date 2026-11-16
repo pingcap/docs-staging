@@ -26,6 +26,8 @@ env:
   EN_CLOUD_BRANCH: release-8.5
   JA_CLOUD_BRANCH: i18n-ja-release-8.5
   ZH_CLOUD_BRANCH: i18n-zh-release-8.5
+  INPUT_REPO: ${{ inputs.repo }}
+  INPUT_BRANCH: ${{ inputs.branch }}
 
 concurrency: ${{ github.workflow }}-${{ inputs.repo }}-${{ inputs.branch }}
 
@@ -39,6 +41,30 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Validate workflow inputs
+        run: |
+          case "${INPUT_REPO}" in
+            pingcap/docs|pingcap/docs-cn|pingcap/docs-dm|pingcap/docs-tidb-operator) ;;
+            *)
+              echo "::error::Invalid repo input: ${INPUT_REPO}"
+              exit 1
+              ;;
+          esac
+
+          if [[ -z "${INPUT_BRANCH}" ]] || \
+             [[ ! "${INPUT_BRANCH}" =~ ^[A-Za-z0-9._/-]+$ ]] || \
+             [[ "${INPUT_BRANCH}" == /* ]] || \
+             [[ "${INPUT_BRANCH}" == */ ]] || \
+             [[ "${INPUT_BRANCH}" == .* ]] || \
+             [[ "${INPUT_BRANCH}" == *. ]] || \
+             [[ "${INPUT_BRANCH}" == -* ]] || \
+             [[ "${INPUT_BRANCH}" == *".."* ]] || \
+             [[ "${INPUT_BRANCH}" == *"//"* ]] || \
+             ! git check-ref-format --branch "${INPUT_BRANCH}" >/dev/null 2>&1; then
+            echo "::error::Invalid branch input: ${INPUT_BRANCH}"
+            exit 1
+          fi
+
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -56,6 +82,19 @@ jobs:
         env:
           GITHUB_AUTHORIZATION_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
+          if [[ -z "${INPUT_BRANCH}" ]] || \
+             [[ ! "${INPUT_BRANCH}" =~ ^[A-Za-z0-9._/-]+$ ]] || \
+             [[ "${INPUT_BRANCH}" == /* ]] || \
+             [[ "${INPUT_BRANCH}" == */ ]] || \
+             [[ "${INPUT_BRANCH}" == .* ]] || \
+             [[ "${INPUT_BRANCH}" == *. ]] || \
+             [[ "${INPUT_BRANCH}" == -* ]] || \
+             [[ "${INPUT_BRANCH}" == *".."* ]] || \
+             [[ "${INPUT_BRANCH}" == *"//"* ]]; then
+            echo "::error::Invalid branch input: ${INPUT_BRANCH}"
+            exit 1
+          fi
+
           sync_tidb_cloud_lake() {
             local lang="$1"
             local source_root="$2"
@@ -97,10 +136,10 @@ jobs:
           }
 
           # handle zh auto translated docs branch(only cloud)
-          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.ZH_CLOUD_BRANCH }} ]
+          if [ "${INPUT_REPO}" = "pingcap/docs" ] && [ "${INPUT_BRANCH}" = "${ZH_CLOUD_BRANCH}" ]
           then
-          yarn download:tidb-cloud:zh --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download:tidb-cloud:zh --ref "${INPUT_BRANCH}"
+          yarn download "${INPUT_REPO}" --ref "${INPUT_BRANCH}"
           sync_tidb_cloud_lake "zh" "./markdown-pages/zh/tidb/release-8.5"
           sync_tidb_cloud_filesystem "zh" "./markdown-pages/zh/tidb/release-8.5"
           git checkout -- ./markdown-pages/zh/tidb/release-8.5
@@ -109,34 +148,34 @@ jobs:
           fi
 
           # handle ja auto translated docs branch(tidb and cloud)
-          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.JA_CLOUD_BRANCH }} ]
+          if [ "${INPUT_REPO}" = "pingcap/docs" ] && [ "${INPUT_BRANCH}" = "${JA_CLOUD_BRANCH}" ]
           then
-          yarn download:tidb-cloud:ja --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download:tidb-cloud:ja --ref "${INPUT_BRANCH}"
+          yarn download "${INPUT_REPO}" --ref "${INPUT_BRANCH}"
           sync_tidb_cloud_lake "ja" "./markdown-pages/ja/tidb/release-8.5"
           sync_tidb_cloud_filesystem "ja" "./markdown-pages/ja/tidb/release-8.5"
           exit 0
           fi
 
           # handle tidb-cloud doc based on specified en doc branch
-          if [ ${{ inputs.repo }} = "pingcap/docs" ] && [ ${{ inputs.branch }} = ${{ env.EN_CLOUD_BRANCH }} ]
+          if [ "${INPUT_REPO}" = "pingcap/docs" ] && [ "${INPUT_BRANCH}" = "${EN_CLOUD_BRANCH}" ]
           then
-          yarn download:tidb-cloud:en --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
-          sync_tidb_cloud_lake "en" "./markdown-pages/en/tidb/${{ inputs.branch }}"
-          sync_tidb_cloud_filesystem "en" "./markdown-pages/en/tidb/${{ inputs.branch }}"
+          yarn download:tidb-cloud:en --ref "${INPUT_BRANCH}"
+          yarn download "${INPUT_REPO}" --ref "${INPUT_BRANCH}"
+          sync_tidb_cloud_lake "en" "./markdown-pages/en/tidb/${INPUT_BRANCH}"
+          sync_tidb_cloud_filesystem "en" "./markdown-pages/en/tidb/${INPUT_BRANCH}"
           exit 0
           fi
 
           # docs-dm and docs-tidb-operator need specify language
-          if [ ${{ inputs.repo }} = "pingcap/docs-dm" ] || [ ${{ inputs.repo }} = "pingcap/docs-tidb-operator" ]
+          if [ "${INPUT_REPO}" = "pingcap/docs-dm" ] || [ "${INPUT_REPO}" = "pingcap/docs-tidb-operator" ]
           then
-          yarn download ${{ inputs.repo }} en --ref ${{ inputs.branch }}
-          yarn download ${{ inputs.repo }} zh --ref ${{ inputs.branch }}
+          yarn download "${INPUT_REPO}" en --ref "${INPUT_BRANCH}"
+          yarn download "${INPUT_REPO}" zh --ref "${INPUT_BRANCH}"
           exit 0
           fi
 
-          yarn download ${{ inputs.repo }} --ref ${{ inputs.branch }}
+          yarn download "${INPUT_REPO}" --ref "${INPUT_BRANCH}"
 
       - name: Update all folder
         if: ${{ inputs.full }}
@@ -216,12 +255,12 @@ jobs:
             --output "${TEMP_FILE}" \
             -H "Accept: application/vnd.github.raw+json" \
             -H "Authorization: token ${GITHUB_AUTHORIZATION_TOKEN}" \
-            "https://api.github.com/repos/${{ inputs.repo }}/contents/tooltip-terms.json?ref=${{ inputs.branch }}"
+            "https://api.github.com/repos/${INPUT_REPO}/contents/tooltip-terms.json?ref=${INPUT_BRANCH}"
           then
             mv "${TEMP_FILE}" ./tooltip-terms.json
           else
             rm -f "${TEMP_FILE}"
-            echo "Skip syncing tooltip-terms.json because it does not exist on ${{ inputs.repo }}@${{ inputs.branch }}."
+            echo "Skip syncing tooltip-terms.json because it does not exist on ${INPUT_REPO}@${INPUT_BRANCH}."
           fi
 
       - name: Git commit
@@ -234,7 +273,7 @@ jobs:
           then
             git status
           else
-            git commit -m "update MD by dispatch event ${{ inputs.repo }} ${{ inputs.branch }}"
+            git commit -m "update MD by dispatch event ${INPUT_REPO} ${INPUT_BRANCH}"
           fi
 
       - name: Git push
