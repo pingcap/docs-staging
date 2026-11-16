@@ -1,6 +1,6 @@
 ---
 title: Back Up and Restore TiDB Cloud Premium or TiDB Cloud BYOC Data
-summary: TiDB Cloud PremiumインスタンスまたはTiDB Cloud BYOCインスタンスのバックアップと復元方法を学びましょう。
+summary: "TiDB Cloud PremiumインスタンスまたはTiDB Cloud BYOCインスタンスのバックアップと復元方法を学びましょう。"
 aliases: ['/ja/tidbcloud/restore-deleted-tidb-cluster']
 ---
 
@@ -11,7 +11,7 @@ aliases: ['/ja/tidbcloud/restore-deleted-tidb-cluster']
 バックアップファイルは、以下のソースから生成される可能性があります。
 
 - アクティブな TiDB Cloud Premium または TiDB Cloud BYOC インスタンス
-- 削除された TiDB Cloud Premium または TiDB Cloud BYOC インスタンスのバックアップ用のごみ箱
+- 削除された TiDB Cloud Premium または TiDB Cloud BYOC インスタンスのバックアップ用の Recycle Bin
 
 > **Tip:**
 >
@@ -174,7 +174,7 @@ TiDB Cloudコンソールでは、外部ストレージの認証情報を入力�
 
 ## 復元する {#restore}
 
-TiDB Cloudは、偶発的なデータ損失や破損が発生した場合にデータを復旧するための復元機能を提供します。アクティブなインスタンスのバックアップ、またはごみ箱内の削除されたインスタンスから復元できます。
+TiDB Cloudは、偶発的なデータ損失や破損が発生した場合にデータを復旧するための復元機能を提供します。アクティブなインスタンスのバックアップ、または Recycle Bin 内の削除されたインスタンスから復元できます。
 
 ### 復元モード {#restore-mode}
 
@@ -243,9 +243,9 @@ TiDB Cloudは、新しいインスタンスへのデータ復元をサポート�
 
     復元処理が開始されると、インスタンスの状態は最初に**Creating**に変わります。作成が完了すると、 **Restoring**に変わります。復元が完了し、状態が**Available**に変わるまで、インスタンスは利用できません。
 
-### ごみ箱から復元 {#restore-from-recycle-bin}
+### Recycle Bin から復元 {#restore-from-recycle-bin}
 
-削除した TiDB Cloud Premium または TiDB Cloud BYOC インスタンスをごみ箱から復元するには、以下の手順を実行してください。
+削除した TiDB Cloud Premium または TiDB Cloud BYOC インスタンスを Recycle Bin から復元するには、以下の手順を実行してください。
 
 1. [TiDB Cloudコンソール](https://tidbcloud.com)で、組織の[**My TiDB**](https://tidbcloud.com/tidbs)ページに移動し、右上隅の**...**をクリックして、 **Recycle Bin**をクリックします。
 
@@ -265,13 +265,13 @@ TiDB Cloudは、新しいインスタンスへのデータ復元をサポート�
 
 ### 別のプランタイプからバックアップを復元する {#restore-backups-from-a-different-plan-type}
 
-現在、AWS上でホストされているTiDB Cloud Dedicatedクラスタから新しいTiDB Cloud Premiumインスタンスへのバックアップ復元のみが可能です。
+現在、AWS上でホストされているTiDB Cloud Dedicatedクラスターから新しいTiDB Cloud Premiumインスタンスへのバックアップ復元のみが可能です。
 
 TiDB Cloud Dedicatedクラスターによって生成されたバックアップを復元するには、次の手順に従ってください。
 
 1. [TiDB Cloudコンソール](https://tidbcloud.com)にログインし、[**My TiDB**](https://tidbcloud.com/tidbs)ページに移動します。右上隅にある**...**をクリックし、 **Restore from Another Plan**をクリックします。
 
-2. **Select Backup**ページで、対象のTiDB Cloud Dedicatedクラスターを含むプロジェクトを選択します。TiDB Cloud Dedicatedクラスターを選択し、復元するバックアップ スナップショットを選択して、 **Next**をクリックします。
+2. **Select Backup**ページで、対象のTiDB Cloud Dedicatedクラスターを含むプロジェクトを選択します。TiDB Cloud Dedicatedクラスターを選択し、復元するバックアップスナップショットを選択して、 **Next**をクリックします。
 
     > **Note:**
     >
@@ -330,7 +330,7 @@ TiDB Cloud Premium と TiDB Cloud BYOC は、クラウドストレージ（Amazo
 
     - **Cloud Provider**：バックアップファイルが保存されているクラウドプロバイダーを選択してください。
     - **Region**：クラウドプロバイダーがAlibaba Cloud OSSの場合は、リージョンを選択してください。
-    - **Backup Files URI**：バックアップファイルが格納されている最上位フォルダのURIを入力してください。
+    - **Backup Files URI**：バックアップファイルが格納されている最上位フォルダーのURIを入力してください。
     - **Access Key ID**：アクセスキーIDを入力してください。
     - **Access Key Secret**：アクセスキーシークレットを入力してください。
 
@@ -339,7 +339,7 @@ TiDB Cloud Premium と TiDB Cloud BYOC は、クラウドストレージ（Amazo
     <CustomContent plan="byoc">
 
     - **Cloud Provider**：バックアップファイルが保存されているクラウドプロバイダーを選択してください。
-    - **Backup Files URI**：バックアップファイルが格納されている最上位フォルダのURIを入力してください。
+    - **Backup Files URI**：バックアップファイルが格納されている最上位フォルダーのURIを入力してください。
     - **Access Key ID**：アクセスキーIDを入力してください。
     - **Access Key Secret**：アクセスキーシークレットを入力してください。
 
@@ -389,7 +389,7 @@ TiDB Cloud Premium と TiDB Cloud BYOC は、クラウドストレージ（Amazo
 
     タスクに必要な権限のみを含むポリシーを作成し、それを IAM ユーザーにアタッチします。TiDB Cloud Premium または TiDB Cloud BYOC インスタンスにデータを復元するには、`s3:GetObject`、`s3:GetBucketLocation`、および `s3:ListBucket` 権限を付与します。
 
-    以下は、 TiDB CloudがAmazon S3バケット内の特定のフォルダからデータを復元できるようにするポリシーの例です。
+    以下は、 TiDB CloudがAmazon S3バケット内の特定のフォルダーからデータを復元できるようにするポリシーの例です。
 
     ```json
     {

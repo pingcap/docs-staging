@@ -1,6 +1,6 @@
 ---
 title: Integrate WordPress with TiDB Cloud Starter
-summary: TiDB Cloud Starterを使ってWordPressを実行する方法を学びましょう。このチュートリアルでは、WordPressとTiDB Cloud Starterを数分で実行するための手順をステップバイステップで解説します。
+summary: "TiDB Cloud Starterを使ってWordPressを実行する方法を学びましょう。このチュートリアルでは、WordPressとTiDB Cloud Starterを数分で実行するための手順をステップバイステップで解説します。"
 aliases: ['/ja/tidbcloud/dev-guide-wordpress/']
 ---
 
@@ -8,7 +8,7 @@ aliases: ['/ja/tidbcloud/dev-guide-wordpress/']
 
 TiDBはMySQL互換データベースであり、 TiDB Cloud Starterはフルマネージド型のTiDBサービスです。[WordPress](https://github.com/WordPress)は、ユーザーがウェブサイトを作成・管理できる無料のオープンソースコンテンツ管理システム（CMS）です。WordPressはPHPで記述されており、MySQLデータベースを使用しています。
 
-このチュートリアルでは、 TiDB Cloud Starterを使用してWordPressを無料で実行する方法を学ぶことができます。
+このチュートリアルでは、 TiDB Cloud Starterを使用してWordPressを無料で実行する方法を学べます。
 
 > **Note:**
 >
@@ -41,7 +41,7 @@ cd wordpress-tidb-docker
     sudo sh install.sh
     ```
 
-2. サンプル リポジトリには、サブモジュールとして[TiDB互換性プラグイン](https://github.com/pingcap/wordpress-tidb-plugin)が含まれています。次のコマンドを実行してサブモジュールを更新します。
+2. サンプルリポジトリには、サブモジュールとして[TiDB互換性プラグイン](https://github.com/pingcap/wordpress-tidb-plugin)が含まれています。次のコマンドを実行してサブモジュールを更新します。
 
     ```shell
     git submodule update --init --recursive
@@ -84,19 +84,19 @@ TiDB Cloud StarterへのWordPressデータベース接続を設定します。
     TIDB_DB_NAME='test'
     ```
 
-    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメータに置き換えてください。デフォルトでは、 TiDB Cloud Starterには`test`データベースが付属しています。TiDB Cloud Starterインスタンスで既に別のデータベースを作成している場合は、 `test`をデータベース名に置き換えてください。
+    プレースホルダー`{}`を、接続ダイアログから取得した接続パラメーターに置き換えてください。デフォルトでは、 TiDB Cloud Starterには`test`データベースが付属しています。TiDB Cloud Starterインスタンスで既に別のデータベースを作成している場合は、 `test`をデータベース名に置き換えてください。
 
 7. `.env`ファイルを保存します。
 
 ### ステップ4： TiDB Cloud StarterでWordPressを起動する {#step-4-start-wordpress-with-tidb-cloud-starter}
 
-1. WordPressをDockerコンテナとして実行するには、以下のコマンドを実行してください。
+1. WordPressをDockerコンテナーとして実行するには、以下のコマンドを実行してください。
 
     ```shell
     docker compose up -d
     ```
 
-2. ローカルマシンでコンテナを起動した場合は[localhost](http://localhost/)にアクセスしてWordPressサイトをセットアップし、リモートマシンでWordPressが実行されている場合は`http://<your_instance_ip>`にアクセスしてください。
+2. ローカルマシンでコンテナーを起動した場合は[localhost](http://localhost/)にアクセスしてWordPressサイトをセットアップし、リモートマシンでWordPressが実行されている場合は`http://<your_instance_ip>`にアクセスしてください。
 
 ### ステップ5：データベース接続を確認する {#step-5-confirm-the-database-connection}
 

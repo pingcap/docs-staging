@@ -6,7 +6,7 @@ aliases: ['/ja/tidbcloud/serverless-driver-kysely-example/']
 
 # TiDB Cloud Serverless Driver Kysely チュートリアル {#tidb-cloud-serverless-driver-kysely-tutorial}
 
-[Kysely](https://kysely.dev/docs/intro)は、タイプセーフでオートコンプリートに適した TypeScript SQL クエリ ビルダーです。 TiDB Cloudは[@tidbcloud/kysely](https://github.com/tidbcloud/kysely)を提供しており、 [TiDB Cloud Serverless Driver](/develop/serverless-driver.md)を使用して HTTPS 経由で Kysely を使用できるようにします。従来の TCP 方式と比較して、 [@tidbcloud/kysely](https://github.com/tidbcloud/kysely)は次の利点があります。
+[Kysely](https://kysely.dev/docs/intro)は、タイプセーフでオートコンプリートに適した TypeScript SQL クエリビルダーです。 TiDB Cloudは[@tidbcloud/kysely](https://github.com/tidbcloud/kysely)を提供しており、 [TiDB Cloud Serverless Driver](/develop/serverless-driver.md)を使用して HTTPS 経由で Kysely を使用できるようにします。従来の TCP 方式と比較して、 [@tidbcloud/kysely](https://github.com/tidbcloud/kysely)は次の利点があります。
 
 - サーバーレス環境におけるパフォーマンスの向上。
 - Kyselyをエッジ環境で使用できる機能。
@@ -53,7 +53,7 @@ aliases: ['/ja/tidbcloud/serverless-driver-kysely-example/']
    }
    ```
 
-4. プロジェクトのルートディレクトリに、TypeScriptコンパイラオプションを定義する`tsconfig.json`ファイルを追加します。以下にファイルの例を示します。
+4. プロジェクトのルートディレクトリに、TypeScriptコンパイラーオプションを定義する`tsconfig.json`ファイルを追加します。以下にファイルの例を示します。
 
    ```json
    {
@@ -90,7 +90,7 @@ aliases: ['/ja/tidbcloud/serverless-driver-kysely-example/']
 
 1. TiDB Cloud Starterインスタンスにテーブルを作成し、データを挿入してください。
 
-    [TiDB CloudコンソールのSQLエディタ](https://docs.pingcap.com/tidbcloud/explore-data-with-sql-editor)を使用してSQL文を実行できます。以下に例を示します。
+    [TiDB CloudコンソールのSQLエディター](https://docs.pingcap.com/tidbcloud/explore-data-with-sql-editor)を使用してSQL文を実行できます。以下に例を示します。
 
    ```sql
    CREATE TABLE `test`.`person`  (
@@ -202,7 +202,7 @@ mysql://[username]:[password]@[host]/[database]
 
 1. TiDB Cloud Starterインスタンスにテーブルを作成し、データを挿入してください。
 
-    [TiDB CloudコンソールのSQLエディタ](https://docs.pingcap.com/tidbcloud/explore-data-with-sql-editor)を使用してSQL文を実行できます。以下に例を示します。
+    [TiDB CloudコンソールのSQLエディター](https://docs.pingcap.com/tidbcloud/explore-data-with-sql-editor)を使用してSQL文を実行できます。以下に例を示します。
 
    ```sql
    CREATE TABLE `test`.`person`  (
@@ -271,7 +271,7 @@ mysql://[username]:[password]@[host]/[database]
    }
    ```
 
-    上記のコードは、クエリパラメータ`query`を受け取り、クエリの結果を返します。クエリパラメータが指定されていない場合は、 `person`テーブル内のすべてのレコードを返します。
+    上記のコードは、クエリパラメーター`query`を受け取り、クエリの結果を返します。クエリパラメーターが指定されていない場合は、 `person`テーブル内のすべてのレコードを返します。
 
 3. コードをローカル環境でテストしてください。
 

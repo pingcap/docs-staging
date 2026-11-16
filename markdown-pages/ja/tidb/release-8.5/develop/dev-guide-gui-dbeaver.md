@@ -8,7 +8,7 @@ aliases: ['/ja/tidb/stable/dev-guide-gui-dbeaver/','/ja/tidb/dev/dev-guide-gui-d
 
 TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbeaver.io/download/)は、開発者、データベース管理者、アナリスト、およびデータを扱うすべての人向けの無料のクロスプラットフォームデータベースツールです。
 
-このチュートリアルでは、DBeaver Communityを使用してTiDBに接続する方法を学ぶことができます。
+このチュートリアルでは、DBeaver Communityを使用してTiDBに接続する方法を学べます。
 
 > **Note:**
 >
@@ -19,12 +19,12 @@ TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbe
 このチュートリアルを完了するには、以下が必要です。
 
 - [DBeaver Community **23.0.3**以降](https://dbeaver.io/download/)。
-- TiDBクラスタ。
+- TiDBクラスター。
 
-**TiDBクラスタをお持ちでない場合は、以下の手順で作成できます。**
+**TiDBクラスターをお持ちでない場合は、以下の手順で作成できます。**
 
 - (推奨) [TiDB Cloud Starterインスタンスを作成する](/develop/dev-guide-build-cluster-in-cloud.md)。
-- [ローカルテスト用のTiDB Self-Managedクラスタをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDB Self-Managedクラスタをデプロイ](/production-deployment-using-tiup.md)
+- [ローカルテスト用のTiDB Self-Managedクラスターをデプロイ](/quick-start-with-tidb.md#deploy-a-local-test-cluster)または[本番のTiDB Self-Managedクラスターをデプロイ](/production-deployment-using-tiup.md)
 
 さらに、 **Windows**上の DBeaver からTiDB Cloud StarterまたはTiDB Cloud Essential のパブリックエンドポイントに接続するには、以下の手順で追加の SSL 証明書 (ISRG Root X1) を設定する必要があります。設定しない場合、接続は失敗します。その他のオペレーティングシステムの場合は、これらの手順はスキップできます。
 
@@ -76,7 +76,7 @@ TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbe
 
 8. **Test Connection**をクリックして、対象のTiDB Cloud StarterまたはEssentialインスタンスへの接続を検証してください。
 
-    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバファイルを入手してください。
+    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバーファイルを入手してください。
 
     ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 
@@ -128,15 +128,15 @@ TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbe
 </div>
 <div label="TiDB Cloud Dedicated">
 
-1. [**My TiDB**](https://tidbcloud.com/tidbs)ページに移動し、対象のTiDB Cloud Dedicatedクラスタの名前をクリックして概要ページに移動します。
+1. [**My TiDB**](https://tidbcloud.com/tidbs)ページに移動し、対象のTiDB Cloud Dedicatedクラスターの名前をクリックして概要ページに移動します。
 
 2. 右上隅の**Connect**をクリックしてください。接続ダイアログが表示されます。
 
 3. 接続ダイアログで、 **Connection Type**ドロップダウンリストから**Public**を選択し、 **CA cert**をクリックしてCA証明書をダウンロードします。
 
-    IP アクセス リストを設定していない場合は、最初の接続の前に、 **Configure IP Access List**をクリックするか、[IP アクセス リストを設定する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)の手順に従って設定します。
+    IP アクセスリストを設定していない場合は、最初の接続の前に、 **Configure IP Access List**をクリックするか、[IP アクセスリストを設定する](https://docs.pingcap.com/tidbcloud/configure-ip-access-list)の手順に従って設定します。
 
-    TiDB Cloud Dedicated は、**Public**接続タイプに加えて、**Private Endpoint**および**VPC Peering**接続タイプもサポートしています。詳細については、 [TiDB Cloud Dedicatedクラスタに接続します](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
+    TiDB Cloud Dedicated は、**Public**接続タイプに加えて、**Private Endpoint**および**VPC Peering**接続タイプもサポートしています。詳細については、 [TiDB Cloud Dedicatedクラスターに接続します](https://docs.pingcap.com/tidbcloud/connect-to-tidb-cluster)を参照してください。
 
 4. DBeaverを起動し、左上隅の**New Database Connection**をクリックします。 **Connect to a database**ダイアログで、リストから**TiDB**を選択し、 **Next**をクリックします。
 
@@ -157,7 +157,7 @@ TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbe
 
 6. **Test Connection**をクリックして、 TiDB Cloud Dedicatedクラスターへの接続を検証してください。
 
-    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバファイルを入手してください。
+    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバーファイルを入手してください。
 
     ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 
@@ -174,20 +174,20 @@ TiDBはMySQL互換データベースであり、 [DBeaver Community](https://dbe
 
     ![Select TiDB as the database in DBeaver](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-select-database.jpg)
 
-2. 以下の接続パラメータを設定してください。
+2. 以下の接続パラメーターを設定してください。
 
-    - **Server Host**：TiDB Self-ManagedクラスタのIPアドレスまたはドメイン名。
-    - **Port**：TiDB Self-Managedクラスタのポート番号。
-    - **Username**：TiDB Self-Managedクラスタに接続するために使用するユーザー名。
+    - **Server Host**：TiDB Self-ManagedクラスターのIPアドレスまたはドメイン名。
+    - **Port**：TiDB Self-Managedクラスターのポート番号。
+    - **Username**：TiDB Self-Managedクラスターに接続するために使用するユーザー名。
     - **Password**：ユーザー名のパスワード。
 
     例えば、以下のような例があります。
 
     ![Configure connection settings for TiDB Self-Managed](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-connection-settings-self-hosted.jpg)
 
-3. **Test Connection**をクリックして、TiDB Self-Managedクラスタへの接続を検証してください。
+3. **Test Connection**をクリックして、TiDB Self-Managedクラスターへの接続を検証してください。
 
-    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバファイルを入手してください。
+    **Download driver files**ダイアログが表示されたら、 **Download**をクリックしてドライバーファイルを入手してください。
 
     ![Download driver files](https://docs-download.pingcap.com/media/images/docs/develop/dbeaver-download-driver.jpg)
 

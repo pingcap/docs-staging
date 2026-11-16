@@ -26,7 +26,7 @@ aliases: ['/ja/tidb/stable/vector-search-data-types/','/ja/tidbcloud/vector-sear
 
 ## 構文 {#syntax}
 
-次の構文の文字列を使用してベクトル値を表すことができます。
+次の構文の文字列を使用してベクトル値を表せます。
 
 ```sql
 '[<float>, <float>, ...]'
@@ -65,7 +65,7 @@ ERROR 1105 (HY000): vector has 2 dimensions, does not fit VECTOR(3)
 
 ## 異なる次元のベクトルを保存する {#store-vectors-with-different-dimensions}
 
-`VECTOR`型の次元パラメータを省略すると、同じ列に異なる次元のベクトルを保存できます。
+`VECTOR`型の次元パラメーターを省略すると、同じ列に異なる次元のベクトルを保存できます。
 
 ```sql
 CREATE TABLE vector_table (
