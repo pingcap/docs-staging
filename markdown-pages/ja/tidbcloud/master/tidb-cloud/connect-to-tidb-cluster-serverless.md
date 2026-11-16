@@ -1,6 +1,6 @@
 ---
 title: Connect to Your TiDB Cloud Starter or Essential Instance
-summary: TiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスにさまざまな方法で接続する方法を学びましょう。
+summary: "TiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスにさまざまな方法で接続する方法を学びましょう。"
 ---
 
 # TiDB Cloud StarterまたはEssentialインスタンスに接続します {#connect-to-your-tidb-cloud-starter-or-essential-instance}

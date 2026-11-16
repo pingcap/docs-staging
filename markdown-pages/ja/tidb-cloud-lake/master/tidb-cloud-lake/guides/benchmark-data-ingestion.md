@@ -89,7 +89,7 @@ TiDB Cloud Lake と Snowflake を評価するために、次の 4 つのベン�
 
 このベンチマークでは、Snowflake と TiDB Cloud Lake の両方を同様の条件でテストしています。
 
-| パラメータ      | Snowflake                                                | TiDB Cloud Lake                            |
+| パラメーター      | Snowflake                                                | TiDB Cloud Lake                            |
 | -------------- | -------------------------------------------------------- | ----------------------------------------- |
 | Warehouse サイズ | Small                                                    | Small                                     |
 | 価格          | [$4/hour](https://www.snowflake.com/en/pricing-options/) | [$3.2/hour](https://www.pingcap.com/pricing/) |

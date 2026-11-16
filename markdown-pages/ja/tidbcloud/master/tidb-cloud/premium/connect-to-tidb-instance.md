@@ -9,7 +9,7 @@ summary: さまざまな方法でTiDB Cloud PremiumまたはTiDB Cloud BYOCイ�
 
 > **Tip:**
 >
-> TiDB Cloud Dedicatedクラスターに接続する方法については、 [TiDB Cloud Dedicatedクラスタに接続します](/tidb-cloud/connect-to-tidb-cluster.md)を参照してください。
+> TiDB Cloud Dedicatedクラスターに接続する方法については、 [TiDB Cloud Dedicatedクラスターに接続します](/tidb-cloud/connect-to-tidb-cluster.md)を参照してください。
 
 ## 接続方法 {#connection-methods}
 
@@ -39,7 +39,7 @@ TiDB Cloud Premium および TiDB Cloud BYOC には、2 種類のネットワー
 
 | 接続方法 | ネットワーク                | 説明                                                |
 | ---- | --------------------- | ------------------------------------------------- |
-| 直接接続 | パブリックまたはプライベートエンドポイント | 直接接続は、パブリックエンドポイントとプライベートエンドポイントの両方を介して行うことができます。 |
+| 直接接続 | パブリックまたはプライベートエンドポイント | 直接接続は、パブリックエンドポイントとプライベートエンドポイントの両方を介して行えます。 |
 
 ## 次は？ {#what-s-next}
 

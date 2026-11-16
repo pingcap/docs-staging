@@ -13,7 +13,7 @@ TiDB Cloud Lake は、新しいデータが書き込まれるたびに、`SYNC` 
 REFRESH SPATIAL INDEX <index> ON [<database>.]<table> [LIMIT <limit>]
 ```
 
-| パラメータ | 説明 |
+| パラメーター | 説明 |
 |-----------|-------------|
 | `<limit>` | インデックス更新中に処理する行の最大数を指定します。指定しない場合、テーブル内のすべての行が処理されます。 |
 

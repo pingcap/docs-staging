@@ -31,7 +31,7 @@ TiDB Cloud Lake では、Warehouse はさまざまなサイズで利用でき、
 
 ## Warehouse の管理 {#managing-warehouses}
 
-組織では必要な数だけ Warehouse を持つことができます。**Warehouses** ページには組織内のすべての Warehouse が表示され、それらを管理できます。Warehouse を作成または削除できるのは `account_admin` のみである点に注意してください。
+組織では必要な数だけ Warehouse を持てます。**Warehouses** ページには組織内のすべての Warehouse が表示され、それらを管理できます。Warehouse を作成または削除できるのは `account_admin` のみである点に注意してください。
 
 > **Tip:**
 >

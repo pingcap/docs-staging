@@ -390,7 +390,7 @@ aws sqs receive-message \
 
 AWS 側の設定が完了したら、TiDB Cloud Lake でデータソースを作成する際に、以下の情報を入力します。
 
-| パラメータ | 説明 |
+| パラメーター | 説明 |
 |-----------|-------------|
 | `role_arn` | TiDB Cloud Lake が引き受けることを許可された、AWS アカウント内の IAM Role ARN |
 | `external_id` | TiDB Cloud Lake コンソールの Organization ID |

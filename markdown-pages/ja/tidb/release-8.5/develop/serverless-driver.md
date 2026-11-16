@@ -12,7 +12,7 @@ aliases: ['/ja/tidbcloud/serverless-driver-config/','/ja/tidbcloud/serverless-dr
 
 ## TiDB Cloud Serverless Driver （PREVIEW）を使用する理由 {#why-use-tidb-cloud-serverless-driver-preview}
 
-従来のTCPベースのMySQLドライバは、サーバーレス関数の短命な性質と矛盾する、長期間持続するTCP接続を前提としているため、サーバーレス関数には適していません。さらに、 [Vercel Edge Functions](https://vercel.com/docs/functions/edge-functions)や[Cloudflare Workers](https://workers.cloudflare.com/)などのエッジ環境では、包括的なTCPサポートと完全なNode.js互換性が欠けている場合があり、これらのドライバは全く動作しない可能性があります。
+従来のTCPベースのMySQLドライバーは、サーバーレス関数の短命な性質と矛盾する、長期間持続するTCP接続を前提としているため、サーバーレス関数には適していません。さらに、 [Vercel Edge Functions](https://vercel.com/docs/functions/edge-functions)や[Cloudflare Workers](https://workers.cloudflare.com/)などのエッジ環境では、包括的なTCPサポートと完全なNode.js互換性が欠けている場合があり、これらのドライバーは全く動作しない可能性があります。
 
 [TiDB Cloud Serverless Driver（PREVIEW）](https://github.com/tidbcloud/serverless-js) for JavaScript を使用すると、サーバーレス環境で一般的にサポートされている HTTP 経由でTiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスに接続できます。これにより、エッジ環境からTiDB Cloud StarterまたはTiDB Cloud Essentialインスタンスに接続し、従来の TCP ベースの MySQL ドライバーと同様の開発エクスペリエンスを維持しながら、TCP による接続オーバーヘッドを削減することが可能になります。
 
@@ -154,7 +154,7 @@ TiDB Cloud Serverless Driverは、接続レベルとSQLレベルの両方で設�
 
 ### 接続レベル構成 {#connection-level-configurations}
 
-接続レベルでは、以下の設定を行うことができます。
+接続レベルでは、以下の設定を行えます。
 
 | 名前           | 型  | デフォルト値    | 説明                                                                                                                                                  |
 | ------------ | ---- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -260,7 +260,7 @@ conn.execute(`select ...`, [], {
 >
 > TiDB Cloud Serverless Driverの設定変更点：
 >
-> - v0.0.7: SQL レベル オプション`isolation`を追加します。
+> - v0.0.7: SQL レベルオプション`isolation`を追加します。
 > - v0.0.10: 接続レベル構成`decoders`と SQL レベルオプション`decoders`を追加します。
 
 ## 特徴 {#features}
@@ -343,7 +343,7 @@ TiDB Cloud Serverless Driver自体は無料ですが、ドライバーを使用�
 - 1回のクエリで最大10,000行まで取得できます。
 - 一度に実行できるSQL文は1つだけです。1つのクエリで複数のSQL文を実行することは、現時点ではサポートされていません。
 - [プライベートエンドポイント](https://docs.pingcap.com/tidbcloud/set-up-private-endpoint-connections-serverless.md)との接続にはまだ対応していません。
-- サーバーは、クロスオリジンリソース共有（CORS）を介して、許可されていないブラウザからのリクエストをブロックし、認証情報を保護します。そのため、TiDB Cloud Serverless Driverはバックエンドサービスからのみ使用できます。
+- サーバーは、クロスオリジンリソース共有（CORS）を介して、許可されていないブラウザーからのリクエストをブロックし、認証情報を保護します。そのため、TiDB Cloud Serverless Driverはバックエンドサービスからのみ使用できます。
 
 ## 次は？ {#what-s-next}
 
