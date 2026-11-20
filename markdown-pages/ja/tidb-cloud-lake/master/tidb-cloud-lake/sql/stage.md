@@ -37,4 +37,4 @@ summary: このページでは、TiDB Cloud Lake における stage 操作の包
 
 > **Note:**
 >
-> TiDB Cloud Lake の stage は、テーブルにロード (load) したり、テーブルからアンロード (unload) したりするデータファイルの一時保存場所として使用されます。
+> TiDB Cloud Lake の stage は、テーブルにロードしたり、テーブルからアンロード (unload) したりするデータファイルの一時保存場所として使用されます。

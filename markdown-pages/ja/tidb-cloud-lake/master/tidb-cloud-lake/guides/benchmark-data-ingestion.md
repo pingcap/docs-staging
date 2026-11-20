@@ -173,7 +173,7 @@ TiDB Cloud Lake と Snowflake を評価するために、次の 4 つのベン�
     DETAILED_OUTPUT = true;
     ```
 
-3. 外部 stage から `hits` テーブルにデータをロード (load) します。
+3. 外部 stage から `hits` テーブルにデータをロードします。
 
     ```sql
     COPY INTO hits
