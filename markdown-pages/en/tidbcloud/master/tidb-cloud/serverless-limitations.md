@@ -31,7 +31,7 @@ We are constantly filling in the feature gaps between TiDB Cloud Starter/Essenti
 
 ### Encryption
 
-- Data persisted in your TiDB Cloud Starter or TiDB Cloud Essential instance is encrypted using the encryption tool provided by the cloud provider that manages your instance. For TiDB Cloud Starter (with spending limit > 0) and TiDB Cloud Essential instances, an optional second layer of encryption is available during the instance creation process, providing an additional level of security beyond the default encryption at rest.
+- Data persisted in your TiDB Cloud Starter or TiDB Cloud Essential instance is encrypted using the encryption service provided by the cloud provider hosting your instance. For TiDB Cloud Essential instances, an additional database layer of encryption (dual-layer encryption) is enabled by default. Dual-layer encryption is not supported for TiDB Cloud Starter instances.
 - Using [customer-managed encryption keys (CMEK)](/tidb-cloud/tidb-cloud-encrypt-cmek-aws.md) is currently unavailable.
 
 ### Maintenance window
