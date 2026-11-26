@@ -16,11 +16,11 @@ Cloud-native identity delegation (AWS IAM Role, Azure Managed Identity, Google S
 
 ## How it works
 
-After TiDB Cloud Lake support shares the trusted principal information for your organization, you create an IAM role/identity in your cloud account, attach a policy that allows the object storage operations you need (for example reading a set of buckets), and configure the trust policy so only TiDB Cloud Lake can assume the role with a unique external ID. TiDB Cloud Lake then assumes that role on demand, uses the temporary credentials to access your storage, and automatically logs out when the session expires.
+After you obtain the trusted IAM role ARN assigned to your organization from the **Connect** dialog in TiDB Cloud Lake, you create an IAM role in your AWS account, attach a policy that allows the object storage operations you need (for example reading a set of buckets), and configure the trust policy so only TiDB Cloud Lake can assume the role with a unique external ID. TiDB Cloud Lake then assumes that role on demand, uses the temporary credentials to access your storage, and automatically logs out when the session expires.
 
 ## Use IAM role
 
-1. Raise a support ticket to get the IAM role ARN for your TiDB Cloud Lake organization:
+1. Log in to TiDB Cloud Lake and click **Connect**. In the dialog, copy the IAM role ARN for your organization:
 
    For example: `arn:aws:iam::123456789012:role/xxxxxxx/tnabcdefg/xxxxxxx-tnabcdefg`
 
